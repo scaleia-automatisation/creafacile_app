@@ -4,18 +4,9 @@ import { Input } from '@/components/ui/input';
 import StepContainer from './StepContainer';
 import { useEffect, useMemo } from 'react';
 import type { ContentType } from '@/store/useKreatorStore';
+import { FUNNEL_OBJECTIVES, FUNNEL_ANGLES, type FunnelObjective } from '@/data/funnelAngles';
 
-const OBJECTIVES = [
-  '🧲 Attirer du trafic',
-  '👀 Capter l\'attention',
-  '💡 Créer l\'intérêt',
-  '🔥 Donner envie d\'acheter',
-  '💎 Montrer la valeur',
-  '🛡️ Rassurer le visiteur',
-  '📈 Prouver les résultats',
-  '🛒 Déclencher l\'achat',
-  '🔁 Fidéliser les clients',
-];
+const OBJECTIVES = FUNNEL_OBJECTIVES;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Angles marketing et styles visuels personnalisés par SECTEUR et adaptés au
@@ -528,7 +519,15 @@ const ObjectiveStep = () => {
   } = useKreatorStore();
 
   const preset = useMemo(() => SECTOR_PRESETS[company_sector] ?? DEFAULT_PRESET, [company_sector]);
-  const angles = preset.angles;
+  // Angles marketing : pilotés par l'objectif (étape du tunnel) + type de contenu.
+  // Si l'objectif sélectionné fait partie des 9 étapes du tunnel, on affiche
+  // les 15 angles spécifiques à ce couple objectif × type. Sinon, fallback
+  // sur les angles du secteur (legacy).
+  const angles = useMemo(() => {
+    const funnelAngles = FUNNEL_ANGLES[objective as FunnelObjective];
+    if (funnelAngles) return funnelAngles[type as ContentType] ?? funnelAngles.image;
+    return preset.angles;
+  }, [objective, type, preset]);
   const styles = preset.styles[type as ContentType] ?? preset.styles.image;
 
   // Reset si la valeur sélectionnée n'appartient plus aux options du secteur/type
@@ -558,7 +557,7 @@ const ObjectiveStep = () => {
         </div>
         <div>
           <label className="text-sm font-medium text-muted-foreground mb-2 block">
-            Angle marketing <span className="text-xs opacity-70">(adapté à votre secteur)</span>
+            Angle marketing <span className="text-xs opacity-70">(adapté à l'objectif et au type de contenu)</span>
           </label>
           <Select value={angleInPresets ? marketing_angle : ''} onValueChange={setMarketingAngle}>
             <SelectTrigger className="bg-card border-foreground/10 text-foreground">
