@@ -601,14 +601,6 @@ const ObjectiveStep = () => {
               ))}
             </SelectContent>
           </Select>
-          {visual_style_brief && (
-            <Input
-              value={visual_style_brief}
-              onChange={(e) => setVisualStyleBrief(e.target.value)}
-              placeholder="Personnaliser le style visuel..."
-              className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-            />
-          )}
           {selectedStyleDescription && (
             <p className="mt-2 text-xs text-muted-foreground leading-relaxed bg-card/50 border border-foreground/10 rounded-btn p-2">
               {selectedStyleDescription}
