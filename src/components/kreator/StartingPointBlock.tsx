@@ -286,29 +286,11 @@ const StartingPointBlock = () => {
 
   // ===== Vidéo : UI simplifiée =====
   if (isVideo) {
+    if (!loadingIdeas && !showIdeas) return null;
     return (
       <div id="starting-point-block" className="step-border bg-background p-4 sm:p-6 md:p-8">
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 mb-2">
-            <FileText className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-foreground">Idée de vidéo</span>
-          </div>
-          <p className="text-xs text-muted-foreground mb-3">
-            Décrivez votre idée de vidéo en quelques phrases
-          </p>
-          <Textarea
-            value={input_text}
-            onChange={(e) => {
-              if (e.target.value.length <= 500) setInputText(e.target.value);
-            }}
-            placeholder="Ex: Une vidéo qui montre la transformation avant/après de mon programme fitness..."
-            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[140px] resize-none"
-          />
-          <div className="text-xs text-muted-foreground text-right">{input_text.length}/500</div>
-        </div>
-
         {loadingIdeas && (
-          <div className="flex flex-col items-center py-8 mt-6 border-t border-foreground/10">
+          <div className="flex flex-col items-center py-8">
             <div className="text-3xl mb-3 animate-bounce">✨</div>
             <p className="text-sm text-muted-foreground">Génération des idées de vidéo en cours…</p>
             <Loader2 className="w-5 h-5 animate-spin text-primary mt-2" />
@@ -316,7 +298,7 @@ const StartingPointBlock = () => {
         )}
 
         {showIdeas && !loadingIdeas && (
-          <div className="mt-6 pt-6 border-t border-foreground/10">
+          <div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               {ideas.map((idea) => (
                 <div
