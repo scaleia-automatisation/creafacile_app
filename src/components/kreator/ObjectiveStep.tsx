@@ -6,39 +6,15 @@ import { useEffect, useMemo } from 'react';
 import type { ContentType } from '@/store/useKreatorStore';
 
 const OBJECTIVES = [
-  // 🟣 TOFU — ATTENTION / Notoriété (haut du tunnel)
-  '🧲 Attirer du trafic qualifié',
-  '📣 Faire connaître le produit ou service',
-  '🌟 Augmenter la notoriété de marque',
-  '🚀 Lancer un nouveau produit',
-  '📢 Promouvoir un produit ou service',
-  '⭐ Améliorer l\'image du produit ou service',
-  // 🔵 TOFU/MOFU — INTÉRÊT / Éducation
-  '📚 Éduquer le marché cible',
-  '🎓 Positionner comme expert du marché',
-  '❤️ Créer de l\'engagement audience',
-  '👥 Développer une communauté engagée',
-  // 🟢 MOFU — DÉSIR / Considération (milieu du tunnel)
-  '💡 Créer un besoin chez le client',
-  '🎯 Générer des leads qualifiés',
-  '📥 Générer des demandes entrantes',
-  '🌱 Nourrir les prospects (lead nurturing)',
-  '🔍 Valider une idée de marché',
-  '🧪 Tester une offre ou un produit',
-  '🛡️ Rassurer et lever les objections',
-  '🚧 Lever les frictions à l\'achat',
-  '🧱 Casser les barrières limitantes',
-  // 🟡 BOFU — ACTION / Conversion (bas du tunnel)
-  '⏩ Accélérer la prise de décision',
-  '⚡ Convertir en clients rapidement',
-  '🛒 Vendre un produit ou service',
-  '📈 Augmenter le taux de conversion',
-  '📉 Réduire le coût d\'acquisition (CAC)',
-  '💰 Maximiser le retour publicitaire (ROAS)',
-  // 🔴 POST-ACHAT — FIDÉLISATION / Rétention
-  '🔔 Relancer les prospects inactifs',
-  '🔁 Fidéliser les clients existants',
-  '💎 Augmenter la valeur client (LTV)',
+  '🧲 Attirer du trafic',
+  '👀 Capter l\'attention',
+  '💡 Créer l\'intérêt',
+  '🔥 Donner envie d\'acheter',
+  '💎 Montrer la valeur',
+  '🛡️ Rassurer le visiteur',
+  '📈 Prouver les résultats',
+  '🛒 Déclencher l\'achat',
+  '🔁 Fidéliser les clients',
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
