@@ -5,6 +5,7 @@ import StepContainer from './StepContainer';
 import { useEffect, useMemo } from 'react';
 import type { ContentType } from '@/store/useKreatorStore';
 import { FUNNEL_OBJECTIVES, FUNNEL_ANGLES, type FunnelObjective } from '@/data/funnelAngles';
+import { VISUAL_STYLES } from '@/data/visualStyles';
 
 const OBJECTIVES = FUNNEL_OBJECTIVES;
 
@@ -528,7 +529,15 @@ const ObjectiveStep = () => {
     if (funnelAngles) return funnelAngles[type as ContentType] ?? funnelAngles.image;
     return preset.angles;
   }, [objective, type, preset]);
-  const styles = preset.styles[type as ContentType] ?? preset.styles.image;
+  const styleOptions = useMemo(
+    () => VISUAL_STYLES[type as ContentType] ?? VISUAL_STYLES.image,
+    [type]
+  );
+  const styles = styleOptions.map((s) => s.label);
+  const selectedStyleDescription = useMemo(
+    () => styleOptions.find((s) => s.label === visual_style_brief)?.description,
+    [styleOptions, visual_style_brief]
+  );
 
   // Reset si la valeur sélectionnée n'appartient plus aux options du secteur/type
   useEffect(() => {
@@ -599,6 +608,11 @@ const ObjectiveStep = () => {
               placeholder="Personnaliser le style visuel..."
               className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
             />
+          )}
+          {selectedStyleDescription && (
+            <p className="mt-2 text-xs text-muted-foreground leading-relaxed bg-card/50 border border-foreground/10 rounded-btn p-2">
+              {selectedStyleDescription}
+            </p>
           )}
         </div>
         <div className="md:col-span-2">
