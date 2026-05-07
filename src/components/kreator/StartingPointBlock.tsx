@@ -286,6 +286,7 @@ const StartingPointBlock = () => {
 
   // ===== Vidéo : UI simplifiée =====
   if (isVideo) {
+    if (!loadingIdeas && !showIdeas) return null;
     return (
       <div id="starting-point-block" className="step-border bg-background p-4 sm:p-6 md:p-8">
         {loadingIdeas && (
