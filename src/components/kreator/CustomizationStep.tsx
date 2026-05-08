@@ -32,11 +32,10 @@ const DESIGN_FONTS = [
 ];
 const ALL_FONTS = [...CLASSIC_FONTS, ...DESIGN_FONTS];
 
-const TEXT_POSITIONS: { value: 'top-center-1' | 'top-center-2' | 'bottom-center-1' | 'bottom-center-2'; label: string }[] = [
-  { value: 'top-center-1', label: 'Centré en haut — 1 ligne' },
-  { value: 'top-center-2', label: 'Centré en haut — 2 lignes' },
-  { value: 'bottom-center-1', label: 'Centré en bas — 1 ligne' },
-  { value: 'bottom-center-2', label: 'Centré en bas — 2 lignes' },
+const TEXT_POSITIONS: { value: 'top-center' | 'middle-center' | 'bottom-center'; label: string }[] = [
+  { value: 'top-center', label: 'Centré en haut' },
+  { value: 'middle-center', label: 'Centré au centre' },
+  { value: 'bottom-center', label: 'Centré en bas' },
 ];
 
 // Video text colors palette

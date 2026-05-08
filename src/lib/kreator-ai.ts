@@ -225,7 +225,7 @@ export async function generatePrompt(params: {
   logoEnabled?: boolean;
   logoUrl?: string;
   logoPosition?: 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right';
-  textPosition?: 'top-center-1' | 'top-center-2' | 'bottom-center-1' | 'bottom-center-2';
+  textPosition?: 'top-center' | 'middle-center' | 'bottom-center';
   textFont?: string;
   textColor?: string;
   voiceOverText?: string;
@@ -406,10 +406,9 @@ ${params.visualStyle ? `Style visuel: ${params.visualStyle}` : 'Style: automatiq
 ${params.showText
   ? `Texte overlay (À REPRODUIRE EXACTEMENT, MOT POUR MOT, AUCUNE MODIFICATION NI AJOUT): "${params.textContent}"
 Position du texte: ${
-        params.textPosition === 'top-center-1' ? 'centré en haut sur UNE seule ligne'
-      : params.textPosition === 'top-center-2' ? 'centré en haut sur DEUX lignes maximum'
-      : params.textPosition === 'bottom-center-2' ? 'centré en bas sur DEUX lignes maximum'
-      : 'centré en bas sur UNE seule ligne'
+        params.textPosition === 'top-center' ? 'centré en haut'
+      : params.textPosition === 'middle-center' ? 'centré au centre'
+      : 'centré en bas'
     } — respecter STRICTEMENT cette position et ce nombre de lignes.
 Police d'écriture: "${params.textFont || 'Montserrat'}" — utiliser cette typographie (ou la plus proche visuellement disponible), bien lisible, kerning soigné.
 ${params.contentType === 'video' && params.textColor ? `Couleur du texte: ${params.textColor} — appliquer EXACTEMENT cette couleur au texte affiché à l'écran (avec contour ou ombre subtile pour la lisibilité si nécessaire).` : ''}`
