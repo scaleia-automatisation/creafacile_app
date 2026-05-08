@@ -427,25 +427,6 @@ const CustomizationStep = () => {
               </AccordionContent>
             </AccordionItem>
 
-            {/* Visual style */}
-            <AccordionItem value="style" className="border-foreground/10">
-              <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline">
-                Style visuel
-              </AccordionTrigger>
-              <AccordionContent className="pt-2">
-                <Select value={options.visual_style} onValueChange={(v) => setOptions({ visual_style: v })}>
-                  <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                    <SelectValue placeholder="Choisir un style..." />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-foreground/10">
-                    {styles.map((s) => (
-                      <SelectItem key={s} value={s} className="text-foreground focus:bg-secondary/20">{s}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </AccordionContent>
-            </AccordionItem>
-
             {/* Voice over (vidéo uniquement) */}
             {isVideo && (
               <AccordionItem value="voiceover" className="border-foreground/10">
