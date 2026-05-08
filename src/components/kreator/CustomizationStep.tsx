@@ -445,6 +445,83 @@ const CustomizationStep = () => {
                 </Select>
               </AccordionContent>
             </AccordionItem>
+
+            {/* Voice over (vidéo uniquement) */}
+            {isVideo && (
+              <AccordionItem value="voiceover" className="border-foreground/10">
+                <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline">
+                  <span className="flex items-center gap-2">
+                    <Mic className="w-4 h-4 text-primary" />
+                    Texte de la voix off
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 space-y-3">
+                  {!voModelSupports && (
+                    <p className="text-xs text-muted-foreground italic">
+                      Le modèle vidéo sélectionné ne prend pas en charge la voix off.
+                      Choisissez un modèle compatible (Sora 2, Veo 3/3.1, Kling 2.6/3.0, Seedance 2) pour activer cette option.
+                    </p>
+                  )}
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">Désactivée</span>
+                    <Switch
+                      checked={voice_over_enabled && voModelSupports}
+                      disabled={!voModelSupports}
+                      onCheckedChange={(v) => setVoiceOverEnabled(v)}
+                    />
+                    <span className="text-xs text-muted-foreground">Activée</span>
+                  </div>
+
+                  {voice_over_enabled && voModelSupports && (
+                    <>
+                      <div className="text-[11px] text-muted-foreground">
+                        Durée vidéo : {videoDurationSec}s — la voix off doit durer ≤ {voMaxSec}s (≈ {voMaxChars} caractères max)
+                      </div>
+                      <Textarea
+                        value={voice_over_text}
+                        onChange={(e) => {
+                          if (e.target.value.length <= voMaxChars) setVoiceOverText(e.target.value);
+                        }}
+                        placeholder="Écrivez ou générez le texte de la voix off…"
+                        className="bg-card border-foreground/10 text-foreground text-sm min-h-[90px] resize-none"
+                      />
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <span className="text-[11px] text-muted-foreground">
+                          {voice_over_text.length}/{voMaxChars} car.
+                        </span>
+                        <div className="flex gap-2">
+                          {!voice_over_text && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={handleGenerateVoiceOver}
+                              disabled={voGenerating}
+                              className="gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs font-bold"
+                            >
+                              {voGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <Sparkles className="w-3.5 h-3.5 mr-1.5" />}
+                              Générer le texte de la voix off
+                            </Button>
+                          )}
+                          {voice_over_text && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              onClick={handleGenerateVoiceOver}
+                              disabled={voGenerating}
+                              className="rounded-btn text-xs font-bold"
+                            >
+                              {voGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <RefreshCw className="w-3.5 h-3.5 mr-1.5" />}
+                              Régénérer voix off
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            )}
           </Accordion>
         </StepContainer>
       )}
