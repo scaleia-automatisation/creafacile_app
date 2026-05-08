@@ -83,6 +83,7 @@ const CustomizationStep = () => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const { upload, uploading } = useStorageUpload();
   const [hexInput, setHexInput] = useState('');
+  const [hexInput2, setHexInput2] = useState('');
   const [voGenerating, setVoGenerating] = useState(false);
 
   const videoDurationSec = isVideo ? getVideoDurationSec(ai_model, model_settings) : 8;
@@ -131,6 +132,12 @@ const CustomizationStep = () => {
     setHexInput(v);
     const norm = normalizeHex(v);
     if (norm) setOptions({ text_color: norm });
+  };
+
+  const handleHexChange2 = (v: string) => {
+    setHexInput2(v);
+    const norm = normalizeHex(v);
+    if (norm) setOptions({ text_color_2: norm });
   };
 
   const isVisible = user_mode === 'expert' || showAdvanced;
@@ -435,6 +442,89 @@ const CustomizationStep = () => {
                                   ))}
                                 </SelectContent>
                               </Select>
+                            </div>
+                            <div>
+                              <label className="text-xs text-muted-foreground mb-1 block">Position du texte</label>
+                              <Select
+                                value={options.text_position_2}
+                                onValueChange={(v) =>
+                                  setOptions({ text_position_2: v as typeof options.text_position_2 })
+                                }
+                              >
+                                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-card border-foreground/10">
+                                  {TEXT_POSITIONS.map((p) => (
+                                    <SelectItem key={p.value} value={p.value} className="text-foreground focus:bg-secondary/20">
+                                      {p.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <label className="text-xs text-muted-foreground mb-1 block">Police d'écriture</label>
+                              <Select
+                                value={options.text_font_2}
+                                onValueChange={(v) => setOptions({ text_font_2: v })}
+                              >
+                                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-card border-foreground/10 max-h-[280px]">
+                                  <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">Classiques</div>
+                                  {CLASSIC_FONTS.map((f) => (
+                                    <SelectItem key={f} value={f} className="text-foreground focus:bg-secondary/20" style={{ fontFamily: f }}>
+                                      {f}
+                                    </SelectItem>
+                                  ))}
+                                  <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">Design</div>
+                                  {DESIGN_FONTS.map((f) => (
+                                    <SelectItem key={f} value={f} className="text-foreground focus:bg-secondary/20" style={{ fontFamily: f }}>
+                                      {f}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-xs text-muted-foreground block">Couleur du texte</label>
+                              <div className="grid grid-cols-8 gap-2">
+                                {TEXT_COLORS.map((c) => {
+                                  const selected = options.text_color_2?.toUpperCase() === c.hex.toUpperCase();
+                                  return (
+                                    <button
+                                      key={c.hex}
+                                      type="button"
+                                      title={`${c.name} ${c.hex}`}
+                                      onClick={() => {
+                                        setOptions({ text_color_2: c.hex });
+                                        setHexInput2(c.hex);
+                                      }}
+                                      className={`h-7 w-7 rounded-full border transition-all ${
+                                        selected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background border-foreground/40' : 'border-foreground/10 hover:scale-110'
+                                      }`}
+                                      style={{ backgroundColor: c.hex }}
+                                      aria-label={c.name}
+                                    />
+                                  );
+                                })}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground">Code hex</span>
+                                <Input
+                                  value={hexInput2 || options.text_color_2}
+                                  onChange={(e) => handleHexChange2(e.target.value)}
+                                  placeholder="#FFFFFF"
+                                  className="bg-card border-foreground/10 text-foreground text-xs h-8 w-28 font-mono uppercase"
+                                  maxLength={7}
+                                />
+                                <div
+                                  className="h-6 w-6 rounded-md border border-foreground/10"
+                                  style={{ backgroundColor: options.text_color_2 }}
+                                />
+                              </div>
                             </div>
                           </>
                         )}

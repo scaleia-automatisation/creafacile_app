@@ -132,6 +132,13 @@ interface KreatorOptions {
   text_content_2: string;
   text_duration_1: number;
   text_duration_2: number;
+  text_position_2:
+    | 'top-center-1'
+    | 'top-center-2'
+    | 'bottom-center-1'
+    | 'bottom-center-2';
+  text_font_2: string;
+  text_color_2: string;
 }
 
 interface KreatorState {
@@ -274,6 +281,9 @@ const initialState = {
     text_content_2: '',
     text_duration_1: 3,
     text_duration_2: 3,
+    text_position_2: 'bottom-center-1' as const,
+    text_font_2: 'Montserrat',
+    text_color_2: '#FFFFFF',
   },
   showAdvanced: false,
   prompt_fr: '',
