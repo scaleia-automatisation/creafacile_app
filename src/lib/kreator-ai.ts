@@ -140,6 +140,7 @@ export async function generateIdeaFromImages(params: {
   activity: string;
   sector: string;
   productService?: string;
+  productDescription?: string;
   market?: string;
   ton?: string;
   visualStyle?: string;
@@ -226,6 +227,8 @@ export async function generatePrompt(params: {
   textPosition?: 'top-center-1' | 'top-center-2' | 'bottom-center-1' | 'bottom-center-2';
   textFont?: string;
   textColor?: string;
+  voiceOverText?: string;
+  videoDurationSec?: number;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
   
