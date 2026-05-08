@@ -140,6 +140,7 @@ export async function generateIdeaFromImages(params: {
   activity: string;
   sector: string;
   productService?: string;
+  productDescription?: string;
   market?: string;
   ton?: string;
   visualStyle?: string;
@@ -206,6 +207,7 @@ export async function generatePrompt(params: {
   companyActivity: string;
   companySector: string;
   productService?: string;
+  productDescription?: string;
   market?: string;
   offerType?: string;
   targetPersona?: string;
@@ -226,6 +228,8 @@ export async function generatePrompt(params: {
   textPosition?: 'top-center-1' | 'top-center-2' | 'bottom-center-1' | 'bottom-center-2';
   textFont?: string;
   textColor?: string;
+  voiceOverText?: string;
+  videoDurationSec?: number;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
   
@@ -289,6 +293,7 @@ Plan 3 (Impact + CTA – 5-8s) : Image forte / résultat, texte court, call to a
 - 1 message = + conversion
 
 ${params.videoRenderStyle ? `TYPE DE RENDU VIDÉO SÉLECTIONNÉ : "${params.videoRenderStyle}" — Adapter TOUTE la direction artistique, l'ambiance, le cadrage et le style de montage à ce rendu vidéo.` : ''}
+${params.voiceOverText ? `\n🎙️ VOIX OFF (OBLIGATOIRE — À INTÉGRER DANS LA VIDÉO) :\nLe texte de voix off à dire EXACTEMENT (mot pour mot, sans modification) est : "${params.voiceOverText}".\nVoix naturelle, humaine, cohérente avec le ton et le marché.\nLa voix off doit IMPÉRATIVEMENT se terminer au moins 2 secondes AVANT la fin de la vidéo${params.videoDurationSec ? ` (durée totale ${params.videoDurationSec}s — voix off ≤ ${Math.max(1, params.videoDurationSec - 2)}s)` : ''}. Aucun mot ne doit être prononcé dans les 2 dernières secondes.` : ''}
 ` : '';
 
   // Determine the active render style
@@ -373,6 +378,7 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown:
 ${params.companyActivity ? `Activité principale: ${params.companyActivity}` : 'Activité: non renseignée'}
 ${params.companySector ? `Secteur d'activité: ${params.companySector}` : 'Secteur: non renseigné'}
 ${params.productService ? `Produit ou service mis en avant (RÉFÉRENCE EXACTE pour la cohérence visuelle): ${params.productService}` : ''}
+${params.productDescription ? `Description détaillée de l'offre: ${params.productDescription}` : ''}
 ${params.offerType ? `Type d'offre: ${params.offerType}` : ''}
 ${params.targetPersona ? `Client cible / Persona: ${params.targetPersona} — adapter le casting, l'environnement, le ton visuel et l'ambiance pour parler DIRECTEMENT à ce profil.` : ''}
 ${params.marketingAngle ? `Angle marketing (PRIORITAIRE — fil conducteur du visuel): ${params.marketingAngle}` : ''}
@@ -675,4 +681,49 @@ export async function generateVideo(
   }
 
   throw new Error(`Modèle vidéo non supporté: ${aiModel}`);
+}
+
+export async function generateVoiceOver(params: {
+  offerType: string;
+  productName: string;
+  productDescription?: string;
+  objective: string;
+  marketingAngle: string;
+  videoDurationSec: number;
+}): Promise<string> {
+  const maxSec = Math.max(1, params.videoDurationSec - 2);
+  // Approx 2.5 mots/seconde en français parlé naturel
+  const maxWords = Math.max(3, Math.floor(maxSec * 2.5));
+  const maxChars = Math.max(20, maxSec * 15);
+
+  const systemPrompt = `Tu es un expert en copywriting pour voix off publicitaire courte (réseaux sociaux).
+Tu écris UNE voix off ULTRA percutante, naturelle, humaine, en français, qui :
+- accroche dans la première seconde (hook fort)
+- met en avant le bénéfice principal
+- se termine par un mini call-to-action ou une chute mémorable
+- s'adresse directement au spectateur (tutoiement)
+- parle comme un humain, JAMAIS comme un robot ou un slogan corporate
+
+CONTRAINTE DURÉE ABSOLUE :
+La voix off DOIT pouvoir être dite en ${maxSec} secondes MAXIMUM (≈ ${maxWords} mots, ≈ ${maxChars} caractères max). C'est non-négociable : elle doit se terminer 2 secondes avant la fin de la vidéo.
+
+Réponds UNIQUEMENT avec le texte de la voix off, sans guillemets, sans introduction, sans mise en forme, sans préfixe.`;
+
+  const userPrompt = `Type d'offre: ${params.offerType || 'non précisé'}
+Nom: ${params.productName || 'non précisé'}
+${params.productDescription ? `Description: ${params.productDescription}` : ''}
+Objectif de contenu: ${params.objective || 'non précisé'}
+Angle marketing: ${params.marketingAngle || 'non précisé'}
+
+Écris UNE voix off courte, percutante, dicible en ${maxSec} secondes maximum.`;
+
+  const data = await callKreatorAI({
+    action: 'generate_voice_over',
+    messages: [{ role: 'user', content: userPrompt }],
+    system_prompt: systemPrompt,
+  });
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  return content.trim().replace(/^["«»"']+|["«»"']+$/g, '').trim();
 }

@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Users, CheckCircle, Sparkles, Upload, X, Replace, ImagePlus, FileText, Lightbulb, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
@@ -31,6 +32,7 @@ const ProductOfferStep = () => {
     market,
     marketing_angle,
     product_service, setProductService,
+    product_description, setProductDescription,
     offer_type, setOfferType,
     target_persona, setTargetPersona,
     product_image_url, setProductImageUrl,
@@ -47,6 +49,28 @@ const ProductOfferStep = () => {
   const [loadingIdeas, setLoadingIdeas] = useState(false);
 
   const isProduct = offer_type === '📦 Produit';
+  const isService = offer_type === '🛠️ Service';
+  const isSaas = offer_type === '💻 SaaS';
+  const isFormation = offer_type === '🎓 Formation';
+
+  const nameLabel = isProduct ? 'Nom du produit'
+    : isService ? 'Nom du service'
+    : isSaas ? 'Nom du SaaS'
+    : isFormation ? 'Nom de la formation'
+    : 'Nom du produit / service';
+  const descriptionLabel = isProduct ? 'Description du produit'
+    : isService ? 'Description du service'
+    : isSaas ? 'Description du SaaS'
+    : isFormation ? 'Description de la formation'
+    : 'Description';
+  const namePlaceholder = isProduct ? 'Ex : Pain au levain bio'
+    : isService ? 'Ex : Coaching sportif personnalisé'
+    : isSaas ? 'Ex : BoosterApp'
+    : isFormation ? 'Ex : Formation Trading 30 jours'
+    : 'Donnez un nom court';
+  const descPlaceholder = isProduct
+    ? 'Décrivez votre produit (ou utilisez « Décrire l\'image »)'
+    : 'Décrivez en quelques phrases (bénéfices, particularités…)';
 
   const handleFile = (file: File) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
@@ -67,7 +91,7 @@ const ProductOfferStep = () => {
     setDescribing(true);
     try {
       const desc = await describeImage(product_image_url);
-      setProductService(desc);
+      setProductDescription(desc);
       toast.success('Description générée');
     } catch (e) {
       console.error(e);
@@ -200,12 +224,24 @@ const ProductOfferStep = () => {
 
         <div className={isProduct && type !== 'video' ? 'md:col-span-2' : ''}>
           <label className="text-sm font-medium text-muted-foreground mb-2 block">
-            {isProduct ? 'Description du produit' : 'Quel est votre produit ou service ?'}
+            {nameLabel} *
           </label>
-          <Textarea
+          <Input
             value={product_service}
             onChange={(e) => setProductService(e.target.value)}
-            placeholder={isProduct ? 'Décrivez votre produit (ou utilisez "Décrire l\'image")' : 'Ex: Programme fitness 30 jours, Pain au levain bio...'}
+            placeholder={namePlaceholder}
+            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm"
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">
+            {descriptionLabel}
+          </label>
+          <Textarea
+            value={product_description}
+            onChange={(e) => setProductDescription(e.target.value)}
+            placeholder={descPlaceholder}
             className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[80px] resize-none"
           />
         </div>
