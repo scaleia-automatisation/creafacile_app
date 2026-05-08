@@ -38,31 +38,6 @@ const StartingChoiceButtons = () => {
   return (
     <div className="flex flex-col items-center gap-4 max-w-3xl mx-auto">
     <div className="flex flex-col sm:flex-row justify-center gap-3 items-start w-full">
-      <div className="flex flex-col gap-2 w-full sm:w-[260px]">
-        <button
-          onClick={() => choose('scratch')}
-          style={radius}
-          className={`${baseBtn} ${
-            starting_choice === 'scratch'
-              ? 'gradient-bg text-primary-foreground shadow-lg shadow-primary/20'
-              : 'bg-card text-foreground hover:opacity-90'
-          }`}
-        >
-          <Lightbulb className="w-5 h-5 shrink-0" />
-          <span>Je n'ai pas d'idée,<br />partir de zéro</span>
-        </button>
-        {scratchError.length > 0 && (
-          <div className="flex items-start gap-2 p-3 rounded-btn border border-destructive/40 bg-destructive/10 text-xs text-destructive">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-            <div>
-              <div className="font-semibold mb-1">Champs requis manquants :</div>
-              <ul className="list-disc list-inside space-y-0.5">
-                {scratchError.map((m) => <li key={m}>{m}</li>)}
-              </ul>
-            </div>
-          </div>
-        )}
-      </div>
       <div className="w-full sm:w-[260px]">
         <button
           onClick={() => choose('idea')}
@@ -90,6 +65,31 @@ const StartingChoiceButtons = () => {
           <TrendingUp className="w-5 h-5 shrink-0" />
           <span>S'inspirer d'un post<br />qui a performé</span>
         </button>
+      </div>
+      <div className="flex flex-col gap-2 w-full sm:w-[260px]">
+        <button
+          onClick={() => choose('scratch')}
+          style={radius}
+          className={`${baseBtn} ${
+            starting_choice === 'scratch'
+              ? 'gradient-bg text-primary-foreground shadow-lg shadow-primary/20'
+              : 'bg-card text-foreground hover:opacity-90'
+          }`}
+        >
+          <Lightbulb className="w-5 h-5 shrink-0" />
+          <span>Je n'ai pas d'idée,<br />partir de zéro</span>
+        </button>
+        {scratchError.length > 0 && (
+          <div className="flex items-start gap-2 p-3 rounded-btn border border-destructive/40 bg-destructive/10 text-xs text-destructive">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <div>
+              <div className="font-semibold mb-1">Champs requis manquants :</div>
+              <ul className="list-disc list-inside space-y-0.5">
+                {scratchError.map((m) => <li key={m}>{m}</li>)}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </div>
     {starting_choice === 'idea' && (
