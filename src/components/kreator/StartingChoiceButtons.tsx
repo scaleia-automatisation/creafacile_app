@@ -1,17 +1,19 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
-import { Lightbulb, TrendingUp, AlertCircle } from 'lucide-react';
+import { Lightbulb, TrendingUp, AlertCircle, PenLine } from 'lucide-react';
 import { useState } from 'react';
+import { Textarea } from '@/components/ui/textarea';
 
 const StartingChoiceButtons = () => {
   const {
     type, starting_choice, setStartingChoice,
+    input_text, setInputText, setIdeaChosen,
     offer_type, company_activity, company_sector, objective,
   } = useKreatorStore();
   const [scratchError, setScratchError] = useState<string[]>([]);
 
   if (type !== 'image' && type !== 'carousel') return null;
 
-  const choose = (val: 'scratch' | 'perf') => {
+  const choose = (val: 'scratch' | 'perf' | 'idea') => {
     if (val === 'scratch') {
       const missing: string[] = [];
       if (!offer_type?.trim()) missing.push("Type d'offre");
@@ -34,7 +36,8 @@ const StartingChoiceButtons = () => {
   const radius = { borderRadius: '20px' };
 
   return (
-    <div className="flex flex-col sm:flex-row justify-center gap-3 items-start max-w-2xl mx-auto">
+    <div className="flex flex-col items-center gap-4 max-w-3xl mx-auto">
+    <div className="flex flex-col sm:flex-row justify-center gap-3 items-start w-full">
       <div className="flex flex-col gap-2 w-full sm:w-[260px]">
         <button
           onClick={() => choose('scratch')}
@@ -62,6 +65,20 @@ const StartingChoiceButtons = () => {
       </div>
       <div className="w-full sm:w-[260px]">
         <button
+          onClick={() => choose('idea')}
+          style={radius}
+          className={`${baseBtn} ${
+            starting_choice === 'idea'
+              ? 'gradient-bg text-primary-foreground shadow-lg shadow-primary/20'
+              : 'bg-card text-foreground hover:opacity-90'
+          }`}
+        >
+          <PenLine className="w-5 h-5 shrink-0" />
+          <span>J'ai une idée<br />de contenu</span>
+        </button>
+      </div>
+      <div className="w-full sm:w-[260px]">
+        <button
           onClick={() => choose('perf')}
           style={radius}
           className={`${baseBtn} ${
@@ -74,6 +91,28 @@ const StartingChoiceButtons = () => {
           <span>S'inspirer d'un post<br />qui a performé</span>
         </button>
       </div>
+    </div>
+    {starting_choice === 'idea' && (
+      <div className="w-full max-w-2xl space-y-2">
+        <label className="text-sm font-medium text-foreground">
+          Décris ton idée de contenu
+        </label>
+        <Textarea
+          value={input_text}
+          onChange={(e) => {
+            const val = e.target.value.slice(0, 500);
+            setInputText(val);
+            setIdeaChosen(val);
+          }}
+          placeholder="Ex : Mettre en avant notre nouvelle collection d'été avec une ambiance plage…"
+          className="min-h-[110px] resize-none"
+          maxLength={500}
+        />
+        <div className="text-xs text-muted-foreground text-right">
+          {input_text.length}/500
+        </div>
+      </div>
+    )}
     </div>
   );
 };
