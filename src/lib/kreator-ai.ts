@@ -207,6 +207,7 @@ export async function generatePrompt(params: {
   companyActivity: string;
   companySector: string;
   productService?: string;
+  productDescription?: string;
   market?: string;
   offerType?: string;
   targetPersona?: string;
