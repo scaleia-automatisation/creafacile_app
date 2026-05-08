@@ -14,8 +14,10 @@ import { supportsVoiceOver, getVideoDurationSec } from '@/lib/voice-over';
 import { generateVoiceOver } from '@/lib/kreator-ai';
 
 const tons = [
-  'Humoristique / Décontracté', 'Promotionnel / Persuasif', 'Engageant / Participatif',
-  'Sérieux / Professionnel', 'Décalé', 'Choc', 'Différent', 'Humour décalé', 'Subtil'
+  'Direct', 'Émotionnel', 'Conversationnel', 'Persuasif', 'Humoristique',
+  'Différent', 'Provocateur', 'Professionnel', 'Sérieux',
+  'Direct + Percutant', 'Émotionnel + Conversationnel', 'Persuasif + Sérieux',
+  'Viral + Humoristique', 'Différent + Provocateur'
 ];
 
 const styles = ['Luxe', 'Moderne', 'Impact', 'Lifestyle'];
