@@ -376,6 +376,7 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown:
 ${params.companyActivity ? `Activité principale: ${params.companyActivity}` : 'Activité: non renseignée'}
 ${params.companySector ? `Secteur d'activité: ${params.companySector}` : 'Secteur: non renseigné'}
 ${params.productService ? `Produit ou service mis en avant (RÉFÉRENCE EXACTE pour la cohérence visuelle): ${params.productService}` : ''}
+${params.productDescription ? `Description détaillée de l'offre: ${params.productDescription}` : ''}
 ${params.offerType ? `Type d'offre: ${params.offerType}` : ''}
 ${params.targetPersona ? `Client cible / Persona: ${params.targetPersona} — adapter le casting, l'environnement, le ton visuel et l'ambiance pour parler DIRECTEMENT à ce profil.` : ''}
 ${params.marketingAngle ? `Angle marketing (PRIORITAIRE — fil conducteur du visuel): ${params.marketingAngle}` : ''}
