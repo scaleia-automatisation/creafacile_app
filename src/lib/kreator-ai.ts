@@ -224,7 +224,7 @@ export async function generatePrompt(params: {
   // Logo + text positioning + font + color
   logoEnabled?: boolean;
   logoUrl?: string;
-  logoPosition?: 'bottom-center' | 'bottom-right';
+  logoPosition?: 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right';
   textPosition?: 'top-center-1' | 'top-center-2' | 'bottom-center-1' | 'bottom-center-2';
   textFont?: string;
   textColor?: string;
