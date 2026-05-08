@@ -272,6 +272,11 @@ const CustomizationStep = () => {
                 </div>
                 {options.show_text && (
                   <div className="space-y-3">
+                    {isVideo && (
+                      <div className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                        Texte à l'écran 1
+                      </div>
+                    )}
                     <Input
                       value={options.text_content}
                       onChange={(e) => {
@@ -280,6 +285,26 @@ const CustomizationStep = () => {
                       placeholder="Texte à afficher (max 60 caractères)"
                       className="bg-card border-foreground/10 text-foreground text-sm"
                     />
+                    {isVideo && (
+                      <div>
+                        <label className="text-xs text-muted-foreground mb-1 block">Durée d'affichage</label>
+                        <Select
+                          value={String(options.text_duration_1)}
+                          onValueChange={(v) => setOptions({ text_duration_1: Number(v) })}
+                        >
+                          <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-card border-foreground/10">
+                            {[2, 3, 4, 5, 6].map((s) => (
+                              <SelectItem key={s} value={String(s)} className="text-foreground focus:bg-secondary/20">
+                                {s} secondes
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                     <div>
                       <label className="text-xs text-muted-foreground mb-1 block">Position du texte</label>
                       <Select
@@ -365,6 +390,54 @@ const CustomizationStep = () => {
                             style={{ backgroundColor: options.text_color }}
                           />
                         </div>
+                      </div>
+                    )}
+
+                    {/* Second on-screen text (video only) */}
+                    {isVideo && (
+                      <div className="pt-3 border-t border-foreground/10 space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Switch
+                            checked={options.text_2_enabled}
+                            onCheckedChange={(v) => setOptions({ text_2_enabled: v })}
+                          />
+                          <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                            Ajouter un 2e texte à l'écran
+                          </span>
+                        </div>
+                        {options.text_2_enabled && (
+                          <>
+                            <div className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                              Texte à l'écran 2
+                            </div>
+                            <Input
+                              value={options.text_content_2}
+                              onChange={(e) => {
+                                if (e.target.value.length <= 60) setOptions({ text_content_2: e.target.value });
+                              }}
+                              placeholder="Texte à afficher (max 60 caractères)"
+                              className="bg-card border-foreground/10 text-foreground text-sm"
+                            />
+                            <div>
+                              <label className="text-xs text-muted-foreground mb-1 block">Durée d'affichage</label>
+                              <Select
+                                value={String(options.text_duration_2)}
+                                onValueChange={(v) => setOptions({ text_duration_2: Number(v) })}
+                              >
+                                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-card border-foreground/10">
+                                  {[2, 3, 4, 5, 6].map((s) => (
+                                    <SelectItem key={s} value={String(s)} className="text-foreground focus:bg-secondary/20">
+                                      {s} secondes
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>

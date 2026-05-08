@@ -127,6 +127,11 @@ interface KreatorOptions {
   text_font: string;
   // Video-only: text color
   text_color: string;
+  // Video-only: second on-screen text + per-text duration (seconds, 2..6)
+  text_2_enabled: boolean;
+  text_content_2: string;
+  text_duration_1: number;
+  text_duration_2: number;
 }
 
 interface KreatorState {
@@ -265,6 +270,10 @@ const initialState = {
     text_position: 'bottom-center-1' as const,
     text_font: 'Montserrat',
     text_color: '#FFFFFF',
+    text_2_enabled: false,
+    text_content_2: '',
+    text_duration_1: 3,
+    text_duration_2: 3,
   },
   showAdvanced: false,
   prompt_fr: '',
