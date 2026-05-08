@@ -160,6 +160,8 @@ interface KreatorState {
   setCompanySector: (val: string) => void;
   product_service: string;
   setProductService: (val: string) => void;
+  product_description: string;
+  setProductDescription: (val: string) => void;
   product_image_url: string;
   setProductImageUrl: (val: string) => void;
   market: string;
@@ -172,6 +174,10 @@ interface KreatorState {
   setMarketingAngle: (val: string) => void;
   visual_style_brief: string;
   setVisualStyleBrief: (val: string) => void;
+  voice_over_enabled: boolean;
+  setVoiceOverEnabled: (val: boolean) => void;
+  voice_over_text: string;
+  setVoiceOverText: (val: string) => void;
 
   format: Format;
   setFormat: (format: Format) => void;
@@ -224,12 +230,15 @@ const initialState = {
   company_activity: '',
   company_sector: '',
   product_service: '',
+  product_description: '',
   product_image_url: '',
   market: '',
   offer_type: '',
   target_persona: '',
   marketing_angle: '',
   visual_style_brief: '',
+  voice_over_enabled: false,
+  voice_over_text: '',
   video_render_style: '',
   video_resolution: '1080p' as VideoResolution,
   sora_character_total_duration: 10 as 10 | 15 | 25,
@@ -288,12 +297,15 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setCompanyActivity: (val) => set({ company_activity: val }),
   setCompanySector: (val) => set({ company_sector: val }),
   setProductService: (val) => set({ product_service: val }),
+  setProductDescription: (val) => set({ product_description: val }),
   setProductImageUrl: (val) => set({ product_image_url: val }),
   setMarket: (val) => set({ market: val }),
   setOfferType: (val) => set({ offer_type: val }),
   setTargetPersona: (val) => set({ target_persona: val }),
   setMarketingAngle: (val) => set({ marketing_angle: val }),
   setVisualStyleBrief: (val) => set({ visual_style_brief: val }),
+  setVoiceOverEnabled: (val) => set({ voice_over_enabled: val }),
+  setVoiceOverText: (val) => set({ voice_over_text: val }),
   setFormat: (format) => set({ format }),
   setInputImageUrl: (url) => set({ input_image_url: url }),
   setInputImageDescription: (desc) => set({ input_image_description: desc }),
