@@ -117,7 +117,7 @@ interface KreatorOptions {
   // Logo (image / carousel)
   logo_enabled: boolean;
   logo_url: string;
-  logo_position: 'bottom-center' | 'bottom-right';
+  logo_position: 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right';
   // Text overlay positioning + font (image / carousel / video)
   text_position:
     | 'top-center-1'
