@@ -15,6 +15,12 @@ const StartingChoiceButtons = () => {
 
   const choose = (val: 'scratch' | 'perf' | 'idea') => {
     if (val === 'scratch') {
+      // Si l'alerte est déjà affichée, un nouveau clic la referme
+      if (scratchError.length > 0) {
+        setScratchError([]);
+        setStartingChoice('');
+        return;
+      }
       const missing: string[] = [];
       if (!offer_type?.trim()) missing.push("Type d'offre");
       if (!company_activity?.trim()) missing.push('Activité principale');
