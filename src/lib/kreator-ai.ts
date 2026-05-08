@@ -682,3 +682,48 @@ export async function generateVideo(
 
   throw new Error(`Modèle vidéo non supporté: ${aiModel}`);
 }
+
+export async function generateVoiceOver(params: {
+  offerType: string;
+  productName: string;
+  productDescription?: string;
+  objective: string;
+  marketingAngle: string;
+  videoDurationSec: number;
+}): Promise<string> {
+  const maxSec = Math.max(1, params.videoDurationSec - 2);
+  // Approx 2.5 mots/seconde en français parlé naturel
+  const maxWords = Math.max(3, Math.floor(maxSec * 2.5));
+  const maxChars = Math.max(20, maxSec * 15);
+
+  const systemPrompt = `Tu es un expert en copywriting pour voix off publicitaire courte (réseaux sociaux).
+Tu écris UNE voix off ULTRA percutante, naturelle, humaine, en français, qui :
+- accroche dans la première seconde (hook fort)
+- met en avant le bénéfice principal
+- se termine par un mini call-to-action ou une chute mémorable
+- s'adresse directement au spectateur (tutoiement)
+- parle comme un humain, JAMAIS comme un robot ou un slogan corporate
+
+CONTRAINTE DURÉE ABSOLUE :
+La voix off DOIT pouvoir être dite en ${maxSec} secondes MAXIMUM (≈ ${maxWords} mots, ≈ ${maxChars} caractères max). C'est non-négociable : elle doit se terminer 2 secondes avant la fin de la vidéo.
+
+Réponds UNIQUEMENT avec le texte de la voix off, sans guillemets, sans introduction, sans mise en forme, sans préfixe.`;
+
+  const userPrompt = `Type d'offre: ${params.offerType || 'non précisé'}
+Nom: ${params.productName || 'non précisé'}
+${params.productDescription ? `Description: ${params.productDescription}` : ''}
+Objectif de contenu: ${params.objective || 'non précisé'}
+Angle marketing: ${params.marketingAngle || 'non précisé'}
+
+Écris UNE voix off courte, percutante, dicible en ${maxSec} secondes maximum.`;
+
+  const data = await callKreatorAI({
+    action: 'generate_voice_over',
+    messages: [{ role: 'user', content: userPrompt }],
+    system_prompt: systemPrompt,
+  });
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  return content.trim().replace(/^["«»"']+|["«»"']+$/g, '').trim();
+}
