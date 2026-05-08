@@ -6,9 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import StepContainer from './StepContainer';
-import { Upload, X, Loader2 } from 'lucide-react';
+import { Upload, X, Loader2, Mic, Sparkles, RefreshCw } from 'lucide-react';
 import { useStorageUpload } from '@/hooks/useStorageUpload';
 import { toast } from 'sonner';
+import { Textarea } from '@/components/ui/textarea';
+import { supportsVoiceOver, getVideoDurationSec } from '@/lib/voice-over';
+import { generateVoiceOver } from '@/lib/kreator-ai';
 
 const tons = [
   'Humoristique / Décontracté', 'Promotionnel / Persuasif', 'Engageant / Participatif',
@@ -66,11 +69,53 @@ const normalizeHex = (v: string): string | null => {
 };
 
 const CustomizationStep = () => {
-  const { type, user_mode, showAdvanced, setShowAdvanced, options, setOptions } = useKreatorStore();
+  const {
+    type, user_mode, showAdvanced, setShowAdvanced, options, setOptions,
+    ai_model, model_settings,
+    voice_over_enabled, setVoiceOverEnabled,
+    voice_over_text, setVoiceOverText,
+    offer_type, product_service, product_description,
+    marketing_angle, objective,
+  } = useKreatorStore();
   const isVideo = type === 'video';
   const logoInputRef = useRef<HTMLInputElement>(null);
   const { upload, uploading } = useStorageUpload();
   const [hexInput, setHexInput] = useState('');
+  const [voGenerating, setVoGenerating] = useState(false);
+
+  const videoDurationSec = isVideo ? getVideoDurationSec(ai_model, model_settings) : 8;
+  const voMaxSec = Math.max(1, videoDurationSec - 2);
+  const voMaxChars = Math.max(20, voMaxSec * 18);
+  const voModelSupports = isVideo && !!ai_model && supportsVoiceOver(ai_model);
+
+  const handleGenerateVoiceOver = async () => {
+    if (!voModelSupports) {
+      toast.error("Ce modèle vidéo ne prend pas en charge la voix off.");
+      return;
+    }
+    if (!product_service?.trim() || !marketing_angle?.trim()) {
+      toast.error("Renseignez le nom de l'offre et l'angle marketing avant de générer la voix off.");
+      return;
+    }
+    setVoGenerating(true);
+    try {
+      const text = await generateVoiceOver({
+        offerType: offer_type,
+        productName: product_service,
+        productDescription: product_description,
+        objective,
+        marketingAngle: marketing_angle,
+        videoDurationSec,
+      });
+      setVoiceOverText(text.slice(0, voMaxChars));
+      toast.success('Voix off générée');
+    } catch (e) {
+      console.error(e);
+      toast.error('Erreur lors de la génération de la voix off');
+    } finally {
+      setVoGenerating(false);
+    }
+  };
 
   const handleLogoUpload = async (file: File) => {
     const url = await upload(file, 'image');
