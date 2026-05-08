@@ -408,7 +408,7 @@ ${params.showText
 Position du texte: ${
         params.textPosition === 'top-center' ? 'centré en haut'
       : params.textPosition === 'middle-center' ? 'centré au centre'
-      : 'centré en bas sur UNE seule ligne'
+      : 'centré en bas'
     } — respecter STRICTEMENT cette position et ce nombre de lignes.
 Police d'écriture: "${params.textFont || 'Montserrat'}" — utiliser cette typographie (ou la plus proche visuellement disponible), bien lisible, kerning soigné.
 ${params.contentType === 'video' && params.textColor ? `Couleur du texte: ${params.textColor} — appliquer EXACTEMENT cette couleur au texte affiché à l'écran (avec contour ou ombre subtile pour la lisibilité si nécessaire).` : ''}`
