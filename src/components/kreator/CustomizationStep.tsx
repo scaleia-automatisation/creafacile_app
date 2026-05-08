@@ -171,9 +171,8 @@ const CustomizationStep = () => {
       {isVisible && (
         <StepContainer stepNumber={3} title="Personnalisation">
           <Accordion type="multiple" className="space-y-2">
-            {/* Logo (image & carousel uniquement) */}
-            {!isVideo && (
-              <AccordionItem value="logo" className="border-foreground/10">
+            {/* Logo (image, carousel & vidéo) */}
+            <AccordionItem value="logo" className="border-foreground/10">
                 <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline">
                   Ajouter un logo
                 </AccordionTrigger>
@@ -239,12 +238,14 @@ const CustomizationStep = () => {
                         <label className="text-xs text-muted-foreground mb-1 block">Position du logo</label>
                         <Select
                           value={options.logo_position}
-                          onValueChange={(v) => setOptions({ logo_position: v as 'bottom-center' | 'bottom-right' })}
+                          onValueChange={(v) => setOptions({ logo_position: v as 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right' })}
                         >
                           <SelectTrigger className="bg-card border-foreground/10 text-foreground">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="bg-card border-foreground/10">
+                            <SelectItem value="top-left" className="text-foreground focus:bg-secondary/20">Logo en haut à gauche</SelectItem>
+                            <SelectItem value="top-right" className="text-foreground focus:bg-secondary/20">Logo en haut à droite</SelectItem>
                             <SelectItem value="bottom-center" className="text-foreground focus:bg-secondary/20">Logo en bas au centre</SelectItem>
                             <SelectItem value="bottom-right" className="text-foreground focus:bg-secondary/20">Logo en bas à droite</SelectItem>
                           </SelectContent>
@@ -254,7 +255,6 @@ const CustomizationStep = () => {
                   )}
                 </AccordionContent>
               </AccordionItem>
-            )}
 
             {/* Text overlay */}
             <AccordionItem value="text" className="border-foreground/10">
