@@ -83,6 +83,7 @@ const CustomizationStep = () => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const { upload, uploading } = useStorageUpload();
   const [hexInput, setHexInput] = useState('');
+  const [hexInput2, setHexInput2] = useState('');
   const [voGenerating, setVoGenerating] = useState(false);
 
   const videoDurationSec = isVideo ? getVideoDurationSec(ai_model, model_settings) : 8;
@@ -131,6 +132,12 @@ const CustomizationStep = () => {
     setHexInput(v);
     const norm = normalizeHex(v);
     if (norm) setOptions({ text_color: norm });
+  };
+
+  const handleHexChange2 = (v: string) => {
+    setHexInput2(v);
+    const norm = normalizeHex(v);
+    if (norm) setOptions({ text_color_2: norm });
   };
 
   const isVisible = user_mode === 'expert' || showAdvanced;
