@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { generatePrompt } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { getVideoDurationSec, supportsVoiceOver } from '@/lib/voice-over';
 
 const PromptStep = () => {
   const { user } = useAuth();
@@ -17,7 +18,8 @@ const PromptStep = () => {
     offer_type, target_persona, marketing_angle, visual_style_brief,
     input_text, idea_chosen, input_image_description, input_photos,
     options, slides_count, status, setStatus, setResultUrl, ai_model,
-    render_style, video_render_style
+    render_style, video_render_style,
+    product_description, voice_over_enabled, voice_over_text, model_settings
   } = useKreatorStore();
 
   const getImageSynthesis = () => {
@@ -62,6 +64,7 @@ const PromptStep = () => {
         companyActivity: company_activity,
         companySector: company_sector,
         productService: product_service,
+        productDescription: product_description,
         market,
         offerType: offer_type,
         targetPersona: target_persona,
@@ -81,6 +84,11 @@ const PromptStep = () => {
         textPosition: options.text_position,
         textFont: options.text_font,
         textColor: options.text_color,
+        voiceOverText:
+          type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
+            ? voice_over_text.trim()
+            : undefined,
+        videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
       });
 
       setPromptFr(result.prompt_fr || '');
