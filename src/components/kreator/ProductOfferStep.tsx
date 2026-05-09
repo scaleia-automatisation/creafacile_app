@@ -248,6 +248,10 @@ const ProductOfferStep = () => {
         </div>
 
         <div className="md:col-span-2">
+          <ActivitySectorFields />
+        </div>
+
+        <div className="md:col-span-2">
           <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
             <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Users className="w-4 h-4 text-primary" />
@@ -335,9 +339,6 @@ const ProductOfferStep = () => {
               </div>
             )}
           </div>
-        </div>
-        <div className="md:col-span-2 mt-2">
-          <ActivitySectorFields />
         </div>
       </div>
     </StepContainer>
