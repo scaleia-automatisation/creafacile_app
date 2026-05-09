@@ -84,7 +84,22 @@ const ProductOfferStep = () => {
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => setProductImageUrl(reader.result as string);
+    reader.onload = async () => {
+      const dataUrl = reader.result as string;
+      setProductImageUrl(dataUrl);
+      // Auto-generate product description from uploaded image (produit only)
+      if (isProduct) {
+        setDescribing(true);
+        try {
+          const desc = await describeImage(dataUrl);
+          setProductDescription(desc);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setDescribing(false);
+        }
+      }
+    };
     reader.readAsDataURL(file);
   };
 

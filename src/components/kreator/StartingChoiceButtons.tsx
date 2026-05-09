@@ -11,7 +11,8 @@ const StartingChoiceButtons = () => {
   const {
     type, starting_choice, setStartingChoice,
     input_text, setInputText, setIdeaChosen,
-    offer_type, company_activity, company_sector, objective,
+    offer_type, company_activity, company_sector,
+    product_service, product_description, product_image_url,
     simple_images, setSimpleImages,
   } = useKreatorStore();
   const [scratchError, setScratchError] = useState<string[]>([]);
@@ -27,22 +28,23 @@ const StartingChoiceButtons = () => {
 
   const choose = (val: 'scratch' | 'perf' | 'idea' | 'simple') => {
     if (val === 'scratch') {
-      // Si l'alerte est déjà affichée, un nouveau clic la referme
-      if (scratchError.length > 0) {
+      // Toggle off if already selected
+      if (starting_choice === 'scratch') {
         setScratchError([]);
         setStartingChoice('');
         return;
       }
+      const isProduct = offer_type === '📦 Produit';
       const missing: string[] = [];
       if (!offer_type?.trim()) missing.push("Type d'offre");
+      if (isProduct && !product_image_url?.trim()) missing.push("Image du produit");
+      if (!product_service?.trim()) missing.push('Nom du produit');
+      if (!product_description?.trim()) missing.push('Description du produit');
       if (!company_activity?.trim()) missing.push('Activité principale');
       if (!company_sector?.trim()) missing.push("Secteur d'activité");
-      if (!objective?.trim()) missing.push('Objectif du contenu');
-      if (missing.length > 0 && starting_choice !== 'scratch') {
-        setScratchError(missing);
-        return;
-      }
-      setScratchError([]);
+      setScratchError(missing);
+      setStartingChoice('scratch');
+      return;
     } else {
       setScratchError([]);
     }
