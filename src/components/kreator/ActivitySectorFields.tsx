@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const SECTORS = [
+export const SECTORS = [
   '🛍️ E-commerce / Retail (DTC, marketplaces)',
   '🧃 Produits grande consommation (cosmétiques, food, boissons)',
   '👗 Mode / Fashion / Luxe',
