@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Users, CheckCircle, Sparkles, Upload, X, Replace, ImagePlus, FileText, Lightbulb, RefreshCw } from 'lucide-react';
+import { Loader2, Users, CheckCircle, Sparkles, Upload, X, Replace, ImagePlus, Lightbulb, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { generatePersonas, describeImageShort, generateIdeas } from '@/lib/kreator-ai';
+import { generatePersonas, describeImageShort, generateIdeas, detectSectorFromImage } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
-import ActivitySectorFields from './ActivitySectorFields';
+import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
 import ObjectiveStep from './ObjectiveStep';
 
 const OFFER_TYPES = ['📦 Produit', '🛠️ Service', '💻 SaaS', '🎓 Formation'];
@@ -30,7 +30,7 @@ const ProductOfferStep = () => {
   const {
     type,
     company_activity,
-    company_sector,
+    company_sector, setCompanySector,
     market,
     marketing_angle,
     product_service, setProductService,
@@ -97,8 +97,12 @@ const ProductOfferStep = () => {
       if (isProduct) {
         setDescribing(true);
         try {
-          const desc = await describeImageShort(dataUrl);
+          const [desc, sector] = await Promise.all([
+            describeImageShort(dataUrl),
+            detectSectorFromImage(dataUrl, SECTORS).catch(() => ''),
+          ]);
           setProductDescription(toOneSentence(desc));
+          if (sector) setCompanySector(sector);
         } catch (e) {
           console.error(e);
         } finally {
@@ -107,21 +111,6 @@ const ProductOfferStep = () => {
       }
     };
     reader.readAsDataURL(file);
-  };
-
-  const handleDescribe = async () => {
-    if (!product_image_url) return;
-    setDescribing(true);
-    try {
-      const desc = await describeImageShort(product_image_url);
-      setProductDescription(toOneSentence(desc));
-      toast.success('Description générée');
-    } catch (e) {
-      console.error(e);
-      toast.error("Erreur lors de l'analyse de l'image");
-    } finally {
-      setDescribing(false);
-    }
   };
 
   const handleNoIdea = async () => {
@@ -236,11 +225,11 @@ const ProductOfferStep = () => {
               </button>
             )}
             <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value=''; }} />
-            {product_image_url && (
-              <Button type="button" size="sm" onClick={handleDescribe} disabled={describing} className="mt-2 gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs font-bold">
-                {describing ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <FileText className="w-3.5 h-3.5 mr-1.5" />}
-                Décrire l'image
-              </Button>
+            {describing && (
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                Analyse de l'image…
+              </div>
             )}
           </div>
         )}
