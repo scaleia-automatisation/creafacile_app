@@ -10,6 +10,7 @@ import { generatePersonas, describeImage, generateIdeas } from '@/lib/kreator-ai
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields from './ActivitySectorFields';
+import ObjectiveStep from './ObjectiveStep';
 
 const OFFER_TYPES = ['📦 Produit', '🛠️ Service', '💻 SaaS', '🎓 Formation'];
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -245,6 +246,10 @@ const ProductOfferStep = () => {
             placeholder={descPlaceholder}
             className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[80px] resize-none"
           />
+        </div>
+
+        <div className="md:col-span-2">
+          <ObjectiveStep />
         </div>
 
         <div className="md:col-span-2">
