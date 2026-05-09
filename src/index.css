@@ -127,6 +127,16 @@
     background: linear-gradient(135deg, #FF2D73, #FF6A3D);
   }
 
+  /* Field labels inside step blocks: bold + orange/pink gradient */
+  .step-border label.text-sm {
+    font-weight: 800;
+    background: linear-gradient(135deg, #FF2D73, #FF6A3D, #FF2D73);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+
   .gradient-border {
     border: 3px solid transparent;
     background-clip: padding-box;
