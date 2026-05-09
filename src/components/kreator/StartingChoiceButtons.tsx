@@ -133,7 +133,7 @@ const StartingChoiceButtons = () => {
           }`}
         >
           <ImagePlus className="w-5 h-5 shrink-0" />
-          <span>Commencer à partir<br />d'une image simple</span>
+          <span>Créer à partir<br />d'une image</span>
         </button>
       </div>
       <div className="w-full">
@@ -147,7 +147,7 @@ const StartingChoiceButtons = () => {
           }`}
         >
           <TrendingUp className="w-5 h-5 shrink-0" />
-          <span>S'inspirer d'un post<br />qui a performé</span>
+          <span>S'inspirer d'un<br />post viral</span>
         </button>
       </div>
       <div className="flex flex-col gap-2 w-full">
