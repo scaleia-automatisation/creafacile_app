@@ -106,9 +106,9 @@ const StartingChoiceButtons = () => {
   const radius = { borderRadius: '20px' };
 
   return (
-    <div className="flex flex-col items-center gap-4 max-w-3xl mx-auto">
-    <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-3 items-start w-full">
-      <div className="w-full sm:w-[260px]">
+    <div className="flex flex-col items-center gap-4 max-w-6xl mx-auto">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-start w-full">
+      <div className="w-full">
         <button
           onClick={() => choose('idea')}
           style={radius}
@@ -122,7 +122,7 @@ const StartingChoiceButtons = () => {
           <span>J'ai une idée<br />de contenu</span>
         </button>
       </div>
-      <div className="w-full sm:w-[260px]">
+      <div className="w-full">
         <button
           onClick={() => choose('simple')}
           style={radius}
@@ -136,7 +136,7 @@ const StartingChoiceButtons = () => {
           <span>Commencer à partir<br />d'une image simple</span>
         </button>
       </div>
-      <div className="w-full sm:w-[260px]">
+      <div className="w-full">
         <button
           onClick={() => choose('perf')}
           style={radius}
@@ -150,7 +150,7 @@ const StartingChoiceButtons = () => {
           <span>S'inspirer d'un post<br />qui a performé</span>
         </button>
       </div>
-      <div className="flex flex-col gap-2 w-full sm:w-[260px]">
+      <div className="flex flex-col gap-2 w-full">
         <button
           onClick={() => choose('scratch')}
           style={radius}
