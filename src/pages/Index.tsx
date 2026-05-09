@@ -5,8 +5,6 @@ import StartingPointBlock from '@/components/kreator/StartingPointBlock';
 import ContentTypeStep from '@/components/kreator/ContentTypeStep';
 import ProductOfferStep from '@/components/kreator/ProductOfferStep';
 import StartingChoiceButtons from '@/components/kreator/StartingChoiceButtons';
-import ObjectiveStep from '@/components/kreator/ObjectiveStep';
-
 import CustomizationStep from '@/components/kreator/CustomizationStep';
 import PromptStep from '@/components/kreator/PromptStep';
 import GenerationStep from '@/components/kreator/GenerationStep';
@@ -97,7 +95,6 @@ const Index = () => {
           <StartingPointBlock />
           <ProductOfferStep />
           <ContentTypeStep />
-          <ObjectiveStep />
           <CustomizationStep />
           <PromptStep />
           <GenerationStep />

@@ -1,7 +1,6 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import StepContainer from './StepContainer';
 import { useEffect, useMemo } from 'react';
 import type { ContentType } from '@/store/useKreatorStore';
 import { FUNNEL_OBJECTIVES, FUNNEL_ANGLES, type FunnelObjective } from '@/data/funnelAngles';
@@ -549,8 +548,7 @@ const ObjectiveStep = () => {
   const styleInPresets = styles.includes(visual_style_brief);
 
   return (
-    <StepContainer stepNumber={4} title="Votre objectif">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-2">
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Objectif du contenu</label>
           <Select value={objective} onValueChange={setObjective}>
@@ -611,7 +609,6 @@ const ObjectiveStep = () => {
           <p className="text-xs text-muted-foreground italic">{QUALITY_DIRECTIVE}</p>
         </div>
       </div>
-    </StepContainer>
   );
 };
 
