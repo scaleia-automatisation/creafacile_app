@@ -116,6 +116,21 @@ export async function describeImage(imageBase64: string) {
   return content.trim();
 }
 
+export async function describeImageShort(imageBase64: string) {
+  const systemPrompt = `Tu es un expert en analyse visuelle. Décris l'image fournie en UNE SEULE phrase TRÈS COURTE de 7 MOTS MAXIMUM (jamais plus). Sans ponctuation finale, sans introduction, sans guillemets. Réponds uniquement avec la description courte.`;
+  const data = await callKreatorAI({
+    action: 'describe_image',
+    image_base64s: [imageBase64],
+    messages: [{ role: 'user', content: 'Décris cette image en 7 mots maximum.' }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  // Hard trim to 7 words
+  const words = content.trim().replace(/[."']+$/g, '').split(/\s+/);
+  return words.slice(0, 7).join(' ');
+}
+
 export async function summarizePerformingPosts(descriptions: string[]) {
   const systemPrompt = `Tu es un expert en marketing digital, copywriting et viralité sur les réseaux sociaux. À partir des descriptions de posts qui ont performé fournies, produis UN résumé synthétique (5 phrases maximum) orienté business, viralité, efficacité de conversion et différenciation, avec un angle marketing fort. Mets en avant les leviers communs (hook, format, ton, preuve, émotion, call-to-action) qui expliquent la performance et qu'il faut réutiliser. Réponds uniquement avec le résumé, sans titre ni mise en forme.`;
   const userContent = descriptions
