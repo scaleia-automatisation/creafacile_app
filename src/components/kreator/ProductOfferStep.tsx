@@ -336,6 +336,9 @@ const ProductOfferStep = () => {
             )}
           </div>
         </div>
+        <div className="md:col-span-2 mt-2">
+          <ActivitySectorFields />
+        </div>
       </div>
     </StepContainer>
   );
