@@ -5,6 +5,7 @@ import StartingPointBlock from '@/components/kreator/StartingPointBlock';
 import ContentTypeStep from '@/components/kreator/ContentTypeStep';
 import ProductOfferStep from '@/components/kreator/ProductOfferStep';
 import StartingChoiceButtons from '@/components/kreator/StartingChoiceButtons';
+import StepContainer from '@/components/kreator/StepContainer';
 import CustomizationStep from '@/components/kreator/CustomizationStep';
 import PromptStep from '@/components/kreator/PromptStep';
 import GenerationStep from '@/components/kreator/GenerationStep';
@@ -91,7 +92,9 @@ const Index = () => {
         </div>
 
         <div className="space-y-6">
-          <StartingChoiceButtons />
+          <StepContainer stepNumber={1} title="Choisissez votre point d'entrée">
+            <StartingChoiceButtons />
+          </StepContainer>
           <StartingPointBlock />
           <ProductOfferStep />
           <ContentTypeStep />
