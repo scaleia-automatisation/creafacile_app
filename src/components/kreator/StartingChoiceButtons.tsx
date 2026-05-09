@@ -14,6 +14,7 @@ const StartingChoiceButtons = () => {
     offer_type, company_activity, company_sector,
     product_service, product_description, product_image_url,
     simple_images, setSimpleImages,
+    objective,
   } = useKreatorStore();
   const [scratchError, setScratchError] = useState<string[]>([]);
   const [loadingDesc, setLoadingDesc] = useState<number | null>(null);
@@ -37,9 +38,9 @@ const StartingChoiceButtons = () => {
       const isProduct = offer_type === '📦 Produit';
       const missing: string[] = [];
       if (!offer_type?.trim()) missing.push("Type d'offre");
+      if (!product_service?.trim()) missing.push('Nom');
       if (isProduct && !product_image_url?.trim()) missing.push("Image du produit");
-      if (!product_service?.trim()) missing.push('Nom du produit');
-      if (!product_description?.trim()) missing.push('Description du produit');
+      if (!objective?.trim()) missing.push('Objectif du contenu');
       if (!company_activity?.trim()) missing.push('Activité principale');
       if (!company_sector?.trim()) missing.push("Secteur d'activité");
       setScratchError(missing);
