@@ -278,7 +278,8 @@ const StartingChoiceButtons = () => {
             setIdeaChosen(val);
           }}
           placeholder="Ex : Mettre en avant notre nouvelle collection d'été avec une ambiance plage…"
-          className="min-h-[110px] resize-none"
+          className="min-h-[110px] resize-none border-2 border-[hsl(210_100%_55%)] focus-visible:ring-2 focus-visible:ring-[hsl(210_100%_55%)]"
+          autoFocus
           maxLength={500}
         />
         <div className="text-xs text-muted-foreground text-right">
