@@ -153,7 +153,7 @@ const StartingChoiceButtons = () => {
           <span>S'inspirer d'un<br />post viral</span>
         </button>
       </div>
-      <div className="flex flex-col gap-2 w-full">
+      <div className="w-full">
         <button
           onClick={() => choose('scratch')}
           style={radius}
@@ -166,19 +166,21 @@ const StartingChoiceButtons = () => {
           <Lightbulb className="w-5 h-5 shrink-0" />
           <span>Je n'ai pas d'idée,<br />partir de zéro</span>
         </button>
-        {scratchError.length > 0 && (
-          <div className="flex items-start gap-2 p-3 rounded-btn border border-destructive/40 bg-destructive/10 text-xs text-destructive">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-            <div>
-              <div className="font-semibold mb-1">Champs requis manquants :</div>
-              <ul className="list-disc list-inside space-y-0.5">
-                {scratchError.map((m) => <li key={m}>{m}</li>)}
-              </ul>
-            </div>
-          </div>
-        )}
       </div>
     </div>
+    {starting_choice === 'scratch' && scratchError.length > 0 && (
+      <div className="w-full flex items-start gap-2 p-3 rounded-btn border border-destructive/40 bg-destructive/10 text-sm text-destructive">
+        <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+        <div>
+          <div className="font-semibold mb-1">
+            Remplissez le type d'offre et la description avant de continuer. Nom et Objectif du contenu.
+          </div>
+          <ul className="list-disc list-inside space-y-0.5 text-xs">
+            {scratchError.map((m) => <li key={m}>{m}</li>)}
+          </ul>
+        </div>
+      </div>
+    )}
     {starting_choice === 'simple' && (
       <div className="w-full step-border bg-background p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-3">
