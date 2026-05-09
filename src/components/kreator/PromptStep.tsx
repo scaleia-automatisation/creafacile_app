@@ -19,7 +19,8 @@ const PromptStep = () => {
     input_text, idea_chosen, input_image_description, input_photos,
     options, slides_count, status, setStatus, setResultUrl, ai_model,
     render_style, video_render_style,
-    product_description, voice_over_enabled, voice_over_text, model_settings
+    product_description, voice_over_enabled, voice_over_text, model_settings,
+    objective, product_image_url,
   } = useKreatorStore();
 
   const getImageSynthesis = () => {
@@ -35,10 +36,16 @@ const PromptStep = () => {
 
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const isProduct = offer_type === '📦 Produit';
   const missingFields: string[] = [];
-  if (!product_service?.trim()) missingFields.push('Produit ou service');
   if (!offer_type?.trim()) missingFields.push("Type d'offre");
+  if (!product_service?.trim()) missingFields.push("Nom de l'offre");
+  if (isProduct && !product_image_url?.trim()) missingFields.push('Image du produit');
+  if (isProduct && !product_description?.trim()) missingFields.push('Description du produit');
   if (!marketing_angle?.trim()) missingFields.push('Angle marketing');
+  if (!objective?.trim()) missingFields.push('Objectif du contenu');
+  if (!company_activity?.trim()) missingFields.push('Activité principale');
+  if (!company_sector?.trim()) missingFields.push("Secteur d'activité");
   const hasMissing = missingFields.length > 0;
 
   const handleGenerate = async () => {
@@ -126,12 +133,12 @@ const PromptStep = () => {
       {!hasPrompt && (
         <div className="space-y-3">
           {hasMissing && (
-            <Alert variant="destructive" className="max-w-md mx-auto bg-destructive/10 border-destructive/30">
+            <Alert variant="destructive" className="max-w-2xl mx-auto bg-destructive/10 border-destructive/30">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription className="text-destructive text-sm">
                 Avant de générer le prompt, veuillez renseigner&nbsp;:{' '}
-                <strong>{missingFields.join(' et ')}</strong>{' '}
-                {missingFields.length > 1 ? 'sont requis' : 'est requis'} dans le bloc «&nbsp;Votre activité&nbsp;».
+                <strong>{missingFields.join(', ')}</strong>{' '}
+                {missingFields.length > 1 ? 'sont requis' : 'est requis'} dans le bloc «&nbsp;Quel est votre offre&nbsp;?&nbsp;» pour générer le prompt du visuel à créer.
               </AlertDescription>
             </Alert>
           )}
