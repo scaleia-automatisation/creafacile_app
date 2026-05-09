@@ -172,9 +172,6 @@ const ProductOfferStep = () => {
 
   return (
     <StepContainer stepNumber={1} title="Quel est votre offre ? (produit, service...)">
-      <div className="mb-6">
-        <ActivitySectorFields />
-      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Type d'offre *</label>
@@ -338,6 +335,9 @@ const ProductOfferStep = () => {
               </div>
             )}
           </div>
+        </div>
+        <div className="md:col-span-2 mt-2">
+          <ActivitySectorFields />
         </div>
       </div>
     </StepContainer>
