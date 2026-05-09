@@ -278,7 +278,7 @@ const StartingChoiceButtons = () => {
             setIdeaChosen(val);
           }}
           placeholder="Ex : Mettre en avant notre nouvelle collection d'été avec une ambiance plage…"
-          className="min-h-[110px] resize-none border-2 border-[hsl(210_100%_55%)] focus-visible:ring-2 focus-visible:ring-[hsl(210_100%_55%)]"
+          className="min-h-[110px] resize-none border-2 border-[hsl(210_100%_55%)] focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none"
           autoFocus
           maxLength={500}
         />
