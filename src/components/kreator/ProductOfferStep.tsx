@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Users, CheckCircle, Sparkles, Upload, X, Replace, ImagePlus, FileText, Lightbulb, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { generatePersonas, describeImage, generateIdeas } from '@/lib/kreator-ai';
+import { generatePersonas, describeImageShort, generateIdeas } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields from './ActivitySectorFields';
@@ -71,11 +71,14 @@ const ProductOfferStep = () => {
     : isFormation ? 'Ex : Formation Trading 30 jours'
     : 'Donnez un nom court';
   const descPlaceholder = isProduct
-    ? 'Entre 2 et 7 mots (généré auto depuis l\'image)'
-    : 'Entre 2 et 7 mots (ex : coaching sportif personnalisé à domicile)';
+    ? 'Une phrase simple (générée auto depuis l\'image)'
+    : 'Une phrase simple (ex : coaching sportif personnalisé à domicile)';
 
-  const limitToWords = (text: string, max = 7) =>
-    text.trim().split(/\s+/).slice(0, max).join(' ');
+  const toOneSentence = (text: string) => {
+    const cleaned = text.trim().replace(/\s+/g, ' ');
+    const match = cleaned.match(/^[^.!?\n]+[.!?]?/);
+    return (match ? match[0] : cleaned).trim();
+  };
 
   const handleFile = (file: File) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
@@ -94,8 +97,8 @@ const ProductOfferStep = () => {
       if (isProduct) {
         setDescribing(true);
         try {
-          const desc = await describeImage(dataUrl);
-          setProductDescription(limitToWords(desc, 7));
+          const desc = await describeImageShort(dataUrl);
+          setProductDescription(toOneSentence(desc));
         } catch (e) {
           console.error(e);
         } finally {
@@ -110,8 +113,8 @@ const ProductOfferStep = () => {
     if (!product_image_url) return;
     setDescribing(true);
     try {
-      const desc = await describeImage(product_image_url);
-      setProductDescription(limitToWords(desc, 7));
+      const desc = await describeImageShort(product_image_url);
+      setProductDescription(toOneSentence(desc));
       toast.success('Description générée');
     } catch (e) {
       console.error(e);
@@ -261,20 +264,18 @@ const ProductOfferStep = () => {
           <Textarea
             value={product_description}
             onChange={(e) => {
-              const words = e.target.value.split(/\s+/).filter(Boolean);
-              if (words.length <= 7) {
-                setProductDescription(e.target.value);
-              } else {
-                setProductDescription(limitToWords(e.target.value, 7));
-              }
+              // Une seule phrase simple : on bloque les retours à la ligne
+              const single = e.target.value.replace(/[\r\n]+/g, ' ');
+              setProductDescription(single);
             }}
+            onBlur={() => setProductDescription(toOneSentence(product_description))}
             placeholder={descPlaceholder}
-            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[80px] resize-none"
+            rows={2}
+            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[60px] resize-none"
           />
           <p className="text-[11px] text-muted-foreground mt-1">
-            {product_description.trim() ? product_description.trim().split(/\s+/).filter(Boolean).length : 0}/7 mots (min 2)
-            {!isProduct && ' — à renseigner manuellement'}
-            {isProduct && ' — généré automatiquement à partir de l\'image'}
+            Une seule phrase simple, exacte
+            {isProduct ? ' — générée automatiquement à partir de l\'image' : ' — à renseigner manuellement'}
           </p>
         </div>
 
