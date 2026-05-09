@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { generatePersonas, describeImage, generateIdeas } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
+import ActivitySectorFields from './ActivitySectorFields';
 
 const OFFER_TYPES = ['📦 Produit', '🛠️ Service', '💻 SaaS', '🎓 Formation'];
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -170,7 +171,10 @@ const ProductOfferStep = () => {
   };
 
   return (
-    <StepContainer stepNumber={2} title="Quel est votre offre ?">
+    <StepContainer stepNumber={1} title="Quel est votre offre ? (produit, service...)">
+      <div className="mb-6">
+        <ActivitySectorFields />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Type d'offre *</label>

@@ -3,7 +3,6 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import StepContainer from './StepContainer';
 
 const SECTORS = [
   '🛍️ E-commerce / Retail (DTC, marketplaces)',
@@ -68,8 +67,7 @@ const ActivitySectorFields = () => {
   };
 
   return (
-    <StepContainer stepNumber={3} title="Votre activité">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Activité principale *</label>
           <Input
@@ -128,7 +126,6 @@ const ActivitySectorFields = () => {
           </Select>
         </div>
       </div>
-    </StepContainer>
   );
 };
 
