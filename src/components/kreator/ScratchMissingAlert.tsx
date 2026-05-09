@@ -4,7 +4,7 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 const ScratchMissingAlert = () => {
   const {
     starting_choice, offer_type, company_activity, company_sector,
-    product_service, product_description, product_image_url,
+    product_service, product_image_url, objective,
   } = useKreatorStore();
 
   if (starting_choice !== 'scratch') return null;
@@ -12,9 +12,9 @@ const ScratchMissingAlert = () => {
   const isProduct = offer_type === '📦 Produit';
   const missing: string[] = [];
   if (!offer_type?.trim()) missing.push("Type d'offre");
+  if (!product_service?.trim()) missing.push('Nom');
   if (isProduct && !product_image_url?.trim()) missing.push("Image du produit");
-  if (!product_service?.trim()) missing.push('Nom du produit');
-  if (!product_description?.trim()) missing.push('Description du produit');
+  if (!objective?.trim()) missing.push('Objectif du contenu');
   if (!company_activity?.trim()) missing.push('Activité principale');
   if (!company_sector?.trim()) missing.push("Secteur d'activité");
 
