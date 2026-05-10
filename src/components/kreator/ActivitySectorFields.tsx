@@ -86,7 +86,7 @@ const ActivitySectorFields = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Activité principale *</label>
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Activité principale ou Métier *</label>
           <Input
             value={company_activity}
             onChange={(e) => setCompanyActivity(e.target.value)}
