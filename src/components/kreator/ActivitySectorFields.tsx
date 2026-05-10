@@ -3,6 +3,8 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Loader2 } from 'lucide-react';
+import { detectSectorFromActivity } from '@/lib/kreator-ai';
 
 export const SECTORS = [
   '🛍️ E-commerce / Retail (DTC, marketplaces)',
@@ -41,19 +43,35 @@ const ActivitySectorFields = () => {
     market, setMarket,
   } = useKreatorStore();
   const [sectorMode, setSectorMode] = useState<'preset' | 'custom'>('preset');
+  const [detectingSector, setDetectingSector] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
-    if (profile.company_activity && !company_activity?.trim()) {
-      setCompanyActivity(profile.company_activity);
-    }
+    // Sector only — l'activité principale reste vide par défaut (saisie manuelle).
     if (profile.company_sector && !company_sector?.trim()) {
       setCompanySector(profile.company_sector);
       if (!SECTORS.includes(profile.company_sector)) {
         setSectorMode('custom');
       }
     }
-  }, [profile?.company_activity, profile?.company_sector, company_activity, company_sector]);
+  }, [profile?.company_sector, company_sector]);
+
+  const handleActivityBlur = async () => {
+    const activity = company_activity?.trim();
+    if (!activity || company_sector?.trim() || detectingSector) return;
+    setDetectingSector(true);
+    try {
+      const sector = await detectSectorFromActivity(activity, SECTORS);
+      if (sector) {
+        setCompanySector(sector);
+        setSectorMode(SECTORS.includes(sector) ? 'preset' : 'custom');
+      }
+    } catch (e) {
+      console.error('Auto sector detection failed', e);
+    } finally {
+      setDetectingSector(false);
+    }
+  };
 
   const handleSectorChange = (value: string) => {
     if (value === 'custom') {
@@ -72,12 +90,16 @@ const ActivitySectorFields = () => {
           <Input
             value={company_activity}
             onChange={(e) => setCompanyActivity(e.target.value)}
+            onBlur={handleActivityBlur}
             placeholder="Ex: Coach fitness, Boulangerie..."
             className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Secteur *</label>
+          <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+            Secteur *
+            {detectingSector && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />}
+          </label>
           {sectorMode === 'preset' ? (
             <Select value={company_sector} onValueChange={handleSectorChange}>
               <SelectTrigger className="bg-card border-foreground/10 text-foreground">
