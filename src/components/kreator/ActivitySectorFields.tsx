@@ -43,18 +43,17 @@ const ActivitySectorFields = () => {
   const [sectorMode, setSectorMode] = useState<'preset' | 'custom'>('preset');
 
   useEffect(() => {
-    if (profile) {
-      if (profile.company_activity && !company_activity) {
-        setCompanyActivity(profile.company_activity);
-      }
-      if (profile.company_sector && !company_sector) {
-        setCompanySector(profile.company_sector);
-        if (profile.company_sector && !SECTORS.includes(profile.company_sector)) {
-          setSectorMode('custom');
-        }
+    if (!profile) return;
+    if (profile.company_activity && !company_activity?.trim()) {
+      setCompanyActivity(profile.company_activity);
+    }
+    if (profile.company_sector && !company_sector?.trim()) {
+      setCompanySector(profile.company_sector);
+      if (!SECTORS.includes(profile.company_sector)) {
+        setSectorMode('custom');
       }
     }
-  }, [profile]);
+  }, [profile?.company_activity, profile?.company_sector, company_activity, company_sector]);
 
   const handleSectorChange = (value: string) => {
     if (value === 'custom') {
