@@ -229,29 +229,18 @@ const ContentTypeStep = () => {
       {type !== 'video' && (
         <div>
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Format</label>
-          <div className={`grid gap-2 sm:gap-3 ${availableFormats.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-            {availableFormats.map((f) => (
-              <button
-                key={f.value}
-                onClick={() => setFormat(f.value)}
-                className={`flex flex-col items-center gap-2 p-3 sm:p-4 rounded-card border-[3px] transition-all duration-200 ${
-                  format === f.value
-                    ? 'border-primary bg-card'
-                    : 'border-foreground/10 bg-card hover:border-secondary hover:bg-secondary/5'
-                }`}
-              >
-                <div className={`w-10 ${f.value === '9:16' ? 'h-16' : f.value === '16:9' ? 'h-6' : 'h-10'} rounded border-2 ${
-                  format === f.value ? 'border-primary bg-primary/10' : 'border-muted-foreground/30 bg-muted/30'
-                }`} />
-                <div className="text-center">
-                  <div className={`font-bold text-sm ${format === f.value ? 'text-foreground' : 'text-muted-foreground'}`}>
-                    {f.label}
-                  </div>
-                  <div className="text-xs text-muted-foreground">{f.sublabel}</div>
-                </div>
-              </button>
-            ))}
-          </div>
+          <Select value={format || undefined} onValueChange={(v) => setFormat(v as Format)}>
+            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+              <SelectValue placeholder="Choisissez un format" />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-foreground/10">
+              {availableFormats.map((f) => (
+                <SelectItem key={f.value} value={f.value} className="text-foreground focus:bg-secondary/20">
+                  {f.label} — {f.sublabel}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       )}
     </StepContainer>
