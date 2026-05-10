@@ -149,6 +149,23 @@ export async function detectSectorFromImage(imageBase64: string, sectors: string
   return match || raw;
 }
 
+export async function detectSectorFromActivity(activity: string, sectors: string[]) {
+  const list = sectors.map((s, i) => `${i + 1}. ${s}`).join('\n');
+  const systemPrompt = `Tu es un expert en classification marketing. À partir de l'activité principale d'une entreprise, choisis LE SECTEUR le plus pertinent dans la liste exacte ci-dessous. Réponds UNIQUEMENT avec le libellé exact du secteur choisi (copie-colle exact, emoji inclus), sans aucune autre phrase, sans guillemets.\n\nListe des secteurs autorisés :\n${list}`;
+  const data = await callKreatorAI({
+    action: 'detect_sector_from_activity',
+    messages: [{ role: 'user', content: `Activité principale : ${activity}` }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  const raw = content.trim().replace(/^["'`]+|["'`.]+$/g, '');
+  const match = sectors.find((s) => s === raw)
+    || sectors.find((s) => raw.includes(s))
+    || sectors.find((s) => s.toLowerCase().includes(raw.toLowerCase()));
+  return match || raw;
+}
+
 export async function summarizePerformingPosts(descriptions: string[]) {
   const systemPrompt = `Tu es un expert en marketing digital, copywriting et viralité sur les réseaux sociaux. À partir des descriptions de posts qui ont performé fournies, produis UN résumé synthétique (5 phrases maximum) orienté business, viralité, efficacité de conversion et différenciation, avec un angle marketing fort. Mets en avant les leviers communs (hook, format, ton, preuve, émotion, call-to-action) qui expliquent la performance et qu'il faut réutiliser. Réponds uniquement avec le résumé, sans titre ni mise en forme.`;
   const userContent = descriptions
