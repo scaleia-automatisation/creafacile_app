@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { describeImageShort } from '@/lib/kreator-ai';
+import { describeImage } from '@/lib/kreator-ai';
 
 const StartingChoiceButtons = () => {
   const {
@@ -70,7 +70,7 @@ const StartingChoiceButtons = () => {
       // auto-generate short description
       setLoadingDesc(index);
       try {
-        const desc = await describeImageShort(base64);
+        const desc = await describeImage(base64);
         const updated = [...useKreatorStore.getState().simple_images];
         if (updated[index]) {
           updated[index] = { ...updated[index], description: desc };
@@ -93,13 +93,9 @@ const StartingChoiceButtons = () => {
   };
 
   const handleDescChange = (index: number, value: string) => {
-    const words = value.trim().split(/\s+/).filter(Boolean);
-    const limited = words.slice(0, 7).join(' ');
-    // allow trailing space while typing under limit
-    const final = words.length <= 7 ? value : limited;
     const next = [...simple_images];
     if (next[index]) {
-      next[index] = { ...next[index], description: final };
+      next[index] = { ...next[index], description: value };
       setSimpleImages(next);
     }
   };
@@ -190,7 +186,7 @@ const StartingChoiceButtons = () => {
           </span>
         </div>
         <p className="text-xs text-muted-foreground mb-4">
-          Importez vos images. Une description courte (7 mots max) est générée automatiquement et reste modifiable.
+          Importez vos images. Une description complète (2 à 3 phrases) est générée automatiquement pour chaque image et reste modifiable.
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[0, 1, 2, 3].map((index) => {
@@ -233,19 +229,16 @@ const StartingChoiceButtons = () => {
                     {loadingDesc === index && !img.description ? (
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        Description…
+                        Génération de la description…
                       </div>
                     ) : (
-                      <Input
+                      <Textarea
                         value={img.description}
                         onChange={(e) => handleDescChange(index, e.target.value)}
-                        placeholder="Description (7 mots max)"
-                        className="text-xs h-9"
+                        placeholder="Description (2 à 3 phrases)"
+                        className="text-xs min-h-[90px] resize-y"
                       />
                     )}
-                    <div className="text-[10px] text-muted-foreground text-right">
-                      {img.description ? img.description.trim().split(/\s+/).filter(Boolean).length : 0}/7 mots
-                    </div>
                   </div>
                 )}
                 <input
