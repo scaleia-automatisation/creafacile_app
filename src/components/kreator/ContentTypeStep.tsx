@@ -3,6 +3,7 @@ import { Image, Layers, Video } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StepContainer from './StepContainer';
 import ModelSettings from './ModelSettings';
+import ObjectiveStep from './ObjectiveStep';
 
 const contentTypes: { type: ContentType; label: string; icon: typeof Image }[] = [
   { type: 'image', label: 'Image', icon: Image },
@@ -83,7 +84,7 @@ const ContentTypeStep = () => {
   };
 
   return (
-    <StepContainer stepNumber={2} title="Quel type de contenu créer ?">
+    <StepContainer stepNumber={2} title="Quel type de contenu voulez-vous créer ?">
       {/* Content type selector */}
       <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
         {contentTypes.map(({ type: t, label, icon: Icon }) => (
@@ -243,6 +244,11 @@ const ContentTypeStep = () => {
           </Select>
         </div>
       )}
+
+      {/* Objectif, Angle marketing, Style visuel */}
+      <div className="mt-6">
+        <ObjectiveStep />
+      </div>
     </StepContainer>
   );
 };
