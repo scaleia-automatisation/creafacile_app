@@ -111,7 +111,7 @@ const StartingChoiceButtons = () => {
   const radius = { borderRadius: '20px' };
 
   return (
-    <div className="flex flex-col items-center gap-4 max-w-6xl mx-auto">
+    <div id="starting-choice-buttons" className="flex flex-col items-center gap-4 max-w-6xl mx-auto">
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-start w-full">
       <div className="w-full">
         <button
