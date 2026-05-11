@@ -510,12 +510,20 @@ const DEFAULT_PRESET: AnglesAndStyles = {
 const QUALITY_DIRECTIVE =
   '🎯 Tous les rendus visent un niveau agence premium : ultraréaliste, 100% naturel, indétectable IA, orienté business & boost de chiffre d\'affaires.';
 
+const TONS = [
+  'Direct', 'Émotionnel', 'Conversationnel', 'Persuasif', 'Humoristique',
+  'Différent', 'Provocateur', 'Professionnel', 'Sérieux',
+  'Direct + Percutant', 'Émotionnel + Conversationnel', 'Persuasif + Sérieux',
+  'Viral + Humoristique', 'Différent + Provocateur',
+];
+
 const ObjectiveStep = () => {
   const {
     objective, setObjective,
     marketing_angle, setMarketingAngle,
     visual_style_brief, setVisualStyleBrief,
     company_sector, type,
+    options, setOptions,
   } = useKreatorStore();
 
   const preset = useMemo(() => SECTOR_PRESETS[company_sector] ?? DEFAULT_PRESET, [company_sector]);
@@ -604,6 +612,21 @@ const ObjectiveStep = () => {
               {selectedStyleDescription}
             </p>
           )}
+        </div>
+        <div className="md:col-span-2">
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">
+            {type === 'video' ? 'Ton de la vidéo' : "Ton d'écriture"}
+          </label>
+          <Select value={options.ton} onValueChange={(v) => setOptions({ ton: v })}>
+            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+              <SelectValue placeholder="Choisir un ton..." />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-foreground/10">
+              {TONS.map((t) => (
+                <SelectItem key={t} value={t} className="text-foreground focus:bg-secondary/20">{t}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="md:col-span-2">
           <p className="text-xs text-muted-foreground italic">{QUALITY_DIRECTIVE}</p>

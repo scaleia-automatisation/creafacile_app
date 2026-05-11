@@ -572,25 +572,6 @@ const CustomizationStep = () => {
               </AccordionItem>
             )}
 
-            {/* Tone */}
-            <AccordionItem value="ton" className="border-foreground/10">
-              <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline">
-                {isVideo ? 'Ton de la vidéo' : 'Ton d\'écriture'}
-              </AccordionTrigger>
-              <AccordionContent className="pt-2">
-                <Select value={options.ton} onValueChange={(v) => setOptions({ ton: v })}>
-                  <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                    <SelectValue placeholder="Choisir un ton..." />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-foreground/10">
-                    {tons.map((t) => (
-                      <SelectItem key={t} value={t} className="text-foreground focus:bg-secondary/20">{t}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </AccordionContent>
-            </AccordionItem>
-
             {/* Voice over (vidéo uniquement) */}
             {isVideo && (
               <AccordionItem value="voiceover" className="border-foreground/10">
