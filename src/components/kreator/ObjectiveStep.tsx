@@ -510,6 +510,13 @@ const DEFAULT_PRESET: AnglesAndStyles = {
 const QUALITY_DIRECTIVE =
   '🎯 Tous les rendus visent un niveau agence premium : ultraréaliste, 100% naturel, indétectable IA, orienté business & boost de chiffre d\'affaires.';
 
+const TONS = [
+  'Direct', 'Émotionnel', 'Conversationnel', 'Persuasif', 'Humoristique',
+  'Différent', 'Provocateur', 'Professionnel', 'Sérieux',
+  'Direct + Percutant', 'Émotionnel + Conversationnel', 'Persuasif + Sérieux',
+  'Viral + Humoristique', 'Différent + Provocateur',
+];
+
 const ObjectiveStep = () => {
   const {
     objective, setObjective,
