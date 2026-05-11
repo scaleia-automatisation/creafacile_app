@@ -2,7 +2,6 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { Lightbulb, TrendingUp, AlertCircle, PenLine, ImagePlus, Upload, X, Replace, Loader2 } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { describeImage } from '@/lib/kreator-ai';
