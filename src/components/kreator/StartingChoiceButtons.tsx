@@ -24,7 +24,7 @@ const StartingChoiceButtons = () => {
     useRef<HTMLInputElement>(null),
   ];
 
-  if (type !== 'image' && type !== 'carousel') return null;
+  if (type !== 'image' && type !== 'carousel' && type !== 'video') return null;
 
   const choose = (val: 'scratch' | 'perf' | 'idea' | 'simple') => {
     if (val === 'scratch') {
