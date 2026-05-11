@@ -34,14 +34,12 @@ const StartingChoiceButtons = () => {
         setStartingChoice('');
         return;
       }
-      const isProduct = offer_type === '📦 Produit';
       const missing: string[] = [];
       if (!offer_type?.trim()) missing.push("Type d'offre");
-      if (!product_service?.trim()) missing.push('Nom');
-      if (isProduct && !product_image_url?.trim()) missing.push("Image du produit");
+      if (!product_description?.trim()) missing.push("Description de l'offre");
+      if (!product_service?.trim()) missing.push("Nom de l'offre");
       if (!objective?.trim()) missing.push('Objectif du contenu');
-      if (!company_activity?.trim()) missing.push('Activité principale');
-      if (!company_sector?.trim()) missing.push("Secteur d'activité");
+      if (!company_activity?.trim()) missing.push('Activité principale ou métier');
       setScratchError(missing);
       setStartingChoice('scratch');
       return;
@@ -175,14 +173,14 @@ const StartingChoiceButtons = () => {
     {starting_choice === 'scratch' && scratchError.length > 0 && (
       <div className="w-full flex items-start gap-2 p-3 rounded-btn border border-destructive/40 bg-destructive/10 text-sm text-destructive">
         <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-        <div>
-          <div className="font-semibold mb-1">
-            Remplissez le type d'offre et la description avant de continuer. Nom et Objectif du contenu.
-          </div>
-          <ul className="list-disc list-inside space-y-0.5 text-xs">
-            {scratchError.map((m) => <li key={m}>{m}</li>)}
-          </ul>
+      <div>
+        <div className="font-semibold mb-1">
+          Veuillez renseigner les champs requis avant de générer des idées de contenu :
         </div>
+        <ul className="list-disc list-inside space-y-0.5 text-xs">
+          {scratchError.map((m) => <li key={m}>{m}</li>)}
+        </ul>
+      </div>
       </div>
     )}
     {starting_choice === 'simple' && (
