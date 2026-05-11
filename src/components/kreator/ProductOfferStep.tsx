@@ -10,7 +10,6 @@ import { generatePersonas, describeImageShort, generateIdeas, detectSectorFromIm
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
-import ObjectiveStep from './ObjectiveStep';
 
 const OFFER_TYPES = ['📦 Produit', '🛠️ Service', '💻 SaaS', '🎓 Formation'];
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -266,10 +265,6 @@ const ProductOfferStep = () => {
             Une seule phrase simple, exacte
             {isProduct ? ' — générée automatiquement à partir de l\'image' : ' — à renseigner manuellement'}
           </p>
-        </div>
-
-        <div className="md:col-span-2">
-          <ObjectiveStep />
         </div>
 
         <div className="md:col-span-2">
