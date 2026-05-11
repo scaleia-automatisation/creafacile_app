@@ -134,16 +134,21 @@ const StartingPointBlock = () => {
     const reader = new FileReader();
     reader.onload = () => {
       const base64 = reader.result as string;
+      let targetIndex = index;
       setPerfPosts((prev) => {
         const next = [...prev];
         if (index < next.length) {
           next[index] = { ...next[index], url: base64, description: '' };
+          targetIndex = index;
         } else {
           next.push({ url: base64, description: '', loading: false });
+          targetIndex = next.length - 1;
         }
         return next;
       });
       setPerfSummary('');
+      // auto-generate description (max 2 sentences)
+      setTimeout(() => handleDescribePerf(targetIndex), 0);
     };
     reader.readAsDataURL(file);
   };
