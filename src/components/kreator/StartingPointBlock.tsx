@@ -83,7 +83,7 @@ const StartingPointBlock = () => {
       setPerfPosts([]);
       setPerfSummary('');
       setTimeout(() => {
-        document.getElementById('starting-point-block')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('starting-choice-buttons')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
       // Trigger idea generation
       handleNoIdea();
