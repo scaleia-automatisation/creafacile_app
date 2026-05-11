@@ -134,23 +134,53 @@ const StartingPointBlock = () => {
     const reader = new FileReader();
     reader.onload = () => {
       const base64 = reader.result as string;
-      let targetIndex = index;
       setPerfPosts((prev) => {
         const next = [...prev];
         if (index < next.length) {
           next[index] = { ...next[index], url: base64, description: '' };
-          targetIndex = index;
         } else {
           next.push({ url: base64, description: '', loading: false });
-          targetIndex = next.length - 1;
         }
         return next;
       });
       setPerfSummary('');
       // auto-generate description (max 2 sentences)
-      setTimeout(() => handleDescribePerf(targetIndex), 0);
+      autoDescribePerf(base64);
     };
     reader.readAsDataURL(file);
+  };
+
+  const autoDescribePerf = async (url: string) => {
+    // mark loading on the post matching this url
+    setPerfPosts((prev) => prev.map((p) => p.url === url ? { ...p, loading: true } : p));
+    try {
+      const desc = await describeImage(url);
+      // keep only first 2 sentences
+      const short = (desc.match(/[^.!?]+[.!?]+/g) || [desc]).slice(0, 2).join(' ').trim();
+      let snapshot: { url: string; description: string; loading: boolean }[] = [];
+      setPerfPosts((prev) => {
+        snapshot = prev.map((p) => p.url === url ? { ...p, description: short, loading: false } : p);
+        return snapshot;
+      });
+      setPerfSummary('');
+      const descs = snapshot.filter((p) => p.description?.trim()).map((p) => p.description.trim());
+      if (descs.length >= 2) {
+        setLoadingPerfSummary(true);
+        try {
+          const summary = await summarizePerformingPosts(descs);
+          setPerfSummary(summary);
+        } catch (e) {
+          console.error(e);
+          toast.error('Erreur lors du résumé des posts');
+        } finally {
+          setLoadingPerfSummary(false);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Erreur lors de l'analyse de l'image");
+      setPerfPosts((prev) => prev.map((p) => p.url === url ? { ...p, loading: false } : p));
+    }
   };
 
   const handleRemovePerf = (index: number) => {
