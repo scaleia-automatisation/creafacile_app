@@ -16,7 +16,7 @@ const StartingChoiceButtons = () => {
     objective,
   } = useKreatorStore();
   const [scratchError, setScratchError] = useState<string[]>([]);
-  const [loadingDesc, setLoadingDesc] = useState<number | null>(null);
+  const [loadingDescSet, setLoadingDescSet] = useState<Set<number>>(new Set());
   const fileRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -67,7 +67,11 @@ const StartingChoiceButtons = () => {
       next[index] = { url: base64, description: '' };
       setSimpleImages(next);
       // auto-generate short description
-      setLoadingDesc(index);
+      setLoadingDescSet((prev) => {
+        const s = new Set(prev);
+        s.add(index);
+        return s;
+      });
       try {
         const desc = await describeImage(base64);
         const updated = [...useKreatorStore.getState().simple_images];
@@ -79,7 +83,11 @@ const StartingChoiceButtons = () => {
         console.error(e);
         toast.error("Erreur lors de la description de l'image");
       } finally {
-        setLoadingDesc(null);
+        setLoadingDescSet((prev) => {
+          const s = new Set(prev);
+          s.delete(index);
+          return s;
+        });
       }
     };
     reader.readAsDataURL(file);
@@ -225,7 +233,7 @@ const StartingChoiceButtons = () => {
                 )}
                 {img?.url && (
                   <div className="space-y-1">
-                    {loadingDesc === index && !img.description ? (
+                    {loadingDescSet.has(index) && !img.description ? (
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
                         Génération de la description…
