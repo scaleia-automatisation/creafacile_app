@@ -52,8 +52,9 @@ const StartingChoiceButtons = () => {
   };
 
   const handleSimpleFile = async (file: File, index: number) => {
-    if (!file.type.startsWith('image/')) {
-      toast.error("Veuillez sélectionner une image valide");
+    const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!ACCEPTED.includes(file.type)) {
+      toast.error("Format non supporté. Utilisez JPG, PNG, WEBP ou GIF (les fichiers HEIC ne sont pas acceptés).");
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
@@ -251,7 +252,7 @@ const StartingChoiceButtons = () => {
                 <input
                   ref={fileRefs[index]}
                   type="file"
-                  accept="image/*"
+                  accept=".jpg,.jpeg,.png,.webp,.gif"
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
