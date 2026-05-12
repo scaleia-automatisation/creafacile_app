@@ -6,12 +6,19 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Users, CheckCircle, Sparkles, Upload, X, Replace, ImagePlus, Lightbulb, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { generatePersonas, describeImageShort, generateIdeas, detectSectorFromImage } from '@/lib/kreator-ai';
+import { generatePersonas, describeImageShort, generateIdeas, detectSectorFromImage, detectOfferTypeFromDescription } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
 
-const OFFER_TYPES = ['📦 Produit', '🛠️ Service'];
+const OFFER_TYPES = [
+  '📦 Produit physique',
+  '💾 Produit digital',
+  '🛠️ Service',
+  '💻 SaaS',
+  '🎓 Formation',
+  '🤝 Consulting',
+];
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
 
@@ -44,30 +51,35 @@ const ProductOfferStep = () => {
   const [loadingPersonas, setLoadingPersonas] = useState(false);
   const [selectedPersonaId, setSelectedPersonaId] = useState<number | null>(null);
   const [describing, setDescribing] = useState(false);
+  const [detectingOfferType, setDetectingOfferType] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
 
-  const isProduct = offer_type === '📦 Produit';
+  const isProduct = offer_type === '📦 Produit physique' || offer_type === '💾 Produit digital';
   const isService = offer_type === '🛠️ Service';
   const isSaas = offer_type === '💻 SaaS';
   const isFormation = offer_type === '🎓 Formation';
+  const isConsulting = offer_type === '🤝 Consulting';
 
   const nameLabel = isProduct ? 'Nom du produit'
     : isService ? 'Nom du service'
     : isSaas ? 'Nom du SaaS'
     : isFormation ? 'Nom de la formation'
+    : isConsulting ? 'Nom de l\'offre de consulting'
     : 'Nom du produit / service';
   const descriptionLabel = isProduct ? 'Description du produit'
     : isService ? 'Description du service'
     : isSaas ? 'Description du SaaS'
     : isFormation ? 'Description de la formation'
+    : isConsulting ? 'Description du consulting'
     : 'Description';
   const namePlaceholder = isProduct ? 'Ex : Pain au levain bio'
     : isService ? 'Ex : Coaching sportif personnalisé'
     : isSaas ? 'Ex : BoosterApp'
     : isFormation ? 'Ex : Formation Trading 30 jours'
+    : isConsulting ? 'Ex : Audit stratégique 360°'
     : 'Donnez un nom court';
   const descPlaceholder = isProduct
     ? 'Une phrase simple (générée auto depuis l\'image)'
@@ -77,6 +89,21 @@ const ProductOfferStep = () => {
     const cleaned = text.trim().replace(/\s+/g, ' ');
     const match = cleaned.match(/^[^.!?\n]+[.!?]?/);
     return (match ? match[0] : cleaned).trim();
+  };
+
+  const handleDescriptionBlur = async () => {
+    const cleanedDesc = toOneSentence(product_description || '');
+    if (cleanedDesc !== product_description) setProductDescription(cleanedDesc);
+    if (!cleanedDesc || offer_type || detectingOfferType) return;
+    setDetectingOfferType(true);
+    try {
+      const detected = await detectOfferTypeFromDescription(cleanedDesc, OFFER_TYPES);
+      if (detected && OFFER_TYPES.includes(detected)) setOfferType(detected);
+    } catch (e) {
+      console.error('Auto offer type detection failed', e);
+    } finally {
+      setDetectingOfferType(false);
+    }
   };
 
   const handleFile = (file: File) => {
@@ -184,7 +211,10 @@ const ProductOfferStep = () => {
     <StepContainer stepNumber={3} title="Quel est votre offre ? (produit, service...)">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Type d'offre *</label>
+          <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+            Type d'offre *
+            {detectingOfferType && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />}
+          </label>
           <Select value={offer_type} onValueChange={setOfferType}>
             <SelectTrigger className="bg-card border-foreground/10 text-foreground">
               <SelectValue placeholder="Choisir un type d'offre..." />
@@ -256,7 +286,7 @@ const ProductOfferStep = () => {
               const single = e.target.value.replace(/[\r\n]+/g, ' ');
               setProductDescription(single);
             }}
-            onBlur={() => setProductDescription(toOneSentence(product_description))}
+            onBlur={handleDescriptionBlur}
             placeholder={descPlaceholder}
             rows={2}
             className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[60px] resize-none"
