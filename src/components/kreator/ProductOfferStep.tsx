@@ -51,6 +51,7 @@ const ProductOfferStep = () => {
   const [loadingPersonas, setLoadingPersonas] = useState(false);
   const [selectedPersonaId, setSelectedPersonaId] = useState<number | null>(null);
   const [describing, setDescribing] = useState(false);
+  const [detectingOfferType, setDetectingOfferType] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
@@ -88,6 +89,21 @@ const ProductOfferStep = () => {
     const cleaned = text.trim().replace(/\s+/g, ' ');
     const match = cleaned.match(/^[^.!?\n]+[.!?]?/);
     return (match ? match[0] : cleaned).trim();
+  };
+
+  const handleDescriptionBlur = async () => {
+    const cleanedDesc = toOneSentence(product_description || '');
+    if (cleanedDesc !== product_description) setProductDescription(cleanedDesc);
+    if (!cleanedDesc || offer_type || detectingOfferType) return;
+    setDetectingOfferType(true);
+    try {
+      const detected = await detectOfferTypeFromDescription(cleanedDesc, OFFER_TYPES);
+      if (detected && OFFER_TYPES.includes(detected)) setOfferType(detected);
+    } catch (e) {
+      console.error('Auto offer type detection failed', e);
+    } finally {
+      setDetectingOfferType(false);
+    }
   };
 
   const handleFile = (file: File) => {
@@ -267,7 +283,7 @@ const ProductOfferStep = () => {
               const single = e.target.value.replace(/[\r\n]+/g, ' ');
               setProductDescription(single);
             }}
-            onBlur={() => setProductDescription(toOneSentence(product_description))}
+            onBlur={handleDescriptionBlur}
             placeholder={descPlaceholder}
             rows={2}
             className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[60px] resize-none"
