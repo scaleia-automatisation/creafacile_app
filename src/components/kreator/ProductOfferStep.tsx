@@ -11,7 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
 
-const OFFER_TYPES = ['📦 Produit', '🛠️ Service', '💻 SaaS', '🎓 Formation'];
+const OFFER_TYPES = ['📦 Produit', '🛠️ Service'];
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
 
