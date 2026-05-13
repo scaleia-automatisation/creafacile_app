@@ -12,12 +12,10 @@ import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
 
 const OFFER_TYPES = [
-  '📦 Produit physique',
-  '💾 Produit digital',
+  '📦 Produit',
   '🛠️ Service',
   '💻 SaaS',
   '🎓 Formation',
-  '🤝 Consulting',
 ];
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
@@ -57,29 +55,25 @@ const ProductOfferStep = () => {
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
 
-  const isProduct = offer_type === '📦 Produit physique' || offer_type === '💾 Produit digital';
+  const isProduct = offer_type === '📦 Produit';
   const isService = offer_type === '🛠️ Service';
   const isSaas = offer_type === '💻 SaaS';
   const isFormation = offer_type === '🎓 Formation';
-  const isConsulting = offer_type === '🤝 Consulting';
 
   const nameLabel = isProduct ? 'Nom du produit'
     : isService ? 'Nom du service'
     : isSaas ? 'Nom du SaaS'
     : isFormation ? 'Nom de la formation'
-    : isConsulting ? 'Nom de l\'offre de consulting'
     : 'Nom du produit / service';
   const descriptionLabel = isProduct ? 'Description du produit'
     : isService ? 'Description du service'
     : isSaas ? 'Description du SaaS'
     : isFormation ? 'Description de la formation'
-    : isConsulting ? 'Description du consulting'
     : 'Description';
   const namePlaceholder = isProduct ? 'Ex : Pain au levain bio'
     : isService ? 'Ex : Coaching sportif personnalisé'
     : isSaas ? 'Ex : BoosterApp'
     : isFormation ? 'Ex : Formation Trading 30 jours'
-    : isConsulting ? 'Ex : Audit stratégique 360°'
     : 'Donnez un nom court';
   const descPlaceholder = isProduct
     ? 'Une phrase simple (générée auto depuis l\'image)'
