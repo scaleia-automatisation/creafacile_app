@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -51,6 +51,7 @@ const ProductOfferStep = () => {
   const [describing, setDescribing] = useState(false);
   const [detectingOfferType, setDetectingOfferType] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const autoPersonaKeyRef = useRef<string>('');
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
@@ -187,6 +188,23 @@ const ProductOfferStep = () => {
       setLoadingPersonas(false);
     }
   };
+
+  // Auto-générer les personas quand tous les champs requis sont remplis
+  useEffect(() => {
+    const ready =
+      offer_type?.trim() &&
+      product_description?.trim() &&
+      product_service?.trim() &&
+      company_activity?.trim() &&
+      company_sector?.trim();
+    if (!ready) return;
+    const key = [offer_type, product_description, product_service, company_activity, company_sector].join('|');
+    if (autoPersonaKeyRef.current === key) return;
+    if (loadingPersonas) return;
+    autoPersonaKeyRef.current = key;
+    handleGeneratePersonas();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [offer_type, product_description, product_service, company_activity, company_sector]);
 
   const handleSelectPersona = (p: Persona) => {
     setSelectedPersonaId(p.id);
