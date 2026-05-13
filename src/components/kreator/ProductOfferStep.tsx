@@ -60,16 +60,9 @@ const ProductOfferStep = () => {
   const isSaas = offer_type === '💻 SaaS';
   const isFormation = offer_type === '🎓 Formation';
 
-  const nameLabel = isProduct ? 'Nom du produit'
-    : isService ? 'Nom du service'
-    : isSaas ? 'Nom du SaaS'
-    : isFormation ? 'Nom de la formation'
-    : 'Nom du produit / service';
-  const descriptionLabel = isProduct ? 'Description du produit'
-    : isService ? 'Description du service'
-    : isSaas ? 'Description du SaaS'
-    : isFormation ? 'Description de la formation'
-    : 'Description';
+  const offerLabel = offer_type ? offer_type.replace(/^[^\p{L}\p{N}]+/u, '').trim() : '';
+  const nameLabel = offerLabel ? `Nom (${offerLabel})` : 'Nom';
+  const descriptionLabel = offerLabel ? `Description (${offerLabel})` : 'Description';
   const namePlaceholder = isProduct ? 'Ex : Pain au levain bio'
     : isService ? 'Ex : Coaching sportif personnalisé'
     : isSaas ? 'Ex : BoosterApp'
