@@ -793,3 +793,75 @@ Angle marketing: ${params.marketingAngle || 'non précisé'}
   if (!content) throw new Error('No response from AI');
   return content.trim().replace(/^["«»"']+|["«»"']+$/g, '').trim();
 }
+
+export async function generateOnScreenText(params: {
+  contentType: string;
+  format: string;
+  idea?: string;
+  objective?: string;
+  marketingAngle?: string;
+  productName?: string;
+  productDescription?: string;
+  offerType?: string;
+  visualStyle?: string;
+  tone?: string;
+  activity?: string;
+  sector?: string;
+  persona?: string;
+  excludeText?: string;
+  variant?: 1 | 2;
+}): Promise<string> {
+  const systemPrompt = `Tu es un expert en copywriting publicitaire pour réseaux sociaux (Meta, TikTok, Instagram, LinkedIn).
+Tu écris UN TEXTE court à afficher À L'ÉCRAN dans un visuel (image / carrousel / vidéo) qui MAXIMISE la conversion.
+
+RÈGLES ABSOLUES :
+- Langue : français
+- Longueur : 50 CARACTÈRES MAXIMUM (compte chaque caractère, espace inclus). Non négociable.
+- 1 seule phrase ou formule, ultra lisible d'un coup d'œil (scroll-stop)
+- Hook persuasif aligné sur l'objectif marketing et l'angle
+- Adapté au persona, au secteur, au type d'offre, au ton et au style visuel
+- Pas de guillemets, pas d'emoji superflu (1 emoji max si vraiment utile)
+- Pas de hashtag, pas de mention @, pas de ponctuation finale lourde
+- Évite le jargon corporate, parle comme un humain, va droit au but
+- Le texte doit être IMMÉDIATEMENT compréhensible et déclencher le clic / l'arrêt du scroll
+${params.variant === 2 ? '- Ce texte est le 2e à apparaître à l\'écran : il doit COMPLÉTER (pas répéter) le 1er texte, idéalement comme un mini call-to-action ou une chute punchy.' : ''}
+${params.excludeText ? `- NE RÉPÈTE PAS et ne paraphrase pas ce texte déjà utilisé : "${params.excludeText}"` : ''}
+
+Réponds UNIQUEMENT par le texte final, sans guillemets, sans préfixe, sans explication.`;
+
+  const userPrompt = `=== CONTEXTE ===
+Type de contenu: ${params.contentType}
+Format: ${params.format}
+${params.idea ? `Idée / sujet: ${params.idea}` : ''}
+${params.objective ? `Objectif marketing: ${params.objective}` : ''}
+${params.marketingAngle ? `Angle marketing: ${params.marketingAngle}` : ''}
+${params.offerType ? `Type d'offre: ${params.offerType}` : ''}
+${params.productName ? `Nom: ${params.productName}` : ''}
+${params.productDescription ? `Description: ${params.productDescription}` : ''}
+${params.visualStyle ? `Style visuel: ${params.visualStyle}` : ''}
+${params.tone ? `Ton d'écriture: ${params.tone}` : ''}
+${params.activity ? `Activité principale: ${params.activity}` : ''}
+${params.sector ? `Secteur: ${params.sector}` : ''}
+${params.persona ? `Client cible / persona: ${params.persona}` : ''}
+
+Écris LE texte à afficher dans le visuel, 50 caractères MAX, qui maximise la conversion.`;
+
+  const data = await callKreatorAI({
+    action: 'generate_on_screen_text',
+    messages: [{ role: 'user', content: userPrompt }],
+    system_prompt: systemPrompt,
+  });
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  let text = content.trim().replace(/^["«»"'`]+|["«»"'`]+$/g, '').trim();
+  // Strip surrounding quotes again, collapse whitespace
+  text = text.replace(/\s+/g, ' ').trim();
+  // Hard cap at 50 chars, cut on word boundary if possible
+  if (text.length > 50) {
+    const sliced = text.slice(0, 50);
+    const lastSpace = sliced.lastIndexOf(' ');
+    text = (lastSpace > 30 ? sliced.slice(0, lastSpace) : sliced).trim();
+  }
+  return text;
+}
