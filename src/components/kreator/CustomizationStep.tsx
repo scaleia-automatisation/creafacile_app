@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,7 @@ import { useStorageUpload } from '@/hooks/useStorageUpload';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { supportsVoiceOver, getVideoDurationSec } from '@/lib/voice-over';
-import { generateVoiceOver } from '@/lib/kreator-ai';
+import { generateVoiceOver, generateOnScreenText } from '@/lib/kreator-ai';
 
 const tons = [
   'Direct', 'Émotionnel', 'Conversationnel', 'Persuasif', 'Humoristique',
@@ -77,6 +77,9 @@ const CustomizationStep = () => {
     voice_over_text, setVoiceOverText,
     offer_type, product_service, product_description,
     marketing_angle, objective,
+    idea_chosen, input_text, format,
+    company_activity, company_sector, target_persona,
+    render_style, video_render_style,
   } = useKreatorStore();
   const isVideo = type === 'video';
   const logoInputRef = useRef<HTMLInputElement>(null);
@@ -84,6 +87,8 @@ const CustomizationStep = () => {
   const [hexInput, setHexInput] = useState('');
   const [hexInput2, setHexInput2] = useState('');
   const [voGenerating, setVoGenerating] = useState(false);
+  const autoText1Ref = useRef<string>('');
+  const autoText2Ref = useRef<string>('');
 
   const videoDurationSec = isVideo ? getVideoDurationSec(ai_model, model_settings) : 8;
   const voMaxSec = Math.max(1, videoDurationSec - 2);
@@ -138,6 +143,60 @@ const CustomizationStep = () => {
     const norm = normalizeHex(v);
     if (norm) setOptions({ text_color_2: norm });
   };
+
+  const buildTextParams = (variant: 1 | 2) => ({
+    contentType: type,
+    format,
+    idea: idea_chosen || input_text,
+    objective,
+    marketingAngle: marketing_angle,
+    productName: product_service,
+    productDescription: product_description,
+    offerType: offer_type,
+    visualStyle: isVideo ? video_render_style : render_style,
+    tone: options.ton,
+    activity: company_activity,
+    sector: company_sector,
+    persona: target_persona,
+    variant,
+    excludeText: variant === 2 ? options.text_content : undefined,
+  });
+
+  // Auto-generate on-screen text 1 when toggle is enabled and field is empty
+  useEffect(() => {
+    if (!options.show_text) return;
+    if (options.text_content?.trim()) return;
+    const key = [type, idea_chosen || input_text, objective, marketing_angle, product_service, product_description, options.ton, isVideo ? video_render_style : render_style, target_persona].join('|');
+    if (autoText1Ref.current === key) return;
+    autoText1Ref.current = key;
+    (async () => {
+      try {
+        const text = await generateOnScreenText(buildTextParams(1));
+        if (text) setOptions({ text_content: text.slice(0, 50) });
+      } catch (e) {
+        console.error('Auto on-screen text 1 failed', e);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options.show_text, idea_chosen, input_text, objective, marketing_angle, product_service, product_description, options.ton, render_style, video_render_style, target_persona, type]);
+
+  // Auto-generate on-screen text 2 (vidéo)
+  useEffect(() => {
+    if (!isVideo || !options.show_text || !options.text_2_enabled) return;
+    if (options.text_content_2?.trim()) return;
+    const key = [options.text_content, idea_chosen || input_text, objective, marketing_angle, product_service, options.ton, video_render_style, target_persona].join('|');
+    if (autoText2Ref.current === key) return;
+    autoText2Ref.current = key;
+    (async () => {
+      try {
+        const text = await generateOnScreenText(buildTextParams(2));
+        if (text) setOptions({ text_content_2: text.slice(0, 50) });
+      } catch (e) {
+        console.error('Auto on-screen text 2 failed', e);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVideo, options.show_text, options.text_2_enabled, options.text_content, idea_chosen, input_text, objective, marketing_angle, product_service, options.ton, video_render_style, target_persona]);
 
   const isVisible = user_mode === 'expert' || showAdvanced;
 
@@ -286,9 +345,9 @@ const CustomizationStep = () => {
                     <Input
                       value={options.text_content}
                       onChange={(e) => {
-                        if (e.target.value.length <= 60) setOptions({ text_content: e.target.value });
+                        if (e.target.value.length <= 50) setOptions({ text_content: e.target.value });
                       }}
-                      placeholder="Texte à afficher (max 60 caractères)"
+                      placeholder="Texte à afficher (max 50 caractères) — généré auto"
                       className="bg-card border-foreground/10 text-foreground text-sm"
                     />
                     {isVideo && (
@@ -419,9 +478,9 @@ const CustomizationStep = () => {
                             <Input
                               value={options.text_content_2}
                               onChange={(e) => {
-                                if (e.target.value.length <= 60) setOptions({ text_content_2: e.target.value });
+                                if (e.target.value.length <= 50) setOptions({ text_content_2: e.target.value });
                               }}
-                              placeholder="Texte à afficher (max 60 caractères)"
+                              placeholder="Texte à afficher (max 50 caractères) — généré auto"
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
                             <div>
