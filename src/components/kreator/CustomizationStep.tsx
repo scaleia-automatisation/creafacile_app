@@ -166,6 +166,7 @@ const CustomizationStep = () => {
   useEffect(() => {
     if (!options.show_text) return;
     if (options.text_content?.trim()) return;
+    if (!objective?.trim() || !product_description?.trim() || !company_activity?.trim()) return;
     const key = [type, idea_chosen || input_text, objective, marketing_angle, product_service, product_description, options.ton, isVideo ? video_render_style : render_style, target_persona].join('|');
     if (autoText1Ref.current === key) return;
     autoText1Ref.current = key;
@@ -184,6 +185,7 @@ const CustomizationStep = () => {
   useEffect(() => {
     if (!isVideo || !options.show_text || !options.text_2_enabled) return;
     if (options.text_content_2?.trim()) return;
+    if (!objective?.trim() || !product_description?.trim() || !company_activity?.trim()) return;
     const key = [options.text_content, idea_chosen || input_text, objective, marketing_angle, product_service, options.ton, video_render_style, target_persona].join('|');
     if (autoText2Ref.current === key) return;
     autoText2Ref.current = key;
