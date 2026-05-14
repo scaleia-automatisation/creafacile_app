@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
-import { Upload, X, Replace, ImagePlus, FileText, TrendingUp, Lightbulb, Loader2, RefreshCw, CheckCircle, ImageIcon } from 'lucide-react';
+import { Upload, X, Replace, ImagePlus, FileText, TrendingUp, Lightbulb, Loader2, RefreshCw, CheckCircle, ImageIcon, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -57,6 +57,7 @@ const StartingPointBlock = () => {
   const [showPerfBlock, setShowPerfBlock] = useState(false);
   const [perfPosts, setPerfPosts] = useState<{ url: string; description: string; loading: boolean }[]>([]);
   const [perfSummary, setPerfSummary] = useState('');
+  const [showPerfAnalysis, setShowPerfAnalysis] = useState(false);
   const [loadingPerfSummary, setLoadingPerfSummary] = useState(false);
 
   // Idea generation state
@@ -144,7 +145,8 @@ const StartingPointBlock = () => {
         return next;
       });
       setPerfSummary('');
-      // auto-generate description (max 2 sentences)
+      setShowPerfAnalysis(false);
+      // auto-generate short per-image description (max 2 sentences) — global analysis is on-demand
       autoDescribePerf(base64);
     };
     reader.readAsDataURL(file);
@@ -163,19 +165,6 @@ const StartingPointBlock = () => {
         return snapshot;
       });
       setPerfSummary('');
-      const descs = snapshot.filter((p) => p.description?.trim()).map((p) => p.description.trim());
-      if (descs.length >= 2) {
-        setLoadingPerfSummary(true);
-        try {
-          const summary = await summarizePerformingPosts(descs);
-          setPerfSummary(summary);
-        } catch (e) {
-          console.error(e);
-          toast.error('Erreur lors du résumé des posts');
-        } finally {
-          setLoadingPerfSummary(false);
-        }
-      }
     } catch (e) {
       console.error(e);
       toast.error("Erreur lors de l'analyse de l'image");
@@ -186,6 +175,7 @@ const StartingPointBlock = () => {
   const handleRemovePerf = (index: number) => {
     setPerfPosts((prev) => prev.filter((_, i) => i !== index));
     setPerfSummary('');
+    setShowPerfAnalysis(false);
   };
 
   const handleDescribePerf = async (index: number) => {
@@ -196,26 +186,37 @@ const StartingPointBlock = () => {
       const desc = await describeImage(post.url);
       setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: desc, loading: false } : p));
       setPerfSummary('');
-
-      // Auto-summary if 2+ descriptions present
-      const updated = perfPosts.map((p, i) => i === index ? { ...p, description: desc } : p);
-      const descs = updated.filter(p => p.description?.trim()).map(p => p.description.trim());
-      if (descs.length >= 2) {
-        setLoadingPerfSummary(true);
-        try {
-          const summary = await summarizePerformingPosts(descs);
-          setPerfSummary(summary);
-        } catch (e) {
-          console.error(e);
-          toast.error('Erreur lors du résumé des posts');
-        } finally {
-          setLoadingPerfSummary(false);
-        }
-      }
     } catch (e) {
       console.error(e);
       toast.error("Erreur lors de l'analyse de l'image");
       setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, loading: false } : p));
+    }
+  };
+
+  const handleGeneratePerfAnalysis = async () => {
+    const posts = perfPosts.filter((p) => p?.url);
+    if (posts.length < 1) return;
+    setShowPerfAnalysis(true);
+    setLoadingPerfSummary(true);
+    setPerfSummary('');
+    try {
+      // Make sure each uploaded image has a description (auto-describe missing)
+      const ensured = await Promise.all(
+        posts.map(async (p) => {
+          if (p.description?.trim()) return p.description.trim();
+          const desc = await describeImage(p.url);
+          const short = (desc.match(/[^.!?]+[.!?]+/g) || [desc]).slice(0, 2).join(' ').trim();
+          setPerfPosts((prev) => prev.map((pp) => pp.url === p.url ? { ...pp, description: short } : pp));
+          return short;
+        })
+      );
+      const summary = await summarizePerformingPosts(ensured);
+      setPerfSummary(summary);
+    } catch (e) {
+      console.error(e);
+      toast.error("Erreur lors de l'analyse globale des posts");
+    } finally {
+      setLoadingPerfSummary(false);
     }
   };
 
