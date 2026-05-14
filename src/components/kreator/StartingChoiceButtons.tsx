@@ -1,6 +1,6 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Lightbulb, TrendingUp, AlertCircle, PenLine, ImagePlus, Upload, X, Replace, Loader2, Sparkles, Wand2 } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -15,11 +15,18 @@ const StartingChoiceButtons = () => {
     simple_images, setSimpleImages,
     objective,
   } = useKreatorStore();
+  const setInputImageDescription = useKreatorStore((s) => s.setInputImageDescription);
   const [scratchError, setScratchError] = useState<string[]>([]);
   const [loadingDescSet, setLoadingDescSet] = useState<Set<number>>(new Set());
   const [groupAnalysis, setGroupAnalysis] = useState('');
   const [analyzingGroup, setAnalyzingGroup] = useState(false);
   const [showGroupAnalysis, setShowGroupAnalysis] = useState(false);
+
+  // Propagate the global analysis into the prompt input so generatePrompt receives it
+  useEffect(() => {
+    if (starting_choice !== 'simple') return;
+    setInputImageDescription(groupAnalysis || '');
+  }, [groupAnalysis, starting_choice, setInputImageDescription]);
   const fileRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
