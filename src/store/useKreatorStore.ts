@@ -128,6 +128,8 @@ interface KreatorOptions {
   text_content_2: string;
   text_duration_1: number;
   text_duration_2: number;
+  text_start_1: number;
+  text_start_2: number;
   text_position_2: 'top-center' | 'middle-center' | 'bottom-center';
   text_font_2: string;
   text_color_2: string;
