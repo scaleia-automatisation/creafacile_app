@@ -615,7 +615,7 @@ const ObjectiveStep = () => {
         </div>
         <div className="md:col-span-2">
           <label className="text-sm font-medium text-muted-foreground mb-2 block">
-            {type === 'video' ? 'Ton de la vidéo' : "Ton d'écriture"}
+            Ton d'écriture
           </label>
           <Select value={options.ton} onValueChange={(v) => setOptions({ ton: v })}>
             <SelectTrigger className="bg-card border-foreground/10 text-foreground">
