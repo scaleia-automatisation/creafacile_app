@@ -353,24 +353,47 @@ const CustomizationStep = () => {
                       className="bg-card border-foreground/10 text-foreground text-sm"
                     />
                     {isVideo && (
-                      <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">Durée d'affichage</label>
-                        <Select
-                          value={String(options.text_duration_1)}
-                          onValueChange={(v) => setOptions({ text_duration_1: Number(v) })}
-                        >
-                          <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-card border-foreground/10">
-                            {[2, 3, 4, 5, 6].map((s) => (
-                              <SelectItem key={s} value={String(s)} className="text-foreground focus:bg-secondary/20">
-                                {s} secondes
+                      <>
+                        <div>
+                          <label className="text-xs text-muted-foreground mb-1 block">À quel moment de la vidéo l'afficher ?</label>
+                          <Select
+                            value={String(options.text_start_1)}
+                            onValueChange={(v) => setOptions({ text_start_1: Number(v) })}
+                          >
+                            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-card border-foreground/10">
+                              {Array.from({ length: Math.min(videoDurationSec, 15) }, (_, i) => i).map((s) => (
+                                <SelectItem key={s} value={String(s)} className="text-foreground focus:bg-secondary/20">
+                                  {s === 0 ? 'Dès le début (0s)' : `À ${s}s`}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-xs text-muted-foreground mb-1 block">Durée d'affichage</label>
+                          <Select
+                            value={String(options.text_duration_1)}
+                            onValueChange={(v) => setOptions({ text_duration_1: Number(v) })}
+                          >
+                            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-card border-foreground/10">
+                              {[3, 4, 5].map((s) => (
+                                <SelectItem key={s} value={String(s)} className="text-foreground focus:bg-secondary/20">
+                                  {s} secondes
+                                </SelectItem>
+                              ))}
+                              <SelectItem value="0" className="text-foreground focus:bg-secondary/20">
+                                Toute la durée de la vidéo
                               </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </>
                     )}
                     <div>
                       <label className="text-xs text-muted-foreground mb-1 block">Position du texte</label>
@@ -484,24 +507,49 @@ const CustomizationStep = () => {
                               placeholder="Texte à afficher (max 50 caractères) — généré auto"
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
-                            {isVideo && (<div>
-                              <label className="text-xs text-muted-foreground mb-1 block">Durée d'affichage</label>
-                              <Select
-                                value={String(options.text_duration_2)}
-                                onValueChange={(v) => setOptions({ text_duration_2: Number(v) })}
-                              >
-                                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="bg-card border-foreground/10">
-                                  {[2, 3, 4, 5, 6].map((s) => (
-                                    <SelectItem key={s} value={String(s)} className="text-foreground focus:bg-secondary/20">
-                                      {s} secondes
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>)}
+                            {isVideo && (
+                              <>
+                                <div>
+                                  <label className="text-xs text-muted-foreground mb-1 block">À quel moment de la vidéo l'afficher ?</label>
+                                  <Select
+                                    value={String(options.text_start_2)}
+                                    onValueChange={(v) => setOptions({ text_start_2: Number(v) })}
+                                  >
+                                    <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-card border-foreground/10">
+                                      {Array.from({ length: Math.min(videoDurationSec, 15) }, (_, i) => i).map((s) => (
+                                        <SelectItem key={s} value={String(s)} className="text-foreground focus:bg-secondary/20">
+                                          {s === 0 ? 'Dès le début (0s)' : `À ${s}s`}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div>
+                                  <label className="text-xs text-muted-foreground mb-1 block">Durée d'affichage</label>
+                                  <Select
+                                    value={String(options.text_duration_2)}
+                                    onValueChange={(v) => setOptions({ text_duration_2: Number(v) })}
+                                  >
+                                    <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-card border-foreground/10">
+                                      {[3, 4, 5].map((s) => (
+                                        <SelectItem key={s} value={String(s)} className="text-foreground focus:bg-secondary/20">
+                                          {s} secondes
+                                        </SelectItem>
+                                      ))}
+                                      <SelectItem value="0" className="text-foreground focus:bg-secondary/20">
+                                        Toute la durée de la vidéo
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </>
+                            )}
                             <div>
                               <label className="text-xs text-muted-foreground mb-1 block">Position du texte</label>
                               <Select
