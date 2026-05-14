@@ -1,9 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
-import { Upload, X, Replace } from 'lucide-react';
+import { Upload, X, Replace, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { describeProductImages } from '@/lib/kreator-ai';
 
 const MAX_PHOTOS = 3;
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -17,6 +19,9 @@ interface PhotoSlot {
 const PhotoUpload = () => {
   const { input_photos, setInputPhotos } = useKreatorStore();
   const fileInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+  const [groupAnalysis, setGroupAnalysis] = useState('');
+  const [analyzingGroup, setAnalyzingGroup] = useState(false);
+  const groupKeyRef = useRef<string>('');
 
   const handleFile = (file: File, index: number) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
@@ -57,6 +62,27 @@ const PhotoUpload = () => {
   const slots: PhotoSlot[] = Array.from({ length: MAX_PHOTOS }, (_, i) =>
     input_photos[i] || { url: '', description: '' }
   );
+
+  // Auto-analyse globale dès qu'il y a 2 images ou plus
+  useEffect(() => {
+    const urls = input_photos.map((p) => p?.url).filter(Boolean) as string[];
+    if (urls.length < 2) {
+      groupKeyRef.current = '';
+      setGroupAnalysis('');
+      return;
+    }
+    const key = urls.join('|').slice(0, 200) + ':' + urls.length;
+    if (groupKeyRef.current === key) return;
+    groupKeyRef.current = key;
+    setAnalyzingGroup(true);
+    describeProductImages(urls)
+      .then((desc) => setGroupAnalysis(desc.trim()))
+      .catch((e) => {
+        console.error('Group image analysis failed', e);
+        toast.error("Erreur lors de l'analyse des images");
+      })
+      .finally(() => setAnalyzingGroup(false));
+  }, [input_photos]);
 
   return (
     <div className="space-y-3">
@@ -123,6 +149,28 @@ const PhotoUpload = () => {
           </div>
         ))}
       </div>
+
+      {(analyzingGroup || groupAnalysis) && (
+        <div className="mt-2 p-3 rounded-lg border border-primary/30 bg-primary/5">
+          <div className="flex items-center gap-2 mb-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-primary" />
+            <span className="text-xs font-bold text-foreground">Analyse globale des images</span>
+          </div>
+          {analyzingGroup ? (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              Analyse en cours… (détection : produits/services identiques ou différents)
+            </div>
+          ) : (
+            <Textarea
+              value={groupAnalysis}
+              onChange={(e) => setGroupAnalysis(e.target.value)}
+              rows={2}
+              className="bg-card border-foreground/10 text-foreground text-xs min-h-[56px] resize-none"
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };
