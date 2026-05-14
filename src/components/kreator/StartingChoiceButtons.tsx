@@ -1,10 +1,10 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
-import { Lightbulb, TrendingUp, AlertCircle, PenLine, ImagePlus, Upload, X, Replace, Loader2 } from 'lucide-react';
+import { Lightbulb, TrendingUp, AlertCircle, PenLine, ImagePlus, Upload, X, Replace, Loader2, Sparkles, Wand2 } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { describeImage } from '@/lib/kreator-ai';
+import { describeImage, describeProductImages } from '@/lib/kreator-ai';
 
 const StartingChoiceButtons = () => {
   const {
@@ -17,6 +17,9 @@ const StartingChoiceButtons = () => {
   } = useKreatorStore();
   const [scratchError, setScratchError] = useState<string[]>([]);
   const [loadingDescSet, setLoadingDescSet] = useState<Set<number>>(new Set());
+  const [groupAnalysis, setGroupAnalysis] = useState('');
+  const [analyzingGroup, setAnalyzingGroup] = useState(false);
+  const [showGroupAnalysis, setShowGroupAnalysis] = useState(false);
   const fileRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -60,36 +63,56 @@ const StartingChoiceButtons = () => {
       return;
     }
     const reader = new FileReader();
-    reader.onload = async () => {
+    reader.onload = () => {
       const base64 = reader.result as string;
       const next = [...simple_images];
       next[index] = { url: base64, description: '' };
       setSimpleImages(next);
-      // auto-generate short description
-      setLoadingDescSet((prev) => {
-        const s = new Set(prev);
-        s.add(index);
-        return s;
-      });
-      try {
-        const desc = await describeImage(base64);
-        const updated = [...useKreatorStore.getState().simple_images];
-        if (updated[index]) {
-          updated[index] = { ...updated[index], description: desc };
-          setSimpleImages(updated);
-        }
-      } catch (e) {
-        console.error(e);
-        toast.error("Erreur lors de la description de l'image");
-      } finally {
-        setLoadingDescSet((prev) => {
-          const s = new Set(prev);
-          s.delete(index);
-          return s;
-        });
-      }
     };
     reader.readAsDataURL(file);
+  };
+
+  const generateDescription = async (index: number) => {
+    const img = simple_images[index];
+    if (!img?.url) return;
+    setLoadingDescSet((prev) => {
+      const s = new Set(prev);
+      s.add(index);
+      return s;
+    });
+    try {
+      const desc = await describeImage(img.url);
+      const updated = [...useKreatorStore.getState().simple_images];
+      if (updated[index]) {
+        updated[index] = { ...updated[index], description: desc };
+        setSimpleImages(updated);
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Erreur lors de la description de l'image");
+    } finally {
+      setLoadingDescSet((prev) => {
+        const s = new Set(prev);
+        s.delete(index);
+        return s;
+      });
+    }
+  };
+
+  const generateGroupAnalysis = async () => {
+    const urls = simple_images.map((i) => i?.url).filter(Boolean) as string[];
+    if (urls.length < 2) return;
+    setShowGroupAnalysis(true);
+    setAnalyzingGroup(true);
+    try {
+      const desc = await describeProductImages(urls);
+      setGroupAnalysis(desc.trim());
+    } catch (e) {
+      console.error(e);
+      toast.error("Erreur lors de l'analyse des images");
+    } finally {
+      setAnalyzingGroup(false);
+    }
   };
 
   const handleRemoveSimple = (index: number) => {
@@ -232,19 +255,29 @@ const StartingChoiceButtons = () => {
                 )}
                 {img?.url && (
                   <div className="space-y-1">
-                    {loadingDescSet.has(index) && !img.description ? (
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        Génération de la description…
-                      </div>
-                    ) : (
-                      <Textarea
-                        value={img.description}
-                        onChange={(e) => handleDescChange(index, e.target.value)}
-                        placeholder="Description (2 à 3 phrases)"
-                        className="text-xs min-h-[90px] resize-y"
-                      />
-                    )}
+                    <Textarea
+                      value={img.description}
+                      onChange={(e) => handleDescChange(index, e.target.value)}
+                      placeholder="Description (2 à 3 phrases)"
+                      className="text-xs min-h-[90px] resize-y"
+                    />
+                    <div className="flex justify-end">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => generateDescription(index)}
+                        disabled={loadingDescSet.has(index)}
+                        className="h-7 text-[11px] gap-1.5"
+                      >
+                        {loadingDescSet.has(index) ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Wand2 className="w-3 h-3" />
+                        )}
+                        Générer la description
+                      </Button>
+                    </div>
                   </div>
                 )}
                 <input
@@ -262,6 +295,48 @@ const StartingChoiceButtons = () => {
             );
           })}
         </div>
+        {simple_images.filter((i) => i?.url).length >= 2 && (
+          <div className="mt-4 space-y-3">
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={generateGroupAnalysis}
+                disabled={analyzingGroup}
+                className="h-8 text-xs gap-1.5"
+              >
+                {analyzingGroup ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="w-3.5 h-3.5" />
+                )}
+                Générer l'analyse
+              </Button>
+            </div>
+            {showGroupAnalysis && (
+              <div className="p-3 rounded-lg border border-primary/30 bg-primary/5">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-primary" />
+                  <span className="text-xs font-bold text-foreground">Description globale des images</span>
+                </div>
+                {analyzingGroup ? (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Analyse en cours… (produits/services identiques ou différents)
+                  </div>
+                ) : (
+                  <Textarea
+                    value={groupAnalysis}
+                    onChange={(e) => setGroupAnalysis(e.target.value)}
+                    rows={2}
+                    className="bg-card border-foreground/10 text-foreground text-xs min-h-[60px] resize-y"
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     )}
     {starting_choice === 'idea' && (
