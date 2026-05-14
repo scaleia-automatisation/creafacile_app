@@ -460,22 +460,21 @@ const CustomizationStep = () => {
                       </div>
                     )}
 
-                    {/* Second on-screen text (video only) */}
-                    {isVideo && (
-                      <div className="pt-3 border-t border-foreground/10 space-y-3">
+                    {/* Second on-screen text */}
+                    <div className="pt-3 border-t border-foreground/10 space-y-3">
                         <div className="flex items-center gap-3">
                           <Switch
                             checked={options.text_2_enabled}
                             onCheckedChange={(v) => setOptions({ text_2_enabled: v })}
                           />
                           <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                            Ajouter un 2e texte à l'écran
+                            {isVideo ? "Ajouter un 2e texte à l'écran" : type === 'carousel' ? 'Ajouter un 2e texte dans les slides' : 'Ajouter un 2e texte dans le visuel'}
                           </span>
                         </div>
                         {options.text_2_enabled && (
                           <>
                             <div className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                              Texte à l'écran 2
+                              {isVideo ? "Texte à l'écran 2" : 'Texte 2'}
                             </div>
                             <Input
                               value={options.text_content_2}
@@ -485,7 +484,7 @@ const CustomizationStep = () => {
                               placeholder="Texte à afficher (max 50 caractères) — généré auto"
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
-                            <div>
+                            {isVideo && (<div>
                               <label className="text-xs text-muted-foreground mb-1 block">Durée d'affichage</label>
                               <Select
                                 value={String(options.text_duration_2)}
@@ -502,7 +501,7 @@ const CustomizationStep = () => {
                                   ))}
                                 </SelectContent>
                               </Select>
-                            </div>
+                            </div>)}
                             <div>
                               <label className="text-xs text-muted-foreground mb-1 block">Position du texte</label>
                               <Select
@@ -548,7 +547,7 @@ const CustomizationStep = () => {
                                 </SelectContent>
                               </Select>
                             </div>
-                            <div className="space-y-2">
+                            {isVideo && (<div className="space-y-2">
                               <label className="text-xs text-muted-foreground block">Couleur du texte</label>
                               <div className="grid grid-cols-8 gap-2">
                                 {TEXT_COLORS.map((c) => {
@@ -585,11 +584,10 @@ const CustomizationStep = () => {
                                   style={{ backgroundColor: options.text_color_2 }}
                                 />
                               </div>
-                            </div>
+                            </div>)}
                           </>
                         )}
-                      </div>
-                    )}
+                    </div>
                   </div>
                 )}
               </AccordionContent>
