@@ -231,7 +231,7 @@ const ProductOfferStep = () => {
             </SelectContent>
           </Select>
         </div>
-        {isProduct && type !== 'video' && (
+        {isProduct && (
           <div>
             <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
               <ImagePlus className="w-4 h-4 text-primary" />
@@ -268,7 +268,7 @@ const ProductOfferStep = () => {
           </div>
         )}
 
-        <div className={isProduct && type !== 'video' ? 'md:col-span-2' : ''}>
+        <div className={isProduct ? 'md:col-span-2' : ''}>
           <label className="text-sm font-medium text-muted-foreground mb-2 block">
             {nameLabel} *
           </label>
