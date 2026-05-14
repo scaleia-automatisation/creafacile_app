@@ -413,11 +413,30 @@ const StartingPointBlock = () => {
               })}
             </div>
 
-            {(loadingPerfSummary || perfSummary) && (
-              <div className="mt-5 p-4 rounded-lg border border-primary/30 bg-primary/5">
+            {perfPosts.filter((p) => p?.url).length >= 1 && (
+              <div className="mt-4 flex justify-end">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={handleGeneratePerfAnalysis}
+                  disabled={loadingPerfSummary}
+                  className="h-8 text-xs gap-1.5"
+                >
+                  {loadingPerfSummary ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-3.5 h-3.5" />
+                  )}
+                  Générer l'analyse
+                </Button>
+              </div>
+            )}
+            {showPerfAnalysis && perfPosts.filter((p) => p?.url).length >= 1 && (
+              <div className="mt-3 p-4 rounded-lg border border-primary/30 bg-primary/5">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-bold text-foreground">Résumé marketing</span>
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-bold text-foreground">Analyse globale</span>
                 </div>
                 {loadingPerfSummary ? (
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -425,7 +444,12 @@ const StartingPointBlock = () => {
                     Analyse des posts performants en cours…
                   </div>
                 ) : (
-                  <p className="text-xs text-foreground leading-relaxed whitespace-pre-line">{perfSummary}</p>
+                  <Textarea
+                    value={perfSummary}
+                    onChange={(e) => setPerfSummary(e.target.value)}
+                    rows={5}
+                    className="bg-card border-foreground/10 text-foreground text-xs leading-relaxed min-h-[110px] resize-y"
+                  />
                 )}
               </div>
             )}
@@ -602,11 +626,30 @@ const StartingPointBlock = () => {
             })}
           </div>
 
-          {(loadingPerfSummary || perfSummary) && (
-            <div className="mt-5 p-4 rounded-lg border border-primary/30 bg-primary/5">
+          {perfPosts.filter((p) => p?.url).length >= 1 && (
+            <div className="mt-4 flex justify-end">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleGeneratePerfAnalysis}
+                disabled={loadingPerfSummary}
+                className="h-8 text-xs gap-1.5"
+              >
+                {loadingPerfSummary ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="w-3.5 h-3.5" />
+                )}
+                Générer l'analyse
+              </Button>
+            </div>
+          )}
+          {showPerfAnalysis && perfPosts.filter((p) => p?.url).length >= 1 && (
+            <div className="mt-3 p-4 rounded-lg border border-primary/30 bg-primary/5">
               <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-4 h-4 text-primary" />
-                <span className="text-sm font-bold text-foreground">Résumé marketing</span>
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="text-sm font-bold text-foreground">Analyse globale</span>
               </div>
               {loadingPerfSummary ? (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -614,7 +657,12 @@ const StartingPointBlock = () => {
                   Analyse des posts performants en cours…
                 </div>
               ) : (
-                <p className="text-xs text-foreground leading-relaxed whitespace-pre-line">{perfSummary}</p>
+                <Textarea
+                  value={perfSummary}
+                  onChange={(e) => setPerfSummary(e.target.value)}
+                  rows={5}
+                  className="bg-card border-foreground/10 text-foreground text-xs leading-relaxed min-h-[110px] resize-y"
+                />
               )}
             </div>
           )}
