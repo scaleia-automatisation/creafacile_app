@@ -43,6 +43,7 @@ const StartingPointBlock = () => {
     options,
     starting_choice, setStartingChoice,
   } = useKreatorStore();
+  const setInputImageDescription = useKreatorStore((s) => s.setInputImageDescription);
 
   // Refs for file inputs (only 1 reference image now)
   const photoRefs = [useRef<HTMLInputElement>(null)];
@@ -66,6 +67,21 @@ const StartingPointBlock = () => {
   
   const [loadingIdeas, setLoadingIdeas] = useState(false);
   const [loadingImageIdea, setLoadingImageIdea] = useState(false);
+
+  // Propagate the viral-posts global analysis to the prompt input
+  useEffect(() => {
+    if (starting_choice !== 'perf') return;
+    setInputImageDescription(perfSummary || '');
+  }, [perfSummary, starting_choice, setInputImageDescription]);
+
+  // Mirror viral posts into input_photos so the prompt synthesis sees them
+  useEffect(() => {
+    if (starting_choice !== 'perf') return;
+    const mirrored = perfPosts
+      .filter((p) => p?.url)
+      .map((p) => ({ url: p.url, description: p.description || '' }));
+    setInputPhotos(mirrored);
+  }, [perfPosts, starting_choice, setInputPhotos]);
 
   // React to global starting_choice (buttons placed above ContentTypeStep)
   useEffect(() => {

@@ -21,17 +21,38 @@ const PromptStep = () => {
     render_style, video_render_style,
     product_description, voice_over_enabled, voice_over_text, model_settings,
     objective, product_image_url,
+    simple_images, starting_choice,
   } = useKreatorStore();
 
   const getImageSynthesis = () => {
-    const uploadedPhotos = input_photos.filter(p => p.url);
-    if (uploadedPhotos.length === 0) return input_image_description || '';
-    const described = uploadedPhotos.map((p, i) => {
+    // Pick the active source depending on the entry point
+    const source =
+      starting_choice === 'simple'
+        ? (simple_images || []).filter(p => p?.url)
+        : (input_photos || []).filter(p => p?.url);
+
+    const globalAnalysis = (input_image_description || '').trim();
+
+    if (source.length === 0) return globalAnalysis;
+
+    const described = source.map((p, i) => {
       const desc = p.description?.trim() || 'image uploadée sans description textuelle — analyser visuellement';
       return `Image ${i + 1}: ${desc}`;
     });
-    if (uploadedPhotos.length === 1) return `Image de référence : ${described[0]}`;
-    return `Synthèse de ${uploadedPhotos.length} images de référence : ${described.join(' | ')}. Créer un visuel cohérent qui fusionne harmonieusement ces éléments en lien avec l'objectif et l'idée.`;
+
+    let synthesis =
+      source.length === 1
+        ? `Image de référence : ${described[0]}`
+        : `Synthèse de ${source.length} images de référence : ${described.join(' | ')}. Créer un visuel cohérent qui fusionne harmonieusement ces éléments en lien avec l'objectif et l'idée.`;
+
+    if (globalAnalysis) {
+      const label =
+        starting_choice === 'perf'
+          ? 'Analyse globale des posts viraux (quintessence à réutiliser)'
+          : 'Analyse globale des images';
+      synthesis += ` ${label} : ${globalAnalysis}`;
+    }
+    return synthesis;
   };
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -81,7 +102,10 @@ const PromptStep = () => {
         paletteEnabled: options.palette_enabled,
         paletteHex: options.palette_hex,
         imageDescription: getImageSynthesis(),
-        referenceImageCount: input_photos.filter(p => p.url).length,
+        referenceImageCount:
+          starting_choice === 'simple'
+            ? (simple_images || []).filter(p => p?.url).length
+            : input_photos.filter(p => p.url).length,
         aiModel: ai_model,
         renderStyle: render_style,
         videoRenderStyle: video_render_style,
