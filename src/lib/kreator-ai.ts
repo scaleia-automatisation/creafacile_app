@@ -131,6 +131,24 @@ export async function describeImageShort(imageBase64: string) {
   return words.slice(0, 7).join(' ');
 }
 
+export async function describeProductImages(imageBase64s: string[]) {
+  const systemPrompt = `Tu es un expert en analyse visuelle de produits.
+On te fournit ${imageBase64s.length} images de produits ou services.
+1. Détermine s'il s'agit du MÊME produit/service vu sous différents angles, OU de produits/services DIFFÉRENTS.
+2. Si IDENTIQUE : décris le produit en UNE seule phrase factuelle (max 20 mots).
+3. Si DIFFÉRENTS : décris brièvement la gamme/ensemble en UNE seule phrase factuelle (max 25 mots), en mentionnant qu'il s'agit de plusieurs produits.
+Réponds UNIQUEMENT avec la phrase finale, sans préfixe, sans guillemets, sans ponctuation finale superflue.`;
+  const data = await callKreatorAI({
+    action: 'describe_image',
+    image_base64s: imageBase64s,
+    messages: [{ role: 'user', content: `Analyse ces ${imageBase64s.length} images et donne UNE phrase de description globale.` }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  return content.trim().replace(/^["'`]+|["'`]+$/g, '').replace(/\s+/g, ' ');
+}
+
 export async function detectSectorFromImage(imageBase64: string, sectors: string[]) {
   const list = sectors.map((s, i) => `${i + 1}. ${s}`).join('\n');
   const systemPrompt = `Tu es un expert en classification marketing. Analyse l'image fournie et choisis LE SECTEUR le plus pertinent dans la liste exacte ci-dessous. Réponds UNIQUEMENT avec le libellé exact du secteur choisi (copie-colle exact, emoji inclus), sans aucune autre phrase, sans guillemets.\n\nListe des secteurs autorisés :\n${list}`;
