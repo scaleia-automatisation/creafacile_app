@@ -279,6 +279,8 @@ const initialState = {
     text_content_2: '',
     text_duration_1: 3,
     text_duration_2: 3,
+    text_start_1: 0,
+    text_start_2: 0,
     text_position_2: 'bottom-center' as const,
     text_font_2: 'Montserrat',
     text_color_2: '#FFFFFF',
