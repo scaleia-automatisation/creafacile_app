@@ -226,22 +226,24 @@ const ContentTypeStep = () => {
         </div>
       )}
 
-      {/* Format selector — identique pour image / carrousel / vidéo */}
-      <div>
-        <label className="text-sm font-medium text-muted-foreground mb-2 block">Format</label>
-        <Select value={format || undefined} onValueChange={(v) => setFormat(v as Format)}>
-          <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-            <SelectValue placeholder="Choisissez un format" />
-          </SelectTrigger>
-          <SelectContent className="bg-card border-foreground/10">
-            {availableFormats.map((f) => (
-              <SelectItem key={f.value} value={f.value} className="text-foreground focus:bg-secondary/20">
-                {f.label} — {f.sublabel}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {/* Format selector — masqué pour la vidéo (format géré par chaque modèle IA) */}
+      {type !== 'video' && (
+        <div>
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Format</label>
+          <Select value={format || undefined} onValueChange={(v) => setFormat(v as Format)}>
+            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+              <SelectValue placeholder="Choisissez un format" />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-foreground/10">
+              {availableFormats.map((f) => (
+                <SelectItem key={f.value} value={f.value} className="text-foreground focus:bg-secondary/20">
+                  {f.label} — {f.sublabel}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       {/* Objectif, Angle marketing, Style visuel */}
       <div className="mt-6">
