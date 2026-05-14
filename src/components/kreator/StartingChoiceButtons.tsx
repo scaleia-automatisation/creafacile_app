@@ -27,6 +27,13 @@ const StartingChoiceButtons = () => {
     if (starting_choice !== 'simple') return;
     setInputImageDescription(groupAnalysis || '');
   }, [groupAnalysis, starting_choice, setInputImageDescription]);
+
+  // Reset the global analysis carrier when leaving image-based entry points
+  useEffect(() => {
+    if (starting_choice !== 'simple' && starting_choice !== 'perf') {
+      setInputImageDescription('');
+    }
+  }, [starting_choice, setInputImageDescription]);
   const fileRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
