@@ -181,12 +181,12 @@ const CustomizationStep = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options.show_text, idea_chosen, input_text, objective, marketing_angle, product_service, product_description, options.ton, render_style, video_render_style, target_persona, type]);
 
-  // Auto-generate on-screen text 2 (vidéo)
+  // Auto-generate on-screen text 2
   useEffect(() => {
-    if (!isVideo || !options.show_text || !options.text_2_enabled) return;
+    if (!options.show_text || !options.text_2_enabled) return;
     if (options.text_content_2?.trim()) return;
     if (!objective?.trim() || !product_description?.trim() || !company_activity?.trim()) return;
-    const key = [options.text_content, idea_chosen || input_text, objective, marketing_angle, product_service, options.ton, video_render_style, target_persona].join('|');
+    const key = [type, options.text_content, idea_chosen || input_text, objective, marketing_angle, product_service, options.ton, isVideo ? video_render_style : render_style, target_persona].join('|');
     if (autoText2Ref.current === key) return;
     autoText2Ref.current = key;
     (async () => {
@@ -198,7 +198,7 @@ const CustomizationStep = () => {
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isVideo, options.show_text, options.text_2_enabled, options.text_content, idea_chosen, input_text, objective, marketing_angle, product_service, options.ton, video_render_style, target_persona]);
+  }, [type, isVideo, options.show_text, options.text_2_enabled, options.text_content, idea_chosen, input_text, objective, marketing_angle, product_service, options.ton, video_render_style, render_style, target_persona]);
 
   const isVisible = user_mode === 'expert' || showAdvanced;
 
