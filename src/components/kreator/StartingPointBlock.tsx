@@ -321,9 +321,116 @@ const StartingPointBlock = () => {
 
   // ===== Vidéo : UI simplifiée =====
   if (isVideo) {
-    if (!loadingIdeas && !showIdeas) return null;
+    if (!showPerfBlock && !loadingIdeas && !showIdeas) return null;
     return (
       <div id="starting-point-block" className="step-border bg-background p-4 sm:p-6 md:p-8">
+        {showPerfBlock && (
+          <div className={loadingIdeas || showIdeas ? 'mb-6 pb-6 border-b border-foreground/10' : ''}>
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-foreground">Posts qui ont performé (jusqu'à 4)</span>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              Importez vos visuels, puis cliquez sur "Décrire le post" pour analyser chaque image. Si vous en ajoutez plusieurs, un résumé marketing sera automatiquement généré.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[0, 1, 2, 3].map((index) => {
+                const post = perfPosts[index];
+                return (
+                  <div key={index} className="space-y-2">
+                    {post?.url ? (
+                      <div className="relative group aspect-square rounded-lg overflow-hidden border border-foreground/10 bg-card">
+                        <img src={post.url} alt={`Post performant ${index + 1}`} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-foreground bg-card/80 hover:bg-destructive hover:text-destructive-foreground"
+                            onClick={() => handleRemovePerf(index)}
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-foreground bg-card/80 hover:bg-primary hover:text-primary-foreground"
+                            onClick={() => perfRefs[index]?.current?.click()}
+                          >
+                            <Replace className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => perfRefs[index]?.current?.click()}
+                        className="aspect-square w-full rounded-lg border-2 border-dashed border-foreground/10 bg-card hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary"
+                      >
+                        <Upload className="w-5 h-5" />
+                        <span className="text-xs font-medium">Image {index + 1}</span>
+                      </button>
+                    )}
+                    {post?.url && (
+                      <Button
+                        onClick={() => handleDescribePerf(index)}
+                        disabled={post.loading}
+                        size="sm"
+                        variant="outline"
+                        className="w-full text-xs"
+                      >
+                        {post.loading ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
+                        ) : (
+                          <FileText className="w-3.5 h-3.5 mr-1" />
+                        )}
+                        Décrire le post
+                      </Button>
+                    )}
+                    {post?.description && (
+                      <Textarea
+                        value={post.description}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: value } : p));
+                          setPerfSummary('');
+                        }}
+                        className="text-sm text-foreground bg-card border border-foreground/10 rounded-md p-2 leading-relaxed min-h-[100px] resize-y"
+                      />
+                    )}
+                    <input
+                      ref={perfRefs[index]}
+                      type="file"
+                      accept=".jpg,.jpeg,.png"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handlePerfFile(file, index);
+                        e.target.value = '';
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            {(loadingPerfSummary || perfSummary) && (
+              <div className="mt-5 p-4 rounded-lg border border-primary/30 bg-primary/5">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendingUp className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-bold text-foreground">Résumé marketing</span>
+                </div>
+                {loadingPerfSummary ? (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Analyse des posts performants en cours…
+                  </div>
+                ) : (
+                  <p className="text-xs text-foreground leading-relaxed whitespace-pre-line">{perfSummary}</p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         {loadingIdeas && (
           <div className="flex flex-col items-center py-8">
             <div className="text-3xl mb-3 animate-bounce">✨</div>
