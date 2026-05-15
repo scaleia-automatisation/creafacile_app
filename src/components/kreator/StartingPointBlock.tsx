@@ -345,13 +345,13 @@ const StartingPointBlock = () => {
           <div className={loadingIdeas || showIdeas ? 'mb-6 pb-6 border-b border-foreground/10' : ''}>
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-foreground">Posts qui ont performé (jusqu'à 4)</span>
+              <span className="text-sm font-medium text-foreground">Post viral de référence</span>
             </div>
             <p className="text-xs text-muted-foreground mb-4">
-              Importez vos visuels, puis cliquez sur "Décrire le post" pour analyser chaque image. Si vous en ajoutez plusieurs, un résumé marketing sera automatiquement généré.
+              Importez votre visuel pour vous en inspirer. Une analyse est générée automatiquement.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[0, 1, 2, 3].map((index) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+              {[0].map((index) => {
                 const post = perfPosts[index];
                 return (
                   <div key={index} className="space-y-2">
@@ -556,13 +556,13 @@ const StartingPointBlock = () => {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-foreground">Posts qui ont performé (jusqu'à 4)</span>
+            <span className="text-sm font-medium text-foreground">Post viral de référence</span>
           </div>
           <p className="text-xs text-muted-foreground mb-4">
-            Importez vos visuels, puis cliquez sur "Décrire le post" pour analyser chaque image. Si vous en ajoutez plusieurs, un résumé marketing sera automatiquement généré.
+            Importez votre visuel pour vous en inspirer. Une analyse est générée automatiquement.
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[0, 1, 2, 3].map((index) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+            {[0].map((index) => {
               const post = perfPosts[index];
               return (
                 <div key={index} className="space-y-2">
