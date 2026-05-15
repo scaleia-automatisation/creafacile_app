@@ -343,14 +343,14 @@ const StartingPointBlock = () => {
       <div id="starting-point-block" className="step-border bg-background p-4 sm:p-6 md:p-8">
         {showPerfBlock && (
           <div className={loadingIdeas || showIdeas ? 'mb-6 pb-6 border-b border-foreground/10' : ''}>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center justify-center gap-2 mb-3">
               <TrendingUp className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-foreground">Post viral de référence</span>
             </div>
-            <p className="text-xs text-muted-foreground mb-4">
+            <p className="text-xs text-muted-foreground mb-4 text-center">
               Importez votre visuel pour vous en inspirer. Une analyse est générée automatiquement.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+            <div className="grid grid-cols-1 gap-4 max-w-xs mx-auto">
               {[0].map((index) => {
                 const post = perfPosts[index];
                 return (
@@ -554,14 +554,14 @@ const StartingPointBlock = () => {
       {/* Performing posts upload area */}
       {showPerfBlock && (
         <div>
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center justify-center gap-2 mb-3">
             <TrendingUp className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-foreground">Post viral de référence</span>
           </div>
-          <p className="text-xs text-muted-foreground mb-4">
+          <p className="text-xs text-muted-foreground mb-4 text-center">
             Importez votre visuel pour vous en inspirer. Une analyse est générée automatiquement.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+          <div className="grid grid-cols-1 gap-4 max-w-xs mx-auto">
             {[0].map((index) => {
               const post = perfPosts[index];
               return (
