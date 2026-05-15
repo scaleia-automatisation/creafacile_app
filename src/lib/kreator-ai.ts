@@ -238,7 +238,13 @@ export async function detectOfferTypeFromDescription(description: string, offerT
 }
 
 export async function summarizePerformingPosts(descriptions: string[]) {
-  const systemPrompt = `Tu es un expert en marketing digital, copywriting et viralité sur les réseaux sociaux. À partir des descriptions de posts qui ont performé fournies, produis UN résumé synthétique (5 phrases maximum) orienté business, viralité, efficacité de conversion et différenciation, avec un angle marketing fort. Mets en avant les leviers communs (hook, format, ton, preuve, émotion, call-to-action) qui expliquent la performance et qu'il faut réutiliser. Réponds uniquement avec le résumé, sans titre ni mise en forme.`;
+  const systemPrompt = `Tu es un expert en marketing digital et viralité sur les réseaux sociaux. À partir de la description du post fournie, explique pourquoi ce post est devenu viral.
+RÈGLES STRICTES :
+- Réponds UNIQUEMENT sous forme d'une liste à puces (utilise "- " en début de chaque ligne).
+- 3 à 4 puces maximum.
+- Phrases courtes et simples (max ~15 mots chacune).
+- Concentre-toi sur les leviers de viralité (hook, émotion, format, ton, preuve sociale, call-to-action, originalité).
+- Pas de titre, pas d'introduction, pas de conclusion. Juste les puces.`;
   const userContent = descriptions
     .map((d, i) => `Post performant ${i + 1} : ${d}`)
     .join('\n\n');
