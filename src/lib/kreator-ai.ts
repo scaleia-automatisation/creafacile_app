@@ -237,6 +237,7 @@ export async function detectOfferTypeFromDescription(description: string, offerT
   return match || raw;
 }
 
+export async function summarizePerformingPosts(descriptions: string[]) {
   const systemPrompt = `Tu es un expert en marketing digital et viralité sur les réseaux sociaux. À partir de la description du post fournie, explique pourquoi ce post est devenu viral.
 RÈGLES STRICTES :
 - Réponds UNIQUEMENT sous forme d'une liste à puces (utilise "- " en début de chaque ligne).
