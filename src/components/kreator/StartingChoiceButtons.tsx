@@ -269,7 +269,7 @@ const StartingChoiceButtons = () => {
         <p className="text-xs text-muted-foreground mb-4">
           Importez votre image. Une description en une phrase complète est générée automatiquement dès l'insertion et reste modifiable.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
           {[0].map((index) => {
             const img = simple_images[index];
             return (
