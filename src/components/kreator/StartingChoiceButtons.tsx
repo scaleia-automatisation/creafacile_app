@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { describeImage, describeProductImages, refineIdea } from '@/lib/kreator-ai';
+import { describeImageShort, describeProductImages, refineIdea } from '@/lib/kreator-ai';
 
 const StartingChoiceButtons = () => {
   const {
@@ -118,20 +118,22 @@ const StartingChoiceButtons = () => {
       const next = [...simple_images];
       next[index] = { url: base64, description: '' };
       setSimpleImages(next);
+      // Auto-générer la description en 1 phrase dès l'insertion
+      generateDescription(index, base64);
     };
     reader.readAsDataURL(file);
   };
 
-  const generateDescription = async (index: number) => {
-    const img = simple_images[index];
-    if (!img?.url) return;
+  const generateDescription = async (index: number, urlOverride?: string) => {
+    const url = urlOverride ?? simple_images[index]?.url;
+    if (!url) return;
     setLoadingDescSet((prev) => {
       const s = new Set(prev);
       s.add(index);
       return s;
     });
     try {
-      const desc = await describeImage(img.url);
+      const desc = await describeImageShort(url);
       const updated = [...useKreatorStore.getState().simple_images];
       if (updated[index]) {
         updated[index] = { ...updated[index], description: desc };
