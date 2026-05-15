@@ -4,13 +4,13 @@ import { useState, useRef, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { describeImage, describeProductImages } from '@/lib/kreator-ai';
+import { describeImage, describeProductImages, refineIdea } from '@/lib/kreator-ai';
 
 const StartingChoiceButtons = () => {
   const {
     type, starting_choice, setStartingChoice,
     input_text, setInputText, setIdeaChosen,
-    offer_type, company_activity, company_sector,
+    offer_type, company_activity, company_sector, market, target_persona,
     product_service, product_description, product_image_url,
     simple_images, setSimpleImages,
     objective,
@@ -21,6 +21,42 @@ const StartingChoiceButtons = () => {
   const [groupAnalysis, setGroupAnalysis] = useState('');
   const [analyzingGroup, setAnalyzingGroup] = useState(false);
   const [showGroupAnalysis, setShowGroupAnalysis] = useState(false);
+  const [refiningIdea, setRefiningIdea] = useState(false);
+
+  const handleRefineIdea = async () => {
+    const missing: string[] = [];
+    if (!offer_type?.trim()) missing.push("Type d'offre");
+    if (!product_service?.trim()) missing.push('Nom');
+    if (!product_description?.trim()) missing.push('Description');
+    if (!company_activity?.trim()) missing.push('Activité principale ou métier');
+    if (!company_sector?.trim()) missing.push('Secteur');
+    if (!input_text?.trim()) missing.push('Idée de contenu');
+    if (missing.length) {
+      toast.error(`Veuillez renseigner : ${missing.join(', ')}`);
+      return;
+    }
+    setRefiningIdea(true);
+    try {
+      const refined = await refineIdea({
+        idea: input_text,
+        offerType: offer_type,
+        productName: product_service,
+        productDescription: product_description,
+        activity: company_activity,
+        sector: company_sector,
+        market,
+        persona: target_persona,
+      });
+      const val = refined.slice(0, 500);
+      setInputText(val);
+      setIdeaChosen(val);
+    } catch (e) {
+      console.error(e);
+      toast.error("Erreur lors de l'amélioration de l'idée");
+    } finally {
+      setRefiningIdea(false);
+    }
+  };
 
   // Propagate the global analysis into the prompt input so generatePrompt receives it
   useEffect(() => {
@@ -370,8 +406,25 @@ const StartingChoiceButtons = () => {
           autoFocus
           maxLength={500}
         />
-        <div className="text-xs text-muted-foreground text-right">
-          {input_text.length}/500
+        <div className="flex items-center justify-between gap-2">
+          <div className="text-xs text-muted-foreground">
+            {input_text.length}/500
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={handleRefineIdea}
+            disabled={refiningIdea || !input_text.trim()}
+            className="h-8 text-xs gap-1.5"
+          >
+            {refiningIdea ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Wand2 className="w-3.5 h-3.5" />
+            )}
+            Améliorer l'idée
+          </Button>
         </div>
       </div>
     )}
