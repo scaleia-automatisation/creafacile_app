@@ -391,8 +391,7 @@ const StartingPointBlock = () => {
                         onClick={() => handleDescribePerf(index)}
                         disabled={post.loading}
                         size="sm"
-                        variant="outline"
-                        className="w-full text-xs"
+                        className="w-full text-xs bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
                       >
                         {post.loading ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
@@ -434,10 +433,9 @@ const StartingPointBlock = () => {
                 <Button
                   type="button"
                   size="sm"
-                  variant="outline"
                   onClick={handleGeneratePerfAnalysis}
                   disabled={loadingPerfSummary}
-                  className="h-8 text-xs gap-1.5"
+                  className="h-8 text-xs gap-1.5 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
                 >
                   {loadingPerfSummary ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -604,8 +602,7 @@ const StartingPointBlock = () => {
                       onClick={() => handleDescribePerf(index)}
                       disabled={post.loading}
                       size="sm"
-                      variant="outline"
-                      className="w-full text-xs"
+                      className="w-full text-xs bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
                     >
                       {post.loading ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
@@ -647,10 +644,9 @@ const StartingPointBlock = () => {
               <Button
                 type="button"
                 size="sm"
-                variant="outline"
                 onClick={handleGeneratePerfAnalysis}
                 disabled={loadingPerfSummary}
-                className="h-8 text-xs gap-1.5"
+                className="h-8 text-xs gap-1.5 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
               >
                 {loadingPerfSummary ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
