@@ -78,8 +78,10 @@ const ProductOfferStep = () => {
 
   const toOneSentence = (text: string) => {
     const cleaned = text.trim().replace(/\s+/g, ' ');
-    const match = cleaned.match(/^[^.!?\n]+[.!?]?/);
-    return (match ? match[0] : cleaned).trim();
+    const match = cleaned.match(/^[^.!?\n]+[.!?]/);
+    let s = (match ? match[0] : cleaned).trim();
+    if (!/[.!?]$/.test(s)) s += '.';
+    return s;
   };
 
   const handleDescriptionBlur = async () => {

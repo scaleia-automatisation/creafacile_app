@@ -117,18 +117,18 @@ export async function describeImage(imageBase64: string) {
 }
 
 export async function describeImageShort(imageBase64: string) {
-  const systemPrompt = `Tu es un expert en analyse visuelle. Décris l'image fournie en UNE SEULE phrase TRÈS COURTE de 7 MOTS MAXIMUM (jamais plus). Sans ponctuation finale, sans introduction, sans guillemets. Réponds uniquement avec la description courte.`;
+  const systemPrompt = `Tu es un expert en analyse visuelle. Décris l'image fournie en UNE SEULE phrase COMPLÈTE et factuelle (sujet + verbe + complément), de 12 à 20 mots maximum, terminée par un point. Sans introduction, sans guillemets, sans liste. Réponds uniquement avec la phrase.`;
   const data = await callKreatorAI({
     action: 'describe_image',
     image_base64s: [imageBase64],
-    messages: [{ role: 'user', content: 'Décris cette image en 7 mots maximum.' }],
+    messages: [{ role: 'user', content: 'Décris cette image en une seule phrase complète.' }],
     system_prompt: systemPrompt,
   });
   const content = data?.choices?.[0]?.message?.content;
   if (!content) throw new Error('No response from AI');
-  // Hard trim to 7 words
-  const words = content.trim().replace(/[."']+$/g, '').split(/\s+/);
-  return words.slice(0, 7).join(' ');
+  let s = content.trim().replace(/^["'`]+|["'`]+$/g, '').replace(/\s+/g, ' ');
+  if (!/[.!?]$/.test(s)) s += '.';
+  return s;
 }
 
 export async function describeProductImages(imageBase64s: string[]) {
@@ -146,7 +146,9 @@ Réponds UNIQUEMENT avec la phrase finale, sans préfixe, sans guillemets, sans 
   });
   const content = data?.choices?.[0]?.message?.content;
   if (!content) throw new Error('No response from AI');
-  return content.trim().replace(/^["'`]+|["'`]+$/g, '').replace(/\s+/g, ' ');
+  let s = content.trim().replace(/^["'`]+|["'`]+$/g, '').replace(/\s+/g, ' ');
+  if (!/[.!?]$/.test(s)) s += '.';
+  return s;
 }
 
 export async function detectSectorFromImage(imageBase64: string, sectors: string[]) {
