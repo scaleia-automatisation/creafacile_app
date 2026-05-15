@@ -267,7 +267,7 @@ const StartingChoiceButtons = () => {
           </span>
         </div>
         <p className="text-xs text-muted-foreground mb-4">
-          Importez vos images. Une description complète (2 à 3 phrases) est générée automatiquement pour chaque image et reste modifiable.
+          Importez vos images. Une description en une phrase complète est générée automatiquement dès l'insertion de chaque image et reste modifiable.
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[0, 1, 2, 3].map((index) => {
@@ -310,25 +310,16 @@ const StartingChoiceButtons = () => {
                     <Textarea
                       value={img.description}
                       onChange={(e) => handleDescChange(index, e.target.value)}
-                      placeholder="Description (2 à 3 phrases)"
-                      className="text-xs min-h-[90px] resize-y"
+                      placeholder={loadingDescSet.has(index) ? 'Analyse en cours…' : 'Description (1 phrase)'}
+                      disabled={loadingDescSet.has(index)}
+                      className="text-xs min-h-[60px] resize-y"
                     />
-                    <div className="flex justify-end">
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={() => generateDescription(index)}
-                        disabled={loadingDescSet.has(index)}
-                        className="h-7 text-[11px] gap-1.5 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
-                      >
-                        {loadingDescSet.has(index) ? (
-                          <Loader2 className="w-3 h-3 animate-spin" />
-                        ) : (
-                          <Wand2 className="w-3 h-3" />
-                        )}
-                        Générer la description
-                      </Button>
-                    </div>
+                    {loadingDescSet.has(index) && (
+                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        Analyse en cours…
+                      </div>
+                    )}
                   </div>
                 )}
                 <input
