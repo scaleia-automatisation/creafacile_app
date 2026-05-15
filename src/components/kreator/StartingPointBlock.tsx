@@ -442,7 +442,7 @@ const StartingPointBlock = () => {
                   ) : (
                     <Sparkles className="w-3.5 h-3.5" />
                   )}
-                  Générer l'analyse
+                  Analyse de performance
                 </Button>
               </div>
             )}
@@ -653,7 +653,7 @@ const StartingPointBlock = () => {
                 ) : (
                   <Sparkles className="w-3.5 h-3.5" />
                 )}
-                Générer l'analyse
+                Analyse de performance
               </Button>
             </div>
           )}
