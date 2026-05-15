@@ -413,10 +413,9 @@ const StartingChoiceButtons = () => {
           <Button
             type="button"
             size="sm"
-            variant="outline"
             onClick={handleRefineIdea}
             disabled={refiningIdea || !input_text.trim()}
-            className="h-8 text-xs gap-1.5"
+            className="h-8 text-xs gap-1.5 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
           >
             {refiningIdea ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
