@@ -84,7 +84,7 @@ const ContentTypeStep = () => {
   };
 
   return (
-    <StepContainer stepNumber={2} title="Quel type de contenu voulez-vous créer ?">
+    <StepContainer stepNumber={3} title="Quel type de contenu voulez-vous créer ?">
       {/* Content type selector */}
       <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
         {contentTypes.map(({ type: t, label, icon: Icon }) => (
