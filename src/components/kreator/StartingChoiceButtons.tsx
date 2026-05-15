@@ -337,47 +337,6 @@ const StartingChoiceButtons = () => {
             );
           })}
         </div>
-        {simple_images.filter((i) => i?.url).length >= 2 && (
-          <div className="mt-4 space-y-3">
-            <div className="flex justify-end">
-              <Button
-                type="button"
-                size="sm"
-                onClick={generateGroupAnalysis}
-                disabled={analyzingGroup}
-                className="h-8 text-xs gap-1.5 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
-              >
-                {analyzingGroup ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <Sparkles className="w-3.5 h-3.5" />
-                )}
-                Générer l'analyse
-              </Button>
-            </div>
-            {showGroupAnalysis && (
-              <div className="p-3 rounded-lg border border-primary/30 bg-primary/5">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-primary" />
-                  <span className="text-xs font-bold text-foreground">Description globale des images</span>
-                </div>
-                {analyzingGroup ? (
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    Analyse en cours… (produits/services identiques ou différents)
-                  </div>
-                ) : (
-                  <Textarea
-                    value={groupAnalysis}
-                    onChange={(e) => setGroupAnalysis(e.target.value)}
-                    rows={2}
-                    className="bg-card border-foreground/10 text-foreground text-xs min-h-[60px] resize-y"
-                  />
-                )}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     )}
     {starting_choice === 'idea' && (
