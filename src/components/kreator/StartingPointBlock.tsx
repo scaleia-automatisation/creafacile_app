@@ -350,7 +350,7 @@ const StartingPointBlock = () => {
             <p className="text-xs text-muted-foreground mb-4">
               Importez votre visuel pour vous en inspirer. Une analyse est générée automatiquement.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
               {[0].map((index) => {
                 const post = perfPosts[index];
                 return (
@@ -561,7 +561,7 @@ const StartingPointBlock = () => {
           <p className="text-xs text-muted-foreground mb-4">
             Importez votre visuel pour vous en inspirer. Une analyse est générée automatiquement.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
             {[0].map((index) => {
               const post = perfPosts[index];
               return (
