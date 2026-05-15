@@ -263,14 +263,14 @@ const StartingChoiceButtons = () => {
         <div className="flex items-center gap-2 mb-3">
           <ImagePlus className="w-4 h-4 text-primary" />
           <span className="text-sm font-medium text-foreground">
-            Images simples (jusqu'à 4)
+            Image de référence
           </span>
         </div>
         <p className="text-xs text-muted-foreground mb-4">
-          Importez vos images. Une description en une phrase complète est générée automatiquement dès l'insertion de chaque image et reste modifiable.
+          Importez votre image. Une description en une phrase complète est générée automatiquement dès l'insertion et reste modifiable.
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[0, 1, 2, 3].map((index) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+          {[0].map((index) => {
             const img = simple_images[index];
             return (
               <div key={index} className="space-y-2">
