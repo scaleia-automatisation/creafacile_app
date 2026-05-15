@@ -315,10 +315,9 @@ const StartingChoiceButtons = () => {
                       <Button
                         type="button"
                         size="sm"
-                        variant="outline"
                         onClick={() => generateDescription(index)}
                         disabled={loadingDescSet.has(index)}
-                        className="h-7 text-[11px] gap-1.5"
+                        className="h-7 text-[11px] gap-1.5 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
                       >
                         {loadingDescSet.has(index) ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
@@ -351,10 +350,9 @@ const StartingChoiceButtons = () => {
               <Button
                 type="button"
                 size="sm"
-                variant="outline"
                 onClick={generateGroupAnalysis}
                 disabled={analyzingGroup}
-                className="h-8 text-xs gap-1.5"
+                className="h-8 text-xs gap-1.5 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
               >
                 {analyzingGroup ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
