@@ -460,6 +460,12 @@ CONTEXTE COMMUN OBLIGATOIRE — Tu DOIS intégrer TOUTES les informations suivan
 
 Tous ces éléments forment un CONTEXTE UNIFIÉ et COHÉRENT. Ne pas les traiter séparément mais les fusionner en un prompt fluide et naturel.
 
+RÈGLE ABSOLUE — PRIORITÉ PALETTE & RÉGLAGES AVANCÉS (NON NÉGOCIABLE) :
+Si l'utilisateur a ACTIVÉ et renseigné sa PALETTE DE COULEURS et/ou ses RÉGLAGES AVANCÉS (ton, style visuel, texte overlay, logo, position, police, couleur de texte), ces paramètres sont STRICTEMENT PRIORITAIRES sur toute suggestion automatique, sur l'analyse des images de référence et sur les choix esthétiques par défaut. Ils DOIVENT être appliqués FIDÈLEMENT et VISIBLEMENT dans le visuel généré.
+- Palette active : les couleurs fournies DOIVENT dominer le visuel (60-80% de la composition combinée), réparties harmonieusement sur le sujet, l'arrière-plan, les accents et les ombres. Aucune couleur hors palette ne doit dominer.
+- Ton, style visuel, texte overlay, logo, police, couleur de texte renseignés : appliquer EXACTEMENT comme demandé, sans réinterprétation.
+- En cas de conflit entre la palette/réglages avancés et l'analyse d'image de référence, la PALETTE et les RÉGLAGES AVANCÉS GAGNENT TOUJOURS.
+
 CONSIGNES OBLIGATOIRES pour le prompt généré :
 - Ultra HD, photo hyper réaliste et professionnel, indistinguable d'une vraie photo prise par un photographe professionnel
 - Rendu ULTRA RÉALISTE, on ne doit JAMAIS deviner que c'est une image générée par IA
@@ -546,7 +552,9 @@ ${params.contentType === 'video' && params.textColor ? `Couleur du texte: ${para
 ${params.logoEnabled && params.logoUrl
   ? `Logo de marque: présent dans le visuel, intégré ${params.logoPosition === 'bottom-right' ? 'en bas à droite' : params.logoPosition === 'top-left' ? 'en haut à gauche' : params.logoPosition === 'top-right' ? 'en haut à droite' : 'en bas au centre'}, taille discrète et professionnelle, parfaitement lisible, sans déformation, ne couvrant pas le sujet principal. Référence du logo fourni par l'utilisateur: ${params.logoUrl}`
   : 'Pas de logo à intégrer'}
-${params.paletteEnabled ? `Palette de couleurs active: ${params.paletteHex.join(', ')} — utiliser entre 30% et 50% dans le visuel` : 'Palette automatique'}
+${params.paletteEnabled ? `🎨 PALETTE DE COULEURS ACTIVE (PRIORITÉ ABSOLUE — domine 60-80% du visuel, prévaut sur toute autre suggestion couleur y compris l'analyse d'images de référence): ${params.paletteHex.join(', ')}` : 'Palette automatique'}
+
+⚠️ RAPPEL FINAL — Les RÉGLAGES AVANCÉS ci-dessus (palette, ton, style visuel, texte overlay, logo, position, police, couleur) renseignés par l'utilisateur sont STRICTEMENT PRIORITAIRES sur toute autre source (analyse d'images, suggestions automatiques). Appliquer EXACTEMENT comme demandé.
 
 Génère un prompt unifié, cohérent et fidèle à l'offre. Sobriété et précision priment sur la décoration.`;
 
