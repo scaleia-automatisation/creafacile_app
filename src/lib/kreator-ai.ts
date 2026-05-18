@@ -498,7 +498,7 @@ CONSIGNES OBLIGATOIRES pour le prompt généré :
 - Éclairage naturel et cinématographique, ombres douces et réalistes
 - Optimisé pour les réseaux sociaux (Instagram, TikTok, LinkedIn, Facebook)
 - NE JAMAIS inclure de texte, lettres, mots ou typographie DANS l'image générée SAUF si l'utilisateur a explicitement demandé du texte overlay ou si l'image de base en contenait
-- Si du texte overlay est demandé : typographie parfaitement lisible, stylisée et professionnelle
+- Si du texte overlay est demandé : typographie parfaitement lisible, stylisée et professionnelle, TAILLE SUFFISAMMENT GRANDE pour être lue instantanément sur mobile (titre ≈ 8–12% de la hauteur du visuel, sous-titre ≈ 4–6%), contraste fort avec l'arrière-plan (ombre portée, contour ou bandeau semi-transparent si nécessaire), hiérarchie typographique claire (hook gros et gras, complément plus petit), interlignage et marges aérés, AUCUN texte tronqué ni collé aux bords. Le texte doit INCITER À LA CONVERSION (hook émotionnel, bénéfice clair, CTA implicite) et transformer le spectateur en client.
 - Éviter absolument les éléments flous, déformés, artificiels ou « plastiques »
 - Respecter les codes couleurs et le style de la marque si fournis
 - Pour les carrousels : cohérence visuelle parfaite entre slides (même palette, même style, même ambiance, même éclairage). La PREMIÈRE slide DOIT être un hook visuel scroll-stop.
