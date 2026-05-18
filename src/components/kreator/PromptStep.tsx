@@ -41,7 +41,9 @@ const PromptStep = () => {
     });
 
     let synthesis =
-      source.length === 1
+      starting_choice === 'simple'
+        ? `Direction UI design de référence (à reproduire FIDÈLEMENT — couleurs, style, composition, typo, ambiance) : ${described[0]}. PRIORITÉ ABSOLUE : adapter parfaitement le visuel généré à cette direction UI design, en cohérence avec le produit/offre, le persona cible, l'objectif du contenu, l'angle marketing, le style visuel, le ton, l'activité, le secteur et le marché.`
+        : source.length === 1
         ? `Image de référence : ${described[0]}`
         : `Synthèse de ${source.length} images de référence : ${described.join(' | ')}. Créer un visuel cohérent qui fusionne harmonieusement ces éléments en lien avec l'objectif et l'idée.`;
 

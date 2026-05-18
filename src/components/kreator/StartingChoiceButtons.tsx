@@ -267,7 +267,7 @@ const StartingChoiceButtons = () => {
           </span>
         </div>
         <p className="text-xs text-muted-foreground mb-4 text-center">
-          Importez votre image. Une description en une phrase complète est générée automatiquement dès l'insertion et reste modifiable.
+          Importez 1 image. Sa direction UI design (couleurs, style, composition, ambiance) est analysée automatiquement pour reproduire fidèlement le même rendu visuel.
         </p>
         <div className="grid grid-cols-1 gap-4 max-w-xs mx-auto">
           {[0].map((index) => {
@@ -308,14 +308,14 @@ const StartingChoiceButtons = () => {
                 {img?.url && (
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-foreground block text-left">
-                      Description de l'image
+                      Description UI design de l'image
                     </label>
                     <Textarea
                       value={img.description}
                       onChange={(e) => handleDescChange(index, e.target.value)}
-                      placeholder={loadingDescSet.has(index) ? 'Analyse en cours…' : 'Description de l\'image (2 phrases max)'}
+                      placeholder={loadingDescSet.has(index) ? 'Analyse UI design en cours…' : 'Description UI design (couleurs, style, composition, ambiance) — 3 à 4 phrases max'}
                       disabled={loadingDescSet.has(index)}
-                      className="text-xs min-h-[60px] resize-y"
+                      className="text-xs min-h-[80px] resize-y"
                     />
                     {loadingDescSet.has(index) && (
                       <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
