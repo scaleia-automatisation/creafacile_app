@@ -486,10 +486,19 @@ CONTEXTE COMMUN OBLIGATOIRE — Tu DOIS intégrer TOUTES les informations suivan
 Tous ces éléments forment un CONTEXTE UNIFIÉ et COHÉRENT. Ne pas les traiter séparément mais les fusionner en un prompt fluide et naturel.
 
 RÈGLE ABSOLUE — PRIORITÉ PALETTE & RÉGLAGES AVANCÉS (NON NÉGOCIABLE) :
-Si l'utilisateur a ACTIVÉ et renseigné sa PALETTE DE COULEURS et/ou ses RÉGLAGES AVANCÉS (ton, style visuel, texte overlay, logo, position, police, couleur de texte), ces paramètres sont STRICTEMENT PRIORITAIRES sur toute suggestion automatique, sur l'analyse des images de référence et sur les choix esthétiques par défaut. Ils DOIVENT être appliqués FIDÈLEMENT et VISIBLEMENT dans le visuel généré.
+Si l'utilisateur a ACTIVÉ, RENSEIGNÉ ou COCHÉ un quelconque RÉGLAGE AVANCÉ (palette de couleurs, ton, style visuel, texte overlay et son contenu, position du texte, police, couleur du texte, second texte overlay, durées et timings, logo, position du logo, voix off, paramètres spécifiques du modèle), TOUS ces paramètres sont STRICTEMENT PRIORITAIRES sur toute suggestion automatique, sur l'analyse des images de référence et sur les choix esthétiques par défaut. Ils DOIVENT être intégrés FIDÈLEMENT et VISIBLEMENT dans le prompt généré dès le clic sur « Générer le prompt », sans exception ni omission.
 - Palette active : les couleurs fournies DOIVENT dominer le visuel (60-80% de la composition combinée), réparties harmonieusement sur le sujet, l'arrière-plan, les accents et les ombres. Aucune couleur hors palette ne doit dominer.
 - Ton, style visuel, texte overlay, logo, police, couleur de texte renseignés : appliquer EXACTEMENT comme demandé, sans réinterprétation.
 - En cas de conflit entre la palette/réglages avancés et l'analyse d'image de référence, la PALETTE et les RÉGLAGES AVANCÉS GAGNENT TOUJOURS.
+
+RÈGLE ABSOLUE — VISUEL ORIENTÉ CONVERSION (NON NÉGOCIABLE) :
+Tout visuel généré (image, carrousel, vidéo) est pensé comme un OUTIL DE CONVERSION dont la mission est de transformer un prospect, un visiteur ou un lead en CLIENT. Trame directrice obligatoire pour TOUS les visuels :
+- Hook visuel scroll-stop dans les 0–2 secondes (tension, émotion, curiosité, bénéfice immédiat)
+- Mise en valeur claire du produit/service et de sa promesse (bénéfice client > caractéristiques)
+- Preuve implicite (résultat, situation d'usage, satisfaction visible, contexte aspirationnel cohérent avec le persona)
+- Direction du regard et composition qui guident vers le sujet et vers la zone de texte overlay / CTA
+- Lisibilité PARFAITE des textes overlay : taille assez grande pour être lue en < 2s sur mobile, contraste fort, hiérarchie typographique claire, bon rendu visuel, jamais collé aux bords
+- Aucun élément parasite qui dilue le message de conversion
 
 CONSIGNES OBLIGATOIRES pour le prompt généré :
 - Ultra HD, photo hyper réaliste et professionnel, indistinguable d'une vraie photo prise par un photographe professionnel
