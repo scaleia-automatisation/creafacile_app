@@ -151,11 +151,14 @@ Reformule et structure cette idée en 2 phrases maximum.`;
 }
 
 export async function describeImageShort(imageBase64: string) {
-  const systemPrompt = `Tu es un expert en analyse visuelle. Décris l'image fournie en UNE SEULE phrase COMPLÈTE et factuelle (sujet + verbe + complément), de 12 à 20 mots maximum, terminée par un point. Sans introduction, sans guillemets, sans liste. Réponds uniquement avec la phrase.`;
+  const systemPrompt = `Tu es un expert en analyse visuelle. Analyse l'image fournie et réponds en français avec :
+1) Commence IMPÉRATIVEMENT par le nom le plus connu et reconnaissable du sujet principal de l'image (1, 2 ou 3 mots maximum, ex: "Tour Eiffel", "iPhone", "Croissant", "Chien Labrador"), suivi d'un point ou d'une virgule.
+2) Puis une description factuelle en 2 phrases MAXIMUM (et minimum 1), claires et concises.
+Pas d'introduction, pas de guillemets, pas de liste. Réponds uniquement avec le nom puis la description.`;
   const data = await callKreatorAI({
     action: 'describe_image',
     image_base64s: [imageBase64],
-    messages: [{ role: 'user', content: 'Décris cette image en une seule phrase complète.' }],
+    messages: [{ role: 'user', content: 'Donne le nom connu du sujet principal puis décris cette image en 2 phrases maximum.' }],
     system_prompt: systemPrompt,
   });
   const content = data?.choices?.[0]?.message?.content;

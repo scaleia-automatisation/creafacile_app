@@ -307,10 +307,13 @@ const StartingChoiceButtons = () => {
                 )}
                 {img?.url && (
                   <div className="space-y-1">
+                    <label className="text-xs font-medium text-foreground block text-left">
+                      Description de l'image
+                    </label>
                     <Textarea
                       value={img.description}
                       onChange={(e) => handleDescChange(index, e.target.value)}
-                      placeholder={loadingDescSet.has(index) ? 'Analyse en cours…' : 'Description (1 phrase)'}
+                      placeholder={loadingDescSet.has(index) ? 'Analyse en cours…' : 'Description de l\'image (2 phrases max)'}
                       disabled={loadingDescSet.has(index)}
                       className="text-xs min-h-[60px] resize-y"
                     />
