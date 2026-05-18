@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { generateIdeas, generateIdeaFromImages, describeImage, summarizePerformingPosts } from '@/lib/kreator-ai';
+import { generateIdeas, generateIdeaFromImages, describeImage, summarizePerformingPosts, analyzeViralPost } from '@/lib/kreator-ai';
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
@@ -162,28 +162,21 @@ const StartingPointBlock = () => {
       });
       setPerfSummary('');
       setShowPerfAnalysis(false);
-      // auto-generate short per-image description (max 2 sentences) — global analysis is on-demand
-      autoDescribePerf(base64);
+      // Auto-analyse de viralité dès l'insertion (3-4 phrases : UI design, hook, caption, CTA, hashtags)
+      autoAnalyzeViral(base64);
     };
     reader.readAsDataURL(file);
   };
 
-  const autoDescribePerf = async (url: string) => {
-    // mark loading on the post matching this url
+  const autoAnalyzeViral = async (url: string) => {
     setPerfPosts((prev) => prev.map((p) => p.url === url ? { ...p, loading: true } : p));
     try {
-      const desc = await describeImage(url);
-      // keep only first 2 sentences
-      const short = (desc.match(/[^.!?]+[.!?]+/g) || [desc]).slice(0, 2).join(' ').trim();
-      let snapshot: { url: string; description: string; loading: boolean }[] = [];
-      setPerfPosts((prev) => {
-        snapshot = prev.map((p) => p.url === url ? { ...p, description: short, loading: false } : p);
-        return snapshot;
-      });
-      setPerfSummary('');
+      const analysis = await analyzeViralPost(url);
+      setPerfPosts((prev) => prev.map((p) => p.url === url ? { ...p, description: analysis, loading: false } : p));
+      setPerfSummary(analysis);
     } catch (e) {
       console.error(e);
-      toast.error("Erreur lors de l'analyse de l'image");
+      toast.error("Erreur lors de l'analyse de viralité");
       setPerfPosts((prev) => prev.map((p) => p.url === url ? { ...p, loading: false } : p));
     }
   };
@@ -199,12 +192,12 @@ const StartingPointBlock = () => {
     if (!post?.url) return;
     setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, loading: true } : p));
     try {
-      const desc = await describeImage(post.url);
-      setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: desc, loading: false } : p));
-      setPerfSummary('');
+      const analysis = await analyzeViralPost(post.url);
+      setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: analysis, loading: false } : p));
+      setPerfSummary(analysis);
     } catch (e) {
       console.error(e);
-      toast.error("Erreur lors de l'analyse de l'image");
+      toast.error("Erreur lors de l'analyse de viralité");
       setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, loading: false } : p));
     }
   };
