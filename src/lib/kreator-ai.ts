@@ -151,14 +151,14 @@ Reformule et structure cette idée en 2 phrases maximum.`;
 }
 
 export async function describeImageShort(imageBase64: string) {
-  const systemPrompt = `Tu es un expert en analyse visuelle. Analyse l'image fournie et réponds en français avec :
-1) Commence IMPÉRATIVEMENT par le nom le plus connu et reconnaissable du sujet principal de l'image (1, 2 ou 3 mots maximum, ex: "Tour Eiffel", "iPhone", "Croissant", "Chien Labrador"), suivi d'un point ou d'une virgule.
-2) Puis une description factuelle en 2 phrases MAXIMUM (et minimum 1), claires et concises.
-Pas d'introduction, pas de guillemets, pas de liste. Réponds uniquement avec le nom puis la description.`;
+  const systemPrompt = `Tu es un directeur artistique expert en UI/visual design. Analyse UNIQUEMENT l'UI design / direction artistique de l'image fournie (pas son sujet).
+Décris en français, en 3 à 4 phrases MAXIMUM, les éléments de design suivants : palette de couleurs dominantes, style visuel (minimaliste, premium, organique, brutaliste, etc.), typographie si visible, composition / mise en page, ambiance lumineuse, textures et matières, traitement photo (flat, 3D, illustration, photo réelle), niveau de contraste et hiérarchie visuelle.
+Objectif : permettre de reproduire EXACTEMENT la même direction UI design sur un autre visuel.
+Pas d'introduction, pas de guillemets, pas de liste, pas de mention du sujet de l'image. Uniquement les caractéristiques de design.`;
   const data = await callKreatorAI({
     action: 'describe_image',
     image_base64s: [imageBase64],
-    messages: [{ role: 'user', content: 'Donne le nom connu du sujet principal puis décris cette image en 2 phrases maximum.' }],
+    messages: [{ role: 'user', content: "Décris l'UI design / direction artistique de cette image en 3 à 4 phrases maximum (couleurs, style, typo, composition, ambiance, traitement). Ne décris pas le sujet." }],
     system_prompt: systemPrompt,
   });
   const content = data?.choices?.[0]?.message?.content;
