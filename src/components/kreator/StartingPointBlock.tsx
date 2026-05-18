@@ -341,7 +341,7 @@ const StartingPointBlock = () => {
               <span className="text-sm font-medium text-foreground">Post viral de référence</span>
             </div>
             <p className="text-xs text-muted-foreground mb-4 text-center">
-              Importez votre visuel pour vous en inspirer. Une analyse est générée automatiquement.
+              Importez 1 image d'un post viral. Une analyse de sa viralité est générée automatiquement.
             </p>
             <div className="grid grid-cols-1 gap-4 max-w-xs mx-auto">
               {[0].map((index) => {
@@ -380,30 +380,28 @@ const StartingPointBlock = () => {
                       </button>
                     )}
                     {post?.url && (
-                      <Button
-                        onClick={() => handleDescribePerf(index)}
-                        disabled={post.loading}
-                        size="sm"
-                        className="w-full text-xs bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
-                      >
-                        {post.loading ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
-                        ) : (
-                          <FileText className="w-3.5 h-3.5 mr-1" />
+                      <div className="space-y-1">
+                        <label className="text-xs font-medium text-foreground block text-left">
+                          Pourquoi ce post est viral ?
+                        </label>
+                        <Textarea
+                          value={post.description}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: value } : p));
+                            setPerfSummary(value);
+                          }}
+                          placeholder={post.loading ? 'Analyse de viralité en cours…' : 'Analyse en 3 à 4 phrases (UI design, hook, caption, CTA, hashtags)'}
+                          disabled={post.loading}
+                          className="text-xs min-h-[110px] resize-y"
+                        />
+                        {post.loading && (
+                          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            Analyse de viralité en cours…
+                          </div>
                         )}
-                        Décrire le post
-                      </Button>
-                    )}
-                    {post?.description && (
-                      <Textarea
-                        value={post.description}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: value } : p));
-                          setPerfSummary('');
-                        }}
-                        className="text-sm text-foreground bg-card border border-foreground/10 rounded-md p-2 leading-relaxed min-h-[100px] resize-y"
-                      />
+                      </div>
                     )}
                     <input
                       ref={perfRefs[index]}
@@ -421,45 +419,6 @@ const StartingPointBlock = () => {
               })}
             </div>
 
-            {perfPosts.filter((p) => p?.url).length >= 1 && (
-              <div className="mt-4 flex justify-end">
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={handleGeneratePerfAnalysis}
-                  disabled={loadingPerfSummary}
-                  className="h-8 text-xs gap-1.5 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
-                >
-                  {loadingPerfSummary ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  ) : (
-                    <Sparkles className="w-3.5 h-3.5" />
-                  )}
-                  Analyser la viralité
-                </Button>
-              </div>
-            )}
-            {showPerfAnalysis && perfPosts.filter((p) => p?.url).length >= 1 && (
-              <div className="mt-3 p-4 rounded-lg border border-primary/30 bg-primary/5">
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-bold text-foreground">Analyse globale</span>
-                </div>
-                {loadingPerfSummary ? (
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Analyse des posts performants en cours…
-                  </div>
-                ) : (
-                  <Textarea
-                    value={perfSummary}
-                    onChange={(e) => setPerfSummary(e.target.value)}
-                    rows={5}
-                    className="bg-card border-foreground/10 text-foreground text-xs leading-relaxed min-h-[110px] resize-y"
-                  />
-                )}
-              </div>
-            )}
           </div>
         )}
 
@@ -552,7 +511,7 @@ const StartingPointBlock = () => {
             <span className="text-sm font-medium text-foreground">Post viral de référence</span>
           </div>
           <p className="text-xs text-muted-foreground mb-4 text-center">
-            Importez votre visuel pour vous en inspirer. Une analyse est générée automatiquement.
+            Importez 1 image d'un post viral. Une analyse de sa viralité est générée automatiquement.
           </p>
           <div className="grid grid-cols-1 gap-4 max-w-xs mx-auto">
             {[0].map((index) => {
@@ -591,30 +550,28 @@ const StartingPointBlock = () => {
                     </button>
                   )}
                   {post?.url && (
-                    <Button
-                      onClick={() => handleDescribePerf(index)}
-                      disabled={post.loading}
-                      size="sm"
-                      className="w-full text-xs bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
-                    >
-                      {post.loading ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
-                      ) : (
-                        <FileText className="w-3.5 h-3.5 mr-1" />
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-foreground block text-left">
+                        Pourquoi ce post est viral ?
+                      </label>
+                      <Textarea
+                        value={post.description}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: value } : p));
+                          setPerfSummary(value);
+                        }}
+                        placeholder={post.loading ? 'Analyse de viralité en cours…' : 'Analyse en 3 à 4 phrases (UI design, hook, caption, CTA, hashtags)'}
+                        disabled={post.loading}
+                        className="text-xs min-h-[110px] resize-y"
+                      />
+                      {post.loading && (
+                        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                          Analyse de viralité en cours…
+                        </div>
                       )}
-                      Décrire le post
-                    </Button>
-                  )}
-                  {post?.description && (
-                    <Textarea
-                      value={post.description}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: value } : p));
-                        setPerfSummary('');
-                      }}
-                      className="text-sm text-foreground bg-card border border-foreground/10 rounded-md p-2 leading-relaxed min-h-[100px] resize-y"
-                    />
+                    </div>
                   )}
                   <input
                     ref={perfRefs[index]}
@@ -632,45 +589,6 @@ const StartingPointBlock = () => {
             })}
           </div>
 
-          {perfPosts.filter((p) => p?.url).length >= 1 && (
-            <div className="mt-4 flex justify-end">
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleGeneratePerfAnalysis}
-                disabled={loadingPerfSummary}
-                className="h-8 text-xs gap-1.5 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
-              >
-                {loadingPerfSummary ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <Sparkles className="w-3.5 h-3.5" />
-                )}
-                Analyser la viralité
-              </Button>
-            </div>
-          )}
-          {showPerfAnalysis && perfPosts.filter((p) => p?.url).length >= 1 && (
-            <div className="mt-3 p-4 rounded-lg border border-primary/30 bg-primary/5">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm font-bold text-foreground">Analyse globale</span>
-              </div>
-              {loadingPerfSummary ? (
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Analyse des posts performants en cours…
-                </div>
-              ) : (
-                <Textarea
-                  value={perfSummary}
-                  onChange={(e) => setPerfSummary(e.target.value)}
-                  rows={5}
-                  className="bg-card border-foreground/10 text-foreground text-xs leading-relaxed min-h-[110px] resize-y"
-                />
-              )}
-            </div>
-          )}
         </div>
       )}
 
