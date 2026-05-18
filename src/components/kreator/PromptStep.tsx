@@ -43,6 +43,8 @@ const PromptStep = () => {
     let synthesis =
       starting_choice === 'simple'
         ? `Direction UI design de référence (à reproduire FIDÈLEMENT — couleurs, style, composition, typo, ambiance) : ${described[0]}. PRIORITÉ ABSOLUE : adapter parfaitement le visuel généré à cette direction UI design, en cohérence avec le produit/offre, le persona cible, l'objectif du contenu, l'angle marketing, le style visuel, le ton, l'activité, le secteur et le marché.`
+        : starting_choice === 'perf'
+        ? `Analyse de viralité du post de référence (quintessence à réutiliser FIDÈLEMENT — UI design, hook, caption, CTA, hashtags, leviers de viralité) : ${described[0]}. PRIORITÉ ABSOLUE : générer un visuel 100% cohérent avec cette analyse de viralité, en l'adaptant au type d'offre, au produit (image, nom, description), au persona cible, à l'objectif du contenu, à l'angle marketing, au style visuel, au ton d'écriture, à l'activité, au secteur et au marché.`
         : source.length === 1
         ? `Image de référence : ${described[0]}`
         : `Synthèse de ${source.length} images de référence : ${described.join(' | ')}. Créer un visuel cohérent qui fusionne harmonieusement ces éléments en lien avec l'objectif et l'idée.`;

@@ -261,6 +261,31 @@ RÈGLES STRICTES :
   return content.trim();
 }
 
+export async function analyzeViralPost(imageBase64: string) {
+  const systemPrompt = `Tu es un expert en marketing digital et viralité sur les réseaux sociaux. Analyse l'image d'un post qui a performé et explique EN FRANÇAIS pourquoi ce post est devenu viral.
+
+RÈGLES STRICTES :
+- Réponds en 3 à 4 phrases MAXIMUM (jamais plus, jamais moins de 3).
+- Pas de liste à puces, pas de titre, pas d'introduction, pas de conclusion : uniquement des phrases courtes et simples.
+- Analyse de façon factuelle et synthétique :
+  • l'UI design du visuel (couleurs, composition, hiérarchie, typographie, style, ambiance, contrastes, focal point)
+  • le hook visuel et/ou textuel (ce qui scroll-stop dans les 0-2s)
+  • la caption si visible (description, ton, structure)
+  • le call-to-action et les hashtags si présents
+  • tout autre levier de viralité (émotion, preuve sociale, curiosité, transformation, urgence, originalité)
+- Fais ressortir la QUINTESSENCE de la viralité du post — les éléments réutilisables pour reproduire un visuel cohérent.
+- Ne décris pas le sujet pour le décrire : chaque phrase doit expliquer POURQUOI cet élément contribue à la viralité.`;
+  const data = await callKreatorAI({
+    action: 'analyze_viral_post',
+    image_base64s: [imageBase64],
+    messages: [{ role: 'user', content: "Analyse ce post viral et explique en 3 à 4 phrases pourquoi il a performé (UI design, hook, caption, CTA, hashtags, leviers de viralité)." }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  return content.trim();
+}
+
 export async function generateIdeaFromImages(params: {
   imageDescriptions: string[];
   imageBase64s: string[];
