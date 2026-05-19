@@ -113,7 +113,7 @@ const ContentTypeStep = () => {
         <div className="mb-6">
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Nombre de slides</label>
           <div className="flex gap-3">
-            {[2, 3].map((n) => (
+            {[2, 3, 4].map((n) => (
               <button
                 key={n}
                 onClick={() => setSlidesCount(n)}
