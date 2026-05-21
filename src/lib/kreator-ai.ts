@@ -915,13 +915,15 @@ export async function generateOnScreenText(params: {
   persona?: string;
   excludeText?: string;
   variant?: 1 | 2;
+  maxWords?: number;
 }): Promise<string> {
+  const maxWords = Math.max(1, Math.min(5, params.maxWords ?? 5));
   const systemPrompt = `Tu es un expert en copywriting publicitaire pour réseaux sociaux (Meta, TikTok, Instagram, LinkedIn).
 Tu écris UN TEXTE court à afficher À L'ÉCRAN dans un visuel (image / carrousel / vidéo) qui MAXIMISE la conversion.
 
 RÈGLES ABSOLUES :
 - Langue : français
-- Longueur : 50 CARACTÈRES MAXIMUM (compte chaque caractère, espace inclus). Non négociable.
+- Longueur : ENTRE 1 ET ${maxWords} MOTS MAXIMUM (compte chaque mot). Non négociable.
 - 1 seule phrase ou formule, ultra lisible d'un coup d'œil (scroll-stop)
 - Hook persuasif aligné sur l'objectif marketing et l'angle
 - Adapté au persona, au secteur, au type d'offre, au ton et au style visuel
@@ -949,7 +951,7 @@ ${params.activity ? `Activité principale: ${params.activity}` : ''}
 ${params.sector ? `Secteur: ${params.sector}` : ''}
 ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
 
-Écris LE texte à afficher dans le visuel, 50 caractères MAX, qui maximise la conversion.`;
+Écris LE texte à afficher dans le visuel, entre 1 et ${maxWords} mots MAX, qui maximise la conversion.`;
 
   const data = await callKreatorAI({
     action: 'generate_on_screen_text',
@@ -962,11 +964,12 @@ ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
   let text = content.trim().replace(/^["«»"'`]+|["«»"'`]+$/g, '').trim();
   // Strip surrounding quotes again, collapse whitespace
   text = text.replace(/\s+/g, ' ').trim();
-  // Hard cap at 50 chars, cut on word boundary if possible
-  if (text.length > 50) {
-    const sliced = text.slice(0, 50);
-    const lastSpace = sliced.lastIndexOf(' ');
-    text = (lastSpace > 30 ? sliced.slice(0, lastSpace) : sliced).trim();
+  // Hard cap at maxWords words
+  const words = text.split(/\s+/).filter(Boolean);
+  if (words.length > maxWords) {
+    text = words.slice(0, maxWords).join(' ');
   }
+  // Strip trailing punctuation
+  text = text.replace(/[.,;:!?]+$/g, '').trim();
   return text;
 }
