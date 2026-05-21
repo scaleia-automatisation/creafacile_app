@@ -341,7 +341,7 @@ const CustomizationStep = () => {
                     <Button
                       type="button"
                       size="sm"
-                      variant="outline"
+                      variant="secondary"
                       onClick={() => handleGenerateText(1)}
                       disabled={!canGenerateText || text1Generating}
                       title={missingTextTooltip}
@@ -521,7 +521,7 @@ const CustomizationStep = () => {
                             <Button
                               type="button"
                               size="sm"
-                              variant="outline"
+                              variant="secondary"
                               onClick={() => handleGenerateText(2)}
                               disabled={!canGenerateText || text2Generating}
                               title={missingTextTooltip}
