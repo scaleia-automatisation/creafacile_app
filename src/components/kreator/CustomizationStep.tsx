@@ -371,7 +371,7 @@ const CustomizationStep = () => {
                       onChange={(e) => {
                         if (e.target.value.length <= 50) setOptions({ text_content: e.target.value });
                       }}
-                      placeholder="Texte à afficher (max 50 caractères) — généré auto"
+                      placeholder="Texte à afficher (1 à 5 mots)"
                       className="bg-card border-foreground/10 text-foreground text-sm"
                     />
                     {isVideo && (
@@ -549,7 +549,7 @@ const CustomizationStep = () => {
                               onChange={(e) => {
                                 if (e.target.value.length <= 50) setOptions({ text_content_2: e.target.value });
                               }}
-                              placeholder="Texte à afficher (max 50 caractères) — généré auto"
+                              placeholder="Texte à afficher (1 à 5 mots)"
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
                             {isVideo && (
