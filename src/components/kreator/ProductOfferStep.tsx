@@ -77,9 +77,10 @@ const ProductOfferStep = () => {
     : 'Une phrase simple (ex : coaching sportif personnalisé à domicile)';
 
   const toOneSentence = (text: string) => {
+    // Pour la description produit : on garde jusqu'à 3 phrases fidèles au produit.
     const cleaned = text.trim().replace(/\s+/g, ' ');
-    const match = cleaned.match(/^[^.!?\n]+[.!?]/);
-    let s = (match ? match[0] : cleaned).trim();
+    const matches = cleaned.match(/[^.!?\n]+[.!?]+/g);
+    let s = matches ? matches.slice(0, 3).join(' ').trim() : cleaned;
     if (!/[.!?]$/.test(s)) s += '.';
     return s;
   };
@@ -124,7 +125,7 @@ const ProductOfferStep = () => {
         setDescribing(true);
         try {
           const [desc, sector] = await Promise.all([
-            describeImageShort(dataUrl),
+            describeProductImages([dataUrl]),
             detectSectorFromImage(dataUrl, SECTORS).catch(() => ''),
           ]);
           setProductDescription(toOneSentence(desc));
