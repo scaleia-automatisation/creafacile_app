@@ -76,14 +76,14 @@ const ProductOfferStep = () => {
     ? 'Une phrase simple (générée auto depuis l\'image)'
     : 'Une phrase simple (ex : coaching sportif personnalisé à domicile)';
 
-  const toOneSentence = (text: string) => {
-    // Pour la description produit : on garde jusqu'à 3 phrases fidèles au produit.
+  const toSentences = (text: string, max: number) => {
     const cleaned = text.trim().replace(/\s+/g, ' ');
     const matches = cleaned.match(/[^.!?\n]+[.!?]+/g);
-    let s = matches ? matches.slice(0, 3).join(' ').trim() : cleaned;
+    let s = matches ? matches.slice(0, max).join(' ').trim() : cleaned;
     if (!/[.!?]$/.test(s)) s += '.';
     return s;
   };
+  const toOneSentence = (text: string) => toSentences(text, 1);
 
   const handleDescriptionBlur = async () => {
     const cleanedDesc = toOneSentence(product_description || '');
@@ -128,7 +128,7 @@ const ProductOfferStep = () => {
             describeProductImages([dataUrl]),
             detectSectorFromImage(dataUrl, SECTORS).catch(() => ''),
           ]);
-          setProductDescription(toOneSentence(desc));
+          setProductDescription(toSentences(desc, 1));
           if (sector) setCompanySector(sector);
         } catch (e) {
           console.error(e);
@@ -174,7 +174,7 @@ const ProductOfferStep = () => {
     groupAnalyzeKeyRef.current = key;
     setDescribing(true);
     describeProductImages(all)
-      .then((desc) => setProductDescription(toOneSentence(desc)))
+      .then((desc) => setProductDescription(toSentences(desc, 3)))
       .catch((e) => console.error('Group image analysis failed', e))
       .finally(() => setDescribing(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
