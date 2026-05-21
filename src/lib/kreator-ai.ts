@@ -591,7 +591,19 @@ Position du texte: ${
       : 'centré en bas'
     } — respecter STRICTEMENT cette position et ce nombre de lignes.
 Police d'écriture: "${params.textFont || 'Montserrat'}" — utiliser cette typographie (ou la plus proche visuellement disponible), bien lisible, kerning soigné.
-${params.contentType === 'video' && params.textColor ? `Couleur du texte: ${params.textColor} — appliquer EXACTEMENT cette couleur au texte affiché à l'écran (avec contour ou ombre subtile pour la lisibilité si nécessaire).` : ''}`
+${params.contentType === 'video' && params.textColor ? `Couleur du texte: ${params.textColor} — appliquer EXACTEMENT cette couleur au texte affiché à l'écran (avec contour ou ombre subtile pour la lisibilité si nécessaire).` : ''}
+${params.contentType === 'video' && params.text2Enabled && params.textContent2
+  ? `\n--- TEXTE À L'ÉCRAN N°2 (vidéo) — À REPRODUIRE EXACTEMENT MOT POUR MOT : "${params.textContent2}"
+Position du texte 2: ${
+        params.textPosition2 === 'top-center' ? 'centré en haut'
+      : params.textPosition2 === 'middle-center' ? 'centré au centre'
+      : 'centré en bas'
+    } — respecter STRICTEMENT cette position.
+Police d'écriture 2: "${params.textFont2 || 'Montserrat'}".
+${params.textColor2 ? `Couleur du texte 2: ${params.textColor2}.` : ''}
+Timing à l'écran : Texte 1 apparaît à ${params.textStart1 ?? 0}s pendant ${params.textDuration1 ?? 3}s, puis Texte 2 apparaît à ${params.textStart2 ?? 0}s pendant ${params.textDuration2 ?? 3}s.
+⚡ HARMONIE OBLIGATOIRE entre Texte 1 et Texte 2 : cohérence typographique parfaite (même famille ou pair harmonieux), hiérarchie visuelle claire (poids/taille), palette cohérente, espacements équilibrés, transitions fluides, rythme de lecture professionnel. Rendu digne d'un grand directeur artistique — composition équilibrée, lisibilité maximale sur fond vidéo (ombre/contour subtil si nécessaire), aucun chevauchement, jamais simultanés sauf si explicitement demandé. Convertir avec impact, sans surcharge.`
+  : ''}`
   : 'Pas de texte overlay — NE PAS générer de texte, pancarte, étiquette, logo ou enseigne dans l\'image'}
 ${params.logoEnabled && params.logoUrl
   ? `Logo de marque: présent dans le visuel, intégré ${params.logoPosition === 'bottom-right' ? 'en bas à droite' : params.logoPosition === 'top-left' ? 'en haut à gauche' : params.logoPosition === 'top-right' ? 'en haut à droite' : 'en bas au centre'}, taille discrète et professionnelle, parfaitement lisible, sans déformation, ne couvrant pas le sujet principal. Référence du logo fourni par l'utilisateur: ${params.logoUrl}`
