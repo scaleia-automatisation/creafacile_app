@@ -14,10 +14,15 @@ import { supportsVoiceOver, getVideoDurationSec } from '@/lib/voice-over';
 import { generateVoiceOver, generateOnScreenText } from '@/lib/kreator-ai';
 
 const tons = [
-  'Direct', 'Émotionnel', 'Conversationnel', 'Persuasif', 'Humoristique',
-  'Différent', 'Provocateur', 'Professionnel', 'Sérieux',
-  'Direct + Percutant', 'Émotionnel + Conversationnel', 'Persuasif + Sérieux',
-  'Viral + Humoristique', 'Différent + Provocateur'
+  'Direct / Cash',
+  'Provocateur',
+  'Authentique',
+  'Storytelling',
+  'Humoristique',
+  'Éducatif',
+  'Inspirant',
+  'Urgent',
+  'Amical',
 ];
 
 const styles = ['Luxe', 'Moderne', 'Impact', 'Lifestyle'];
