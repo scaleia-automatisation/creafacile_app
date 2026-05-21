@@ -241,7 +241,7 @@ const CustomizationStep = () => {
         </div>
       )}
       {isVisible && (
-        <StepContainer stepNumber={3} title="Personnalisation">
+        <StepContainer stepNumber={4} title="Personnalisation">
           <Accordion type="multiple" className="space-y-2">
             {/* Logo (image, carousel & vidéo) */}
             <AccordionItem value="logo" className="border-foreground/10">

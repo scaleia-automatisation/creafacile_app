@@ -189,7 +189,7 @@ const PromptStep = () => {
       )}
 
       {hasPrompt && (
-        <StepContainer stepNumber={4} title="Prompt généré">
+        <StepContainer stepNumber={5} title="Prompt généré">
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-foreground">🇫🇷 Prompt Français</label>
