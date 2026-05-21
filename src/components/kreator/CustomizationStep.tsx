@@ -342,8 +342,8 @@ const CustomizationStep = () => {
                       type="button"
                       size="sm"
                       onClick={() => handleGenerateText(1)}
-                      disabled={!canGenerateText || text1Generating}
-                      title={missingTextTooltip}
+                      disabled={text1Generating}
+                      title={missingTextTooltip || undefined}
                       className="h-8 text-xs gap-1 bg-[#FF2D73] text-white hover:bg-[#e62968] border-none"
                     >
                       {text1Generating ? (
@@ -521,7 +521,7 @@ const CustomizationStep = () => {
                               type="button"
                               size="sm"
                               onClick={() => handleGenerateText(2)}
-                              disabled={!canGenerateText || text2Generating}
+                              disabled={text2Generating}
                               title={missingTextTooltip}
                               className="h-8 text-xs gap-1 bg-[#FF2D73] text-white hover:bg-[#e62968] border-none"
                             >
