@@ -383,6 +383,16 @@ export async function generatePrompt(params: {
   textPosition?: 'top-center' | 'middle-center' | 'bottom-center';
   textFont?: string;
   textColor?: string;
+  // Second on-screen text (video)
+  text2Enabled?: boolean;
+  textContent2?: string;
+  textPosition2?: 'top-center' | 'middle-center' | 'bottom-center';
+  textFont2?: string;
+  textColor2?: string;
+  textDuration1?: number;
+  textDuration2?: number;
+  textStart1?: number;
+  textStart2?: number;
   voiceOverText?: string;
   videoDurationSec?: number;
 }) {
