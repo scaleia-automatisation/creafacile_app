@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
@@ -92,8 +92,8 @@ const CustomizationStep = () => {
   const [hexInput, setHexInput] = useState('');
   const [hexInput2, setHexInput2] = useState('');
   const [voGenerating, setVoGenerating] = useState(false);
-  const autoText1Ref = useRef<string>('');
-  const autoText2Ref = useRef<string>('');
+  const [text1Generating, setText1Generating] = useState(false);
+  const [text2Generating, setText2Generating] = useState(false);
 
   const videoDurationSec = isVideo ? getVideoDurationSec(ai_model, model_settings) : 8;
   const voMaxSec = Math.max(1, videoDurationSec - 2);
@@ -165,45 +165,39 @@ const CustomizationStep = () => {
     persona: target_persona,
     variant,
     excludeText: variant === 2 ? options.text_content : undefined,
+    maxWords: 5,
   });
 
-  // Auto-generate on-screen text 1 when toggle is enabled and field is empty
-  useEffect(() => {
-    if (!options.show_text) return;
-    if (options.text_content?.trim()) return;
-    if (!objective?.trim() || !product_description?.trim() || !company_activity?.trim()) return;
-    const key = [type, idea_chosen || input_text, objective, marketing_angle, product_service, product_description, options.ton, isVideo ? video_render_style : render_style, target_persona].join('|');
-    if (autoText1Ref.current === key) return;
-    autoText1Ref.current = key;
-    (async () => {
-      try {
-        const text = await generateOnScreenText(buildTextParams(1));
-        if (text) setOptions({ text_content: text.slice(0, 50) });
-      } catch (e) {
-        console.error('Auto on-screen text 1 failed', e);
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options.show_text, idea_chosen, input_text, objective, marketing_angle, product_service, product_description, options.ton, render_style, video_render_style, target_persona, type]);
+  const activeVisualStyle = isVideo ? video_render_style : render_style;
+  const missingForText: string[] = [];
+  if (!objective?.trim()) missingForText.push("l'objectif du contenu");
+  if (!activeVisualStyle?.trim()) missingForText.push('le style visuel');
+  if (!options.ton?.trim()) missingForText.push("le ton d'écriture");
+  const canGenerateText = missingForText.length === 0;
+  const missingTextTooltip = canGenerateText
+    ? ''
+    : `Renseignez ${missingForText.join(', ')} pour générer le texte.`;
 
-  // Auto-generate on-screen text 2
-  useEffect(() => {
-    if (!options.show_text || !options.text_2_enabled) return;
-    if (options.text_content_2?.trim()) return;
-    if (!objective?.trim() || !product_description?.trim() || !company_activity?.trim()) return;
-    const key = [type, options.text_content, idea_chosen || input_text, objective, marketing_angle, product_service, options.ton, isVideo ? video_render_style : render_style, target_persona].join('|');
-    if (autoText2Ref.current === key) return;
-    autoText2Ref.current = key;
-    (async () => {
-      try {
-        const text = await generateOnScreenText(buildTextParams(2));
-        if (text) setOptions({ text_content_2: text.slice(0, 50) });
-      } catch (e) {
-        console.error('Auto on-screen text 2 failed', e);
+  const handleGenerateText = async (variant: 1 | 2) => {
+    if (!canGenerateText) {
+      toast.error(missingTextTooltip);
+      return;
+    }
+    const setLoading = variant === 1 ? setText1Generating : setText2Generating;
+    setLoading(true);
+    try {
+      const text = await generateOnScreenText(buildTextParams(variant));
+      if (text) {
+        if (variant === 1) setOptions({ text_content: text.slice(0, 50) });
+        else setOptions({ text_content_2: text.slice(0, 50) });
       }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, isVideo, options.show_text, options.text_2_enabled, options.text_content, idea_chosen, input_text, objective, marketing_angle, product_service, options.ton, video_render_style, render_style, target_persona]);
+    } catch (e) {
+      console.error(`Generate on-screen text ${variant} failed`, e);
+      toast.error('Erreur lors de la génération du texte');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const isVisible = user_mode === 'expert' || showAdvanced;
 
@@ -334,14 +328,37 @@ const CustomizationStep = () => {
                 {isVideo ? 'Texte à l\'écran' : type === 'carousel' ? 'Texte dans les slides' : 'Texte dans le visuel'}
               </AccordionTrigger>
               <AccordionContent className="pt-2">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-xs text-muted-foreground">Sans</span>
-                  <Switch
-                    checked={options.show_text}
-                    onCheckedChange={(v) => setOptions({ show_text: v })}
-                  />
-                  <span className="text-xs text-muted-foreground">Avec</span>
+                <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">Sans</span>
+                    <Switch
+                      checked={options.show_text}
+                      onCheckedChange={(v) => setOptions({ show_text: v })}
+                    />
+                    <span className="text-xs text-muted-foreground">Avec</span>
+                  </div>
+                  {options.show_text && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleGenerateText(1)}
+                      disabled={!canGenerateText || text1Generating}
+                      title={missingTextTooltip}
+                      className="h-8 text-xs gap-1"
+                    >
+                      {text1Generating ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-3 h-3" />
+                      )}
+                      Générer le texte
+                    </Button>
+                  )}
                 </div>
+                {options.show_text && !canGenerateText && (
+                  <p className="text-[11px] text-destructive mb-2">{missingTextTooltip}</p>
+                )}
                 {options.show_text && (
                   <div className="space-y-3">
                     {isVideo && (
@@ -354,7 +371,7 @@ const CustomizationStep = () => {
                       onChange={(e) => {
                         if (e.target.value.length <= 50) setOptions({ text_content: e.target.value });
                       }}
-                      placeholder="Texte à afficher (max 50 caractères) — généré auto"
+                      placeholder="Texte à afficher (1 à 5 mots)"
                       className="bg-card border-foreground/10 text-foreground text-sm"
                     />
                     {isVideo && (
@@ -490,15 +507,38 @@ const CustomizationStep = () => {
 
                     {/* Second on-screen text */}
                     <div className="pt-3 border-t border-foreground/10 space-y-3">
-                        <div className="flex items-center gap-3">
-                          <Switch
-                            checked={options.text_2_enabled}
-                            onCheckedChange={(v) => setOptions({ text_2_enabled: v })}
-                          />
-                          <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                            {isVideo ? "Ajouter un 2e texte à l'écran" : type === 'carousel' ? 'Ajouter un 2e texte dans les slides' : 'Ajouter un 2e texte dans le visuel'}
-                          </span>
+                        <div className="flex items-center justify-between gap-3 flex-wrap">
+                          <div className="flex items-center gap-3">
+                            <Switch
+                              checked={options.text_2_enabled}
+                              onCheckedChange={(v) => setOptions({ text_2_enabled: v })}
+                            />
+                            <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                              {isVideo ? "Ajouter un 2e texte à l'écran" : type === 'carousel' ? 'Ajouter un 2e texte dans les slides' : 'Ajouter un 2e texte dans le visuel'}
+                            </span>
+                          </div>
+                          {options.text_2_enabled && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleGenerateText(2)}
+                              disabled={!canGenerateText || text2Generating}
+                              title={missingTextTooltip}
+                              className="h-8 text-xs gap-1"
+                            >
+                              {text2Generating ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <Sparkles className="w-3 h-3" />
+                              )}
+                              Générer le texte
+                            </Button>
+                          )}
                         </div>
+                        {options.text_2_enabled && !canGenerateText && (
+                          <p className="text-[11px] text-destructive">{missingTextTooltip}</p>
+                        )}
                         {options.text_2_enabled && (
                           <>
                             <div className="text-xs font-semibold text-foreground uppercase tracking-wider">
@@ -509,7 +549,7 @@ const CustomizationStep = () => {
                               onChange={(e) => {
                                 if (e.target.value.length <= 50) setOptions({ text_content_2: e.target.value });
                               }}
-                              placeholder="Texte à afficher (max 50 caractères) — généré auto"
+                              placeholder="Texte à afficher (1 à 5 mots)"
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
                             {isVideo && (
