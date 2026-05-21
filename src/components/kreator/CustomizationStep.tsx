@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
