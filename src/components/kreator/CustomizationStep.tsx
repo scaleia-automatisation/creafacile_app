@@ -328,14 +328,37 @@ const CustomizationStep = () => {
                 {isVideo ? 'Texte à l\'écran' : type === 'carousel' ? 'Texte dans les slides' : 'Texte dans le visuel'}
               </AccordionTrigger>
               <AccordionContent className="pt-2">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-xs text-muted-foreground">Sans</span>
-                  <Switch
-                    checked={options.show_text}
-                    onCheckedChange={(v) => setOptions({ show_text: v })}
-                  />
-                  <span className="text-xs text-muted-foreground">Avec</span>
+                <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">Sans</span>
+                    <Switch
+                      checked={options.show_text}
+                      onCheckedChange={(v) => setOptions({ show_text: v })}
+                    />
+                    <span className="text-xs text-muted-foreground">Avec</span>
+                  </div>
+                  {options.show_text && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleGenerateText(1)}
+                      disabled={!canGenerateText || text1Generating}
+                      title={missingTextTooltip}
+                      className="h-8 text-xs gap-1"
+                    >
+                      {text1Generating ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-3 h-3" />
+                      )}
+                      Générer le texte
+                    </Button>
+                  )}
                 </div>
+                {options.show_text && !canGenerateText && (
+                  <p className="text-[11px] text-destructive mb-2">{missingTextTooltip}</p>
+                )}
                 {options.show_text && (
                   <div className="space-y-3">
                     {isVideo && (
@@ -484,15 +507,38 @@ const CustomizationStep = () => {
 
                     {/* Second on-screen text */}
                     <div className="pt-3 border-t border-foreground/10 space-y-3">
-                        <div className="flex items-center gap-3">
-                          <Switch
-                            checked={options.text_2_enabled}
-                            onCheckedChange={(v) => setOptions({ text_2_enabled: v })}
-                          />
-                          <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                            {isVideo ? "Ajouter un 2e texte à l'écran" : type === 'carousel' ? 'Ajouter un 2e texte dans les slides' : 'Ajouter un 2e texte dans le visuel'}
-                          </span>
+                        <div className="flex items-center justify-between gap-3 flex-wrap">
+                          <div className="flex items-center gap-3">
+                            <Switch
+                              checked={options.text_2_enabled}
+                              onCheckedChange={(v) => setOptions({ text_2_enabled: v })}
+                            />
+                            <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                              {isVideo ? "Ajouter un 2e texte à l'écran" : type === 'carousel' ? 'Ajouter un 2e texte dans les slides' : 'Ajouter un 2e texte dans le visuel'}
+                            </span>
+                          </div>
+                          {options.text_2_enabled && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleGenerateText(2)}
+                              disabled={!canGenerateText || text2Generating}
+                              title={missingTextTooltip}
+                              className="h-8 text-xs gap-1"
+                            >
+                              {text2Generating ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <Sparkles className="w-3 h-3" />
+                              )}
+                              Générer le texte
+                            </Button>
+                          )}
                         </div>
+                        {options.text_2_enabled && !canGenerateText && (
+                          <p className="text-[11px] text-destructive">{missingTextTooltip}</p>
+                        )}
                         {options.text_2_enabled && (
                           <>
                             <div className="text-xs font-semibold text-foreground uppercase tracking-wider">
