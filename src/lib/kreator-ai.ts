@@ -169,16 +169,19 @@ Pas d'introduction, pas de guillemets, pas de liste, pas de mention du sujet de 
 }
 
 export async function describeProductImages(imageBase64s: string[]) {
-  const systemPrompt = `Tu es un expert en analyse visuelle de produits.
-On te fournit ${imageBase64s.length} images de produits ou services.
-1. Détermine s'il s'agit du MÊME produit/service vu sous différents angles, OU de produits/services DIFFÉRENTS.
-2. Si IDENTIQUE : décris le produit en UNE seule phrase factuelle (max 20 mots).
-3. Si DIFFÉRENTS : décris brièvement la gamme/ensemble en UNE seule phrase factuelle (max 25 mots), en mentionnant qu'il s'agit de plusieurs produits.
-Réponds UNIQUEMENT avec la phrase finale, sans préfixe, sans guillemets, sans ponctuation finale superflue.`;
+  const systemPrompt = `Tu es un expert en analyse visuelle de produits avec un œil de designer industriel et de directeur artistique packaging.
+On te fournit ${imageBase64s.length} image(s) d'un produit (ou d'une gamme).
+Objectif : produire une description 100% AUTHENTIQUE et FIDÈLE au produit réel visible, suffisamment précise pour qu'un autre visuel puisse reproduire le produit À L'IDENTIQUE (forme, proportions, matériaux, finitions, couleurs exactes, textures, typographie/logo visibles, étiquette/packaging, éléments distinctifs).
+Règles STRICTES :
+- Réponds en FRANÇAIS, en 2 à 3 PHRASES MAXIMUM (jamais plus, jamais moins de 2).
+- 100% factuel : ne JAMAIS inventer une marque, un ingrédient, une matière, une couleur ou un détail non visible. Si un détail n'est pas certain, reste générique sur ce point.
+- Si plusieurs images = MÊME produit sous différents angles : décris UN seul produit en intégrant les détails vus sur chaque angle.
+- Si plusieurs images = produits DIFFÉRENTS : décris la gamme en précisant le nombre et les variantes visibles.
+- Pas de marketing, pas d'adjectifs subjectifs ("magnifique", "premium"...), pas d'introduction, pas de guillemets, pas de liste, pas de markdown. Uniquement les phrases descriptives finales.`;
   const data = await callKreatorAI({
     action: 'describe_image',
     image_base64s: imageBase64s,
-    messages: [{ role: 'user', content: `Analyse ces ${imageBase64s.length} images et donne UNE phrase de description globale.` }],
+    messages: [{ role: 'user', content: `Analyse ${imageBase64s.length === 1 ? "cette image" : `ces ${imageBase64s.length} images`} et donne une description 100% fidèle du produit en 2 ou 3 phrases permettant de le reproduire à l'identique (forme, matériaux, couleurs, typographie/logo, packaging, détails distinctifs visibles).` }],
     system_prompt: systemPrompt,
   });
   const content = data?.choices?.[0]?.message?.content;
