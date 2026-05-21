@@ -81,7 +81,7 @@ const CustomizationStep = () => {
     voice_over_enabled, setVoiceOverEnabled,
     voice_over_text, setVoiceOverText,
     offer_type, product_service, product_description,
-    marketing_angle, objective,
+    marketing_angle, objective, visual_style_brief,
     idea_chosen, input_text, format,
     company_activity, company_sector, target_persona,
     render_style, video_render_style,
@@ -158,7 +158,7 @@ const CustomizationStep = () => {
     productName: product_service,
     productDescription: product_description,
     offerType: offer_type,
-    visualStyle: isVideo ? video_render_style : render_style,
+    visualStyle: visual_style_brief || options.visual_style || (isVideo ? video_render_style : render_style),
     tone: options.ton,
     activity: company_activity,
     sector: company_sector,
@@ -168,7 +168,7 @@ const CustomizationStep = () => {
     maxWords: 5,
   });
 
-  const activeVisualStyle = isVideo ? video_render_style : render_style;
+  const activeVisualStyle = visual_style_brief || options.visual_style || (isVideo ? video_render_style : render_style);
   const missingForText: string[] = [];
   if (!objective?.trim()) missingForText.push("l'objectif du contenu");
   if (!activeVisualStyle?.trim()) missingForText.push('le style visuel');
