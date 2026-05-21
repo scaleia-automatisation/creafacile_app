@@ -344,7 +344,6 @@ const CustomizationStep = () => {
                       onClick={() => handleGenerateText(1)}
                       disabled={text1Generating}
                       title={missingTextTooltip || undefined}
-                      title={missingTextTooltip}
                       className="h-8 text-xs gap-1 bg-[#FF2D73] text-white hover:bg-[#e62968] border-none"
                     >
                       {text1Generating ? (
