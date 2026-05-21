@@ -341,11 +341,10 @@ const CustomizationStep = () => {
                     <Button
                       type="button"
                       size="sm"
-                      variant="secondary"
                       onClick={() => handleGenerateText(1)}
                       disabled={!canGenerateText || text1Generating}
                       title={missingTextTooltip}
-                      className="h-8 text-xs gap-1"
+                      className="h-8 text-xs gap-1 bg-[#FF2D73] text-white hover:bg-[#e62968] border-none"
                     >
                       {text1Generating ? (
                         <Loader2 className="w-3 h-3 animate-spin" />
@@ -521,11 +520,10 @@ const CustomizationStep = () => {
                             <Button
                               type="button"
                               size="sm"
-                              variant="secondary"
                               onClick={() => handleGenerateText(2)}
                               disabled={!canGenerateText || text2Generating}
                               title={missingTextTooltip}
-                              className="h-8 text-xs gap-1"
+                              className="h-8 text-xs gap-1 bg-[#FF2D73] text-white hover:bg-[#e62968] border-none"
                             >
                               {text2Generating ? (
                                 <Loader2 className="w-3 h-3 animate-spin" />
