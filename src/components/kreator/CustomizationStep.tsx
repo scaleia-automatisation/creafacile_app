@@ -11,7 +11,7 @@ import { useStorageUpload } from '@/hooks/useStorageUpload';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { supportsVoiceOver, getVideoDurationSec } from '@/lib/voice-over';
-import { generateVoiceOver, generateOnScreenText } from '@/lib/kreator-ai';
+import { generateVoiceOver, generateOnScreenText, generateSlideTexts } from '@/lib/kreator-ai';
 
 const tons = [
   'Direct / Cash',
@@ -85,8 +85,11 @@ const CustomizationStep = () => {
     idea_chosen, input_text, format,
     company_activity, company_sector, target_persona,
     render_style, video_render_style,
+    slides_count,
   } = useKreatorStore();
   const isVideo = type === 'video';
+  const isCarousel = type === 'carousel';
+  const slideCount = Math.max(1, Math.min(4, slides_count || 2));
   const logoInputRef = useRef<HTMLInputElement>(null);
   const { upload, uploading } = useStorageUpload();
   const [hexInput, setHexInput] = useState('');
@@ -94,6 +97,7 @@ const CustomizationStep = () => {
   const [voGenerating, setVoGenerating] = useState(false);
   const [text1Generating, setText1Generating] = useState(false);
   const [text2Generating, setText2Generating] = useState(false);
+  const [slidesGenerating, setSlidesGenerating] = useState(false);
 
   const videoDurationSec = isVideo ? getVideoDurationSec(ai_model, model_settings) : 8;
   const voMaxSec = Math.max(1, videoDurationSec - 2);
@@ -197,6 +201,50 @@ const CustomizationStep = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGenerateSlideTexts = async () => {
+    if (!canGenerateText) {
+      toast.error(missingTextTooltip);
+      return;
+    }
+    setSlidesGenerating(true);
+    try {
+      const texts = await generateSlideTexts({
+        count: slideCount,
+        format,
+        idea: idea_chosen || input_text,
+        objective,
+        marketingAngle: marketing_angle,
+        productName: product_service,
+        productDescription: product_description,
+        offerType: offer_type,
+        visualStyle: visual_style_brief || options.visual_style || render_style,
+        tone: options.ton,
+        activity: company_activity,
+        sector: company_sector,
+        persona: target_persona,
+        maxWords: 5,
+      });
+      const next = [...(options.slide_texts || ['', '', '', ''])];
+      for (let i = 0; i < 4; i++) next[i] = (texts[i] || '').slice(0, 50);
+      setOptions({ slide_texts: next, text_content: next[0] || '' });
+    } catch (e) {
+      console.error('Generate slide texts failed', e);
+      toast.error('Erreur lors de la génération des textes des slides');
+    } finally {
+      setSlidesGenerating(false);
+    }
+  };
+
+  const setSlideText = (index: number, value: string) => {
+    if (value.length > 50) return;
+    const next = [...(options.slide_texts || ['', '', '', ''])];
+    while (next.length < 4) next.push('');
+    next[index] = value;
+    const patch: Partial<typeof options> = { slide_texts: next };
+    if (index === 0) patch.text_content = value;
+    setOptions(patch);
   };
 
   const isVisible = user_mode === 'expert' || showAdvanced;
