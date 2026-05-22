@@ -11,7 +11,7 @@ import { useStorageUpload } from '@/hooks/useStorageUpload';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { supportsVoiceOver, getVideoDurationSec } from '@/lib/voice-over';
-import { generateVoiceOver, generateOnScreenText } from '@/lib/kreator-ai';
+import { generateVoiceOver, generateOnScreenText, generateSlideTexts } from '@/lib/kreator-ai';
 
 const tons = [
   'Direct / Cash',
@@ -85,8 +85,11 @@ const CustomizationStep = () => {
     idea_chosen, input_text, format,
     company_activity, company_sector, target_persona,
     render_style, video_render_style,
+    slides_count,
   } = useKreatorStore();
   const isVideo = type === 'video';
+  const isCarousel = type === 'carousel';
+  const slideCount = Math.max(1, Math.min(4, slides_count || 2));
   const logoInputRef = useRef<HTMLInputElement>(null);
   const { upload, uploading } = useStorageUpload();
   const [hexInput, setHexInput] = useState('');
@@ -94,6 +97,7 @@ const CustomizationStep = () => {
   const [voGenerating, setVoGenerating] = useState(false);
   const [text1Generating, setText1Generating] = useState(false);
   const [text2Generating, setText2Generating] = useState(false);
+  const [slidesGenerating, setSlidesGenerating] = useState(false);
 
   const videoDurationSec = isVideo ? getVideoDurationSec(ai_model, model_settings) : 8;
   const voMaxSec = Math.max(1, videoDurationSec - 2);
@@ -197,6 +201,50 @@ const CustomizationStep = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGenerateSlideTexts = async () => {
+    if (!canGenerateText) {
+      toast.error(missingTextTooltip);
+      return;
+    }
+    setSlidesGenerating(true);
+    try {
+      const texts = await generateSlideTexts({
+        count: slideCount,
+        format,
+        idea: idea_chosen || input_text,
+        objective,
+        marketingAngle: marketing_angle,
+        productName: product_service,
+        productDescription: product_description,
+        offerType: offer_type,
+        visualStyle: visual_style_brief || options.visual_style || render_style,
+        tone: options.ton,
+        activity: company_activity,
+        sector: company_sector,
+        persona: target_persona,
+        maxWords: 5,
+      });
+      const next = [...(options.slide_texts || ['', '', '', ''])];
+      for (let i = 0; i < 4; i++) next[i] = (texts[i] || '').slice(0, 50);
+      setOptions({ slide_texts: next, text_content: next[0] || '' });
+    } catch (e) {
+      console.error('Generate slide texts failed', e);
+      toast.error('Erreur lors de la génération des textes des slides');
+    } finally {
+      setSlidesGenerating(false);
+    }
+  };
+
+  const setSlideText = (index: number, value: string) => {
+    if (value.length > 50) return;
+    const next = [...(options.slide_texts || ['', '', '', ''])];
+    while (next.length < 4) next.push('');
+    next[index] = value;
+    const patch: Partial<typeof options> = { slide_texts: next };
+    if (index === 0) patch.text_content = value;
+    setOptions(patch);
   };
 
   const isVisible = user_mode === 'expert' || showAdvanced;
@@ -338,7 +386,7 @@ const CustomizationStep = () => {
                     <span className="text-xs text-muted-foreground">Avec</span>
                   </div>
                   {options.show_text && (
-                    <Button
+                    !isCarousel && <Button
                       type="button"
                       size="sm"
                       onClick={() => handleGenerateText(1)}
@@ -354,25 +402,59 @@ const CustomizationStep = () => {
                       Générer le texte
                     </Button>
                   )}
+                  {options.show_text && isCarousel && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleGenerateSlideTexts}
+                      disabled={slidesGenerating}
+                      title={missingTextTooltip || undefined}
+                      className="h-8 text-xs gap-1 bg-[#FF2D73] text-white hover:bg-[#e62968] border-none"
+                    >
+                      {slidesGenerating ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-3 h-3" />
+                      )}
+                      Générer les textes des slides
+                    </Button>
+                  )}
                 </div>
                 {options.show_text && !canGenerateText && (
                   <p className="text-[11px] text-destructive mb-2">{missingTextTooltip}</p>
                 )}
                 {options.show_text && (
                   <div className="space-y-3">
-                    {isVideo && (
+                    {isCarousel && (
+                      <div className="space-y-3">
+                        {Array.from({ length: slideCount }).map((_, i) => (
+                          <div key={i}>
+                            <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-1 block">
+                              Texte slide {i + 1}
+                            </label>
+                            <Input
+                              value={(options.slide_texts && options.slide_texts[i]) || ''}
+                              onChange={(e) => setSlideText(i, e.target.value)}
+                              placeholder={`Texte slide ${i + 1} (1 à 5 mots)`}
+                              className="bg-card border-foreground/10 text-foreground text-sm"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {isVideo && !isCarousel && (
                       <div className="text-xs font-semibold text-foreground uppercase tracking-wider">
                         Texte à l'écran 1
                       </div>
                     )}
-                    <Input
+                    {!isCarousel && <Input
                       value={options.text_content}
                       onChange={(e) => {
                         if (e.target.value.length <= 50) setOptions({ text_content: e.target.value });
                       }}
                       placeholder="Texte à afficher (1 à 5 mots)"
                       className="bg-card border-foreground/10 text-foreground text-sm"
-                    />
+                    />}
                     {isVideo && (
                       <>
                         <div>
@@ -505,7 +587,7 @@ const CustomizationStep = () => {
                     )}
 
                     {/* Second on-screen text */}
-                    <div className="pt-3 border-t border-foreground/10 space-y-3">
+                    {!isCarousel && <div className="pt-3 border-t border-foreground/10 space-y-3">
                         <div className="flex items-center justify-between gap-3 flex-wrap">
                           <div className="flex items-center gap-3">
                             <Switch
@@ -513,7 +595,7 @@ const CustomizationStep = () => {
                               onCheckedChange={(v) => setOptions({ text_2_enabled: v })}
                             />
                             <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                              {isVideo ? "Ajouter un 2e texte à l'écran" : type === 'carousel' ? 'Ajouter un 2e texte dans les slides' : 'Ajouter un 2e texte dans le visuel'}
+                              {isVideo ? "Ajouter un 2e texte à l'écran" : 'Ajouter un 2e texte dans le visuel'}
                             </span>
                           </div>
                           {options.text_2_enabled && (
@@ -678,7 +760,7 @@ const CustomizationStep = () => {
                             </div>)}
                           </>
                         )}
-                    </div>
+                    </div>}
                   </div>
                 )}
               </AccordionContent>

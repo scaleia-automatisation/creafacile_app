@@ -133,6 +133,8 @@ interface KreatorOptions {
   text_position_2: 'top-center' | 'middle-center' | 'bottom-center';
   text_font_2: string;
   text_color_2: string;
+  // Carousel-only: per-slide texts (up to 4). Index 0 mirrors text_content for legacy.
+  slide_texts: string[];
 }
 
 interface KreatorState {
@@ -287,6 +289,7 @@ const initialState = {
     text_position_2: 'bottom-center' as const,
     text_font_2: 'Montserrat',
     text_color_2: '#FFFFFF',
+    slide_texts: ['', '', '', ''],
   },
   showAdvanced: false,
   prompt_fr: '',

@@ -373,6 +373,8 @@ export async function generatePrompt(params: {
   marketingAngle?: string;
   showText: boolean;
   textContent: string;
+  slideTexts?: string[];
+  slidesCount?: number;
   paletteEnabled: boolean;
   paletteHex: string[];
   imageDescription: string;
@@ -588,7 +590,18 @@ ${params.referenceImageCount && params.referenceImageCount > 1 ? `IMPORTANT: ${p
 ${params.ton ? `Ton: ${params.ton}` : 'Ton: automatique'}
 ${params.visualStyle ? `Style visuel: ${params.visualStyle}` : 'Style: automatique'}
 ${params.showText
-  ? `Texte overlay (À REPRODUIRE EXACTEMENT, MOT POUR MOT, AUCUNE MODIFICATION NI AJOUT): "${params.textContent}"
+  ? (params.contentType === 'carousel' && params.slideTexts && params.slideTexts.filter(Boolean).length > 0
+    ? `Textes des slides du carrousel (À REPRODUIRE EXACTEMENT MOT POUR MOT — UN texte PAR slide, dans l'ordre, AUCUNE modification ni ajout) :
+${(params.slideTexts.slice(0, Math.max(1, Math.min(4, params.slidesCount || params.slideTexts.length))))
+  .map((t, i) => `Slide ${i + 1}: "${(t || '').trim()}"`).join('\n')}
+Position du texte (IDENTIQUE sur TOUTES les slides): ${
+        params.textPosition === 'top-center' ? 'centré en haut'
+      : params.textPosition === 'middle-center' ? 'centré au centre'
+      : 'centré en bas'
+    }.
+Police d'écriture (IDENTIQUE sur TOUTES les slides): "${params.textFont || 'Montserrat'}".
+⚡ HARMONIE PARFAITE OBLIGATOIRE entre TOUTES les slides du carrousel : même typographie, même taille relative, même position, même hiérarchie visuelle, même palette, même traitement (ombre/contour si nécessaire), même rythme et même style éditorial — comme un seul système de design cohérent du début à la fin. Lisibilité maximale sur mobile, contraste fort, intégration native dans la composition (pas un simple sticker collé). Rendu digne d'un grand directeur artistique, optimisé pour la conversion. La slide 1 doit porter le hook le plus puissant ; les slides suivantes développent et culminent sur un call-to-action implicite ou explicite. Ne JAMAIS modifier le wording fourni.`
+    : `Texte overlay (À REPRODUIRE EXACTEMENT, MOT POUR MOT, AUCUNE MODIFICATION NI AJOUT): "${params.textContent}"
 Position du texte: ${
         params.textPosition === 'top-center' ? 'centré en haut'
       : params.textPosition === 'middle-center' ? 'centré au centre'
@@ -607,7 +620,7 @@ Police d'écriture 2: "${params.textFont2 || 'Montserrat'}".
 ${params.textColor2 ? `Couleur du texte 2: ${params.textColor2}.` : ''}
 Timing à l'écran : Texte 1 apparaît à ${params.textStart1 ?? 0}s pendant ${params.textDuration1 ?? 3}s, puis Texte 2 apparaît à ${params.textStart2 ?? 0}s pendant ${params.textDuration2 ?? 3}s.
 ⚡ HARMONIE OBLIGATOIRE entre Texte 1 et Texte 2 : cohérence typographique parfaite (même famille ou pair harmonieux), hiérarchie visuelle claire (poids/taille), palette cohérente, espacements équilibrés, transitions fluides, rythme de lecture professionnel. Rendu digne d'un grand directeur artistique — composition équilibrée, lisibilité maximale sur fond vidéo (ombre/contour subtil si nécessaire), aucun chevauchement, jamais simultanés sauf si explicitement demandé. Convertir avec impact, sans surcharge.`
-  : ''}`
+  : ''}`)
   : 'Pas de texte overlay — NE PAS générer de texte, pancarte, étiquette, logo ou enseigne dans l\'image'}
 ${params.logoEnabled && params.logoUrl
   ? `Logo de marque: présent dans le visuel, intégré ${params.logoPosition === 'bottom-right' ? 'en bas à droite' : params.logoPosition === 'top-left' ? 'en haut à gauche' : params.logoPosition === 'top-right' ? 'en haut à droite' : 'en bas au centre'}, taille discrète et professionnelle, parfaitement lisible, sans déformation, ne couvrant pas le sujet principal. Référence du logo fourni par l'utilisateur: ${params.logoUrl}`
@@ -998,4 +1011,87 @@ ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
   // Strip trailing punctuation
   text = text.replace(/[.,;:!?]+$/g, '').trim();
   return text;
+}
+
+export async function generateSlideTexts(params: {
+  count: number;
+  format: string;
+  idea?: string;
+  objective?: string;
+  marketingAngle?: string;
+  productName?: string;
+  productDescription?: string;
+  offerType?: string;
+  visualStyle?: string;
+  tone?: string;
+  activity?: string;
+  sector?: string;
+  persona?: string;
+  maxWords?: number;
+}): Promise<string[]> {
+  const count = Math.max(1, Math.min(4, params.count || 2));
+  const maxWords = Math.max(1, Math.min(5, params.maxWords ?? 5));
+  const systemPrompt = `Tu es un expert en copywriting publicitaire pour carrousels Instagram/TikTok/LinkedIn.
+Tu génères ${count} textes courts à afficher à l'écran, UN PAR SLIDE d'un carrousel de ${count} slides, parfaitement HARMONIEUX entre eux, qui maximisent la conversion.
+
+RÈGLES ABSOLUES :
+- Langue : français.
+- Chaque texte : ENTRE 1 ET ${maxWords} MOTS MAXIMUM. Compte chaque mot. Non négociable.
+- Un seul texte par slide (pas de retour à la ligne).
+- HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé.
+- Progression narrative orientée conversion :
+  • Slide 1 = HOOK 0-2s ultra puissant (scroll-stop, curiosité/émotion/promesse).
+  • Slides intermédiaires = développement, preuve, bénéfice ou tension.
+  • Slide ${count} = CALL-TO-ACTION ou chute mémorable qui pousse à l'action.
+- Aucune répétition d'un mot fort entre les slides (sauf si effet voulu).
+- Pas de guillemets, pas de hashtag, pas d'emoji superflu (1 emoji max sur l'ensemble), pas de ponctuation finale lourde.
+- Pas de jargon corporate, on parle humain, direct, percutant.
+
+RETOURNE UNIQUEMENT un JSON valide sans markdown :
+{"slides":["texte slide 1","texte slide 2"${count >= 3 ? ',"texte slide 3"' : ''}${count >= 4 ? ',"texte slide 4"' : ''}]}`;
+
+  const userPrompt = `=== CONTEXTE ===
+Type de contenu: carrousel
+Nombre de slides: ${count}
+Format: ${params.format}
+${params.idea ? `Idée / sujet: ${params.idea}` : ''}
+${params.objective ? `Objectif marketing: ${params.objective}` : ''}
+${params.marketingAngle ? `Angle marketing: ${params.marketingAngle}` : ''}
+${params.offerType ? `Type d'offre: ${params.offerType}` : ''}
+${params.productName ? `Nom: ${params.productName}` : ''}
+${params.productDescription ? `Description: ${params.productDescription}` : ''}
+${params.visualStyle ? `Style visuel: ${params.visualStyle}` : ''}
+${params.tone ? `Ton d'écriture: ${params.tone}` : ''}
+${params.activity ? `Activité principale: ${params.activity}` : ''}
+${params.sector ? `Secteur: ${params.sector}` : ''}
+${params.persona ? `Client cible / persona: ${params.persona}` : ''}
+
+Écris les ${count} textes à afficher dans chaque slide (1 à ${maxWords} mots chacun), 100% cohérents entre eux et optimisés pour la conversion.`;
+
+  const data = await callKreatorAI({
+    action: 'generate_slide_texts',
+    messages: [{ role: 'user', content: userPrompt }],
+    system_prompt: systemPrompt,
+  });
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  let parsed: { slides?: string[] } = {};
+  try {
+    const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
+    parsed = JSON.parse(cleaned);
+  } catch {
+    throw new Error('Failed to parse AI response');
+  }
+  const slides = Array.isArray(parsed.slides) ? parsed.slides : [];
+  const out: string[] = [];
+  for (let i = 0; i < count; i++) {
+    let t = (slides[i] || '').toString().trim();
+    t = t.replace(/^["«»"'`]+|["«»"'`]+$/g, '').trim().replace(/\s+/g, ' ');
+    const words = t.split(/\s+/).filter(Boolean);
+    if (words.length > maxWords) t = words.slice(0, maxWords).join(' ');
+    t = t.replace(/[.,;:!?]+$/g, '').trim();
+    out.push(t);
+  }
+  return out;
 }
