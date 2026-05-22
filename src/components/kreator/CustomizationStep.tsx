@@ -386,7 +386,7 @@ const CustomizationStep = () => {
                     <span className="text-xs text-muted-foreground">Avec</span>
                   </div>
                   {options.show_text && (
-                    <Button
+                    !isCarousel && <Button
                       type="button"
                       size="sm"
                       onClick={() => handleGenerateText(1)}
@@ -400,6 +400,23 @@ const CustomizationStep = () => {
                         <Sparkles className="w-3 h-3" />
                       )}
                       Générer le texte
+                    </Button>
+                  )}
+                  {options.show_text && isCarousel && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleGenerateSlideTexts}
+                      disabled={slidesGenerating}
+                      title={missingTextTooltip || undefined}
+                      className="h-8 text-xs gap-1 bg-[#FF2D73] text-white hover:bg-[#e62968] border-none"
+                    >
+                      {slidesGenerating ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-3 h-3" />
+                      )}
+                      Générer les textes des slides
                     </Button>
                   )}
                 </div>
