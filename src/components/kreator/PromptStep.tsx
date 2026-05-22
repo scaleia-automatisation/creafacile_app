@@ -103,6 +103,8 @@ const PromptStep = () => {
         marketingAngle: marketing_angle,
         showText: options.show_text,
         textContent: options.text_content,
+        slideTexts: options.slide_texts,
+        slidesCount: slides_count,
         text2Enabled: options.text_2_enabled,
         textContent2: options.text_content_2,
         textPosition2: options.text_position_2,
