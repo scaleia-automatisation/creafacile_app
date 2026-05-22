@@ -373,6 +373,8 @@ export async function generatePrompt(params: {
   marketingAngle?: string;
   showText: boolean;
   textContent: string;
+  slideTexts?: string[];
+  slidesCount?: number;
   paletteEnabled: boolean;
   paletteHex: string[];
   imageDescription: string;
