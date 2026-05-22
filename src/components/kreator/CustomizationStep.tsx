@@ -587,7 +587,7 @@ const CustomizationStep = () => {
                     )}
 
                     {/* Second on-screen text */}
-                    <div className="pt-3 border-t border-foreground/10 space-y-3">
+                    {!isCarousel && <div className="pt-3 border-t border-foreground/10 space-y-3">
                         <div className="flex items-center justify-between gap-3 flex-wrap">
                           <div className="flex items-center gap-3">
                             <Switch
@@ -760,7 +760,7 @@ const CustomizationStep = () => {
                             </div>)}
                           </>
                         )}
-                    </div>
+                    </div>}
                   </div>
                 )}
               </AccordionContent>
