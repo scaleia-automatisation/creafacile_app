@@ -595,7 +595,7 @@ const CustomizationStep = () => {
                               onCheckedChange={(v) => setOptions({ text_2_enabled: v })}
                             />
                             <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                              {isVideo ? "Ajouter un 2e texte à l'écran" : type === 'carousel' ? 'Ajouter un 2e texte dans les slides' : 'Ajouter un 2e texte dans le visuel'}
+                              {isVideo ? "Ajouter un 2e texte à l'écran" : 'Ajouter un 2e texte dans le visuel'}
                             </span>
                           </div>
                           {options.text_2_enabled && (
