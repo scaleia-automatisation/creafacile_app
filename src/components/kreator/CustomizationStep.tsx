@@ -425,19 +425,36 @@ const CustomizationStep = () => {
                 )}
                 {options.show_text && (
                   <div className="space-y-3">
-                    {isVideo && (
+                    {isCarousel && (
+                      <div className="space-y-3">
+                        {Array.from({ length: slideCount }).map((_, i) => (
+                          <div key={i}>
+                            <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-1 block">
+                              Texte slide {i + 1}
+                            </label>
+                            <Input
+                              value={(options.slide_texts && options.slide_texts[i]) || ''}
+                              onChange={(e) => setSlideText(i, e.target.value)}
+                              placeholder={`Texte slide ${i + 1} (1 à 5 mots)`}
+                              className="bg-card border-foreground/10 text-foreground text-sm"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {isVideo && !isCarousel && (
                       <div className="text-xs font-semibold text-foreground uppercase tracking-wider">
                         Texte à l'écran 1
                       </div>
                     )}
-                    <Input
+                    {!isCarousel && <Input
                       value={options.text_content}
                       onChange={(e) => {
                         if (e.target.value.length <= 50) setOptions({ text_content: e.target.value });
                       }}
                       placeholder="Texte à afficher (1 à 5 mots)"
                       className="bg-card border-foreground/10 text-foreground text-sm"
-                    />
+                    />}
                     {isVideo && (
                       <>
                         <div>
