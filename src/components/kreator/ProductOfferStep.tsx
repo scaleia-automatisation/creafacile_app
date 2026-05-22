@@ -14,8 +14,6 @@ import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
 const OFFER_TYPES = [
   '📦 Produit',
   '🛠️ Service',
-  '💻 SaaS',
-  '🎓 Formation',
 ];
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
@@ -61,16 +59,12 @@ const ProductOfferStep = () => {
 
   const isProduct = offer_type === '📦 Produit';
   const isService = offer_type === '🛠️ Service';
-  const isSaas = offer_type === '💻 SaaS';
-  const isFormation = offer_type === '🎓 Formation';
 
   const offerLabel = offer_type ? offer_type.replace(/^[^\p{L}\p{N}]+/u, '').trim() : '';
   const nameLabel = offerLabel ? `Nom (${offerLabel})` : 'Nom';
   const descriptionLabel = offerLabel ? `Description (${offerLabel})` : 'Description';
   const namePlaceholder = isProduct ? 'Ex : Pain au levain bio'
     : isService ? 'Ex : Coaching sportif personnalisé'
-    : isSaas ? 'Ex : BoosterApp'
-    : isFormation ? 'Ex : Formation Trading 30 jours'
     : 'Donnez un nom court';
   const descPlaceholder = isProduct
     ? 'Une phrase simple (générée auto depuis l\'image)'
