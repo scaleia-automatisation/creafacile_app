@@ -219,7 +219,7 @@ const StartingChoiceButtons = () => {
               <span>Créer à partir<br />d'une image</span>
             </button>
           </div>
-          <div className="w-full">
+          <div className="w-full h-full">
             <button
               onClick={() => choose('perf')}
               style={radius}
