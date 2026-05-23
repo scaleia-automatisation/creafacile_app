@@ -205,7 +205,7 @@ const StartingChoiceButtons = () => {
       </div>
       {user_mode === 'expert' && (
         <>
-          <div className="w-full">
+          <div className="w-full h-full">
             <button
               onClick={() => choose('simple')}
               style={radius}
