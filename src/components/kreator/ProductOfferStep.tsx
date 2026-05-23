@@ -40,7 +40,6 @@ const ProductOfferStep = () => {
     offer_type, setOfferType,
     target_persona, setTargetPersona,
     product_image_url, setProductImageUrl,
-    product_image_urls_extra, setProductImageUrlsExtra,
     idea_chosen, setIdeaChosen,
     setInputText,
   } = useKreatorStore();
@@ -50,9 +49,7 @@ const ProductOfferStep = () => {
   const [describing, setDescribing] = useState(false);
   const [detectingOfferType, setDetectingOfferType] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const extraFileRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
   const autoPersonaKeyRef = useRef<string>('');
-  const groupAnalyzeKeyRef = useRef<string>('');
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
