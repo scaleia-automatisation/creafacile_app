@@ -41,6 +41,7 @@ const ActivitySectorFields = () => {
     company_activity, setCompanyActivity,
     company_sector, setCompanySector,
     market, setMarket,
+    user_mode,
   } = useKreatorStore();
   const [sectorMode, setSectorMode] = useState<'preset' | 'custom'>('preset');
   const [detectingSector, setDetectingSector] = useState(false);
