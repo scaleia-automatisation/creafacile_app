@@ -91,13 +91,6 @@ const ProductOfferStep = () => {
     }
   };
 
-  const readFileAsDataUrl = (file: File) => new Promise<string>((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(r.result as string);
-    r.onerror = reject;
-    r.readAsDataURL(file);
-  });
-
   const handleFile = (file: File) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
       toast.error('Format non supporté. Utilisez JPG, PNG ou WEBP.');
@@ -111,8 +104,7 @@ const ProductOfferStep = () => {
     reader.onload = async () => {
       const dataUrl = reader.result as string;
       setProductImageUrl(dataUrl);
-      // If only one image so far, use single-image description; group analysis runs via effect when ≥2.
-      if (isProduct && product_image_urls_extra.length === 0) {
+      if (isProduct) {
         setDescribing(true);
         try {
           const [desc, sector] = await Promise.all([
@@ -130,46 +122,6 @@ const ProductOfferStep = () => {
     };
     reader.readAsDataURL(file);
   };
-
-  const handleExtraFile = async (file: File, idx: number) => {
-    if (!ACCEPTED_TYPES.includes(file.type)) {
-      toast.error('Format non supporté. Utilisez JPG, PNG ou WEBP.');
-      return;
-    }
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      toast.error(`Le fichier dépasse ${MAX_SIZE_MB}MB`);
-      return;
-    }
-    try {
-      const dataUrl = await readFileAsDataUrl(file);
-      const next = [...product_image_urls_extra];
-      next[idx] = dataUrl;
-      setProductImageUrlsExtra(next.filter(Boolean));
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const removeExtra = (idx: number) => {
-    const next = product_image_urls_extra.filter((_, i) => i !== idx);
-    setProductImageUrlsExtra(next);
-  };
-
-  // Auto-analyse globale dès qu'il y a 2 images ou plus
-  useEffect(() => {
-    if (!isProduct) return;
-    const all = [product_image_url, ...product_image_urls_extra].filter(Boolean);
-    if (all.length < 2) return;
-    const key = all.join('|').slice(0, 200) + ':' + all.length;
-    if (groupAnalyzeKeyRef.current === key) return;
-    groupAnalyzeKeyRef.current = key;
-    setDescribing(true);
-    describeProductImages(all)
-      .then((desc) => setProductDescription(toSentences(desc, 3)))
-      .catch((e) => console.error('Group image analysis failed', e))
-      .finally(() => setDescribing(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product_image_url, product_image_urls_extra, isProduct]);
 
   const handleNoIdea = async () => {
     if (!user) { toast.error('Connectez-vous pour générer des idées'); return; }
@@ -303,55 +255,15 @@ const ProductOfferStep = () => {
               </button>
             )}
             <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value=''; }} />
-            {/* Images supplémentaires (jusqu'à 2 de plus) */}
-            {product_image_url && (
-              <div className="mt-2 flex gap-2 flex-wrap">
-                {[0, 1].map((idx) => {
-                  const url = product_image_urls_extra[idx];
-                  return url ? (
-                    <div key={idx} className="relative group w-[72px] h-[72px] rounded-md overflow-hidden border border-foreground/10 bg-card">
-                      <img src={url} alt={`Produit ${idx + 2}`} className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => removeExtra(idx)}
-                        className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => extraFileRefs[idx].current?.click()}
-                      className="w-[72px] h-[72px] rounded-md border-2 border-dashed border-foreground/10 bg-card hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-primary"
-                    >
-                      <Upload className="w-4 h-4" />
-                      <span className="text-[10px] font-medium">+ image</span>
-                    </button>
-                  );
-                })}
-                {[0, 1].map((idx) => (
-                  <input
-                    key={`in-${idx}`}
-                    ref={extraFileRefs[idx]}
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.webp"
-                    className="hidden"
-                    onChange={(e) => { const f = e.target.files?.[0]; if (f) handleExtraFile(f, idx); e.target.value=''; }}
-                  />
-                ))}
-              </div>
-            )}
             {product_image_url && (
               <p className="text-[11px] text-muted-foreground mt-1.5">
-                Ajoutez 1 ou 2 images supplémentaires (mêmes angles ou produits différents). À partir de 2 images, une description globale est générée automatiquement.
+                1 seule image de référence possible. La description est générée automatiquement à partir de cette image.
               </p>
             )}
             {describing && (
               <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
-                Analyse {(product_image_urls_extra.length + (product_image_url ? 1 : 0)) >= 2 ? 'des images' : "de l'image"}…
+                Analyse de l'image…
               </div>
             )}
           </div>
@@ -388,9 +300,7 @@ const ProductOfferStep = () => {
           <p className="text-[11px] text-muted-foreground mt-1">
             Une seule phrase simple, exacte
             {isProduct
-              ? ((product_image_urls_extra.length + (product_image_url ? 1 : 0)) >= 2
-                ? ' — générée automatiquement à partir des images (identiques ou différentes)'
-                : ' — générée automatiquement à partir de l\'image')
+              ? ' — générée automatiquement à partir de l\'image'
               : ' — à renseigner manuellement'}
           </p>
         </div>
