@@ -41,6 +41,7 @@ const ActivitySectorFields = () => {
     company_activity, setCompanyActivity,
     company_sector, setCompanySector,
     market, setMarket,
+    user_mode,
   } = useKreatorStore();
   const [sectorMode, setSectorMode] = useState<'preset' | 'custom'>('preset');
   const [detectingSector, setDetectingSector] = useState(false);
@@ -82,6 +83,8 @@ const ActivitySectorFields = () => {
       setCompanySector(value);
     }
   };
+
+  if (user_mode === 'beginner') return null;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
