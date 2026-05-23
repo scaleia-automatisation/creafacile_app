@@ -246,7 +246,7 @@ const ProductOfferStep = () => {
             Type d'offre *
             {detectingOfferType && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />}
           </label>
-          <Select value={offer_type} onValueChange={setOfferType}>
+          <Select value={offer_type} onValueChange={handleOfferTypeChange}>
             <SelectTrigger className="bg-card border-foreground/10 text-foreground">
               <SelectValue placeholder="Choisir un type d'offre..." />
             </SelectTrigger>
