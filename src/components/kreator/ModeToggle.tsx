@@ -24,7 +24,7 @@ const ModeToggle = () => {
             : 'text-muted-foreground hover:text-foreground'
         }`}
       >
-        Mode<br/>expert
+        Expert
       </button>
     </div>
   );
