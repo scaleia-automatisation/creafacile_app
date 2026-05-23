@@ -246,7 +246,7 @@ const StartingChoiceButtons = () => {
           }`}
         >
           <Lightbulb className="w-5 h-5 shrink-0" />
-          <span>Je n'ai pas d'idée</span>
+          <span>Je n'ai pas d'idée<br />aujaurd'hui</span>
         </button>
       </div>
     </div>
