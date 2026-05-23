@@ -183,12 +183,12 @@ const StartingChoiceButtons = () => {
   };
 
   const baseBtn =
-    'w-full flex items-center justify-center gap-2 h-auto py-4 px-5 text-sm md:text-base font-bold border-2 border-[hsl(210_100%_55%)] transition-all whitespace-normal leading-tight text-center';
+    'w-full flex items-center justify-center gap-2 h-full min-h-[88px] py-4 px-5 text-sm md:text-base font-bold border-2 border-[hsl(210_100%_55%)] transition-all whitespace-normal leading-tight text-center';
   const radius = { borderRadius: '20px' };
 
   return (
     <div id="starting-choice-buttons" className="flex flex-col items-center gap-4 max-w-6xl mx-auto">
-    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 items-start w-full ${user_mode === 'beginner' ? 'max-w-xl mx-auto' : 'lg:grid-cols-4'}`}>
+    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch w-full ${user_mode === 'beginner' ? 'max-w-xl mx-auto' : 'lg:grid-cols-4'}`}>
       <div className="w-full">
         <button
           onClick={() => choose('idea')}
