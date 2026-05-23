@@ -79,6 +79,21 @@ const ProductOfferStep = () => {
   };
   const toOneSentence = (text: string) => toSentences(text, 1);
 
+  const handleOfferTypeChange = (val: string) => {
+    setOfferType(val);
+    setProductService('');
+    setProductDescription('');
+    setProductImageUrl('');
+    setProductImageUrlsExtra([]);
+    setTargetPersona('');
+    setIdeaChosen('');
+    setInputText('');
+    setPersonas([]);
+    setSelectedPersonaId(null);
+    setShowIdeas(false);
+    setIdeas([]);
+  };
+
   const handleDescriptionBlur = async () => {
     const cleanedDesc = toOneSentence(product_description || '');
     if (cleanedDesc !== product_description) setProductDescription(cleanedDesc);
