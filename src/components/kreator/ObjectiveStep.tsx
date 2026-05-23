@@ -529,6 +529,7 @@ const ObjectiveStep = () => {
     visual_style_brief, setVisualStyleBrief,
     company_sector, type,
     options, setOptions,
+    user_mode,
   } = useKreatorStore();
 
   const preset = useMemo(() => SECTOR_PRESETS[company_sector] ?? DEFAULT_PRESET, [company_sector]);
