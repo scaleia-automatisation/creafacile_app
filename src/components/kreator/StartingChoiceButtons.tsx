@@ -14,6 +14,7 @@ const StartingChoiceButtons = () => {
     product_service, product_description, product_image_url,
     simple_images, setSimpleImages,
     objective,
+    user_mode,
   } = useKreatorStore();
   const setInputImageDescription = useKreatorStore((s) => s.setInputImageDescription);
   const [scratchError, setScratchError] = useState<string[]>([]);
