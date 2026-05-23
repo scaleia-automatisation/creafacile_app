@@ -244,9 +244,6 @@ export async function detectOfferTypeFromDescription(description: string, offerT
   return match || raw;
 }
 
-export async function summarizePerformingPosts(descriptions: string[]) {
-}
-
 export async function detectActivityFromDescription(description: string): Promise<string> {
   const systemPrompt = `Tu es un expert en classification d'activités professionnelles. À partir de la description d'une offre (produit ou service), déduis L'ACTIVITÉ PRINCIPALE ou LE MÉTIER de l'entreprise qui la propose.
 RÈGLES STRICTES :
@@ -263,7 +260,7 @@ RÈGLES STRICTES :
   return content.trim().replace(/^["'`]+|["'`.]+$/g, '').split('\n')[0].trim();
 }
 
-export async function _summarizePerformingPostsLegacy(descriptions: string[]) {
+export async function summarizePerformingPosts(descriptions: string[]) {
   const systemPrompt = `Tu es un expert en marketing digital et viralité sur les réseaux sociaux. À partir de la description du post fournie, explique pourquoi ce post est devenu viral.
 RÈGLES STRICTES :
 - Réponds UNIQUEMENT sous forme d'une liste à puces (utilise "- " en début de chaque ligne).
