@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Users, CheckCircle, Sparkles, Upload, X, Replace, ImagePlus, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { generatePersonas, generateIdeas, detectSectorFromImage, detectOfferTypeFromDescription, describeProductImages } from '@/lib/kreator-ai';
+import { generatePersonas, generateIdeas, detectSectorFromImage, detectOfferTypeFromDescription, describeProductImages, detectActivityFromDescription } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
@@ -31,7 +31,7 @@ const ProductOfferStep = () => {
   const { user } = useAuth();
   const {
     type,
-    company_activity,
+    company_activity, setCompanyActivity,
     company_sector, setCompanySector,
     market,
     marketing_angle,
@@ -48,6 +48,8 @@ const ProductOfferStep = () => {
   const [selectedPersonaId, setSelectedPersonaId] = useState<number | null>(null);
   const [describing, setDescribing] = useState(false);
   const [detectingOfferType, setDetectingOfferType] = useState(false);
+  const [detectingActivity, setDetectingActivity] = useState(false);
+  const autoActivityKeyRef = useRef<string>('');
   const fileRef = useRef<HTMLInputElement>(null);
   const autoPersonaKeyRef = useRef<string>('');
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
@@ -79,16 +81,28 @@ const ProductOfferStep = () => {
   const handleDescriptionBlur = async () => {
     const cleanedDesc = toOneSentence(product_description || '');
     if (cleanedDesc !== product_description) setProductDescription(cleanedDesc);
-    if (!cleanedDesc || offer_type || detectingOfferType) return;
-    setDetectingOfferType(true);
-    try {
-      const detected = await detectOfferTypeFromDescription(cleanedDesc, OFFER_TYPES);
-      if (detected && OFFER_TYPES.includes(detected)) setOfferType(detected);
-    } catch (e) {
-      console.error('Auto offer type detection failed', e);
-    } finally {
-      setDetectingOfferType(false);
+    if (!cleanedDesc) return;
+    const tasks: Promise<void>[] = [];
+    if (!offer_type && !detectingOfferType) {
+      setDetectingOfferType(true);
+      tasks.push(
+        detectOfferTypeFromDescription(cleanedDesc, OFFER_TYPES)
+          .then((detected) => { if (detected && OFFER_TYPES.includes(detected)) setOfferType(detected); })
+          .catch((e) => console.error('Auto offer type detection failed', e))
+          .finally(() => setDetectingOfferType(false))
+      );
     }
+    if (!company_activity?.trim() && !detectingActivity && autoActivityKeyRef.current !== cleanedDesc) {
+      autoActivityKeyRef.current = cleanedDesc;
+      setDetectingActivity(true);
+      tasks.push(
+        detectActivityFromDescription(cleanedDesc)
+          .then((activity) => { if (activity) setCompanyActivity(activity); })
+          .catch((e) => console.error('Auto activity detection failed', e))
+          .finally(() => setDetectingActivity(false))
+      );
+    }
+    await Promise.all(tasks);
   };
 
   const handleFile = (file: File) => {

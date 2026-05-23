@@ -244,6 +244,22 @@ export async function detectOfferTypeFromDescription(description: string, offerT
   return match || raw;
 }
 
+export async function detectActivityFromDescription(description: string): Promise<string> {
+  const systemPrompt = `Tu es un expert en classification d'activités professionnelles. À partir de la description d'une offre (produit ou service), déduis L'ACTIVITÉ PRINCIPALE ou LE MÉTIER de l'entreprise qui la propose.
+RÈGLES STRICTES :
+- Réponds UNIQUEMENT par 1 à 4 mots (ex : "Boulangerie artisanale", "Coach sportif", "Agence marketing", "Cabinet d'avocats").
+- Pas de phrase, pas de ponctuation finale, pas de guillemets, pas d'emoji.
+- Utilise le français, au singulier, sans article ("Boulangerie" et non "Une boulangerie").`;
+  const data = await callKreatorAI({
+    action: 'detect_activity_from_description',
+    messages: [{ role: 'user', content: `Description de l'offre : ${description}` }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) return '';
+  return content.trim().replace(/^["'`]+|["'`.]+$/g, '').split('\n')[0].trim();
+}
+
 export async function summarizePerformingPosts(descriptions: string[]) {
   const systemPrompt = `Tu es un expert en marketing digital et viralité sur les réseaux sociaux. À partir de la description du post fournie, explique pourquoi ce post est devenu viral.
 RÈGLES STRICTES :
