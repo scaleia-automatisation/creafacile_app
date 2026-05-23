@@ -188,7 +188,7 @@ const StartingChoiceButtons = () => {
 
   return (
     <div id="starting-choice-buttons" className="flex flex-col items-center gap-4 max-w-6xl mx-auto">
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-start w-full">
+    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 items-start w-full ${user_mode === 'beginner' ? 'max-w-xl mx-auto' : 'lg:grid-cols-4'}`}>
       <div className="w-full">
         <button
           onClick={() => choose('idea')}
@@ -203,34 +203,38 @@ const StartingChoiceButtons = () => {
           <span>J'ai une idée<br />de contenu</span>
         </button>
       </div>
-      <div className="w-full">
-        <button
-          onClick={() => choose('simple')}
-          style={radius}
-          className={`${baseBtn} ${
-            starting_choice === 'simple'
-              ? 'gradient-bg text-primary-foreground shadow-lg shadow-primary/20'
-              : 'bg-card text-foreground hover:opacity-90'
-          }`}
-        >
-          <ImagePlus className="w-5 h-5 shrink-0" />
-          <span>Créer à partir<br />d'une image</span>
-        </button>
-      </div>
-      <div className="w-full">
-        <button
-          onClick={() => choose('perf')}
-          style={radius}
-          className={`${baseBtn} ${
-            starting_choice === 'perf'
-              ? 'gradient-bg text-primary-foreground shadow-lg shadow-primary/20'
-              : 'bg-card text-foreground hover:opacity-90'
-          }`}
-        >
-          <TrendingUp className="w-5 h-5 shrink-0" />
-          <span>S'inspirer d'un<br />post viral</span>
-        </button>
-      </div>
+      {user_mode === 'expert' && (
+        <>
+          <div className="w-full">
+            <button
+              onClick={() => choose('simple')}
+              style={radius}
+              className={`${baseBtn} ${
+                starting_choice === 'simple'
+                  ? 'gradient-bg text-primary-foreground shadow-lg shadow-primary/20'
+                  : 'bg-card text-foreground hover:opacity-90'
+              }`}
+            >
+              <ImagePlus className="w-5 h-5 shrink-0" />
+              <span>Créer à partir<br />d'une image</span>
+            </button>
+          </div>
+          <div className="w-full">
+            <button
+              onClick={() => choose('perf')}
+              style={radius}
+              className={`${baseBtn} ${
+                starting_choice === 'perf'
+                  ? 'gradient-bg text-primary-foreground shadow-lg shadow-primary/20'
+                  : 'bg-card text-foreground hover:opacity-90'
+              }`}
+            >
+              <TrendingUp className="w-5 h-5 shrink-0" />
+              <span>S'inspirer d'un<br />post viral</span>
+            </button>
+          </div>
+        </>
+      )}
       <div className="w-full">
         <button
           onClick={() => choose('scratch')}
