@@ -235,7 +235,7 @@ const StartingChoiceButtons = () => {
           </div>
         </>
       )}
-      <div className="w-full">
+      <div className="w-full h-full">
         <button
           onClick={() => choose('scratch')}
           style={radius}
