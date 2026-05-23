@@ -40,6 +40,7 @@ const ProductOfferStep = () => {
     offer_type, setOfferType,
     target_persona, setTargetPersona,
     product_image_url, setProductImageUrl,
+    product_image_urls_extra, setProductImageUrlsExtra,
     idea_chosen, setIdeaChosen,
     setInputText,
   } = useKreatorStore();
