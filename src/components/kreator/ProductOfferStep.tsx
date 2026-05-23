@@ -43,6 +43,7 @@ const ProductOfferStep = () => {
     product_image_urls_extra, setProductImageUrlsExtra,
     idea_chosen, setIdeaChosen,
     setInputText,
+    user_mode,
   } = useKreatorStore();
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [loadingPersonas, setLoadingPersonas] = useState(false);
