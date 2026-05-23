@@ -189,7 +189,7 @@ const StartingChoiceButtons = () => {
   return (
     <div id="starting-choice-buttons" className="flex flex-col items-center gap-4 max-w-6xl mx-auto">
     <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch w-full ${user_mode === 'beginner' ? 'max-w-xl mx-auto' : 'lg:grid-cols-4'}`}>
-      <div className="w-full">
+      <div className="w-full h-full">
         <button
           onClick={() => choose('idea')}
           style={radius}
