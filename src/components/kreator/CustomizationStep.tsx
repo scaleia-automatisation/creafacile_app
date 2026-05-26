@@ -365,6 +365,24 @@ const CustomizationStep = () => {
                           </SelectContent>
                         </Select>
                       </div>
+                      {isVideo && (
+                        <div>
+                          <label className="text-xs text-muted-foreground mb-1 block">Apparition du logo</label>
+                          <Select
+                            value={options.logo_appearance}
+                            onValueChange={(v) => setOptions({ logo_appearance: v as 'start' | 'middle' | 'end' })}
+                          >
+                            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-card border-foreground/10">
+                              <SelectItem value="start" className="text-foreground focus:bg-secondary/20">Au début de la vidéo</SelectItem>
+                              <SelectItem value="middle" className="text-foreground focus:bg-secondary/20">Au milieu de la vidéo</SelectItem>
+                              <SelectItem value="end" className="text-foreground focus:bg-secondary/20">À la fin de la vidéo</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
                     </>
                   )}
                 </AccordionContent>
