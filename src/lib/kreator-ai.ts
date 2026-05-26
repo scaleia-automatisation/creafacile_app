@@ -402,6 +402,7 @@ export async function generatePrompt(params: {
   logoEnabled?: boolean;
   logoUrl?: string;
   logoPosition?: 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right';
+  logoAppearance?: 'start' | 'middle' | 'end';
   textPosition?: 'top-center' | 'middle-center' | 'bottom-center';
   textFont?: string;
   textColor?: string;
@@ -639,7 +640,7 @@ Timing à l'écran : Texte 1 apparaît à ${params.textStart1 ?? 0}s pendant ${p
   : ''}`)
   : 'Pas de texte overlay — NE PAS générer de texte, pancarte, étiquette, logo ou enseigne dans l\'image'}
 ${params.logoEnabled && params.logoUrl
-  ? `Logo de marque: présent dans le visuel, intégré ${params.logoPosition === 'bottom-right' ? 'en bas à droite' : params.logoPosition === 'top-left' ? 'en haut à gauche' : params.logoPosition === 'top-right' ? 'en haut à droite' : 'en bas au centre'}, taille discrète et professionnelle, parfaitement lisible, sans déformation, ne couvrant pas le sujet principal. Référence du logo fourni par l'utilisateur: ${params.logoUrl}`
+  ? `Logo de marque: présent dans le visuel, intégré ${params.logoPosition === 'bottom-right' ? 'en bas à droite' : params.logoPosition === 'top-left' ? 'en haut à gauche' : params.logoPosition === 'top-right' ? 'en haut à droite' : 'en bas au centre'}, taille discrète et professionnelle, parfaitement lisible, sans déformation, ne couvrant pas le sujet principal. Référence du logo fourni par l'utilisateur: ${params.logoUrl}${params.contentType === 'video' ? `\nApparition du logo dans la vidéo: ${params.logoAppearance === 'middle' ? "AU MILIEU de la vidéo (apparition à mi-parcours, environ à la moitié de la durée)" : params.logoAppearance === 'end' ? "À LA FIN de la vidéo (apparition sur les dernières secondes, comme signature de marque finale)" : "AU DÉBUT de la vidéo (apparition dès les premières secondes, dès l'ouverture)"} — le script et le storyboard DOIVENT explicitement indiquer ce timing d'apparition du logo, sans exception.` : ''}`
   : 'Pas de logo à intégrer'}
 ${params.paletteEnabled ? `🎨 PALETTE DE COULEURS ACTIVE (PRIORITÉ ABSOLUE — domine 60-80% du visuel, prévaut sur toute autre suggestion couleur y compris l'analyse d'images de référence): ${params.paletteHex.join(', ')}` : 'Palette automatique'}
 

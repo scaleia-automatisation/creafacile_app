@@ -118,6 +118,8 @@ interface KreatorOptions {
   logo_enabled: boolean;
   logo_url: string;
   logo_position: 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right';
+  // Video-only: when the logo appears in the script
+  logo_appearance: 'start' | 'middle' | 'end';
   // Text overlay positioning + font (image / carousel / video)
   text_position: 'top-center' | 'middle-center' | 'bottom-center';
   text_font: string;
@@ -277,6 +279,7 @@ const initialState = {
     logo_enabled: false,
     logo_url: '',
     logo_position: 'bottom-center' as const,
+    logo_appearance: 'start' as const,
     text_position: 'bottom-center' as const,
     text_font: 'Montserrat',
     text_color: '#FFFFFF',

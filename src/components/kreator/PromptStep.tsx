@@ -127,6 +127,7 @@ const PromptStep = () => {
         logoEnabled: options.logo_enabled,
         logoUrl: options.logo_url,
         logoPosition: options.logo_position,
+        logoAppearance: options.logo_appearance,
         textPosition: options.text_position,
         textFont: options.text_font,
         textColor: options.text_color,
