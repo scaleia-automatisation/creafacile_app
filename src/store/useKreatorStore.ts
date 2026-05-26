@@ -279,6 +279,7 @@ const initialState = {
     logo_enabled: false,
     logo_url: '',
     logo_position: 'bottom-center' as const,
+    logo_appearance: 'start' as const,
     text_position: 'bottom-center' as const,
     text_font: 'Montserrat',
     text_color: '#FFFFFF',
