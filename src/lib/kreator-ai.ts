@@ -402,6 +402,7 @@ export async function generatePrompt(params: {
   logoEnabled?: boolean;
   logoUrl?: string;
   logoPosition?: 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right';
+  logoAppearance?: 'start' | 'middle' | 'end';
   textPosition?: 'top-center' | 'middle-center' | 'bottom-center';
   textFont?: string;
   textColor?: string;
