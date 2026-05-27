@@ -42,6 +42,7 @@ const StartingPointBlock = () => {
     render_style, setRenderStyle,
     options,
     starting_choice, setStartingChoice,
+    user_mode,
   } = useKreatorStore();
   const setInputImageDescription = useKreatorStore((s) => s.setInputImageDescription);
 
