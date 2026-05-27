@@ -118,28 +118,32 @@ export async function describeImage(imageBase64: string) {
 
 export async function refineIdea(input: {
   idea: string;
-  offerType: string;
+  offerType?: string;
   productName: string;
   productDescription: string;
-  activity: string;
-  sector: string;
+  activity?: string;
+  sector?: string;
   market?: string;
   persona?: string;
+  objective?: string;
+  marketingAngle?: string;
 }) {
-  const systemPrompt = `Tu es un expert en marketing de contenu. Reformule et structure l'idée de contenu fournie pour la rendre claire, concrète, percutante et alignée avec l'offre, le secteur et la cible. Réponds en FRANÇAIS, en 2 PHRASES MAXIMUM (jamais plus), sans introduction, sans guillemets, sans liste, sans markdown. Conserve l'intention de l'auteur, supprime le superflu, ajoute uniquement les précisions utiles tirées du contexte.`;
+  const systemPrompt = `Tu es un expert en marketing de contenu et copywriting de conversion. Reformule et structure l'idée de contenu fournie pour la rendre claire, concrète, percutante, avec un ANGLE MARKETING FORT aligné sur l'offre, l'objectif de contenu et l'angle marketing fournis (si présents), tout en respectant strictement le sens et l'intention de l'idée d'origine. Réponds en FRANÇAIS, en 2 PHRASES MAXIMUM (jamais plus), sans introduction, sans guillemets, sans liste, sans markdown. Supprime le superflu, ajoute uniquement les précisions utiles tirées du contexte.`;
   const userPrompt = `=== IDÉE BRUTE ===
 ${input.idea}
 
 === CONTEXTE OFFRE ===
-Type d'offre: ${input.offerType}
 Nom: ${input.productName}
 Description: ${input.productDescription}
-Activité / Métier: ${input.activity}
-Secteur: ${input.sector}
+${input.offerType ? `Type d'offre: ${input.offerType}` : ''}
+${input.activity ? `Activité / Métier: ${input.activity}` : ''}
+${input.sector ? `Secteur: ${input.sector}` : ''}
 ${input.market ? `Marché / Localisation: ${input.market}` : ''}
 ${input.persona ? `Client cible / Persona: ${input.persona}` : ''}
+${input.objective ? `Objectif de contenu: ${input.objective}` : ''}
+${input.marketingAngle ? `Angle marketing: ${input.marketingAngle}` : ''}
 
-Reformule et structure cette idée en 2 phrases maximum.`;
+Reformule cette idée en 2 phrases maximum, dans le SENS de l'idée d'origine, avec un angle marketing fort.`;
   const data = await callKreatorAI({
     action: 'refine_idea',
     messages: [{ role: 'user', content: userPrompt }],
