@@ -156,7 +156,8 @@ const ProductOfferStep = () => {
 
   const handleNoIdea = async () => {
     if (!user) { toast.error('Connectez-vous pour générer des idées'); return; }
-    if (!company_activity) { toast.error('Renseignez votre activité principale dans "Votre activité"'); return; }
+    const isBeginner = user_mode === 'beginner';
+    if (!isBeginner && !company_activity) { toast.error('Renseignez votre activité principale dans "Votre activité"'); return; }
     const missing: string[] = [];
     if (!product_service?.trim()) missing.push('Produit ou service');
     if (!marketing_angle?.trim()) missing.push('Angle marketing');
@@ -187,11 +188,12 @@ const ProductOfferStep = () => {
   };
 
   const handleGeneratePersonas = async () => {
-    if (!company_activity?.trim()) {
+    const isBeginner = user_mode === 'beginner';
+    if (!isBeginner && !company_activity?.trim()) {
       toast.error("Renseignez l'activité principale (bloc Votre activité)");
       return;
     }
-    if (!company_sector?.trim()) {
+    if (!isBeginner && !company_sector?.trim()) {
       toast.error("Renseignez le secteur d'activité (bloc Votre activité)");
       return;
     }
