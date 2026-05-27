@@ -5,6 +5,7 @@ const ScratchMissingAlert = () => {
   const {
     starting_choice, offer_type, company_activity, company_sector,
     product_service, product_image_url, objective,
+    user_mode,
   } = useKreatorStore();
 
   if (starting_choice !== 'scratch') return null;
