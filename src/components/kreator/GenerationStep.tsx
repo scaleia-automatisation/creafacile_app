@@ -52,7 +52,10 @@ const GenerationStep = () => {
     type, prompt_en, prompt_fr, status, setStatus, result_url, setResultUrl,
     ai_model, format, setCreditsUsed, objective, marketing_angle, input_text, idea_chosen,
     company_sector, company_activity, input_photos, resetProject,
-    model_settings, sora_character_scenes
+    model_settings, sora_character_scenes,
+    offer_type, product_service, product_description, target_persona, market,
+    options, slides_count, visual_style_brief, render_style, video_render_style,
+    input_image_description,
   } = useKreatorStore();
   const [progress, setProgress] = useState(0);
   const [generating, setGenerating] = useState(false);
@@ -114,6 +117,28 @@ const GenerationStep = () => {
           contentType: type,
           sector: company_sector,
           activity: company_activity,
+          aiModel: ai_model,
+          format,
+          slidesCount: slides_count,
+          offerType: offer_type,
+          offerName: product_service,
+          offerDescription: product_description,
+          persona: target_persona,
+          market,
+          marketingAngle: marketing_angle,
+          ton: options.ton,
+          visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
+          freeDescription: input_text,
+          promptValide: prompt_fr,
+          advancedSettings: [
+            options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
+            options.logo_enabled ? `logo: ${options.logo_position}${type === 'video' ? ` (apparition ${options.logo_appearance})` : ''}` : '',
+            options.show_text ? `texte overlay: position ${options.text_position}, police ${options.text_font}` : '',
+          ].filter(Boolean).join(' | '),
+          productAnalysis: input_image_description,
+          text1: options.show_text ? options.text_content : '',
+          text2: options.text_2_enabled ? options.text_content_2 : '',
+          slideTexts: options.slide_texts,
         }),
       ]);
 
