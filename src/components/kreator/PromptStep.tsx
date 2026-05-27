@@ -22,6 +22,7 @@ const PromptStep = () => {
     product_description, voice_over_enabled, voice_over_text, model_settings,
     objective, product_image_url,
     simple_images, starting_choice,
+    user_mode,
   } = useKreatorStore();
 
   const getImageSynthesis = () => {
