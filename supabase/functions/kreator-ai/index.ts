@@ -75,34 +75,40 @@ serve(async (req) => {
       return jsonError(500, "Pas d'image générée");
     }
 
-    // === DALL-E 3 image generation (OpenAI) ===
+    // === OpenAI image generation via Lovable AI Gateway ===
     if (action === "generate_image" && !isImagenModel && !isNanoBananaModel) {
-      const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-      if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
+      const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+      if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-      const dalleRes = await fetch("https://api.openai.com/v1/images/generations", {
+      const gatewaySize = size === "9:16"
+        ? "1024x1536"
+        : size === "16:9"
+          ? "1536x1024"
+          : "1024x1024";
+
+      const imageRes = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "dall-e-3",
+          model: "openai/gpt-image-2",
           prompt: prompt || "",
           n: 1,
-          size: dalle_size || size || "1024x1024",
-          quality: quality || "hd",
+          size: gatewaySize,
+          quality: "low",
         }),
       });
 
-      if (!dalleRes.ok) {
-        const errText = await dalleRes.text();
-        console.error("DALL-E 3 error:", dalleRes.status, errText);
-        return jsonError(dalleRes.status === 429 ? 429 : 500, dalleRes.status === 429 ? "Limite de requêtes OpenAI atteinte." : "Erreur DALL-E 3");
+      if (!imageRes.ok) {
+        const errText = await imageRes.text();
+        console.error("OpenAI image generation error:", imageRes.status, errText);
+        return jsonError(imageRes.status === 429 ? 429 : 500, imageRes.status === 429 ? "Limite de génération d'image atteinte." : "Erreur génération image OpenAI");
       }
 
-      const dalleData = await dalleRes.json();
-      const item = dalleData?.data?.[0];
+      const imageData = await imageRes.json();
+      const item = imageData?.data?.[0];
       const imageUrl = item?.url
         ? item.url
         : item?.b64_json
