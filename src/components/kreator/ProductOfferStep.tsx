@@ -220,12 +220,13 @@ const ProductOfferStep = () => {
 
   // Auto-générer les personas quand tous les champs requis sont remplis
   useEffect(() => {
+    const isBeginner = user_mode === 'beginner';
     const ready =
       offer_type?.trim() &&
       product_description?.trim() &&
       product_service?.trim() &&
-      company_activity?.trim() &&
-      company_sector?.trim();
+      (isBeginner || company_activity?.trim()) &&
+      (isBeginner || company_sector?.trim());
     if (!ready) return;
     const key = [offer_type, product_description, product_service, company_activity, company_sector].join('|');
     if (autoPersonaKeyRef.current === key) return;
