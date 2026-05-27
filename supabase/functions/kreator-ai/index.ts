@@ -704,6 +704,13 @@ serve(async (req) => {
         "qwen/image-edit": "qwen/image-edit",
         "ideogram/character": "ideogram/character",
         "ideogram/image": "ideogram/image",
+        // Migrated to kie.ai
+        "dall-e-3": "gpt-image-2",
+        "nano-banana-2": "nano-banana-2",
+        "nano-banana-pro": "nano-banana-pro",
+        "imagen-4": "imagen4",
+        "imagen-4-ultra": "imagen4-ultra",
+        "imagen-4-fast": "imagen4-fast",
       };
 
       const kieModel = kieImageModelMap[ai_model || ""] || ai_model;
@@ -718,6 +725,8 @@ serve(async (req) => {
       if (input_image_url) {
         input.image_url = input_image_url;
         input.image = input_image_url;
+        // Google nano-banana / imagen / gpt-image-2 expect `image_input` (array)
+        input.image_input = [input_image_url];
       } else if (needsImage) {
         return jsonError(400, `Le modèle ${ai_model} nécessite une image de référence en entrée.`);
       }
