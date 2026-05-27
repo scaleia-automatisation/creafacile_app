@@ -92,7 +92,6 @@ serve(async (req) => {
           n: 1,
           size: dalle_size || size || "1024x1024",
           quality: quality || "hd",
-          response_format: "url",
         }),
       });
 
@@ -103,7 +102,13 @@ serve(async (req) => {
       }
 
       const dalleData = await dalleRes.json();
-      return jsonResp({ image_url: dalleData?.data?.[0]?.url });
+      const item = dalleData?.data?.[0];
+      const imageUrl = item?.url
+        ? item.url
+        : item?.b64_json
+          ? `data:image/png;base64,${item.b64_json}`
+          : null;
+      return jsonResp({ image_url: imageUrl });
     }
 
     // === Imagen 4 image generation (Vertex AI / Gemini API) ===
