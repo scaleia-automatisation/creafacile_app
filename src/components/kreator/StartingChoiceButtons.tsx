@@ -92,7 +92,7 @@ const StartingChoiceButtons = () => {
       if (!product_description?.trim()) missing.push("Description de l'offre");
       if (!product_service?.trim()) missing.push("Nom de l'offre");
       if (!objective?.trim()) missing.push('Objectif du contenu');
-      if (!company_activity?.trim()) missing.push('Activité principale ou métier');
+      if (user_mode !== 'beginner' && !company_activity?.trim()) missing.push('Activité principale ou métier');
       setScratchError(missing);
       setStartingChoice('scratch');
       return;

@@ -42,6 +42,7 @@ const StartingPointBlock = () => {
     render_style, setRenderStyle,
     options,
     starting_choice, setStartingChoice,
+    user_mode,
   } = useKreatorStore();
   const setInputImageDescription = useKreatorStore((s) => s.setInputImageDescription);
 
@@ -235,10 +236,11 @@ const StartingPointBlock = () => {
       return;
     }
     const { offer_type, objective } = useKreatorStore.getState();
+    const isBeginner = user_mode === 'beginner';
     const missing: string[] = [];
     if (!offer_type?.trim()) missing.push("Type d'offre");
-    if (!company_activity?.trim()) missing.push('Activité principale');
-    if (!company_sector?.trim()) missing.push("Secteur d'activité");
+    if (!isBeginner && !company_activity?.trim()) missing.push('Activité principale');
+    if (!isBeginner && !company_sector?.trim()) missing.push("Secteur d'activité");
     if (!objective?.trim()) missing.push('Objectif du contenu');
     if (missing.length > 0) {
       toast.error(`Veuillez renseigner : ${missing.join(', ')} avant de générer des idées à partir de zéro`);

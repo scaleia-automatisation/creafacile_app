@@ -22,6 +22,7 @@ const PromptStep = () => {
     product_description, voice_over_enabled, voice_over_text, model_settings,
     objective, product_image_url,
     simple_images, starting_choice,
+    user_mode,
   } = useKreatorStore();
 
   const getImageSynthesis = () => {
@@ -62,6 +63,7 @@ const PromptStep = () => {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const isProduct = offer_type === '📦 Produit';
+  const isBeginner = user_mode === 'beginner';
   const missingFields: string[] = [];
   if (!offer_type?.trim()) missingFields.push("Type d'offre");
   if (!product_service?.trim()) missingFields.push("Nom de l'offre");
@@ -69,8 +71,8 @@ const PromptStep = () => {
   if (isProduct && !product_description?.trim()) missingFields.push('Description du produit');
   if (!marketing_angle?.trim()) missingFields.push('Angle marketing');
   if (!objective?.trim()) missingFields.push('Objectif du contenu');
-  if (!company_activity?.trim()) missingFields.push('Activité principale');
-  if (!company_sector?.trim()) missingFields.push("Secteur d'activité");
+  if (!isBeginner && !company_activity?.trim()) missingFields.push('Activité principale');
+  if (!isBeginner && !company_sector?.trim()) missingFields.push("Secteur d'activité");
   const hasMissing = missingFields.length > 0;
 
   const handleGenerate = async () => {
