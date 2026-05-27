@@ -160,7 +160,7 @@ const ProductOfferStep = () => {
     if (!isBeginner && !company_activity) { toast.error('Renseignez votre activité principale dans "Votre activité"'); return; }
     const missing: string[] = [];
     if (!product_service?.trim()) missing.push('Produit ou service');
-    if (!marketing_angle?.trim()) missing.push('Angle marketing');
+    if (!isBeginner && !marketing_angle?.trim()) missing.push('Angle marketing');
     if (missing.length > 0) {
       toast.error(`Veuillez renseigner : ${missing.join(' et ')} avant de générer des idées`);
       return;

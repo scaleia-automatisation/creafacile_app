@@ -69,8 +69,8 @@ const PromptStep = () => {
   if (!product_service?.trim()) missingFields.push("Nom de l'offre");
   if (isProduct && !product_image_url?.trim()) missingFields.push('Image du produit');
   if (isProduct && !product_description?.trim()) missingFields.push('Description du produit');
-  if (!marketing_angle?.trim()) missingFields.push('Angle marketing');
-  if (!objective?.trim()) missingFields.push('Objectif du contenu');
+  if (!isBeginner && !marketing_angle?.trim()) missingFields.push('Angle marketing');
+  if (!isBeginner && !objective?.trim()) missingFields.push('Objectif du contenu');
   if (!isBeginner && !company_activity?.trim()) missingFields.push('Activité principale');
   if (!isBeginner && !company_sector?.trim()) missingFields.push("Secteur d'activité");
   const hasMissing = missingFields.length > 0;
