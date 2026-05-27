@@ -936,7 +936,12 @@ export async function generateImage(
   format: string = '1:1',
   inputImageUrl?: string
 ) {
-  const isKieImageModel = ['qwen/image-edit', 'ideogram/character', 'ideogram/image'].includes(aiModel);
+  // All image models are now routed through kie.ai
+  const isKieImageModel = [
+    'qwen/image-edit', 'ideogram/character', 'ideogram/image',
+    'dall-e-3', 'nano-banana-2', 'nano-banana-pro',
+    'imagen-4', 'imagen-4-ultra', 'imagen-4-fast',
+  ].includes(aiModel);
 
   // === kie.ai image models — start + polling ===
   if (isKieImageModel) {
