@@ -44,10 +44,9 @@ const formats: { value: Format; label: string; sublabel: string }[] = [
 
 const ContentTypeStep = () => {
   const {
-    type, setType, slides_count, setSlidesCount,
+    type, slides_count, setSlidesCount,
     ai_model, setAiModel,
     format, setFormat,
-    video_resolution, setVideoResolution,
     sora_character_total_duration, setSoraCharacterTotalDuration,
     sora_character_scenes, setSoraCharacterScenes,
   } = useKreatorStore();
