@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react';
 import type { ContentType } from '@/store/useKreatorStore';
 import { FUNNEL_OBJECTIVES, FUNNEL_ANGLES, type FunnelObjective } from '@/data/funnelAngles';
 import { VISUAL_STYLES } from '@/data/visualStyles';
+import IdeaSuggestions from './IdeaSuggestions';
 
 const OBJECTIVES = FUNNEL_OBJECTIVES;
 
@@ -641,6 +642,7 @@ const ObjectiveStep = () => {
         <div className="md:col-span-2">
           <p className="text-xs text-muted-foreground italic">{QUALITY_DIRECTIVE}</p>
         </div>
+        {user_mode === 'beginner' && <IdeaSuggestions />}
       </div>
   );
 };
