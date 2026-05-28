@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Users, CheckCircle, Sparkles, Upload, X, Replace, ImagePlus, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { generatePersonas, generateIdeas, detectSectorFromImage, detectOfferTypeFromDescription, describeProductImages, detectActivityFromDescription } from '@/lib/kreator-ai';
+import { generatePersonas, generateIdeas, detectSectorFromImage, detectOfferTypeFromDescription, describeProductImages, detectActivityFromDescription, detectSectorFromActivity } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
@@ -52,6 +52,8 @@ const ProductOfferStep = () => {
   const [detectingOfferType, setDetectingOfferType] = useState(false);
   const [detectingActivity, setDetectingActivity] = useState(false);
   const autoActivityKeyRef = useRef<string>('');
+  const [detectingSector, setDetectingSector] = useState(false);
+  const autoSectorKeyRef = useRef<string>('');
   const fileRef = useRef<HTMLInputElement>(null);
   const autoPersonaKeyRef = useRef<string>('');
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
@@ -117,6 +119,16 @@ const ProductOfferStep = () => {
           .then((activity) => { if (activity) setCompanyActivity(activity); })
           .catch((e) => console.error('Auto activity detection failed', e))
           .finally(() => setDetectingActivity(false))
+      );
+    }
+    if (!company_sector?.trim() && !detectingSector && autoSectorKeyRef.current !== cleanedDesc) {
+      autoSectorKeyRef.current = cleanedDesc;
+      setDetectingSector(true);
+      tasks.push(
+        detectSectorFromActivity(cleanedDesc, SECTORS)
+          .then((sector) => { if (sector) setCompanySector(sector); })
+          .catch((e) => console.error('Auto sector detection failed', e))
+          .finally(() => setDetectingSector(false))
       );
     }
     await Promise.all(tasks);
