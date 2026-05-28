@@ -1,22 +1,12 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
-import { Wand2, Loader2 } from 'lucide-react';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { refineIdea } from '@/lib/kreator-ai';
-import { useState } from 'react';
 import ContentTypeStep from './ContentTypeStep';
 
 const StartingChoiceButtons = () => {
   const {
     type, setType,
-    input_text, setInputText, setIdeaChosen,
-    offer_type, product_service, product_description,
-    company_activity, company_sector, market, target_persona, marketing_angle,
-    objective,
+    offer_type,
     setStartingChoice,
   } = useKreatorStore();
-  const [refiningIdea, setRefiningIdea] = useState(false);
 
   const isProduct = offer_type === '📦 Produit';
   const isService = offer_type === '🛠️ Service';
@@ -31,40 +21,6 @@ const StartingChoiceButtons = () => {
   const handleSelectType = (t: 'image' | 'carousel' | 'video') => {
     setType(t);
     setStartingChoice('idea');
-  };
-
-  const handleRefineIdea = async () => {
-    const missing: string[] = [];
-    if (!product_service?.trim()) missing.push('Nom');
-    if (!product_description?.trim()) missing.push('Description');
-    if (!input_text?.trim()) missing.push('Idée de contenu');
-    if (missing.length) {
-      toast.error(`Veuillez renseigner : ${missing.join(', ')}`);
-      return;
-    }
-    setRefiningIdea(true);
-    try {
-      const refined = await refineIdea({
-        idea: input_text,
-        offerType: offer_type,
-        productName: product_service,
-        productDescription: product_description,
-        activity: company_activity,
-        sector: company_sector,
-        market,
-        persona: target_persona,
-        objective,
-        marketingAngle: marketing_angle,
-      });
-      const val = refined.slice(0, 500);
-      setInputText(val);
-      setIdeaChosen(val);
-    } catch (e) {
-      console.error(e);
-      toast.error("Erreur lors de l'amélioration de l'idée");
-    } finally {
-      setRefiningIdea(false);
-    }
   };
 
   return (
@@ -93,44 +49,6 @@ const StartingChoiceButtons = () => {
             </button>
           );
         })}
-      </div>
-
-      {/* Idée de contenu */}
-      <div className="w-full max-w-2xl space-y-2">
-        <label className="text-sm font-medium text-foreground">
-          Décris ton idée de contenu
-        </label>
-        <Textarea
-          value={input_text}
-          onChange={(e) => {
-            const val = e.target.value.slice(0, 500);
-            setInputText(val);
-            setIdeaChosen(val);
-          }}
-          placeholder="Ex : Mettre en avant notre nouvelle collection d'été avec une ambiance plage…"
-          className="min-h-[110px] resize-none border-2 border-[hsl(210_100%_55%)] focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none"
-          autoFocus
-          maxLength={500}
-        />
-        <div className="flex items-center justify-between gap-2">
-          <div className="text-xs text-muted-foreground">
-            {input_text.length}/500
-          </div>
-          <Button
-            type="button"
-            size="sm"
-            onClick={handleRefineIdea}
-            disabled={refiningIdea || !input_text.trim()}
-            className="h-8 text-xs gap-1.5 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0"
-          >
-            {refiningIdea ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <Wand2 className="w-3.5 h-3.5" />
-            )}
-            Améliorer l'idée
-          </Button>
-        </div>
       </div>
 
       {/* Modèle IA et format (déplacé depuis l'ancien bloc 3) */}
