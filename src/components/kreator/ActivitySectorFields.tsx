@@ -46,16 +46,13 @@ const ActivitySectorFields = () => {
   const [sectorMode, setSectorMode] = useState<'preset' | 'custom'>('preset');
   const [detectingSector, setDetectingSector] = useState(false);
 
+  // Pas de pré-remplissage par défaut. Le secteur est renseigné automatiquement
+  // dès que la description produit/service est saisie (voir ProductOfferStep).
   useEffect(() => {
-    if (!profile) return;
-    // Sector only — l'activité principale reste vide par défaut (saisie manuelle).
-    if (profile.company_sector && !company_sector?.trim()) {
-      setCompanySector(profile.company_sector);
-      if (!SECTORS.includes(profile.company_sector)) {
-        setSectorMode('custom');
-      }
+    if (company_sector?.trim() && !SECTORS.includes(company_sector)) {
+      setSectorMode('custom');
     }
-  }, [profile?.company_sector, company_sector]);
+  }, [company_sector]);
 
   const handleActivityBlur = async () => {
     const activity = company_activity?.trim();
