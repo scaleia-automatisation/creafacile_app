@@ -93,7 +93,7 @@ const Index = () => {
 
         <div className="space-y-6">
           <ProductOfferStep />
-          <StepContainer stepNumber={2} title="Choisissez votre point d'entrée">
+          <StepContainer stepNumber={2} title="Que voulez-vous créer ?">
             <StartingChoiceButtons />
           </StepContainer>
           <StartingPointBlock />

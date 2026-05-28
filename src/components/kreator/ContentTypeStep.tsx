@@ -1,15 +1,9 @@
-import { useKreatorStore, type ContentType, type AIModel, type VideoResolution, type Format } from '@/store/useKreatorStore';
-import { Image, Layers, Video } from 'lucide-react';
+import { useKreatorStore, type AIModel, type Format } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StepContainer from './StepContainer';
 import ModelSettings from './ModelSettings';
 import ObjectiveStep from './ObjectiveStep';
 
-const contentTypes: { type: ContentType; label: string; icon: typeof Image }[] = [
-  { type: 'image', label: 'Image', icon: Image },
-  { type: 'carousel', label: 'Carrousel', icon: Layers },
-  { type: 'video', label: 'Vidéo', icon: Video },
-];
 
 const imageModels: { value: AIModel; label: string }[] = [
   { value: 'nano-banana-2', label: 'Nano Banana 2 ⚡' },
@@ -50,10 +44,9 @@ const formats: { value: Format; label: string; sublabel: string }[] = [
 
 const ContentTypeStep = () => {
   const {
-    type, setType, slides_count, setSlidesCount,
+    type, slides_count, setSlidesCount,
     ai_model, setAiModel,
     format, setFormat,
-    video_resolution, setVideoResolution,
     sora_character_total_duration, setSoraCharacterTotalDuration,
     sora_character_scenes, setSoraCharacterScenes,
   } = useKreatorStore();
@@ -84,30 +77,7 @@ const ContentTypeStep = () => {
   };
 
   return (
-    <StepContainer stepNumber={3} title="Quel type de contenu voulez-vous créer ?">
-      {/* Content type selector */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
-        {contentTypes.map(({ type: t, label, icon: Icon }) => (
-          <button
-            key={t}
-            onClick={() => setType(t)}
-            className={`relative flex flex-col items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 rounded-card border-[3px] transition-all duration-200 ${
-              type === t
-                ? 'border-primary bg-card shadow-lg shadow-primary/10'
-                : 'border-foreground/10 bg-card hover:border-secondary hover:bg-secondary/5'
-            }`}
-          >
-            <Icon className={`w-6 h-6 sm:w-8 sm:h-8 ${type === t ? 'text-primary' : 'text-muted-foreground'}`} />
-            <span className={`font-semibold text-sm ${type === t ? 'text-foreground' : 'text-muted-foreground'}`}>
-              {label}
-            </span>
-            {type === t && (
-              <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full gradient-bg" />
-            )}
-          </button>
-        ))}
-      </div>
-
+    <StepContainer stepNumber={3} title="Modèle IA et format">
       {/* Carousel: slides count */}
       {type === 'carousel' && (
         <div className="mb-6">
