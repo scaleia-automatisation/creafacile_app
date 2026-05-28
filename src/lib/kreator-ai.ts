@@ -69,6 +69,70 @@ Génère 3 idées virales, persuasives, impactantes et engageantes qui suscitent
   }
 }
 
+export interface ContentIdea {
+  id: number;
+  hook: string;
+  concept: string;
+  angle: string;
+}
+
+export async function generateContentIdeas(input: {
+  contentType: 'image' | 'carousel' | 'video';
+  objective?: string;
+  offerType?: string;
+  productName?: string;
+  productDescription?: string;
+  activity?: string;
+  sector?: string;
+  persona?: string;
+  market?: string;
+}): Promise<{ ideas: ContentIdea[] }> {
+  const systemPrompt = `Tu es un expert en marketing digital viral et copywriting de conversion (Facebook, Instagram, TikTok, LinkedIn — recommandations algorithmes 2026).
+
+OBJECTIF : Générer EXACTEMENT 3 idées de contenu TRÈS DIFFÉRENTES, avec un ANGLE MARKETING FORT chacune.
+Les 3 angles doivent être radicalement distincts (ex : douleur / transformation / curiosité ; ou preuve sociale / urgence / éducation). Jamais 2 angles similaires.
+
+STRUCTURE STRICTE de chaque idée :
+- hook : phrase d'accroche scroll-stop 0-2s, ultra punchy, max 70 caractères, avec emoji en début.
+- concept : description claire et concrète du contenu (ce qu'on voit / entend / lit), 1 à 2 phrases max, orientée conversion et cohérente avec le type de contenu et l'objectif.
+- angle : nom court de l'angle marketing fort (ex : "Douleur", "Transformation", "Curiosité", "Preuve sociale", "Urgence", "Autorité", "Storytelling", "Controverse douce") + 4-8 mots d'explication.
+
+RÈGLES :
+- Toujours COHÉRENT avec l'objectif du contenu, le type d'offre, le nom, la description, l'activité, le secteur et le persona fournis.
+- Optimisé conversion + recommandations algorithmes 2026 (rétention, partage, commentaires).
+- Français, sans markdown, sans guillemets superflus.
+
+RETOURNE UNIQUEMENT un JSON valide, exactement ce format :
+{"ideas":[{"id":1,"hook":"…","concept":"…","angle":"…"},{"id":2,"hook":"…","concept":"…","angle":"…"},{"id":3,"hook":"…","concept":"…","angle":"…"}]}`;
+
+  const userPrompt = `=== CONTEXTE ===
+Type de contenu : ${input.contentType}
+${input.objective ? `Objectif du contenu (PRIORITAIRE) : ${input.objective}` : ''}
+${input.offerType ? `Type d'offre : ${input.offerType}` : ''}
+${input.productName ? `Nom de l'offre : ${input.productName}` : ''}
+${input.productDescription ? `Description : ${input.productDescription}` : ''}
+${input.activity ? `Activité principale / Métier : ${input.activity}` : ''}
+${input.sector ? `Secteur : ${input.sector}` : ''}
+${input.persona ? `Client cible / Persona : ${input.persona}` : ''}
+${input.market ? `Marché : ${input.market}` : ''}
+
+Génère 3 idées de contenu avec angles marketing forts TRÈS différents, parfaitement cohérentes avec ce contexte.`;
+
+  const data = await callKreatorAI({
+    action: 'generate_content_ideas',
+    messages: [{ role: 'user', content: userPrompt }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  try {
+    const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch {
+    throw new Error('Failed to parse AI response');
+  }
+}
+
 export async function generatePersonas(params: {
   activity: string;
   sector: string;

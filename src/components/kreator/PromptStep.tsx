@@ -186,6 +186,7 @@ const PromptStep = () => {
           )}
           <div className="flex justify-center">
             <Button
+              id="prompt-generate-btn"
               onClick={handleGenerate}
               disabled={isGenerating || hasMissing}
               className="w-full max-w-md py-6 text-lg font-extrabold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn disabled:opacity-50"
