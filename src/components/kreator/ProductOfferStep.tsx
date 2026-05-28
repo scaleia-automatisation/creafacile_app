@@ -55,7 +55,6 @@ const ProductOfferStep = () => {
   const [detectingSector, setDetectingSector] = useState(false);
   const autoSectorKeyRef = useRef<string>('');
   const fileRef = useRef<HTMLInputElement>(null);
-  const autoPersonaKeyRef = useRef<string>('');
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
@@ -230,23 +229,6 @@ const ProductOfferStep = () => {
     }
   };
 
-  // Auto-générer les personas quand tous les champs requis sont remplis
-  useEffect(() => {
-    const isBeginner = user_mode === 'beginner';
-    const ready =
-      offer_type?.trim() &&
-      product_description?.trim() &&
-      product_service?.trim() &&
-      (isBeginner || company_activity?.trim()) &&
-      (isBeginner || company_sector?.trim());
-    if (!ready) return;
-    const key = [offer_type, product_description, product_service, company_activity, company_sector].join('|');
-    if (autoPersonaKeyRef.current === key) return;
-    if (loadingPersonas) return;
-    autoPersonaKeyRef.current = key;
-    handleGeneratePersonas();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [offer_type, product_description, product_service, company_activity, company_sector]);
 
   const handleSelectPersona = (p: Persona) => {
     setSelectedPersonaId(p.id);
@@ -340,6 +322,8 @@ const ProductOfferStep = () => {
               if (!single.trim()) {
                 setCompanyActivity('');
                 setCompanySector('');
+                setPersonas([]);
+                setSelectedPersonaId(null);
                 autoActivityKeyRef.current = '';
                 autoSectorKeyRef.current = '';
               }
