@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { refineIdea } from '@/lib/kreator-ai';
 import { useState } from 'react';
-import ObjectiveStep from './ObjectiveStep';
+import ContentTypeStep from './ContentTypeStep';
 
 const StartingChoiceButtons = () => {
   const {
@@ -133,9 +133,9 @@ const StartingChoiceButtons = () => {
         </div>
       </div>
 
-      {/* Objectif, Angle marketing, Style visuel, Ton d'écriture */}
-      <div className="w-full">
-        <ObjectiveStep />
+      {/* Modèle IA et format (déplacé depuis l'ancien bloc 3) */}
+      <div className="w-full pt-2">
+        <ContentTypeStep />
       </div>
     </div>
   );
