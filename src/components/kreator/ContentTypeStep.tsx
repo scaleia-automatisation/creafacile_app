@@ -1,6 +1,5 @@
 import { useKreatorStore, type AIModel, type Format } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import StepContainer from './StepContainer';
 import ModelSettings from './ModelSettings';
 
 
@@ -76,7 +75,7 @@ const ContentTypeStep = () => {
   };
 
   return (
-    <StepContainer stepNumber={3} title="Modèle IA et format">
+    <div className="w-full space-y-0">
       {/* Carousel: slides count */}
       {type === 'carousel' && (
         <div className="mb-6">
@@ -214,7 +213,7 @@ const ContentTypeStep = () => {
         </div>
       )}
 
-    </StepContainer>
+    </div>
   );
 };
 

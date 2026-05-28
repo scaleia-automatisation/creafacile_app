@@ -2,9 +2,9 @@ import boosterLogo from '@/assets/creafacile-logo.png';
 import ModeToggle from '@/components/kreator/ModeToggle';
 import MobileMenu from '@/components/MobileMenu';
 import StartingPointBlock from '@/components/kreator/StartingPointBlock';
-import ContentTypeStep from '@/components/kreator/ContentTypeStep';
 import ProductOfferStep from '@/components/kreator/ProductOfferStep';
 import StartingChoiceButtons from '@/components/kreator/StartingChoiceButtons';
+import ObjectiveStep from '@/components/kreator/ObjectiveStep';
 import StepContainer from '@/components/kreator/StepContainer';
 import CustomizationStep from '@/components/kreator/CustomizationStep';
 import PromptStep from '@/components/kreator/PromptStep';
@@ -93,11 +93,13 @@ const Index = () => {
 
         <div className="space-y-6">
           <ProductOfferStep />
-          <StepContainer stepNumber={2} title="Que voulez-vous créer ?">
+          <StepContainer stepNumber={2} title="Quel est votre objectif ?">
+            <ObjectiveStep />
+          </StepContainer>
+          <StepContainer stepNumber={3} title="Que voulez-vous créer ?">
             <StartingChoiceButtons />
           </StepContainer>
           <StartingPointBlock />
-          <ContentTypeStep />
           <CustomizationStep />
           <PromptStep />
           <GenerationStep />
