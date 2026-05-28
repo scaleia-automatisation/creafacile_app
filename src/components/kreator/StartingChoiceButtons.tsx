@@ -1,10 +1,4 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
-import { Wand2, Loader2 } from 'lucide-react';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { refineIdea } from '@/lib/kreator-ai';
-import { useState } from 'react';
 import ContentTypeStep from './ContentTypeStep';
 
 const StartingChoiceButtons = () => {
