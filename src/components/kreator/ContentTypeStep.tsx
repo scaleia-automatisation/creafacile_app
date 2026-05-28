@@ -214,10 +214,6 @@ const ContentTypeStep = () => {
         </div>
       )}
 
-      {/* Objectif, Angle marketing, Style visuel */}
-      <div className="mt-6">
-        <ObjectiveStep />
-      </div>
     </StepContainer>
   );
 };

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { refineIdea } from '@/lib/kreator-ai';
 import { useState } from 'react';
+import ObjectiveStep from './ObjectiveStep';
 
 const StartingChoiceButtons = () => {
   const {
@@ -130,6 +131,11 @@ const StartingChoiceButtons = () => {
             Améliorer l'idée
           </Button>
         </div>
+      </div>
+
+      {/* Objectif, Angle marketing, Style visuel, Ton d'écriture */}
+      <div className="w-full">
+        <ObjectiveStep />
       </div>
     </div>
   );
