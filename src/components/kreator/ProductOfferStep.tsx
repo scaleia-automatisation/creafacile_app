@@ -337,6 +337,12 @@ const ProductOfferStep = () => {
               // Une seule phrase simple : on bloque les retours à la ligne
               const single = e.target.value.replace(/[\r\n]+/g, ' ');
               setProductDescription(single);
+              if (!single.trim()) {
+                setCompanyActivity('');
+                setCompanySector('');
+                autoActivityKeyRef.current = '';
+                autoSectorKeyRef.current = '';
+              }
             }}
             onBlur={handleDescriptionBlur}
             placeholder={descPlaceholder}
