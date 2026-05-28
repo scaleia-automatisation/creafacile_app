@@ -1,15 +1,9 @@
-import { useKreatorStore, type ContentType, type AIModel, type VideoResolution, type Format } from '@/store/useKreatorStore';
-import { Image, Layers, Video } from 'lucide-react';
+import { useKreatorStore, type AIModel, type Format } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StepContainer from './StepContainer';
 import ModelSettings from './ModelSettings';
 import ObjectiveStep from './ObjectiveStep';
 
-const contentTypes: { type: ContentType; label: string; icon: typeof Image }[] = [
-  { type: 'image', label: 'Image', icon: Image },
-  { type: 'carousel', label: 'Carrousel', icon: Layers },
-  { type: 'video', label: 'Vidéo', icon: Video },
-];
 
 const imageModels: { value: AIModel; label: string }[] = [
   { value: 'nano-banana-2', label: 'Nano Banana 2 ⚡' },
