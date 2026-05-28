@@ -4,13 +4,9 @@ import ContentTypeStep from './ContentTypeStep';
 const StartingChoiceButtons = () => {
   const {
     type, setType,
-    input_text, setInputText, setIdeaChosen,
-    offer_type, product_service, product_description,
-    company_activity, company_sector, market, target_persona, marketing_angle,
-    objective,
+    offer_type,
     setStartingChoice,
   } = useKreatorStore();
-  const [refiningIdea, setRefiningIdea] = useState(false);
 
   const isProduct = offer_type === '📦 Produit';
   const isService = offer_type === '🛠️ Service';
@@ -25,40 +21,6 @@ const StartingChoiceButtons = () => {
   const handleSelectType = (t: 'image' | 'carousel' | 'video') => {
     setType(t);
     setStartingChoice('idea');
-  };
-
-  const handleRefineIdea = async () => {
-    const missing: string[] = [];
-    if (!product_service?.trim()) missing.push('Nom');
-    if (!product_description?.trim()) missing.push('Description');
-    if (!input_text?.trim()) missing.push('Idée de contenu');
-    if (missing.length) {
-      toast.error(`Veuillez renseigner : ${missing.join(', ')}`);
-      return;
-    }
-    setRefiningIdea(true);
-    try {
-      const refined = await refineIdea({
-        idea: input_text,
-        offerType: offer_type,
-        productName: product_service,
-        productDescription: product_description,
-        activity: company_activity,
-        sector: company_sector,
-        market,
-        persona: target_persona,
-        objective,
-        marketingAngle: marketing_angle,
-      });
-      const val = refined.slice(0, 500);
-      setInputText(val);
-      setIdeaChosen(val);
-    } catch (e) {
-      console.error(e);
-      toast.error("Erreur lors de l'amélioration de l'idée");
-    } finally {
-      setRefiningIdea(false);
-    }
   };
 
   return (
