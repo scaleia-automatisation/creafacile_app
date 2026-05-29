@@ -1,10 +1,6 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { useEffect, useMemo } from 'react';
-import type { ContentType } from '@/store/useKreatorStore';
-import { FUNNEL_OBJECTIVES, FUNNEL_ANGLES, type FunnelObjective } from '@/data/funnelAngles';
-import { VISUAL_STYLES } from '@/data/visualStyles';
+import { FUNNEL_OBJECTIVES } from '@/data/funnelAngles';
 import IdeaSuggestions from './IdeaSuggestions';
 
 const OBJECTIVES = FUNNEL_OBJECTIVES;
@@ -526,41 +522,9 @@ const TONS = [
 const ObjectiveStep = () => {
   const {
     objective, setObjective,
-    marketing_angle, setMarketingAngle,
-    visual_style_brief, setVisualStyleBrief,
-    company_sector, type,
     options, setOptions,
     user_mode,
   } = useKreatorStore();
-
-  const preset = useMemo(() => SECTOR_PRESETS[company_sector] ?? DEFAULT_PRESET, [company_sector]);
-  // Angles marketing : pilotés par l'objectif (étape du tunnel) + type de contenu.
-  // Si l'objectif sélectionné fait partie des 9 étapes du tunnel, on affiche
-  // les 15 angles spécifiques à ce couple objectif × type. Sinon, fallback
-  // sur les angles du secteur (legacy).
-  const angles = useMemo(() => {
-    const funnelAngles = FUNNEL_ANGLES[objective as FunnelObjective];
-    if (funnelAngles) return funnelAngles[type as ContentType] ?? funnelAngles.image;
-    return preset.angles;
-  }, [objective, type, preset]);
-  const styleOptions = useMemo(
-    () => VISUAL_STYLES[type as ContentType] ?? VISUAL_STYLES.image,
-    [type]
-  );
-  const styles = styleOptions.map((s) => s.label);
-  const selectedStyleDescription = useMemo(
-    () => styleOptions.find((s) => s.label === visual_style_brief)?.description,
-    [styleOptions, visual_style_brief]
-  );
-
-  // Reset si la valeur sélectionnée n'appartient plus aux options du secteur/type
-  useEffect(() => {
-    // L'utilisateur peut désormais personnaliser le texte → on ne reset plus
-    // automatiquement la valeur si elle n'est plus dans les presets.
-  }, [angles, styles]);
-
-  const angleInPresets = angles.includes(marketing_angle);
-  const styleInPresets = styles.includes(visual_style_brief);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
