@@ -790,6 +790,12 @@ serve(async (req) => {
       }
 
       if (["success", "succeed", "succeeded", "completed", "complete"].includes(state)) {
+        // kie.ai often returns resultJson as a JSON-encoded string
+        let resultJson: any = data?.resultJson;
+        if (typeof resultJson === "string") {
+          try { resultJson = JSON.parse(resultJson); } catch { /* keep as string */ }
+        }
+
         const findImageUrl = (obj: any): string | null => {
           if (!obj || typeof obj !== "object") return null;
           for (const k of Object.keys(obj)) {
@@ -802,15 +808,26 @@ serve(async (req) => {
           return null;
         };
 
-        const direct = data?.resultJson?.imageUrl
-                    || data?.resultJson?.image_url
+        const firstOf = (v: any): string | null => {
+          if (!v) return null;
+          if (typeof v === "string") return v;
+          if (Array.isArray(v)) return typeof v[0] === "string" ? v[0] : (v[0]?.url || v[0]?.imageUrl || v[0]?.image_url || null);
+          return null;
+        };
+
+        const direct = firstOf(resultJson?.resultUrls)
+                    || firstOf(resultJson?.image_urls)
+                    || firstOf(resultJson?.images)
+                    || resultJson?.imageUrl
+                    || resultJson?.image_url
+                    || firstOf(data?.resultUrls)
                     || data?.resultUrl
                     || data?.imageUrl
                     || data?.image_url
                     || data?.output?.image_url
                     || (Array.isArray(data?.output) ? data.output[0]?.url : null);
 
-        const imageUrl = direct || findImageUrl(data);
+        const imageUrl = direct || findImageUrl(resultJson) || findImageUrl(data);
         if (imageUrl) return jsonResp({ image_url: imageUrl, done: true });
 
         console.error("kie.ai image done but no url:", pollText.slice(0, 500));
