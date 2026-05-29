@@ -93,11 +93,11 @@ const Index = () => {
 
         <div className="space-y-6">
           <ProductOfferStep />
-          <StepContainer stepNumber={2} title="Que voulez-vous créer ?">
-            <StartingChoiceButtons />
-          </StepContainer>
-          <StepContainer stepNumber={3} title="Quel est votre objectif ?">
+          <StepContainer stepNumber={2} title="Quel est votre objectif ?">
             <ObjectiveStep />
+          </StepContainer>
+          <StepContainer stepNumber={3} title="Que voulez-vous créer ?">
+            <StartingChoiceButtons />
           </StepContainer>
           <StartingPointBlock />
           <CustomizationStep />
