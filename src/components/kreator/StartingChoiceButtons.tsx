@@ -13,7 +13,7 @@ const StartingChoiceButtons = () => {
   const offerLabel = offer_type ? offer_type.replace(/^[^\p{L}\p{N}]+/u, '').trim().toLowerCase() : '';
 
   const cards = [
-    { type: 'image' as const, label: `Pub ${offerLabel}`, emoji: '📱' },
+    { type: 'image' as const, label: `Image ${offerLabel}`, emoji: '📱' },
     { type: 'carousel' as const, label: `Carousel ${offerLabel}`, emoji: '🎠' },
     { type: 'video' as const, label: `Vidéo ${offerLabel}`, emoji: '🎬' },
   ];
