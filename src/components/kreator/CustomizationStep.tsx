@@ -252,13 +252,13 @@ const CustomizationStep = () => {
   if (user_mode === 'beginner' && !showAdvanced) {
     return (
       <div className="flex flex-col items-center gap-3 py-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 bg-white border border-white rounded-card px-4 py-2.5 shadow-sm">
           <Switch
             checked={showAdvanced}
             onCheckedChange={setShowAdvanced}
             className="data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground/30"
           />
-          <span className="text-sm font-bold uppercase tracking-wider text-primary">
+          <span className="text-sm font-bold uppercase tracking-wider text-black">
             ⚙️ RÉGLAGES AVANCÉS
           </span>
         </div>
@@ -270,13 +270,13 @@ const CustomizationStep = () => {
     <>
       {user_mode === 'beginner' && (
         <div className="flex flex-col items-center gap-3 py-4 mb-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 bg-white border border-white rounded-card px-4 py-2.5 shadow-sm">
             <Switch
               checked={showAdvanced}
               onCheckedChange={setShowAdvanced}
               className="data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground/30"
             />
-            <span className="text-sm font-bold uppercase tracking-wider text-primary">
+            <span className="text-sm font-bold uppercase tracking-wider text-black">
               ⚙️ RÉGLAGES AVANCÉS
             </span>
           </div>
