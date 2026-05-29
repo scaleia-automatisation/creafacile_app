@@ -577,6 +577,7 @@ const ObjectiveStep = () => {
             </SelectContent>
           </Select>
         </div>
+        <IdeaSuggestions />
         {user_mode === 'expert' && (
           <>
             <div>
@@ -642,7 +643,6 @@ const ObjectiveStep = () => {
         <div className="md:col-span-2">
           <p className="text-xs text-muted-foreground italic">{QUALITY_DIRECTIVE}</p>
         </div>
-        {user_mode === 'beginner' && <IdeaSuggestions />}
       </div>
   );
 };
