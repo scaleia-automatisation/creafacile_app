@@ -175,10 +175,10 @@ const PromptStep = () => {
       {!hasPrompt && (
         <div className="space-y-3">
           {hasMissing && (
-            <Alert className="max-w-2xl mx-auto bg-white border-white text-black shadow-sm [&>svg]:text-black">
+            <Alert variant="destructive" className="max-w-2xl mx-auto bg-destructive/10 border-destructive/30">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-black text-sm">
-                Avant de générer le contenu, veuillez renseigner&nbsp;:{' '}
+              <AlertDescription className="text-destructive text-sm">
+                Avant de générer le prompt, veuillez renseigner&nbsp;:{' '}
                 <strong>{missingFields.join(', ')}</strong>{' '}
                 {missingFields.length > 1 ? 'sont requis' : 'est requis'} dans le bloc «&nbsp;Quel est votre offre&nbsp;?&nbsp;» pour générer le prompt du visuel à créer.
               </AlertDescription>
@@ -196,7 +196,7 @@ const PromptStep = () => {
                   <Loader2 className="w-5 h-5 animate-spin" /> Génération en cours…
                 </span>
               ) : (
-                'Générer le contenu'
+                'Générer le prompt'
               )}
             </Button>
           </div>

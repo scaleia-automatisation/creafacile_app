@@ -7,7 +7,7 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock, FileText } from 'lucide-react';
+import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { generateImage, generateVideo, generateCaption, type PlatformCaptions } from '@/lib/kreator-ai';
 import { supabase } from '@/integrations/supabase/client';
@@ -66,7 +66,6 @@ const GenerationStep = () => {
   const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [showPublishedPopup, setShowPublishedPopup] = useState(false);
   const [showSavedPopup, setShowSavedPopup] = useState(false);
-  const [showPromptDialog, setShowPromptDialog] = useState(false);
   const [publishPlatforms, setPublishPlatforms] = useState<Record<Platform, boolean>>({
     facebook: false, instagram: false, tiktok: false, linkedin: false,
   });
@@ -453,18 +452,6 @@ const GenerationStep = () => {
               </Button>
             </div>
 
-            {/* Voir le prompt */}
-            <div className="flex justify-center">
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-foreground/10 text-foreground hover:border-secondary text-xs"
-                onClick={() => setShowPromptDialog(true)}
-              >
-                <FileText className="w-3.5 h-3.5 mr-1" /> Voir le prompt
-              </Button>
-            </div>
-
             {/* Caption section with platform dropdown */}
             <div className="bg-card rounded-card p-4 md:p-5 border border-foreground/10">
               <div className="flex items-center justify-between mb-4">
@@ -719,34 +706,6 @@ const GenerationStep = () => {
           >
             Voir mes générations
           </Button>
-        </DialogContent>
-      </Dialog>
-
-      {/* Voir le prompt dialog */}
-      <Dialog open={showPromptDialog} onOpenChange={setShowPromptDialog}>
-        <DialogContent className="bg-card border-foreground/10 max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-foreground">Prompt utilisé pour générer le contenu</DialogTitle>
-            <DialogDescription className="text-muted-foreground">
-              Voici le prompt qui a servi à générer votre contenu.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="bg-background border border-foreground/10 rounded-card p-4 text-sm text-foreground whitespace-pre-wrap max-h-[50vh] overflow-y-auto">
-            {prompt_fr}
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                navigator.clipboard.writeText(prompt_fr);
-                toast.success('Prompt copié');
-              }}
-              className="border-foreground/10 text-foreground"
-            >
-              <Copy className="w-3.5 h-3.5 mr-1" /> Copier
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
