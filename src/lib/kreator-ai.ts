@@ -1003,7 +1003,8 @@ export async function generateImage(
   promptEn: string,
   aiModel: AIModel = 'dall-e-3',
   format: string = '1:1',
-  inputImageUrl?: string
+  inputImageUrl?: string,
+  abortSignal?: AbortSignal
 ) {
   // All image models are now routed through kie.ai
   const isKieImageModel = [
@@ -1014,6 +1015,7 @@ export async function generateImage(
 
   // === kie.ai image models — start + polling ===
   if (isKieImageModel) {
+    if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
     const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
       body: {
         action: 'kie_start_image',
@@ -1033,9 +1035,11 @@ export async function generateImage(
     const maxAttempts = 60;
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       await new Promise((r) => setTimeout(r, 4000));
+      if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
       const { data: pollData, error: pollError } = await supabase.functions.invoke('kreator-ai', {
         body: { action: 'kie_poll_image', task_id: taskId },
       });
+      if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
       if (pollError) { console.warn('kie.ai poll error', pollError); continue; }
       if (pollData?.error) throw new Error(pollData.error);
       if (pollData?.done && pollData?.image_url) return pollData.image_url;
