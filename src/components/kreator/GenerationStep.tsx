@@ -110,7 +110,7 @@ const GenerationStep = () => {
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
           ? generateVideo(prompt_fr, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
-          : generateImage(prompt_fr, ai_model, format, input_photos?.[0]?.url),
+          : generateImage(prompt_fr, ai_model, format, input_photos?.[0]?.url, abortController.signal),
         generateCaption({
           objective: marketing_angle || objective,
           idea: idea_chosen || input_text,
