@@ -1,11 +1,6 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { useEffect, useMemo } from 'react';
-import type { ContentType } from '@/store/useKreatorStore';
-import { FUNNEL_OBJECTIVES, FUNNEL_ANGLES, type FunnelObjective } from '@/data/funnelAngles';
-import { VISUAL_STYLES } from '@/data/visualStyles';
-import IdeaSuggestions from './IdeaSuggestions';
+import { FUNNEL_OBJECTIVES } from '@/data/funnelAngles';
 
 const OBJECTIVES = FUNNEL_OBJECTIVES;
 
@@ -526,41 +521,9 @@ const TONS = [
 const ObjectiveStep = () => {
   const {
     objective, setObjective,
-    marketing_angle, setMarketingAngle,
-    visual_style_brief, setVisualStyleBrief,
-    company_sector, type,
     options, setOptions,
     user_mode,
   } = useKreatorStore();
-
-  const preset = useMemo(() => SECTOR_PRESETS[company_sector] ?? DEFAULT_PRESET, [company_sector]);
-  // Angles marketing : pilotés par l'objectif (étape du tunnel) + type de contenu.
-  // Si l'objectif sélectionné fait partie des 9 étapes du tunnel, on affiche
-  // les 15 angles spécifiques à ce couple objectif × type. Sinon, fallback
-  // sur les angles du secteur (legacy).
-  const angles = useMemo(() => {
-    const funnelAngles = FUNNEL_ANGLES[objective as FunnelObjective];
-    if (funnelAngles) return funnelAngles[type as ContentType] ?? funnelAngles.image;
-    return preset.angles;
-  }, [objective, type, preset]);
-  const styleOptions = useMemo(
-    () => VISUAL_STYLES[type as ContentType] ?? VISUAL_STYLES.image,
-    [type]
-  );
-  const styles = styleOptions.map((s) => s.label);
-  const selectedStyleDescription = useMemo(
-    () => styleOptions.find((s) => s.label === visual_style_brief)?.description,
-    [styleOptions, visual_style_brief]
-  );
-
-  // Reset si la valeur sélectionnée n'appartient plus aux options du secteur/type
-  useEffect(() => {
-    // L'utilisateur peut désormais personnaliser le texte → on ne reset plus
-    // automatiquement la valeur si elle n'est plus dans les presets.
-  }, [angles, styles]);
-
-  const angleInPresets = angles.includes(marketing_angle);
-  const styleInPresets = styles.includes(visual_style_brief);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -579,49 +542,6 @@ const ObjectiveStep = () => {
         </div>
         {user_mode === 'expert' && (
           <>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                Angle marketing <span className="text-xs opacity-70">(adapté à l'objectif et au type de contenu)</span>
-              </label>
-              <Select value={angleInPresets ? marketing_angle : ''} onValueChange={setMarketingAngle}>
-                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                  <SelectValue placeholder="Choisir un angle..." />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-foreground/10">
-                  {angles.map((a) => (
-                    <SelectItem key={a} value={a} className="text-foreground focus:bg-secondary/20">{a}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {marketing_angle && (
-                <Input
-                  value={marketing_angle}
-                  onChange={(e) => setMarketingAngle(e.target.value)}
-                  placeholder="Personnaliser l'angle marketing..."
-                  className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-                />
-              )}
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                Style visuel <span className="text-xs opacity-70">(adapté au {type === 'video' ? 'format vidéo' : type === 'carousel' ? 'carrousel' : 'visuel'})</span>
-              </label>
-              <Select value={styleInPresets ? visual_style_brief : ''} onValueChange={setVisualStyleBrief}>
-                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                  <SelectValue placeholder="Choisir un style visuel..." />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-foreground/10">
-                  {styles.map((v) => (
-                    <SelectItem key={v} value={v} className="text-foreground focus:bg-secondary/20">{v}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedStyleDescription && (
-                <p className="mt-2 text-xs text-muted-foreground leading-relaxed bg-card/50 border border-foreground/10 rounded-btn p-2">
-                  {selectedStyleDescription}
-                </p>
-              )}
-            </div>
             <div className="md:col-span-2">
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
                 Ton d'écriture
