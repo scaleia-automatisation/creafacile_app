@@ -95,11 +95,12 @@ Les 3 angles doivent être radicalement distincts (ex : douleur / transformation
 STRUCTURE STRICTE de chaque idée :
 - hook : phrase d'accroche scroll-stop 0-2s, ultra punchy, max 70 caractères, avec emoji en début.
 - concept : description claire et concrète du contenu (ce qu'on voit / entend / lit), 1 à 2 phrases max, orientée conversion et cohérente avec le type de contenu et l'objectif.
-- angle : nom court de l'angle marketing fort (ex : "Douleur", "Transformation", "Curiosité", "Preuve sociale", "Urgence", "Autorité", "Storytelling", "Controverse douce") + 4-8 mots d'explication.
+- angle : nom court de l'angle marketing fort, formulé de façon NATURELLE et humaine (ex : "Douleur", "Transformation", "Curiosité", "Preuve sociale", "Urgence", "Autorité", "Storytelling", "Controverse douce") + 4-8 mots d'explication naturelle, sans jargon marketing agressif, sans ton commercial forcé, comme un échange entre amis.
 
 RÈGLES :
 - Toujours COHÉRENT avec l'objectif du contenu, le type d'offre, le nom, la description, l'activité, le secteur et le persona fournis.
 - Optimisé conversion + recommandations algorithmes 2026 (rétention, partage, commentaires).
+- Tous les angles doivent sonner NATURELS, fluides, humains — jamais robotiques, jamais "vendeurs", jamais clichés marketing.
 - Français, sans markdown, sans guillemets superflus.
 
 RETOURNE UNIQUEMENT un JSON valide, exactement ce format :
