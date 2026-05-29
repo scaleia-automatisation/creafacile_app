@@ -57,7 +57,10 @@ const IdeaSuggestions = () => {
   };
 
   return (
-    <div className="md:col-span-2 flex flex-col items-center gap-4 pt-2">
+    <div className="md:col-span-2 flex flex-col items-center gap-4 py-6 px-4 rounded-card border-2 border-dashed border-primary/40 bg-primary/5">
+      <div className="text-xs uppercase tracking-wider font-bold text-primary/80">
+        ✨ Besoin d'inspiration ?
+      </div>
       <Button
         type="button"
         onClick={handleGenerate}
