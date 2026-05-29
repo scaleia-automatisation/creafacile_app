@@ -577,7 +577,6 @@ const ObjectiveStep = () => {
             </SelectContent>
           </Select>
         </div>
-        <IdeaSuggestions />
         {user_mode === 'expert' && (
           <>
             <div>
