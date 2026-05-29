@@ -5,14 +5,10 @@ import type { ContentType } from '@/store/useKreatorStore';
 
 export const FUNNEL_OBJECTIVES = [
   '🧲 Attirer du trafic',
-  '👀 Capter l\'attention',
-  '💡 Créer l\'intérêt',
-  '🔥 Donner envie d\'acheter',
-  '💎 Montrer la valeur',
-  '🛡️ Rassurer le visiteur',
-  '📈 Prouver les résultats',
-  '🛒 Déclencher l\'achat',
-  '🔁 Fidéliser les clients',
+  '🎯 Générer des prospects',
+  '🛡️ Rassurer',
+  '💰 Vendre',
+  '🔁 Fidéliser',
 ] as const;
 
 export type FunnelObjective = typeof FUNNEL_OBJECTIVES[number];
