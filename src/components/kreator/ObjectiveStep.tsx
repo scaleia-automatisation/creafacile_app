@@ -1,7 +1,6 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FUNNEL_OBJECTIVES } from '@/data/funnelAngles';
-import IdeaSuggestions from './IdeaSuggestions';
 
 const OBJECTIVES = FUNNEL_OBJECTIVES;
 
