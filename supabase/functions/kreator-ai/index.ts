@@ -700,12 +700,14 @@ serve(async (req) => {
       const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
       if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
 
+      const hasInputImage = !!input_image_url;
+      // Map app model IDs to kie.ai model IDs (depends on whether an input image is provided)
       const kieImageModelMap: Record<string, string> = {
         "qwen/image-edit": "qwen/image-edit",
         "ideogram/character": "ideogram/character",
         "ideogram/image": "ideogram/image",
         // Migrated to kie.ai
-        "dall-e-3": "gpt-image-2",
+        "dall-e-3": hasInputImage ? "gpt-image-2-image-to-image" : "gpt-image-2-text-to-image",
         "nano-banana-2": "nano-banana-2",
         "nano-banana-pro": "nano-banana-pro",
         "imagen-4": "imagen4",
