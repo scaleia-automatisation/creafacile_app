@@ -579,49 +579,6 @@ const ObjectiveStep = () => {
         </div>
         {user_mode === 'expert' && (
           <>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                Angle marketing <span className="text-xs opacity-70">(adapté à l'objectif et au type de contenu)</span>
-              </label>
-              <Select value={angleInPresets ? marketing_angle : ''} onValueChange={setMarketingAngle}>
-                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                  <SelectValue placeholder="Choisir un angle..." />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-foreground/10">
-                  {angles.map((a) => (
-                    <SelectItem key={a} value={a} className="text-foreground focus:bg-secondary/20">{a}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {marketing_angle && (
-                <Input
-                  value={marketing_angle}
-                  onChange={(e) => setMarketingAngle(e.target.value)}
-                  placeholder="Personnaliser l'angle marketing..."
-                  className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-                />
-              )}
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                Style visuel <span className="text-xs opacity-70">(adapté au {type === 'video' ? 'format vidéo' : type === 'carousel' ? 'carrousel' : 'visuel'})</span>
-              </label>
-              <Select value={styleInPresets ? visual_style_brief : ''} onValueChange={setVisualStyleBrief}>
-                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                  <SelectValue placeholder="Choisir un style visuel..." />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-foreground/10">
-                  {styles.map((v) => (
-                    <SelectItem key={v} value={v} className="text-foreground focus:bg-secondary/20">{v}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedStyleDescription && (
-                <p className="mt-2 text-xs text-muted-foreground leading-relaxed bg-card/50 border border-foreground/10 rounded-btn p-2">
-                  {selectedStyleDescription}
-                </p>
-              )}
-            </div>
             <div className="md:col-span-2">
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
                 Ton d'écriture
