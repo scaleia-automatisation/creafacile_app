@@ -86,19 +86,24 @@ export async function generateContentIdeas(input: {
   sector?: string;
   persona?: string;
   market?: string;
+  useCase?: string;
+  tone?: string;
 }): Promise<{ ideas: ContentIdea[] }> {
   const systemPrompt = `Tu es un expert en marketing digital viral et copywriting de conversion (Facebook, Instagram, TikTok, LinkedIn — recommandations algorithmes 2026).
 
-OBJECTIF : Générer EXACTEMENT 3 idées de contenu TRÈS DIFFÉRENTES, avec un ANGLE MARKETING FORT chacune.
-Les 3 angles doivent être radicalement distincts (ex : douleur / transformation / curiosité ; ou preuve sociale / urgence / éducation). Jamais 2 angles similaires.
+OBJECTIF : Générer EXACTEMENT 3 idées de contenu ULTIMES, IDÉALES, qui CONVERTISSENT LE PLUS, avec un ANGLE MARKETING PUISSANT ET FORT chacune.
+Les 3 idées doivent être TRÈS DIFFÉRENTES avec des angles radicalement distincts (ex : douleur / transformation / curiosité ; ou preuve sociale / urgence / éducation). Jamais 2 angles similaires.
+Chaque idée doit être en COHÉRENCE PARFAITE avec : type d'offre, nom de l'offre, description, activité/métier, persona cible, objectif du contenu, type de contenu (image / carousel / vidéo), et cas d'utilisation.
 
 STRUCTURE STRICTE de chaque idée :
 - hook : phrase d'accroche scroll-stop 0-2s, ultra punchy, max 70 caractères, avec emoji en début.
-- concept : description claire et concrète du contenu (ce qu'on voit / entend / lit), 1 à 2 phrases max, orientée conversion et cohérente avec le type de contenu et l'objectif.
+- concept : description claire et concrète du contenu (ce qu'on voit / entend / lit), 1 à 2 phrases max, orientée conversion maximale et strictement cohérente avec le type de contenu, l'objectif et le cas d'utilisation.
 - angle : nom court de l'angle marketing fort, formulé de façon NATURELLE et humaine (ex : "Douleur", "Transformation", "Curiosité", "Preuve sociale", "Urgence", "Autorité", "Storytelling", "Controverse douce") + 4-8 mots d'explication naturelle, sans jargon marketing agressif, sans ton commercial forcé, comme un échange entre amis.
 
 RÈGLES :
-- Toujours COHÉRENT avec l'objectif du contenu, le type d'offre, le nom, la description, l'activité, le secteur et le persona fournis.
+- Toujours STRICTEMENT COHÉRENT avec TOUS les éléments fournis : type d'offre, nom, description, activité/métier, secteur, marché, persona, objectif, type de contenu, cas d'utilisation et ton d'écriture.
+- Respecter scrupuleusement le cas d'utilisation choisi (ex : Avant/Après, UGC, Témoignage, Démonstration, Comparatif, FAQ, etc.) — c'est le format narratif obligatoire de chaque idée.
+- Respecter le ton d'écriture demandé dans la formulation du hook.
 - Optimisé conversion + recommandations algorithmes 2026 (rétention, partage, commentaires).
 - Tous les angles doivent sonner NATURELS, fluides, humains — jamais robotiques, jamais "vendeurs", jamais clichés marketing.
 - Français, sans markdown, sans guillemets superflus.
@@ -116,8 +121,10 @@ ${input.activity ? `Activité principale / Métier : ${input.activity}` : ''}
 ${input.sector ? `Secteur : ${input.sector}` : ''}
 ${input.persona ? `Client cible / Persona : ${input.persona}` : ''}
 ${input.market ? `Marché : ${input.market}` : ''}
+${input.useCase ? `Cas d'utilisation (format narratif OBLIGATOIRE) : ${input.useCase}` : ''}
+${input.tone ? `Ton d'écriture : ${input.tone}` : ''}
 
-Génère 3 idées de contenu avec angles marketing forts TRÈS différents, parfaitement cohérentes avec ce contexte.`;
+Génère 3 idées de contenu ULTIMES qui convertissent le plus, avec des angles marketing puissants et TRÈS différents, en cohérence parfaite avec TOUT ce contexte (notamment le cas d'utilisation et le type de contenu).`;
 
   const data = await callKreatorAI({
     action: 'generate_content_ideas',

@@ -8,7 +8,7 @@ import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 const IdeaSuggestions = () => {
   const {
     type, objective, offer_type, product_service, product_description, product_image_url, use_case,
-    company_activity, company_sector, target_persona, market,
+    company_activity, company_sector, target_persona, market, options,
     setInputText, setIdeaChosen,
   } = useKreatorStore();
 
@@ -41,6 +41,8 @@ const IdeaSuggestions = () => {
         sector: company_sector,
         persona: target_persona,
         market,
+        useCase: use_case,
+        tone: options?.ton,
       });
       setIdeas(res.ideas || []);
     } catch (e) {
