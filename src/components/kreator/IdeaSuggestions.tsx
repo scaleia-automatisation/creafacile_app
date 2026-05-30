@@ -7,7 +7,7 @@ import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 
 const IdeaSuggestions = () => {
   const {
-    type, objective, offer_type, product_service, product_description,
+    type, objective, offer_type, product_service, product_description, product_image_url, use_case,
     company_activity, company_sector, target_persona, market,
     setInputText, setIdeaChosen,
   } = useKreatorStore();
@@ -15,7 +15,20 @@ const IdeaSuggestions = () => {
   const [loading, setLoading] = useState(false);
   const [ideas, setIdeas] = useState<ContentIdea[]>([]);
 
+  const missing: string[] = [];
+  if (!offer_type?.trim()) missing.push("type d'offre");
+  if (!product_service?.trim()) missing.push('Nom');
+  if (offer_type === 'produit' && !product_image_url?.trim()) missing.push('Image de référence');
+  if (!product_description?.trim()) missing.push('Description');
+  if (!objective?.trim()) missing.push('Objectif du contenu');
+  if (!use_case?.trim()) missing.push("Cas d'utilisation");
+  const canGenerate = missing.length === 0;
+
   const handleGenerate = async () => {
+    if (!canGenerate) {
+      toast.error('Veuillez renseigner les champs requis');
+      return;
+    }
     setLoading(true);
     try {
       const res = await generateContentIdeas({
@@ -57,18 +70,20 @@ const IdeaSuggestions = () => {
   };
 
   return (
-    <div className="md:col-span-2 flex flex-col items-center gap-4 py-6 px-4 rounded-card border-2 border-dashed border-primary/40 bg-primary/5">
-      <div className="text-xs uppercase tracking-wider font-bold text-primary/80">
-        ✨ Besoin d'inspiration ?
-      </div>
+    <div className="md:col-span-2 flex flex-col items-center gap-4 py-6 px-4">
+      {!canGenerate && (
+        <p className="text-xs text-center text-muted-foreground max-w-xl">
+          Avant de générer 3 idées de contenu, veuillez renseigner : type d'offre, Nom, Image de référence si produit, Description, objectif du contenu, cas d'utilisations sont requis pour générer les 3 idées de contenus.
+        </p>
+      )}
       <Button
         type="button"
         onClick={handleGenerate}
-        disabled={loading}
-        className="gap-2 bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0 px-6 py-5 text-sm font-semibold rounded-btn"
+        disabled={loading || !canGenerate}
+        className="flex flex-col items-center justify-center gap-1 h-auto bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0 px-8 py-4 text-sm font-semibold rounded-btn"
       >
-        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
-        Générer 3 idées de contenu
+        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wand2 className="w-5 h-5" />}
+        <span>Générer 3 idées de contenu</span>
       </Button>
 
       {ideas.length > 0 && (
