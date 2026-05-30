@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Loader2, Wand2 } from 'lucide-react';
+import { Sparkles, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 
@@ -77,7 +77,7 @@ const IdeaSuggestions = () => {
         disabled={loading || !canGenerate}
         className="w-full max-w-md py-6 text-lg font-extrabold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn disabled:opacity-50 flex items-center justify-center gap-2"
       >
-        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wand2 className="w-5 h-5" />}
+        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
         <span>Générer 3 idées de contenu</span>
       </Button>
 
