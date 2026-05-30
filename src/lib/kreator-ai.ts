@@ -112,6 +112,9 @@ RÈGLES :
 - Tous les angles doivent sonner NATURELS, fluides, humains — jamais robotiques, jamais "vendeurs", jamais clichés marketing.
 - Français, sans markdown, sans guillemets superflus.
 
+RÈGLE ANTI-IA (ABSOLUE, NON NÉGOCIABLE) :
+Tout doit sonner 100% NATUREL, AUTHENTIQUE, HUMAIN, RÉEL, comme écrit par une vraie personne qui parle à un ami. JAMAIS aucune expression, tournure, structure ou vocabulaire typique de l'IA. INTERDIT formellement : "plongez dans", "découvrez", "à l'ère du", "dans un monde où", "imaginez un instant", "et si je vous disais que", "révolutionnaire", "incontournable", "véritable game-changer", "n'attendez plus", "ne cherchez plus", "voici comment", "le secret pour", "transformez votre", "boostez votre", "élevez votre", "libérez votre potentiel", "synonyme de", "au cœur de", "à l'image de", énumérations parfaitement parallèles ("plus X, plus Y, plus Z"), adjectifs empilés à 3 ("simple, rapide, efficace"), formulations trop équilibrées, transitions scolaires, métaphores grandiloquentes. Pas de structure trop propre, pas de symétrie suspecte, pas de ton corporate ni pseudo-inspirant. Écris comme un humain réel : irrégulier, vivant, direct, parfois familier, avec du relief — pas une IA polie.
+
 RETOURNE UNIQUEMENT un JSON valide, exactement ce format :
 {"ideas":[{"id":1,"hook":"…","concept":"…","angle":"…"},{"id":2,"hook":"…","concept":"…","angle":"…"},{"id":3,"hook":"…","concept":"…","angle":"…"}]}`;
 
