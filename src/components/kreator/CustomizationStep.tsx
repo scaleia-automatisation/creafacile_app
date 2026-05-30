@@ -251,7 +251,7 @@ const CustomizationStep = () => {
 
   if (user_mode === 'beginner' && !showAdvanced) {
     return (
-      <div className="flex flex-col items-center gap-3 py-4">
+      <div className="flex justify-end py-4">
         <div className="flex items-center gap-3">
           <Switch
             checked={showAdvanced}
@@ -269,7 +269,7 @@ const CustomizationStep = () => {
   return (
     <>
       {user_mode === 'beginner' && (
-        <div className="flex flex-col items-center gap-3 py-4 mb-4">
+        <div className="flex justify-end py-4 mb-4">
           <div className="flex items-center gap-3">
             <Switch
               checked={showAdvanced}
