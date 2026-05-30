@@ -75,7 +75,7 @@ const IdeaSuggestions = () => {
         type="button"
         onClick={handleGenerate}
         disabled={loading || !canGenerate}
-        className="flex flex-col items-center justify-center gap-1 h-auto bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white border-0 px-8 py-4 text-sm font-semibold rounded-btn"
+        className="flex flex-col items-center justify-center gap-1 h-auto bg-[hsl(210_100%_55%)] hover:bg-[hsl(210_100%_50%)] text-white py-4 rounded-btn mx-[10px] my-[10px] px-[300px] border-8 font-bold text-xl"
       >
         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wand2 className="w-5 h-5" />}
         <span>Générer 3 idées de contenu</span>
