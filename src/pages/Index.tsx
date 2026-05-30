@@ -101,8 +101,8 @@ const Index = () => {
             <StartingChoiceButtons />
           </StepContainer>
           <StartingPointBlock />
-          <IdeaSuggestions />
           <CustomizationStep />
+          <IdeaSuggestions />
           <PromptStep />
           <GenerationStep />
         </div>
