@@ -203,6 +203,35 @@ const CustomizationStep = () => {
     }
   };
 
+  // Auto-generate text 1 when "Texte dans le visuel" is enabled (image/video) and empty
+  useEffect(() => {
+    if (
+      options.show_text &&
+      !isCarousel &&
+      !options.text_content?.trim() &&
+      !text1Generating &&
+      canGenerateText
+    ) {
+      handleGenerateText(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options.show_text, isCarousel, canGenerateText]);
+
+  // Auto-generate text 2 when 2nd on-screen text is enabled and empty
+  useEffect(() => {
+    if (
+      options.show_text &&
+      options.text_2_enabled &&
+      !isCarousel &&
+      !options.text_content_2?.trim() &&
+      !text2Generating &&
+      canGenerateText
+    ) {
+      handleGenerateText(2);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options.text_2_enabled, options.show_text, isCarousel, canGenerateText]);
+
   const handleGenerateSlideTexts = async () => {
     if (!canGenerateText) {
       toast.error(missingTextTooltip);
