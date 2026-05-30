@@ -1219,6 +1219,7 @@ RÈGLES ABSOLUES :
 - Pas de hashtag, pas de mention @, pas de ponctuation finale lourde
 - Évite le jargon corporate, parle comme un humain, va droit au but
 - Le texte doit être IMMÉDIATEMENT compréhensible et déclencher le clic / l'arrêt du scroll
+- ANTI-IA ABSOLU : 100% naturel, authentique, humain, réel. INTERDIT : "découvrez", "plongez dans", "révolutionnaire", "incontournable", "boostez", "transformez", "libérez", "n'attendez plus", "le secret", "voici comment", "à l'ère du", "dans un monde où", formulations trop équilibrées/symétriques, ton corporate ou pseudo-inspirant. Écris comme un vrai humain parle, direct, vivant, sans tournure d'IA.
 ${params.variant === 2 ? '- Ce texte est le 2e à apparaître à l\'écran : il doit COMPLÉTER (pas répéter) le 1er texte, idéalement comme un mini call-to-action ou une chute punchy.' : ''}
 ${params.excludeText ? `- NE RÉPÈTE PAS et ne paraphrase pas ce texte déjà utilisé : "${params.excludeText}"` : ''}
 
