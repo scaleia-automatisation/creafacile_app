@@ -172,10 +172,8 @@ const CustomizationStep = () => {
     maxWords: 3,
   });
 
-  const activeVisualStyle = visual_style_brief || options.visual_style || (isVideo ? video_render_style : render_style);
   const missingForText: string[] = [];
   if (!objective?.trim()) missingForText.push("l'objectif du contenu");
-  if (!activeVisualStyle?.trim()) missingForText.push('le style visuel');
   if (!options.ton?.trim()) missingForText.push("le ton d'écriture");
   const canGenerateText = missingForText.length === 0;
   const missingTextTooltip = canGenerateText
