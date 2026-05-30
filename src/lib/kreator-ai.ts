@@ -97,13 +97,17 @@ Chaque idée doit être en COHÉRENCE PARFAITE avec : type d'offre, nom de l'off
 
 STRUCTURE STRICTE de chaque idée :
 - hook : phrase d'accroche scroll-stop 0-2s, ultra punchy, max 70 caractères, avec emoji en début.
-- concept : description claire et concrète du contenu (ce qu'on voit / entend / lit), 1 à 2 phrases max, orientée conversion maximale et strictement cohérente avec le type de contenu, l'objectif et le cas d'utilisation.
-- angle : nom court de l'angle marketing fort, formulé de façon NATURELLE et humaine (ex : "Douleur", "Transformation", "Curiosité", "Preuve sociale", "Urgence", "Autorité", "Storytelling", "Controverse douce") + 4-8 mots d'explication naturelle, sans jargon marketing agressif, sans ton commercial forcé, comme un échange entre amis.
+- concept : description SIMPLE et claire de l'idée (ce qu'on voit / entend / lit), STRICTEMENT 30 MOTS MAXIMUM (jamais plus), orientée conversion et cohérente avec le type de contenu, l'objectif et le cas d'utilisation.
+- angle : nom court de l'angle marketing (1 à 3 mots), sans explication supplémentaire.
+
+RÈGLE HOOK — ABSOLUE :
+Le hook DOIT être directement dans le SENS de l'OBJECTIF DU CONTENU et respecter EXACTEMENT le TON D'ÉCRITURE demandé (vocabulaire, niveau de langue, énergie, rythme). C'est non négociable : un hook qui s'écarte de l'objectif ou du ton est invalide.
 
 RÈGLES :
 - Toujours STRICTEMENT COHÉRENT avec TOUS les éléments fournis : type d'offre, nom, description, activité/métier, secteur, marché, persona, objectif, type de contenu, cas d'utilisation et ton d'écriture.
 - Respecter scrupuleusement le cas d'utilisation choisi (ex : Avant/Après, UGC, Témoignage, Démonstration, Comparatif, FAQ, etc.) — c'est le format narratif obligatoire de chaque idée.
-- Respecter le ton d'écriture demandé dans la formulation du hook.
+- Le hook doit IMPÉRATIVEMENT refléter l'objectif du contenu et adopter le ton d'écriture demandé.
+- concept = 30 mots maximum, simple et concret.
 - Optimisé conversion + recommandations algorithmes 2026 (rétention, partage, commentaires).
 - Tous les angles doivent sonner NATURELS, fluides, humains — jamais robotiques, jamais "vendeurs", jamais clichés marketing.
 - Français, sans markdown, sans guillemets superflus.
