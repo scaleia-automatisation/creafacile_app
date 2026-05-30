@@ -53,6 +53,10 @@ const IdeaSuggestions = () => {
     }
   };
 
+  const updateIdea = (idx: number, field: 'hook' | 'concept', value: string) => {
+    setIdeas((prev) => prev.map((it, i) => (i === idx ? { ...it, [field]: value } : it)));
+  };
+
   const handleUseIdea = (idea: ContentIdea) => {
     const text = `${idea.hook} — ${idea.concept}`.slice(0, 500);
     setInputText(text);
@@ -98,12 +102,18 @@ const IdeaSuggestions = () => {
               <div className="text-[10px] uppercase tracking-wider font-bold text-primary text-center">
                 Idée {idx + 1}
               </div>
-              <div className="font-bold text-foreground text-base leading-snug text-center">
-                {idea.hook}
-              </div>
-              <div className="text-sm text-muted-foreground leading-relaxed text-center">
-                {idea.concept}
-              </div>
+              <textarea
+                value={idea.hook}
+                onChange={(e) => updateIdea(idx, 'hook', e.target.value)}
+                rows={2}
+                className="w-full font-bold text-foreground text-base leading-snug text-center bg-transparent border border-transparent hover:border-foreground/10 focus:border-primary/50 focus:outline-none rounded-md p-2 resize-none"
+              />
+              <textarea
+                value={idea.concept}
+                onChange={(e) => updateIdea(idx, 'concept', e.target.value)}
+                rows={3}
+                className="w-full text-sm text-muted-foreground leading-relaxed text-center bg-transparent border border-transparent hover:border-foreground/10 focus:border-primary/50 focus:outline-none rounded-md p-2 resize-none"
+              />
               <Button
                 type="button"
                 size="sm"
