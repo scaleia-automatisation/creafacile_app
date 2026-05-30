@@ -178,9 +178,7 @@ const PromptStep = () => {
             <Alert variant="destructive" className="max-w-2xl mx-auto bg-destructive/10 border-destructive/30">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription className="text-destructive text-sm">
-                Avant de générer le prompt, veuillez renseigner&nbsp;:{' '}
-                <strong>{missingFields.join(', ')}</strong>{' '}
-                {missingFields.length > 1 ? 'sont requis' : 'est requis'} dans le bloc «&nbsp;Quel est votre offre&nbsp;?&nbsp;» pour générer le prompt du visuel à créer.
+                Avant de générer 3 idées de contenu, veuillez renseigner&nbsp;: type d'offre, Nom, Image de référence si produit, Description, objectif du contenu, cas d'utilisations sont requis pour générer les 3 idées de contenus.
               </AlertDescription>
             </Alert>
           )}
