@@ -89,7 +89,7 @@ const IdeaSuggestions = () => {
         className="w-full max-w-md py-6 text-lg font-extrabold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-        <span>Générer 3 idées de contenu</span>
+        <span>{ideas.length > 0 ? 'Régénérer 3 idées de contenu' : 'Générer 3 idées de contenu'}</span>
       </Button>
 
       {ideas.length > 0 && (
