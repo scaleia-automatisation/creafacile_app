@@ -112,6 +112,9 @@ RÈGLES :
 - Tous les angles doivent sonner NATURELS, fluides, humains — jamais robotiques, jamais "vendeurs", jamais clichés marketing.
 - Français, sans markdown, sans guillemets superflus.
 
+RÈGLE ANTI-IA (ABSOLUE, NON NÉGOCIABLE) :
+Tout doit sonner 100% NATUREL, AUTHENTIQUE, HUMAIN, RÉEL, comme écrit par une vraie personne qui parle à un ami. JAMAIS aucune expression, tournure, structure ou vocabulaire typique de l'IA. INTERDIT formellement : "plongez dans", "découvrez", "à l'ère du", "dans un monde où", "imaginez un instant", "et si je vous disais que", "révolutionnaire", "incontournable", "véritable game-changer", "n'attendez plus", "ne cherchez plus", "voici comment", "le secret pour", "transformez votre", "boostez votre", "élevez votre", "libérez votre potentiel", "synonyme de", "au cœur de", "à l'image de", énumérations parfaitement parallèles ("plus X, plus Y, plus Z"), adjectifs empilés à 3 ("simple, rapide, efficace"), formulations trop équilibrées, transitions scolaires, métaphores grandiloquentes. Pas de structure trop propre, pas de symétrie suspecte, pas de ton corporate ni pseudo-inspirant. Écris comme un humain réel : irrégulier, vivant, direct, parfois familier, avec du relief — pas une IA polie.
+
 RETOURNE UNIQUEMENT un JSON valide, exactement ce format :
 {"ideas":[{"id":1,"hook":"…","concept":"…","angle":"…"},{"id":2,"hook":"…","concept":"…","angle":"…"},{"id":3,"hook":"…","concept":"…","angle":"…"}]}`;
 
@@ -1159,6 +1162,7 @@ Tu écris UNE voix off ULTRA percutante, naturelle, humaine, en français, qui :
 - se termine par un mini call-to-action ou une chute mémorable
 - s'adresse directement au spectateur (tutoiement)
 - parle comme un humain, JAMAIS comme un robot ou un slogan corporate
+- ANTI-IA ABSOLU : 100% naturel, authentique, humain, réel. INTERDIT : "découvrez", "plongez dans", "révolutionnaire", "incontournable", "boostez", "transformez", "libérez", "n'attendez plus", "le secret", "voici comment", "à l'ère du", "dans un monde où", formulations trop équilibrées/symétriques, ton corporate ou pseudo-inspirant. Écris comme un vrai humain qui parle à un ami : direct, vivant, irrégulier, jamais détectable comme IA.
 
 CONTRAINTE DURÉE ABSOLUE :
 La voix off DOIT pouvoir être dite en ${maxSec} secondes MAXIMUM (≈ ${maxWords} mots, ≈ ${maxChars} caractères max). C'est non-négociable : elle doit se terminer 2 secondes avant la fin de la vidéo.
@@ -1216,6 +1220,7 @@ RÈGLES ABSOLUES :
 - Pas de hashtag, pas de mention @, pas de ponctuation finale lourde
 - Évite le jargon corporate, parle comme un humain, va droit au but
 - Le texte doit être IMMÉDIATEMENT compréhensible et déclencher le clic / l'arrêt du scroll
+- ANTI-IA ABSOLU : 100% naturel, authentique, humain, réel. INTERDIT : "découvrez", "plongez dans", "révolutionnaire", "incontournable", "boostez", "transformez", "libérez", "n'attendez plus", "le secret", "voici comment", "à l'ère du", "dans un monde où", formulations trop équilibrées/symétriques, ton corporate ou pseudo-inspirant. Écris comme un vrai humain parle, direct, vivant, sans tournure d'IA.
 ${params.variant === 2 ? '- Ce texte est le 2e à apparaître à l\'écran : il doit COMPLÉTER (pas répéter) le 1er texte, idéalement comme un mini call-to-action ou une chute punchy.' : ''}
 ${params.excludeText ? `- NE RÉPÈTE PAS et ne paraphrase pas ce texte déjà utilisé : "${params.excludeText}"` : ''}
 
@@ -1292,6 +1297,7 @@ RÈGLES ABSOLUES :
 - Aucune répétition d'un mot fort entre les slides (sauf si effet voulu).
 - Pas de guillemets, pas de hashtag, pas d'emoji superflu (1 emoji max sur l'ensemble), pas de ponctuation finale lourde.
 - Pas de jargon corporate, on parle humain, direct, percutant.
+- ANTI-IA ABSOLU : 100% naturel, authentique, humain, réel. INTERDIT : "découvrez", "plongez dans", "révolutionnaire", "incontournable", "boostez", "transformez", "libérez", "n'attendez plus", "le secret", "voici comment", "à l'ère du", "dans un monde où", formulations trop symétriques/équilibrées, ton corporate ou pseudo-inspirant. Écris comme un vrai humain parle.
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown :
 {"slides":["texte slide 1","texte slide 2"${count >= 3 ? ',"texte slide 3"' : ''}${count >= 4 ? ',"texte slide 4"' : ''}]}`;
