@@ -1,5 +1,6 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
 import ContentTypeStep from './ContentTypeStep';
+import UseCaseStep from './UseCaseStep';
 
 const StartingChoiceButtons = () => {
   const {
@@ -49,6 +50,11 @@ const StartingChoiceButtons = () => {
             </button>
           );
         })}
+      </div>
+
+      {/* Cas d'utilisation (filtré par objectif / type d'offre / type de contenu) */}
+      <div className="w-full pt-2">
+        <UseCaseStep />
       </div>
 
       {/* Modèle IA et format (déplacé depuis l'ancien bloc 3) */}

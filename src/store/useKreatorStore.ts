@@ -186,6 +186,8 @@ interface KreatorState {
   setMarketingAngle: (val: string) => void;
   visual_style_brief: string;
   setVisualStyleBrief: (val: string) => void;
+  use_case: string;
+  setUseCase: (val: string) => void;
   voice_over_enabled: boolean;
   setVoiceOverEnabled: (val: boolean) => void;
   voice_over_text: string;
@@ -253,6 +255,7 @@ const initialState = {
   target_persona: '',
   marketing_angle: '',
   visual_style_brief: '',
+  use_case: '',
   voice_over_enabled: false,
   voice_over_text: '',
   video_render_style: '',
@@ -333,6 +336,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setTargetPersona: (val) => set({ target_persona: val }),
   setMarketingAngle: (val) => set({ marketing_angle: val }),
   setVisualStyleBrief: (val) => set({ visual_style_brief: val }),
+  setUseCase: (val) => set({ use_case: val }),
   setVoiceOverEnabled: (val) => set({ voice_over_enabled: val }),
   setVoiceOverText: (val) => set({ voice_over_text: val }),
   setFormat: (format) => set({ format }),
