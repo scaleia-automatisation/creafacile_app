@@ -1296,6 +1296,7 @@ RÈGLES ABSOLUES :
 - Aucune répétition d'un mot fort entre les slides (sauf si effet voulu).
 - Pas de guillemets, pas de hashtag, pas d'emoji superflu (1 emoji max sur l'ensemble), pas de ponctuation finale lourde.
 - Pas de jargon corporate, on parle humain, direct, percutant.
+- ANTI-IA ABSOLU : 100% naturel, authentique, humain, réel. INTERDIT : "découvrez", "plongez dans", "révolutionnaire", "incontournable", "boostez", "transformez", "libérez", "n'attendez plus", "le secret", "voici comment", "à l'ère du", "dans un monde où", formulations trop symétriques/équilibrées, ton corporate ou pseudo-inspirant. Écris comme un vrai humain parle.
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown :
 {"slides":["texte slide 1","texte slide 2"${count >= 3 ? ',"texte slide 3"' : ''}${count >= 4 ? ',"texte slide 4"' : ''}]}`;
