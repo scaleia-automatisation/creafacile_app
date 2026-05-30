@@ -174,13 +174,6 @@ const PromptStep = () => {
     <>
       {!hasPrompt && (
         <div className="space-y-3">
-          {hasMissing && (
-            <Alert className="max-w-2xl mx-auto bg-transparent border-0">
-              <AlertDescription className="text-muted-foreground text-sm text-center">
-                Avant de générer 3 idées de contenu, veuillez renseigner&nbsp;: type d'offre, Nom, Image de référence si produit, Description, objectif du contenu, cas d'utilisations sont requis pour générer les 3 idées de contenus.
-              </AlertDescription>
-            </Alert>
-          )}
           <div className="flex justify-center">
             <Button
               id="prompt-generate-btn"
