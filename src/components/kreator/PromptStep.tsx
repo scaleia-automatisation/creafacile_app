@@ -174,22 +174,14 @@ const PromptStep = () => {
     <>
       {!hasPrompt && (
         <div className="space-y-3">
-          <div className="flex justify-center">
-            <Button
-              id="prompt-generate-btn"
-              onClick={handleGenerate}
-              disabled={isGenerating || hasMissing}
-              className="w-full max-w-md py-6 text-lg font-extrabold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn disabled:opacity-50"
-            >
-              {isGenerating ? (
-                <span className="flex items-center gap-2">
-                  <Loader2 className="w-5 h-5 animate-spin" /> Génération en cours…
-                </span>
-              ) : (
-                'Générer le prompt'
-              )}
-            </Button>
-          </div>
+          <button
+            id="prompt-generate-btn"
+            type="button"
+            onClick={handleGenerate}
+            disabled={isGenerating || hasMissing}
+            className="hidden"
+            aria-hidden="true"
+          />
         </div>
       )}
 
