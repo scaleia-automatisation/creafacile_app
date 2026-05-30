@@ -93,19 +93,16 @@ const IdeaSuggestions = () => {
           {ideas.map((idea, idx) => (
             <div
               key={idea.id ?? idx}
-              className="flex flex-col gap-3 p-4 rounded-card border-2 border-foreground/10 bg-card hover:border-primary/40 transition-colors"
+              className="flex flex-col items-center text-center gap-3 p-4 rounded-card border-2 border-foreground/10 bg-card hover:border-primary/40 transition-colors"
             >
-              <div className="text-[10px] uppercase tracking-wider font-bold text-primary">
+              <div className="text-[10px] uppercase tracking-wider font-bold text-primary text-center">
                 Idée {idx + 1}
               </div>
-              <div className="font-bold text-foreground text-sm leading-snug">
+              <div className="font-bold text-foreground text-base leading-snug text-center">
                 {idea.hook}
               </div>
-              <div className="text-xs text-muted-foreground leading-relaxed">
+              <div className="text-sm text-muted-foreground leading-relaxed text-center">
                 {idea.concept}
-              </div>
-              <div className="text-[11px] font-semibold text-foreground/80 bg-secondary/10 border border-secondary/20 rounded-btn px-2 py-1.5">
-                🎯 {idea.angle}
               </div>
               <Button
                 type="button"
