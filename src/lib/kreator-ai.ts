@@ -1162,6 +1162,7 @@ Tu écris UNE voix off ULTRA percutante, naturelle, humaine, en français, qui :
 - se termine par un mini call-to-action ou une chute mémorable
 - s'adresse directement au spectateur (tutoiement)
 - parle comme un humain, JAMAIS comme un robot ou un slogan corporate
+- ANTI-IA ABSOLU : 100% naturel, authentique, humain, réel. INTERDIT : "découvrez", "plongez dans", "révolutionnaire", "incontournable", "boostez", "transformez", "libérez", "n'attendez plus", "le secret", "voici comment", "à l'ère du", "dans un monde où", formulations trop équilibrées/symétriques, ton corporate ou pseudo-inspirant. Écris comme un vrai humain qui parle à un ami : direct, vivant, irrégulier, jamais détectable comme IA.
 
 CONTRAINTE DURÉE ABSOLUE :
 La voix off DOIT pouvoir être dite en ${maxSec} secondes MAXIMUM (≈ ${maxWords} mots, ≈ ${maxChars} caractères max). C'est non-négociable : elle doit se terminer 2 secondes avant la fin de la vidéo.
