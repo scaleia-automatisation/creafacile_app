@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
@@ -169,7 +169,7 @@ const CustomizationStep = () => {
     persona: target_persona,
     variant,
     excludeText: variant === 2 ? options.text_content : undefined,
-    maxWords: 5,
+    maxWords: 3,
   });
 
   const activeVisualStyle = visual_style_brief || options.visual_style || (isVideo ? video_render_style : render_style);
@@ -417,7 +417,7 @@ const CustomizationStep = () => {
                       ) : (
                         <Sparkles className="w-3 h-3" />
                       )}
-                      Générer le texte
+                      Régénérer le texte 1
                     </Button>
                   )}
                   {options.show_text && isCarousel && (
@@ -470,7 +470,7 @@ const CustomizationStep = () => {
                       onChange={(e) => {
                         if (e.target.value.length <= 50) setOptions({ text_content: e.target.value });
                       }}
-                      placeholder="Texte à afficher (1 à 5 mots)"
+                      placeholder="Texte à afficher (1 à 3 mots)"
                       className="bg-card border-foreground/10 text-foreground text-sm"
                     />}
                     {isVideo && (
@@ -630,7 +630,7 @@ const CustomizationStep = () => {
                               ) : (
                                 <Sparkles className="w-3 h-3" />
                               )}
-                              Générer le texte
+                              Régénérer le texte 2
                             </Button>
                           )}
                         </div>
@@ -647,7 +647,7 @@ const CustomizationStep = () => {
                               onChange={(e) => {
                                 if (e.target.value.length <= 50) setOptions({ text_content_2: e.target.value });
                               }}
-                              placeholder="Texte à afficher (1 à 5 mots)"
+                              placeholder="Texte à afficher (1 à 3 mots)"
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
                             {isVideo && (
