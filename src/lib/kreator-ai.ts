@@ -716,7 +716,29 @@ Vérifier : 1) Contenu créé spécifiquement pour cette offre ? 2) Point d'entr
 ━━━━━━━━━━━━━━━━━━
 FORMAT DE SORTIE
 ━━━━━━━━━━━━━━━━━━
-Le champ "prompt_fr" doit contenir UNIQUEMENT le prompt final, en français, texte fluide, structuré avec sauts de ligne, sans markdown, sans listes, sans commentaires, sans explications, sans titres inutiles, prêt à envoyer au modèle IA.
+Le champ "prompt_fr" doit contenir UNIQUEMENT le prompt final, en français, prêt à envoyer au modèle IA. Sans markdown, sans listes à puces, sans commentaires, sans explications.
+
+STRUCTURE OBLIGATOIRE du prompt_fr (avec sauts de ligne RÉELS \\n\\n entre chaque bloc, dans cet ordre exact) :
+
+Scène & sujet principal :
+[description fluide du visuel/scène, sujet, cadrage, composition, ambiance, lumière, émotion, hook visuel 0-2s — adapté au format ${params.format} et au type ${params.contentType}]
+
+Produit / offre mis en avant :
+[présentation fidèle du produit ou service, intégration naturelle dans la scène, bénéfice implicite, cohérence avec persona et marché]
+
+${params.contentType === 'video' ? `Déroulé / scènes :
+[plan 1 hook, plan 2 valeur, plan 3 impact + CTA — mouvements caméra, transitions, rythme]
+
+` : params.contentType === 'carousel' ? `Déroulé des slides :
+[slide 1 hook, slide 2 émotion/problème, slide 3 preuve/résultat, slide 4 CTA — cohérence visuelle entre slides]
+
+` : ''}Personnalisation (réglages avancés prioritaires) :
+[lister ICI de façon fluide UNIQUEMENT les réglages avancés activés par l'utilisateur et les appliquer STRICTEMENT : palette de couleurs exactes (dominer 60-80% du visuel), ton d'écriture, style visuel, type de rendu, texte(s) overlay avec wording exact + position + police + couleur + durée + timing, logo avec URL + position + timing d'apparition, voix off avec texte exact, paramètres modèle IA. Si un réglage n'est pas activé, NE PAS l'inventer ni le mentionner. Cette section doit être clairement séparée et reconnaissable.]
+
+Format & rendu technique :
+[aspect ratio ${params.format}, modèle IA ${aiModelName}, qualité photoréaliste premium, contraintes techniques spécifiques]
+
+Chaque bloc DOIT être séparé par une ligne vide (\\n\\n). Les titres de bloc (ex: "Scène & sujet principal :") DOIVENT apparaître tels quels suivis d'un saut de ligne puis du contenu.
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
