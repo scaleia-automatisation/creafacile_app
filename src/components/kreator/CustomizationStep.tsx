@@ -564,7 +564,7 @@ const CustomizationStep = () => {
                       </Select>
                     </div>
                     <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">Police du texte 1</label>
+                      <label className="text-xs text-muted-foreground mb-1 block">{isCarousel ? 'Police texte slide' : 'Police du texte 1'}</label>
                       <Select
                         value={options.text_font}
                         onValueChange={(v) => setOptions({ text_font: v })}
