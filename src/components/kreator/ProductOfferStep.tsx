@@ -413,11 +413,9 @@ const ProductOfferStep = () => {
             {personas.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
                 {personas.map((p) => (
-                  <button
+                  <div
                     key={p.id}
-                    type="button"
-                    onClick={() => handleSelectPersona(p)}
-                    className={`text-left relative p-4 rounded-xl border-[2px] transition-all ${
+                    className={`text-left relative p-4 rounded-xl border-[2px] transition-all flex flex-col ${
                       selectedPersonaId === p.id
                         ? 'border-primary shadow-lg shadow-primary/20'
                         : 'border-foreground/10 hover:border-secondary/50'
@@ -431,7 +429,20 @@ const ProductOfferStep = () => {
                     <div className="text-xs text-muted-foreground mb-1"><span className="text-primary font-semibold">CSP:</span> {p.csp}</div>
                     <div className="text-xs text-muted-foreground mb-1"><span className="text-primary font-semibold">Problème:</span> {p.probleme}</div>
                     <div className="text-xs text-muted-foreground"><span className="text-primary font-semibold">Objectif:</span> {p.objectif}</div>
-                  </button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => handleSelectPersona(p)}
+                      disabled={selectedPersonaId === p.id}
+                      className="mt-3 w-full gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs font-bold"
+                    >
+                      {selectedPersonaId === p.id ? (
+                        <><CheckCircle className="w-3.5 h-3.5 mr-1.5" /> Persona choisi</>
+                      ) : (
+                        'Je choisis ce persona'
+                      )}
+                    </Button>
+                  </div>
                 ))}
               </div>
             )}
