@@ -136,10 +136,26 @@ const CustomizationStep = () => {
   };
 
   const handleLogoUpload = async (file: File) => {
-    const url = await upload(file, 'image');
+    const isJpeg = file.type === 'image/jpeg' || file.type === 'image/jpg'
+      || /\.jpe?g$/i.test(file.name);
+    let toUpload: File = file;
+    if (isJpeg) {
+      try {
+        toast.info('Suppression du fond du logo en cours…');
+        const { removeBackground } = await import('@imgly/background-removal');
+        const blob = await removeBackground(file);
+        const pngName = file.name.replace(/\.[^.]+$/, '') + '.png';
+        toUpload = new File([blob], pngName, { type: 'image/png' });
+      } catch (err) {
+        console.error('[logo bg removal]', err);
+        toast.error("Impossible de retirer le fond du logo JPEG. Importez un PNG transparent.");
+        return;
+      }
+    }
+    const url = await upload(toUpload, 'image');
     if (url) {
       setOptions({ logo_url: url });
-      toast.success('Logo importé');
+      toast.success(isJpeg ? 'Logo importé (fond retiré)' : 'Logo importé');
     }
   };
 
