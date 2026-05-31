@@ -1169,7 +1169,10 @@ export async function generateVoiceOver(params: {
   productName: string;
   productDescription?: string;
   objective: string;
-  marketingAngle: string;
+  marketingAngle?: string;
+  tone?: string;
+  persona?: string;
+  useCase?: string;
   videoDurationSec: number;
 }): Promise<string> {
   const maxSec = Math.max(1, params.videoDurationSec - 2);
@@ -1191,13 +1194,18 @@ La voix off DOIT pouvoir être dite en ${maxSec} secondes MAXIMUM (≈ ${maxWord
 
 Réponds UNIQUEMENT avec le texte de la voix off, sans guillemets, sans introduction, sans mise en forme, sans préfixe.`;
 
-  const userPrompt = `Type d'offre: ${params.offerType || 'non précisé'}
-Nom: ${params.productName || 'non précisé'}
-${params.productDescription ? `Description: ${params.productDescription}` : ''}
-Objectif de contenu: ${params.objective || 'non précisé'}
-Angle marketing: ${params.marketingAngle || 'non précisé'}
+  const userPrompt = `INPUTS PRIORITAIRES — à respecter STRICTEMENT pour rédiger la voix off :
 
-Écris UNE voix off courte, percutante, dicible en ${maxSec} secondes maximum.`;
+• Type d'offre (PRIORITÉ HAUTE) : ${params.offerType || 'non précisé'}
+• Nom (PRIORITÉ HAUTE) : ${params.productName || 'non précisé'}
+• Description (PRIORITÉ HAUTE) : ${params.productDescription || 'non précisée'}
+• Ton d'écriture (PRIORITÉ TRÈS HAUTE — adopte EXACTEMENT ce ton, vocabulaire, rythme et registre) : ${params.tone || 'non précisé'}
+• Client cible / persona (PRIORITÉ HAUTE — parle DIRECTEMENT à cette personne, avec ses mots) : ${params.persona || 'non précisé'}
+• Objectif du contenu (PRIORITÉ TRÈS HAUTE — la voix off doit servir cet objectif marketing) : ${params.objective || 'non précisé'}
+• Cas d'utilisation (PRIORITÉ TRÈS HAUTE — respecte le format et l'intention de ce cas d'usage) : ${params.useCase || 'non précisé'}
+${params.marketingAngle ? `• Angle marketing (contexte secondaire) : ${params.marketingAngle}` : ''}
+
+Écris UNE voix off courte, percutante, dicible en ${maxSec} secondes maximum, en respectant STRICTEMENT le ton, le persona, l'objectif et le cas d'utilisation ci-dessus.`;
 
   const data = await callKreatorAI({
     action: 'generate_voice_over',

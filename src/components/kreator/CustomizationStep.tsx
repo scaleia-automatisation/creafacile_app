@@ -85,7 +85,7 @@ const CustomizationStep = () => {
     idea_chosen, input_text, format,
     company_activity, company_sector, target_persona,
     render_style, video_render_style,
-    slides_count,
+    slides_count, use_case,
   } = useKreatorStore();
   const isVideo = type === 'video';
   const isCarousel = type === 'carousel';
@@ -109,8 +109,8 @@ const CustomizationStep = () => {
       toast.error("Ce modèle vidéo ne prend pas en charge la voix off.");
       return;
     }
-    if (!product_service?.trim() || !marketing_angle?.trim()) {
-      toast.error("Renseignez le nom de l'offre et l'angle marketing avant de générer la voix off.");
+    if (!product_service?.trim()) {
+      toast.error("Renseignez le nom de l'offre avant de générer la voix off.");
       return;
     }
     setVoGenerating(true);
@@ -121,6 +121,9 @@ const CustomizationStep = () => {
         productDescription: product_description,
         objective,
         marketingAngle: marketing_angle,
+        tone: options.ton,
+        persona: target_persona,
+        useCase: use_case,
         videoDurationSec,
       });
       setVoiceOverText(text.slice(0, voMaxChars));
