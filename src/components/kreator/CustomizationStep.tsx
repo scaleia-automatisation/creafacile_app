@@ -487,9 +487,9 @@ const CustomizationStep = () => {
                         ))}
                       </div>
                     )}
-                    {isVideo && !isCarousel && (
+                    {!isCarousel && (
                       <div className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                        Texte à l'écran 1
+                        Texte 1
                       </div>
                     )}
                     {!isCarousel && <Input
@@ -667,7 +667,7 @@ const CustomizationStep = () => {
                         {options.text_2_enabled && (
                           <>
                             <div className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                              {isVideo ? "Texte à l'écran 2" : 'Texte 2'}
+                              Texte 2
                             </div>
                             <Input
                               value={options.text_content_2}
