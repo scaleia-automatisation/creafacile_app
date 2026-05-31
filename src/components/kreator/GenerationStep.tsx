@@ -75,7 +75,7 @@ const GenerationStep = () => {
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const hasPrompt = prompt_fr.length > 0;
-  const buttonLabel = type === 'image' ? 'Générer le visuel' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
+  const buttonLabel = type === 'image' ? 'Générer le contenu' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
 
   const currentCaption = captions ? captions[selectedPlatform] : null;
