@@ -149,12 +149,24 @@ const ProductOfferStep = () => {
       if (isProduct) {
         setDescribing(true);
         try {
-          const [desc, sector] = await Promise.all([
-            describeProductImages([dataUrl]),
+          const desc = await describeProductImages([dataUrl]);
+          const cleanedDesc = toSentences(desc, 1);
+          setProductDescription(cleanedDesc);
+          // Génère activité + secteur EN MÊME TEMPS que la description
+          const [activity, sectorFromDesc, sectorFromImage] = await Promise.all([
+            detectActivityFromDescription(cleanedDesc).catch(() => ''),
+            detectSectorFromActivity(cleanedDesc, SECTORS).catch(() => ''),
             detectSectorFromImage(dataUrl, SECTORS).catch(() => ''),
           ]);
-          setProductDescription(toSentences(desc, 1));
-          if (sector) setCompanySector(sector);
+          if (activity) {
+            setCompanyActivity(activity);
+            autoActivityKeyRef.current = cleanedDesc;
+          }
+          const sector = sectorFromDesc || sectorFromImage;
+          if (sector) {
+            setCompanySector(sector);
+            autoSectorKeyRef.current = cleanedDesc;
+          }
         } catch (e) {
           console.error(e);
         } finally {
