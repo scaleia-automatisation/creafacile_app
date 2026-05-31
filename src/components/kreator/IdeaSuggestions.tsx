@@ -121,7 +121,7 @@ const IdeaSuggestions = () => {
                 className="mt-auto gap-1.5 gradient-bg border-0 text-primary-foreground hover:opacity-90 text-xs font-bold"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                Générer ce contenu
+                Générer le prompt
               </Button>
             </div>
           ))}
