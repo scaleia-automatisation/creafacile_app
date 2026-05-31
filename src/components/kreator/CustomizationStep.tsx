@@ -544,7 +544,7 @@ const CustomizationStep = () => {
                       </>
                     )}
                     <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">Position du texte</label>
+                      <label className="text-xs text-muted-foreground mb-1 block">Position du texte 1</label>
                       <Select
                         value={options.text_position}
                         onValueChange={(v) =>
@@ -564,7 +564,7 @@ const CustomizationStep = () => {
                       </Select>
                     </div>
                     <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">Police d'écriture</label>
+                      <label className="text-xs text-muted-foreground mb-1 block">Police du texte 1</label>
                       <Select
                         value={options.text_font}
                         onValueChange={(v) => setOptions({ text_font: v })}
@@ -721,7 +721,7 @@ const CustomizationStep = () => {
                               </>
                             )}
                             <div>
-                              <label className="text-xs text-muted-foreground mb-1 block">Position du texte</label>
+                              <label className="text-xs text-muted-foreground mb-1 block">Position du texte 2</label>
                               <Select
                                 value={options.text_position_2}
                                 onValueChange={(v) =>
@@ -741,7 +741,7 @@ const CustomizationStep = () => {
                               </Select>
                             </div>
                             <div>
-                              <label className="text-xs text-muted-foreground mb-1 block">Police d'écriture</label>
+                              <label className="text-xs text-muted-foreground mb-1 block">Police du texte 2</label>
                               <Select
                                 value={options.text_font_2}
                                 onValueChange={(v) => setOptions({ text_font_2: v })}
