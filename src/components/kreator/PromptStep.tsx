@@ -89,7 +89,7 @@ const PromptStep = () => {
       const result = await generatePrompt({
         contentType: type,
         format,
-        objective: marketing_angle,
+        objective,
         ton: options.ton,
         visualStyle: visual_style_brief || options.visual_style,
         inputText: input_text,
