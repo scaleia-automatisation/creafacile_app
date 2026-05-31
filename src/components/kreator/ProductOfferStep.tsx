@@ -55,6 +55,7 @@ const ProductOfferStep = () => {
   const [detectingSector, setDetectingSector] = useState(false);
   const autoSectorKeyRef = useRef<string>('');
   const fileRef = useRef<HTMLInputElement>(null);
+  const autoPersonasKeyRef = useRef<string>('');
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
