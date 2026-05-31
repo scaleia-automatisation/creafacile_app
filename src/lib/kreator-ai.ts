@@ -484,7 +484,15 @@ export async function generatePrompt(params: {
   // Logo + text positioning + font + color
   logoEnabled?: boolean;
   logoUrl?: string;
-  logoPosition?: 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right';
+  logoPosition?:
+    | 'bottom-center'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'top-left'
+    | 'top-right'
+    | 'top-center'
+    | 'middle-left'
+    | 'middle-right';
   logoAppearance?: 'start' | 'middle' | 'end';
   textPosition?: 'top-center' | 'middle-center' | 'bottom-center';
   textFont?: string;
