@@ -178,7 +178,7 @@ const PromptStep = () => {
             id="prompt-generate-btn"
             type="button"
             onClick={handleGenerate}
-            disabled={isGenerating || hasMissing}
+            disabled={isGenerating}
             className="hidden"
             aria-hidden="true"
           />
