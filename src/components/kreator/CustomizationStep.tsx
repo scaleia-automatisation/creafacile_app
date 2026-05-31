@@ -781,7 +781,7 @@ const CustomizationStep = () => {
                                 </SelectContent>
                               </Select>
                             </div>
-                            {isVideo && (<div className="space-y-2">
+                            <div className="space-y-2">
                               <label className="text-xs text-muted-foreground block">Couleur du texte</label>
                               <div className="grid grid-cols-8 gap-2">
                                 {TEXT_COLORS.map((c) => {
@@ -818,7 +818,7 @@ const CustomizationStep = () => {
                                   style={{ backgroundColor: options.text_color_2 }}
                                 />
                               </div>
-                            </div>)}
+                            </div>
                           </>
                         )}
                     </div>}
