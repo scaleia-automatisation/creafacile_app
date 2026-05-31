@@ -484,7 +484,15 @@ export async function generatePrompt(params: {
   // Logo + text positioning + font + color
   logoEnabled?: boolean;
   logoUrl?: string;
-  logoPosition?: 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right';
+  logoPosition?:
+    | 'bottom-center'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'top-left'
+    | 'top-right'
+    | 'top-center'
+    | 'middle-left'
+    | 'middle-right';
   logoAppearance?: 'start' | 'middle' | 'end';
   textPosition?: 'top-center' | 'middle-center' | 'bottom-center';
   textFont?: string;
@@ -806,7 +814,7 @@ Timing à l'écran : Texte 1 apparaît à ${params.textStart1 ?? 0}s pendant ${p
   : ''}`)
   : 'Pas de texte overlay — NE PAS générer de texte, pancarte, étiquette, logo ou enseigne dans l\'image'}
 ${params.logoEnabled && params.logoUrl
-  ? `🏷️ LOGO DE MARQUE (OBLIGATOIRE — PRIORITÉ ABSOLUE) : intégrer EXACTEMENT ce logo fourni par l'utilisateur, et AUCUN AUTRE. URL du logo (image de référence à utiliser telle quelle, fond déjà transparent) : ${params.logoUrl}\n• INTERDICTION ABSOLUE d'inventer, dessiner, recréer, redessiner, styliser, reinterpréter ou substituer un autre logo, monogramme, lettrage, icône, emblème ou marque. Reproduire À L'IDENTIQUE le logo fourni (formes, couleurs, typographie, proportions exactes).\n• Position : ${params.logoPosition === 'bottom-right' ? 'en bas à droite' : params.logoPosition === 'top-left' ? 'en haut à gauche' : params.logoPosition === 'top-right' ? 'en haut à droite' : 'en bas au centre'}. Taille discrète et professionnelle, parfaitement net, sans déformation, sans rotation, sans effet, sans recadrage du logo, sans ajout de texte autour, fond transparent préservé, ne couvre jamais le sujet principal.${params.contentType === 'video' ? `\n• Apparition dans la vidéo : ${params.logoAppearance === 'middle' ? "AU MILIEU de la vidéo (apparition à mi-parcours, environ à la moitié de la durée)" : params.logoAppearance === 'end' ? "À LA FIN de la vidéo (apparition sur les dernières secondes, comme signature de marque finale)" : "AU DÉBUT de la vidéo (apparition dès les premières secondes, dès l'ouverture)"} — le script et le storyboard DOIVENT explicitement indiquer ce timing d'apparition du logo, sans exception.` : ''}`
+  ? `🏷️ LOGO DE MARQUE (OBLIGATOIRE — PRIORITÉ ABSOLUE) : intégrer EXACTEMENT ce logo fourni par l'utilisateur, et AUCUN AUTRE. URL du logo (image de référence à utiliser telle quelle, fond déjà transparent) : ${params.logoUrl}\n• INTERDICTION ABSOLUE d'inventer, dessiner, recréer, redessiner, styliser, reinterpréter ou substituer un autre logo, monogramme, lettrage, icône, emblème ou marque. Reproduire À L'IDENTIQUE le logo fourni (formes, couleurs, typographie, proportions exactes).\n• Position : ${params.logoPosition === 'bottom-right' ? 'en bas à droite' : params.logoPosition === 'bottom-left' ? 'en bas à gauche' : params.logoPosition === 'top-left' ? 'en haut à gauche' : params.logoPosition === 'top-right' ? 'en haut à droite' : params.logoPosition === 'top-center' ? 'en haut au centre' : params.logoPosition === 'middle-left' ? 'au milieu à gauche' : params.logoPosition === 'middle-right' ? 'au milieu à droite' : 'en bas au centre'}. Taille discrète et professionnelle, parfaitement net, sans déformation, sans rotation, sans effet, sans recadrage du logo, sans ajout de texte autour, fond transparent préservé, ne couvre jamais le sujet principal.${params.contentType === 'video' ? `\n• Apparition dans la vidéo : ${params.logoAppearance === 'middle' ? "AU MILIEU de la vidéo (apparition à mi-parcours, environ à la moitié de la durée)" : params.logoAppearance === 'end' ? "À LA FIN de la vidéo (apparition sur les dernières secondes, comme signature de marque finale)" : "AU DÉBUT de la vidéo (apparition dès les premières secondes, dès l'ouverture)"} — le script et le storyboard DOIVENT explicitement indiquer ce timing d'apparition du logo, sans exception.` : ''}`
   : 'Pas de logo à intégrer'}
 ${params.paletteEnabled ? `🎨 PALETTE DE COULEURS ACTIVE (PRIORITÉ ABSOLUE — domine 60-80% du visuel, prévaut sur toute autre suggestion couleur y compris l'analyse d'images de référence): ${params.paletteHex.join(', ')}` : 'Palette automatique'}
 

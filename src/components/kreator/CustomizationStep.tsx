@@ -393,14 +393,18 @@ const CustomizationStep = () => {
                         <label className="text-xs text-muted-foreground mb-1 block">Position du logo</label>
                         <Select
                           value={options.logo_position}
-                          onValueChange={(v) => setOptions({ logo_position: v as 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right' })}
+                          onValueChange={(v) => setOptions({ logo_position: v as typeof options.logo_position })}
                         >
                           <SelectTrigger className="bg-card border-foreground/10 text-foreground">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="bg-card border-foreground/10">
                             <SelectItem value="top-left" className="text-foreground focus:bg-secondary/20">Logo en haut à gauche</SelectItem>
+                            <SelectItem value="top-center" className="text-foreground focus:bg-secondary/20">Logo en haut au centre</SelectItem>
                             <SelectItem value="top-right" className="text-foreground focus:bg-secondary/20">Logo en haut à droite</SelectItem>
+                            <SelectItem value="middle-left" className="text-foreground focus:bg-secondary/20">Logo au milieu à gauche</SelectItem>
+                            <SelectItem value="middle-right" className="text-foreground focus:bg-secondary/20">Logo au milieu à droite</SelectItem>
+                            <SelectItem value="bottom-left" className="text-foreground focus:bg-secondary/20">Logo en bas à gauche</SelectItem>
                             <SelectItem value="bottom-center" className="text-foreground focus:bg-secondary/20">Logo en bas au centre</SelectItem>
                             <SelectItem value="bottom-right" className="text-foreground focus:bg-secondary/20">Logo en bas à droite</SelectItem>
                           </SelectContent>
@@ -603,9 +607,8 @@ const CustomizationStep = () => {
                       </Select>
                     </div>
 
-                    {/* Text color (vidéo) */}
-                    {isVideo && (
-                      <div className="space-y-2">
+                    {/* Couleur du texte 1 */}
+                    <div className="space-y-2">
                         <label className="text-xs text-muted-foreground block">Couleur du texte</label>
                         <div className="grid grid-cols-8 gap-2">
                           {TEXT_COLORS.map((c) => {
@@ -642,8 +645,7 @@ const CustomizationStep = () => {
                             style={{ backgroundColor: options.text_color }}
                           />
                         </div>
-                      </div>
-                    )}
+                    </div>
 
                     {/* Second on-screen text */}
                     {!isCarousel && <div className="pt-3 border-t border-foreground/10 space-y-3">
@@ -779,7 +781,7 @@ const CustomizationStep = () => {
                                 </SelectContent>
                               </Select>
                             </div>
-                            {isVideo && (<div className="space-y-2">
+                            <div className="space-y-2">
                               <label className="text-xs text-muted-foreground block">Couleur du texte</label>
                               <div className="grid grid-cols-8 gap-2">
                                 {TEXT_COLORS.map((c) => {
@@ -816,7 +818,7 @@ const CustomizationStep = () => {
                                   style={{ backgroundColor: options.text_color_2 }}
                                 />
                               </div>
-                            </div>)}
+                            </div>
                           </>
                         )}
                     </div>}
