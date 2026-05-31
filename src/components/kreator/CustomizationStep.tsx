@@ -393,14 +393,18 @@ const CustomizationStep = () => {
                         <label className="text-xs text-muted-foreground mb-1 block">Position du logo</label>
                         <Select
                           value={options.logo_position}
-                          onValueChange={(v) => setOptions({ logo_position: v as 'bottom-center' | 'bottom-right' | 'top-left' | 'top-right' })}
+                          onValueChange={(v) => setOptions({ logo_position: v as typeof options.logo_position })}
                         >
                           <SelectTrigger className="bg-card border-foreground/10 text-foreground">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="bg-card border-foreground/10">
                             <SelectItem value="top-left" className="text-foreground focus:bg-secondary/20">Logo en haut à gauche</SelectItem>
+                            <SelectItem value="top-center" className="text-foreground focus:bg-secondary/20">Logo en haut au centre</SelectItem>
                             <SelectItem value="top-right" className="text-foreground focus:bg-secondary/20">Logo en haut à droite</SelectItem>
+                            <SelectItem value="middle-left" className="text-foreground focus:bg-secondary/20">Logo au milieu à gauche</SelectItem>
+                            <SelectItem value="middle-right" className="text-foreground focus:bg-secondary/20">Logo au milieu à droite</SelectItem>
+                            <SelectItem value="bottom-left" className="text-foreground focus:bg-secondary/20">Logo en bas à gauche</SelectItem>
                             <SelectItem value="bottom-center" className="text-foreground focus:bg-secondary/20">Logo en bas au centre</SelectItem>
                             <SelectItem value="bottom-right" className="text-foreground focus:bg-secondary/20">Logo en bas à droite</SelectItem>
                           </SelectContent>
