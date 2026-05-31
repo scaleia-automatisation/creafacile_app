@@ -231,8 +231,17 @@ const ProductOfferStep = () => {
         sector: company_sector,
         offerType: offer_type,
       });
-      setPersonas(result.personas || []);
-      setSelectedPersonaId(null);
+      const list: Persona[] = result.personas || [];
+      setPersonas(list);
+      const bestId = typeof result.best_id === 'number' ? result.best_id : list[0]?.id;
+      const best = list.find((p) => p.id === bestId) || list[0];
+      if (best) {
+        setSelectedPersonaId(best.id);
+        const text = `${best.profil} — ${best.contexte_rapide} | CSP: ${best.csp} | Problème: ${best.probleme} | Objectif: ${best.objectif}`;
+        setTargetPersona(text);
+      } else {
+        setSelectedPersonaId(null);
+      }
     } catch (err) {
       console.error(err);
       toast.error('Erreur lors de la génération des personas');
@@ -256,8 +265,16 @@ const ProductOfferStep = () => {
       setLoadingPersonas(true);
       try {
         const result = await generatePersonas({ activity, sector, offerType: offer });
-        setPersonas(result.personas || []);
-        setSelectedPersonaId(null);
+        const list: Persona[] = result.personas || [];
+        setPersonas(list);
+        // Auto-sélection du meilleur persona (conversion / douleur / revenus)
+        const bestId = typeof result.best_id === 'number' ? result.best_id : list[0]?.id;
+        const best = list.find((p) => p.id === bestId) || list[0];
+        if (best) {
+          setSelectedPersonaId(best.id);
+          const text = `${best.profil} — ${best.contexte_rapide} | CSP: ${best.csp} | Problème: ${best.probleme} | Objectif: ${best.objectif}`;
+          setTargetPersona(text);
+        }
       } catch (err) {
         console.error('Auto personas generation failed', err);
       } finally {
