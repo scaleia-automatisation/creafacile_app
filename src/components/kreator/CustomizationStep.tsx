@@ -607,9 +607,8 @@ const CustomizationStep = () => {
                       </Select>
                     </div>
 
-                    {/* Text color (vidéo) */}
-                    {isVideo && (
-                      <div className="space-y-2">
+                    {/* Couleur du texte 1 */}
+                    <div className="space-y-2">
                         <label className="text-xs text-muted-foreground block">Couleur du texte</label>
                         <div className="grid grid-cols-8 gap-2">
                           {TEXT_COLORS.map((c) => {
@@ -646,8 +645,7 @@ const CustomizationStep = () => {
                             style={{ backgroundColor: options.text_color }}
                           />
                         </div>
-                      </div>
-                    )}
+                    </div>
 
                     {/* Second on-screen text */}
                     {!isCarousel && <div className="pt-3 border-t border-foreground/10 space-y-3">
