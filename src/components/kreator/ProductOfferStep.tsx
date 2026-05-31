@@ -55,6 +55,7 @@ const ProductOfferStep = () => {
   const [detectingSector, setDetectingSector] = useState(false);
   const autoSectorKeyRef = useRef<string>('');
   const fileRef = useRef<HTMLInputElement>(null);
+  const autoPersonasKeyRef = useRef<string>('');
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
@@ -239,6 +240,31 @@ const ProductOfferStep = () => {
       setLoadingPersonas(false);
     }
   };
+
+  // Auto-génère 3 personas dès que description + activité + secteur + type d'offre sont renseignés
+  useEffect(() => {
+    const desc = (product_description || '').trim();
+    const activity = (company_activity || '').trim();
+    const sector = (company_sector || '').trim();
+    const offer = (offer_type || '').trim();
+    if (!desc || !activity || !sector || !offer) return;
+    const key = `${desc}|${activity}|${sector}|${offer}`;
+    if (autoPersonasKeyRef.current === key) return;
+    if (loadingPersonas) return;
+    autoPersonasKeyRef.current = key;
+    (async () => {
+      setLoadingPersonas(true);
+      try {
+        const result = await generatePersonas({ activity, sector, offerType: offer });
+        setPersonas(result.personas || []);
+        setSelectedPersonaId(null);
+      } catch (err) {
+        console.error('Auto personas generation failed', err);
+      } finally {
+        setLoadingPersonas(false);
+      }
+    })();
+  }, [product_description, company_activity, company_sector, offer_type]);
 
 
   const handleSelectPersona = (p: Persona) => {
