@@ -156,9 +156,15 @@ export async function generatePersonas(params: {
   const systemPrompt = `Tu es un expert en marketing et personas client. Génère exactement 3 profils de persona ULTRA pertinents pour le contexte fourni.
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown, exactement ce format :
-{"personas":[{"id":1,"profil":"Nom + âge + situation courte (ex: Marie, 34 ans, maman active)","contexte_rapide":"1 phrase sur son contexte de vie / pro","csp":"CSP+ / CSP / employé / étudiant / retraité / dirigeant…","probleme":"problème principal qu'il/elle rencontre","objectif":"objectif principal qu'il/elle cherche à atteindre"},{"id":2,...},{"id":3,...}]}
+{"personas":[{"id":1,"profil":"Nom + âge + situation courte (ex: Marie, 34 ans, maman active)","contexte_rapide":"1 phrase sur son contexte de vie / pro","csp":"CSP+ / CSP / employé / étudiant / retraité / dirigeant…","probleme":"problème principal qu'il/elle rencontre","objectif":"objectif principal qu'il/elle cherche à atteindre"},{"id":2,...},{"id":3,...}],"best_id":1,"best_reason":"raison courte"}
 
-Les 3 personas doivent être DIFFÉRENTS (âges, situations, motivations différentes) mais tous cohérents avec l'activité, le secteur et le type d'offre.`;
+Les 3 personas doivent être DIFFÉRENTS (âges, situations, motivations différentes) mais tous cohérents avec l'activité, le secteur et le type d'offre.
+
+ANALYSE OBLIGATOIRE : après avoir généré les 3 personas, compare-les et désigne dans "best_id" le persona qui :
+1) convertit le plus (intention d'achat la plus forte),
+2) a la douleur la plus intense et la plus urgente à résoudre,
+3) génère le plus de revenus (panier moyen × fréquence × LTV la plus élevée).
+Le champ "best_id" doit correspondre EXACTEMENT à l'id (1, 2 ou 3) du meilleur persona. "best_reason" : 1 phrase courte qui justifie le choix.`;
 
   const userPrompt = `Activité principale: ${params.activity}
 Secteur d'activité: ${params.sector || 'non précisé'}
