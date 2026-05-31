@@ -544,7 +544,7 @@ const CustomizationStep = () => {
                       </>
                     )}
                     <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">Position du texte 1</label>
+                      <label className="text-xs text-muted-foreground mb-1 block">{isCarousel ? 'Position texte slide' : 'Position du texte 1'}</label>
                       <Select
                         value={options.text_position}
                         onValueChange={(v) =>
