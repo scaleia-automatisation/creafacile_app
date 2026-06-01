@@ -805,7 +805,7 @@ Position du texte: ${
       : 'centré en bas'
     } — respecter STRICTEMENT cette position et ce nombre de lignes.
 Police d'écriture: "${params.textFont || 'Montserrat'}" — utiliser cette typographie (ou la plus proche visuellement disponible), bien lisible, kerning soigné.
-${params.contentType === 'video' && params.textColor ? `Couleur du texte: ${params.textColor} — appliquer EXACTEMENT cette couleur au texte affiché à l'écran (avec contour ou ombre subtile pour la lisibilité si nécessaire).` : ''}
+${params.textColor ? `🎨 Couleur du texte (OBLIGATOIRE — PRIORITÉ ABSOLUE) : ${params.textColor} (code hexadécimal exact). Le texte affiché DOIT être rendu EXACTEMENT dans cette couleur, sans dérive, sans variation de teinte, sans dégradé, sans effet de couleur additionnel. Ajouter UNIQUEMENT un léger contour ou une ombre portée subtile si nécessaire pour garantir la lisibilité sur le fond, sans altérer la couleur du texte.` : ''}
 ${(params.contentType === 'video' || params.contentType === 'image') && params.text2Enabled && params.textContent2
   ? `\n--- TEXTE À L'ÉCRAN N°2 — À REPRODUIRE EXACTEMENT MOT POUR MOT : "${params.textContent2}"
 ⚡ CONTINUITÉ NARRATIVE OBLIGATOIRE : ce Texte 2 est la SUITE COHÉRENTE et NATURELLE du Texte 1 ("${params.textContent}"). Les deux forment UN MÊME message en deux temps (hook → chute / call-to-action), sans répétition. ${params.contentType === 'image' ? 'Les deux textes sont visibles SIMULTANÉMENT dans l\'image, hiérarchisés visuellement (Texte 1 = accroche principale, Texte 2 = punchline / CTA secondaire). Chacun fait entre 3 et 7 mots MAXIMUM — JAMAIS plus.' : ''}
