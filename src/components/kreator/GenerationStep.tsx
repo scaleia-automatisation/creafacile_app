@@ -297,6 +297,14 @@ const GenerationStep = () => {
     }
   };
 
+  const handleGenerateRef = useRef(handleGenerate);
+  handleGenerateRef.current = handleGenerate;
+  useEffect(() => {
+    const onTrigger = () => { handleGenerateRef.current(); };
+    window.addEventListener('kreator:generate', onTrigger);
+    return () => window.removeEventListener('kreator:generate', onTrigger);
+  }, []);
+
   const handleCopyCaption = () => {
     if (!currentCaption) return;
     const text = `${currentCaption.hook}\n${currentCaption.description}\n${currentCaption.cta}\n\n${currentCaption.hashtags}`;
