@@ -6,13 +6,12 @@ import ModelSettings from './ModelSettings';
 const imageModels: { value: AIModel; label: string }[] = [
   { value: 'nano-banana-2', label: 'Nano Banana 2 ⚡' },
   { value: 'nano-banana-pro', label: 'Nano Banana Pro 🎨' },
-  { value: 'dall-e-3', label: 'DALL-E 3' },
   { value: 'imagen-4', label: 'Imagen 4' },
   { value: 'imagen-4-ultra', label: 'Imagen 4 Ultra' },
   { value: 'imagen-4-fast', label: 'Imagen 4 Fast' },
-  { value: 'qwen/image-edit', label: 'Qwen Image Edit ✏️' },
-  { value: 'ideogram/character', label: 'Ideogram Character 👤' },
-  { value: 'ideogram/image', label: 'Ideogram Image 🖼️' },
+  { value: 'gpt-image-5', label: 'GPT Image 5' },
+  { value: 'gpt-image-5-mini', label: 'GPT Image 5 Mini' },
+  { value: 'grok-image', label: 'Grok AI 🤖' },
 ];
 
 const videoModels: { value: AIModel; label: string }[] = [
