@@ -705,12 +705,23 @@ Ultra lisibles mobile, parfaitement intégrés, jamais coupés, cohérents avec 
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE IMAGE
 ━━━━━━━━━━━━━━━━━━
-Prompt image : max 100 mots, sauts de ligne, fluide, sans markdown ni listes, composition premium, sujet principal dominant, CTA implicite, conversion visuelle forte.
+Prompt image : max 180 mots, sauts de ligne, fluide, sans markdown ni listes.
+EXIGENCE PREMIUM NON NÉGOCIABLE — niveau "agence créative top mondiale / graphiste senior / directeur artistique award-winning (Behance / Dribbble / Awwwards / Cannes Lions)". JAMAIS de visuel plat, simpliste, amateur, générique ou "template gratuit".
+Le visuel DOIT contenir une vraie RECHERCHE de design : composition travaillée (grille, règle des tiers, équilibre asymétrique maîtrisé, layering, profondeur), HIÉRARCHIE typographique forte (titre massif impactant + sous-éléments contrastés en taille/poids), TYPOGRAPHIE display moderne (sans-serif condensé bold, serif éditorial, ou display script selon le secteur — JAMAIS d'Arial/Times basique), MIX de polices intelligent (1 display + 1 sans-serif neutre).
+ÉLÉMENTS GRAPHIQUES OBLIGATOIRES (sélectionner ceux qui SERVENT le produit, sans surcharger) : formes organiques ou géométriques d'accentuation (étoiles brutalistes, splash, blob, badge prix circulaire, ruban, bulle BD, tag oblique), textures subtiles (papier, grain, halftone, noise), ombres portées réalistes longues, lueurs / éclats, micro-particules (sésame, sauce qui coule, fumée, vapeur, ingrédients en lévitation, éclaboussures), traits manuscrits / soulignés / cercles dessinés à la main pour souligner un mot-clé, flèches stylisées.
+TYPOGRAPHIE : titres en MAJUSCULES massifs, possibilité de jeu typographique (mot répété en arrière-plan en transparence, texte qui suit la forme du produit, lettrage qui passe devant/derrière le produit pour créer de la profondeur, contour ou ombre décalée colorée).
+PALETTE : 2 à 3 couleurs maximum + 1 accent vif contrastant (jaune néon, orange électrique, rouge sang, vert citron) pour les badges / CTA. Couleurs saturées et assumées, jamais fades.
+PRODUIT : toujours en hero (40-60% de la surface), parfaitement détouré ou en mise en scène léchée, lumière studio premium, ombres portées dramatiques, micro-détails appétissants/désirables (gouttes, brillance, texture, ingrédients qui volent autour).
+RENDU FINAL : doit ressembler à une AFFICHE PUBLICITAIRE PRO digne d'une marque internationale (style des références fournies : burger Coca-Cola, Tropic Addict, XO Chinese, Jimbo, Hey grapefruit, Special Pizza, Luosifen). Choisir intelligemment la référence la plus adaptée au produit/secteur et s'en inspirer dans la structure (sans copier).
+INTERDIT ABSOLU : fond uni plat sans texture ni élément graphique, produit seul centré sans contexte, typographie unique fade, absence totale de badge/accent/forme décorative, look "post Canva basique", composition symétrique ennuyeuse, palette pastel sans contraste.
 
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE CARROUSEL
 ━━━━━━━━━━━━━━━━━━
-Prompt carrousel : max 300 mots, storytelling cohérent, continuité visuelle absolue, même univers graphique, lumière, palette, direction artistique. SLIDE 1 : hook scroll stop immédiat. SLIDE 2 : émotion, problème ou bénéfice. SLIDE 3 : preuve, résultat ou transformation. SLIDE 4 : CTA subtil premium.
+Prompt carrousel : max 400 mots, storytelling cohérent, continuité visuelle ABSOLUE entre slides (même univers graphique, même palette, même typographie, même traitement lumière, même style d'éléments décoratifs — SYSTÈME DE DESIGN unifié comme une vraie campagne d'agence).
+MÊME EXIGENCE PREMIUM QUE L'IMAGE (voir ci-dessus) appliquée à CHAQUE slide : composition travaillée, typographie display impactante, éléments graphiques (badges, formes, textures, splash, ombres, particules), palette saturée 2-3 couleurs + accent vif, produit hero parfaitement mis en scène.
+SLIDE 1 : hook scroll-stop immédiat (titre énorme percutant + produit hero + accent graphique fort). SLIDE 2 : émotion, problème ou bénéfice (visuel narratif, typographie expressive). SLIDE 3 : preuve, résultat ou transformation (mise en scène crédible, détail produit, micro-textures). SLIDE 4 : CTA subtil premium (call-to-action visuel élégant, badge action, flèche stylisée).
+S'inspirer des références fournies (XO Chinese, Jimbo, Coca-Cola burger series) pour la cohérence de série. JAMAIS de slides simplistes, plates ou amateur. Chaque slide doit pouvoir être publiée seule comme une affiche pro.
 
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE VIDÉO
