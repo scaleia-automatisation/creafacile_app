@@ -7,7 +7,7 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock } from 'lucide-react';
+import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock, Eye, EyeOff } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { generateImage, generateVideo, generateCaption, generatePrompt, type PlatformCaptions } from '@/lib/kreator-ai';
 import { getVideoDurationSec, supportsVoiceOver } from '@/lib/voice-over';
@@ -72,6 +72,7 @@ const GenerationStep = () => {
     facebook: false, instagram: false, tiktok: false, linkedin: false,
   });
   const [publishing, setPublishing] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -326,9 +327,8 @@ const GenerationStep = () => {
   };
 
   const handleRegenerate = () => {
-    setStatus('idle');
-    setResultUrl('');
     setCaptions(null);
+    handleGenerate();
   };
 
   const handleShare = (platform: string) => {
