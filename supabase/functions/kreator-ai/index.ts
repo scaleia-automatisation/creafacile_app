@@ -860,9 +860,13 @@ serve(async (req) => {
       if (!orModel) return jsonError(400, `Modèle OpenRouter non mappé: ${ai_model}`);
 
       const aspectLabel = size === "9:16"
-        ? "vertical 9:16 portrait"
+        ? "vertical 9:16 story"
         : size === "16:9"
-        ? "horizontal 16:9 landscape"
+        ? "horizontal 16:9 widescreen"
+        : size === "3:4"
+        ? "vertical 3:4 portrait"
+        : size === "4:3"
+        ? "horizontal 4:3 landscape"
         : "square 1:1";
       const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}`;
 
