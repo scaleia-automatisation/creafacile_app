@@ -1277,13 +1277,13 @@ export async function generateOnScreenText(params: {
   variant?: 1 | 2;
   maxWords?: number;
 }): Promise<string> {
-  const maxWords = Math.max(1, Math.min(5, params.maxWords ?? 5));
+  const maxWords = Math.max(1, Math.min(7, params.maxWords ?? 7));
   const systemPrompt = `Tu es un expert en copywriting publicitaire pour réseaux sociaux (Meta, TikTok, Instagram, LinkedIn).
 Tu écris UN TEXTE court à afficher À L'ÉCRAN dans un visuel (image / carrousel / vidéo) qui MAXIMISE la conversion.
 
 RÈGLES ABSOLUES :
 - Langue : français
-- Longueur : ENTRE 1 ET ${maxWords} MOTS MAXIMUM (compte chaque mot). Non négociable.
+- Longueur : ENTRE 3 ET ${maxWords} MOTS MAXIMUM (compte chaque mot). Non négociable.
 - 1 seule phrase ou formule, ultra lisible d'un coup d'œil (scroll-stop)
 - Hook persuasif aligné sur l'objectif marketing et l'angle
 - Adapté au persona, au secteur, au type d'offre, au ton et au style visuel
@@ -1292,8 +1292,8 @@ RÈGLES ABSOLUES :
 - Évite le jargon corporate, parle comme un humain, va droit au but
 - Le texte doit être IMMÉDIATEMENT compréhensible et déclencher le clic / l'arrêt du scroll
 - ANTI-IA ABSOLU : 100% naturel, authentique, humain, réel. INTERDIT : "découvrez", "plongez dans", "révolutionnaire", "incontournable", "boostez", "transformez", "libérez", "n'attendez plus", "le secret", "voici comment", "à l'ère du", "dans un monde où", formulations trop équilibrées/symétriques, ton corporate ou pseudo-inspirant. Écris comme un vrai humain parle, direct, vivant, sans tournure d'IA.
-${params.variant === 2 ? '- Ce texte est le 2e à apparaître à l\'écran : il doit COMPLÉTER (pas répéter) le 1er texte, idéalement comme un mini call-to-action ou une chute punchy.' : ''}
-${params.excludeText ? `- NE RÉPÈTE PAS et ne paraphrase pas ce texte déjà utilisé : "${params.excludeText}"` : ''}
+${params.variant === 2 ? `- Ce texte est le 2e à apparaître dans le visuel : il DOIT être une SUITE COHÉRENTE et NATURELLE du 1er texte (continuité narrative directe, même fil de pensée), qui le complète sans le répéter — idéalement une chute punchy, une révélation ou un mini call-to-action qui découle logiquement du 1er.` : ''}
+${params.excludeText ? `- 1ER TEXTE (à prolonger sans répéter ni paraphraser) : "${params.excludeText}". Ton texte doit s'enchaîner naturellement après celui-ci, comme la suite d'une même phrase ou idée.` : ''}
 
 Réponds UNIQUEMENT par le texte final, sans guillemets, sans préfixe, sans explication.`;
 
@@ -1312,7 +1312,7 @@ ${params.activity ? `Activité principale: ${params.activity}` : ''}
 ${params.sector ? `Secteur: ${params.sector}` : ''}
 ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
 
-Écris LE texte à afficher dans le visuel, entre 1 et ${maxWords} mots MAX, qui maximise la conversion.`;
+Écris LE texte à afficher dans le visuel, entre 3 et ${maxWords} mots MAX, qui maximise la conversion.`;
 
   const data = await callKreatorAI({
     action: 'generate_on_screen_text',
