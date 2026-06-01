@@ -185,7 +185,7 @@ const CustomizationStep = () => {
     persona: target_persona,
     variant,
     excludeText: variant === 2 ? options.text_content : undefined,
-    maxWords: 3,
+    maxWords: 7,
   });
 
   const missingForText: string[] = [];
