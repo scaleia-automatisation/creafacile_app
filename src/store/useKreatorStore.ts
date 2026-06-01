@@ -5,6 +5,7 @@ export type Format = '9:16' | '16:9' | '1:1';
 export type AIModel =
   | 'dall-e-3' | 'imagen-4' | 'imagen-4-ultra' | 'imagen-4-fast' | 'nano-banana-2' | 'nano-banana-pro'
   | 'qwen/image-edit' | 'ideogram/character' | 'ideogram/image'
+  | 'gpt-image-5' | 'gpt-image-5-mini' | 'grok-image'
   | 'sora-2-t2v' | 'sora-2-i2v' | 'sora-2-pro-i2v' | 'sora-2-pro-t2v' | 'sora-2-pro-character'
   // legacy/alt
   | 'veo-3' | 'veo-3.1'
