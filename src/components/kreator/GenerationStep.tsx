@@ -516,7 +516,7 @@ const GenerationStep = () => {
             </div>
 
             {/* 4 action buttons in one row */}
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-5 gap-2">
               <Button
                 onClick={handleDownload}
                 size="sm"
@@ -554,11 +554,41 @@ const GenerationStep = () => {
                 variant="outline"
                 size="sm"
                 className="border-foreground/10 text-foreground hover:border-secondary text-xs px-2"
+                onClick={() => setShowPrompt(s => !s)}
+              >
+                {showPrompt ? <EyeOff className="w-3.5 h-3.5 mr-1" /> : <Eye className="w-3.5 h-3.5 mr-1" />}
+                {showPrompt ? 'Masquer prompt' : 'Voir le prompt'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-foreground/10 text-foreground hover:border-secondary text-xs px-2"
                 onClick={handleRegenerate}
               >
                 <RefreshCw className="w-3.5 h-3.5 mr-1" /> Régénérer
               </Button>
             </div>
+
+            {showPrompt && (
+              <div className="bg-card rounded-card p-4 md:p-5 border border-foreground/10">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-foreground">Prompt utilisé (modifiable)</label>
+                  <span className="text-xs text-muted-foreground">{prompt_fr.length} car.</span>
+                </div>
+                <Textarea
+                  value={prompt_fr}
+                  onChange={(e) => setPromptFr(e.target.value)}
+                  className="bg-background border-foreground/10 text-foreground text-sm resize-none"
+                  style={{ minHeight: `${Math.max(120, Math.ceil(prompt_fr.length / 60) * 24)}px` }}
+                />
+                <div className="flex gap-2 mt-2">
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => { navigator.clipboard.writeText(prompt_fr); toast.success('Prompt copié'); }}>
+                    <Copy className="w-3 h-3 mr-1" /> Copier
+                  </Button>
+                  <p className="text-xs text-muted-foreground self-center">Les modifications seront utilisées lors du prochain « Régénérer ».</p>
+                </div>
+              </div>
+            )}
 
             {/* Caption section with platform dropdown */}
             <div className="bg-card rounded-card p-4 md:p-5 border border-foreground/10">
