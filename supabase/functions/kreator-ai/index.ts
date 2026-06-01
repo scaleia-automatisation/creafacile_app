@@ -700,6 +700,92 @@ serve(async (req) => {
       const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
       if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
       // Note: a dedicated `openrouter_generate_image` action handles models routed via OpenRouter.
+    }
+
+    // === OpenRouter: synchronous image generation (Nano Banana, Imagen, GPT Image, Grok) ===
+    if (action === "openrouter_generate_image") {
+      const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
+      if (!OPENROUTER_API_KEY) return jsonError(500, "OPENROUTER_API_KEY non configurée");
+
+      const orModelMap: Record<string, string> = {
+        "nano-banana-2": "google/gemini-2.5-flash-image-preview",
+        "nano-banana-pro": "google/gemini-3-pro-image-preview",
+        "imagen-4": "google/imagen-4",
+        "imagen-4-ultra": "google/imagen-4-ultra",
+        "imagen-4-fast": "google/imagen-4-fast",
+        "gpt-image-5": "openai/gpt-image-1",
+        "gpt-image-5-mini": "openai/gpt-image-1-mini",
+        "grok-image": "x-ai/grok-2-image-1212",
+      };
+      const orModel = orModelMap[ai_model || ""];
+      if (!orModel) return jsonError(400, `Modèle OpenRouter non mappé: ${ai_model}`);
+
+      const aspectLabel = size === "9:16"
+        ? "vertical 9:16 portrait"
+        : size === "16:9"
+        ? "horizontal 16:9 landscape"
+        : "square 1:1";
+      const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}`;
+
+      const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://creafacile.com",
+          "X-Title": "CréaFacile",
+        },
+        body: JSON.stringify({
+          model: orModel,
+          modalities: ["image", "text"],
+          messages: [
+            input_image_url
+              ? {
+                  role: "user",
+                  content: [
+                    { type: "text", text: enhancedPrompt },
+                    { type: "image_url", image_url: { url: input_image_url } },
+                  ],
+                }
+              : { role: "user", content: enhancedPrompt },
+          ],
+        }),
+      });
+
+      const orText = await orRes.text();
+      if (!orRes.ok) {
+        console.error("OpenRouter image error:", orRes.status, orText.slice(0, 500));
+        if (orRes.status === 429) return jsonError(429, "Limite OpenRouter atteinte. Réessayez.");
+        if (orRes.status === 402) return jsonError(402, "Crédits OpenRouter épuisés.");
+        return jsonError(500, `Erreur OpenRouter: ${orText.slice(0, 300)}`);
+      }
+
+      let orJson: any;
+      try { orJson = JSON.parse(orText); } catch { return jsonError(500, "Réponse OpenRouter invalide"); }
+
+      // Extract image: OpenRouter returns images on message.images[] or inside content
+      const msg = orJson?.choices?.[0]?.message;
+      const imgFromImages = msg?.images?.[0]?.image_url?.url;
+      let imgFromContent: string | undefined;
+      if (Array.isArray(msg?.content)) {
+        for (const part of msg.content) {
+          if (part?.type === "image_url" && part?.image_url?.url) {
+            imgFromContent = part.image_url.url;
+            break;
+          }
+        }
+      }
+      const imageUrl = imgFromImages || imgFromContent;
+      if (!imageUrl) {
+        console.error("OpenRouter no image in response:", orText.slice(0, 500));
+        return jsonError(500, "Pas d'image dans la réponse OpenRouter");
+      }
+      return jsonResp({ image_url: imageUrl });
+    }
+
+    // (reopen kie block — actually below was already closed, this stub keeps structure)
+    if (action === "__noop_after_openrouter__") {
+      return jsonResp({ ok: true });
 
       const hasInputImage = !!input_image_url;
       // Map app model IDs to kie.ai model IDs (depends on whether an input image is provided)
