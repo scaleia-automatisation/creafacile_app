@@ -769,8 +769,6 @@ ${params.contentType === 'image' || params.contentType === 'carousel' ? `Directi
 
 ` : ''}Chaque bloc DOIT être séparé par une ligne vide (\\n\\n). Les titres de bloc (ex: "Scène & sujet principal :") DOIVENT apparaître tels quels suivis d'un saut de ligne puis du contenu.
 
-Chaque bloc DOIT être séparé par une ligne vide (\\n\\n). Les titres de bloc (ex: "Scène & sujet principal :") DOIVENT apparaître tels quels suivis d'un saut de ligne puis du contenu.
-
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
 
