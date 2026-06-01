@@ -1054,7 +1054,8 @@ export async function generateImage(
   aiModel: AIModel = 'dall-e-3',
   format: string = '1:1',
   inputImageUrl?: string,
-  abortSignal?: AbortSignal
+  abortSignal?: AbortSignal,
+  logoUrl?: string,
 ) {
   // === OpenRouter models (Nano Banana, Imagen 4, GPT Image 5, Grok) ===
   const openRouterModels: AIModel[] = [
@@ -1071,6 +1072,7 @@ export async function generateImage(
         ai_model: aiModel,
         size: format,
         input_image_url: inputImageUrl || '',
+        logo_url: logoUrl || '',
       },
     });
     if (error) throw error;
@@ -1097,6 +1099,7 @@ export async function generateImage(
         ai_model: aiModel,
         size: format,
         input_image_url: inputImageUrl || '',
+        logo_url: logoUrl || '',
       },
     });
     if (startError) throw startError;

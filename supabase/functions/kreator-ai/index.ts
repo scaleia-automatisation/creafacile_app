@@ -18,7 +18,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { action, messages, system_prompt, model, prompt, size, dalle_size, quality, ai_model, image_base64s, operation_name, task_id, input_image_url, model_settings, sora_character_scenes } = await req.json();
+    const { action, messages, system_prompt, model, prompt, size, dalle_size, quality, ai_model, image_base64s, operation_name, task_id, input_image_url, logo_url, model_settings, sora_character_scenes } = await req.json();
 
     const isNanoBananaModel = ["nano-banana-2", "nano-banana-pro"].includes(ai_model || "");
 
@@ -42,7 +42,7 @@ serve(async (req) => {
       const geminiModel = nanoBananaModelMap[ai_model] || "google/gemini-3.1-flash-image-preview";
 
       const aspectLabel = size === "9:16" ? "vertical 9:16 portrait" : size === "16:9" ? "horizontal 16:9 landscape" : "square 1:1";
-      const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}`;
+      const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}${logo_url ? "\n\nIMPORTANT: The second reference image is the user's brand logo. You MUST integrate this EXACT logo into the generated image — do NOT invent, redraw, restyle or substitute any other logo. Reproduce it identically (same shapes, colors, typography, proportions)." : ""}`;
 
       const nbRes = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
         method: "POST",
@@ -725,11 +725,14 @@ serve(async (req) => {
         aspect_ratio: aspectRatio,
       };
       const needsImage = ai_model === "qwen/image-edit" || ai_model === "ideogram/character";
-      if (input_image_url) {
-        input.image_url = input_image_url;
-        input.image = input_image_url;
+      const refImages: string[] = [];
+      if (input_image_url) refImages.push(input_image_url);
+      if (logo_url) refImages.push(logo_url);
+      if (refImages.length > 0) {
+        input.image_url = refImages[0];
+        input.image = refImages[0];
         // Google nano-banana / imagen / gpt-image-2 expect `image_input` (array)
-        input.image_input = [input_image_url];
+        input.image_input = refImages;
       } else if (needsImage) {
         return jsonError(400, `Le modèle ${ai_model} nécessite une image de référence en entrée.`);
       }
@@ -875,15 +878,14 @@ serve(async (req) => {
           model: orModel,
           modalities: ["image", "text"],
           messages: [
-            input_image_url
-              ? {
-                  role: "user",
-                  content: [
-                    { type: "text", text: enhancedPrompt },
-                    { type: "image_url", image_url: { url: input_image_url } },
-                  ],
-                }
-              : { role: "user", content: enhancedPrompt },
+            (() => {
+              const parts: any[] = [{ type: "text", text: enhancedPrompt }];
+              if (input_image_url) parts.push({ type: "image_url", image_url: { url: input_image_url } });
+              if (logo_url) parts.push({ type: "image_url", image_url: { url: logo_url } });
+              return parts.length === 1
+                ? { role: "user", content: enhancedPrompt }
+                : { role: "user", content: parts };
+            })(),
           ],
         }),
       });
