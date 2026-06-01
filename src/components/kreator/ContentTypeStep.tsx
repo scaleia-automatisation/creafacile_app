@@ -34,9 +34,11 @@ const videoModels: { value: AIModel; label: string }[] = [
 
 
 const formats: { value: Format; label: string; sublabel: string }[] = [
-  { value: '9:16', label: '9:16', sublabel: 'Portrait' },
-  { value: '16:9', label: '16:9', sublabel: 'Paysage' },
   { value: '1:1', label: '1:1', sublabel: 'Carré' },
+  { value: '3:4', label: '3:4', sublabel: 'Portrait' },
+  { value: '9:16', label: '9:16', sublabel: 'Story' },
+  { value: '4:3', label: '4:3', sublabel: 'Paysage' },
+  { value: '16:9', label: '16:9', sublabel: 'Écran large' },
 ];
 
 const ContentTypeStep = () => {
@@ -49,9 +51,12 @@ const ContentTypeStep = () => {
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
+  const isGptImage = ai_model === 'gpt-image-5' || ai_model === 'gpt-image-5-mini';
   const availableFormats = type === 'video'
-    ? formats.filter((f) => f.value !== '1:1')
-    : formats;
+    ? formats.filter((f) => f.value === '9:16' || f.value === '16:9')
+    : isGptImage
+    ? formats
+    : formats.filter((f) => f.value === '1:1' || f.value === '9:16' || f.value === '16:9');
 
   const isSoraCharacter = type === 'video' && ai_model === 'sora-2-pro-character';
   const scenesTotal = sora_character_scenes.reduce((sum, s) => sum + (Number(s.duration) || 0), 0);
