@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export type ContentType = 'image' | 'carousel' | 'video';
-export type Format = '9:16' | '16:9' | '1:1';
+export type Format = '9:16' | '16:9' | '1:1' | '3:4' | '4:3';
 export type AIModel =
   | 'dall-e-3' | 'imagen-4' | 'imagen-4-ultra' | 'imagen-4-fast' | 'nano-banana-2' | 'nano-banana-pro'
   | 'qwen/image-edit' | 'ideogram/character' | 'ideogram/image'
