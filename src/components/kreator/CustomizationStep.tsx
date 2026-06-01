@@ -498,7 +498,7 @@ const CustomizationStep = () => {
                             <Input
                               value={(options.slide_texts && options.slide_texts[i]) || ''}
                               onChange={(e) => setSlideText(i, e.target.value)}
-                              placeholder={`Texte slide ${i + 1} (1 à 5 mots)`}
+                              placeholder={`Texte slide ${i + 1} (3 à 7 mots)`}
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
                           </div>
@@ -515,7 +515,7 @@ const CustomizationStep = () => {
                       onChange={(e) => {
                         if (e.target.value.length <= 50) setOptions({ text_content: e.target.value });
                       }}
-                      placeholder="Texte à afficher (1 à 3 mots)"
+                      placeholder="Texte à afficher (3 à 7 mots)"
                       className="bg-card border-foreground/10 text-foreground text-sm"
                     />}
                     {isVideo && (
@@ -690,7 +690,7 @@ const CustomizationStep = () => {
                               onChange={(e) => {
                                 if (e.target.value.length <= 50) setOptions({ text_content_2: e.target.value });
                               }}
-                              placeholder="Texte à afficher (1 à 3 mots)"
+                              placeholder="Texte à afficher (3 à 7 mots)"
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
                             {isVideo && (
