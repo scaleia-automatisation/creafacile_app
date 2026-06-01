@@ -476,6 +476,7 @@ export async function generatePrompt(params: {
   offerType?: string;
   targetPersona?: string;
   marketingAngle?: string;
+  useCase?: string;
   showText: boolean;
   textContent: string;
   slideTexts?: string[];
@@ -583,6 +584,70 @@ ${params.voiceOverText ? `\n🎙️ VOIX OFF (OBLIGATOIRE — À INTÉGRER DANS 
 
   // Determine the active render style
   const activeRenderStyle = params.contentType === 'video' ? params.videoRenderStyle : params.renderStyle;
+
+  // === Direction artistique premium spécifique au cas d'utilisation ===
+  const useCaseKey = (params.useCase || '').toLowerCase();
+  const useCaseDirectiveMap: Array<{ match: RegExp; type: 'image' | 'carousel' | 'video'; label: string; body: string }> = [
+    // PHOTO / IMAGE
+    { match: /publicit[ée]|premium/, type: 'image', label: 'PHOTO — PUBLICITÉ PREMIUM', body: 'Campagne publicitaire premium centrée sur le produit/service. Direction artistique luxueuse, éclairages professionnels, mise en scène sophistiquée, composition digne des plus grandes marques internationales. Valoriser fortement qualité, bénéfices et valeur perçue.' },
+    { match: /lifestyle/, type: 'image', label: 'PHOTO — LIFESTYLE', body: 'Mettre en scène le produit/service dans une situation réelle, naturelle et aspirante. Scène authentique permettant à la cible de se projeter. Émotions positives, ambiance immersive, esthétique moderne.' },
+    { match: /promo|réduc|offre flash|solde/, type: 'image', label: 'PHOTO — PROMOTION', body: 'Visuel promotionnel premium. Mettre en évidence l\'offre commerciale avec forte visibilité tout en conservant une image haut de gamme. Sentiment d\'urgence sans dégrader la perception de qualité.' },
+    { match: /avant.?apr[èe]s|before.?after|transformation/, type: 'image', label: 'PHOTO — AVANT / APRÈS', body: 'Illustrer clairement une transformation spectaculaire. Séparation visuelle évidente entre avant et après. Mettre en valeur le résultat obtenu grâce au produit/service.' },
+    { match: /avis|t[ée]moignage client|review/, type: 'image', label: 'PHOTO — AVIS CLIENT', body: 'Mettre en avant la satisfaction client avec un design rassurant, crédible et professionnel. Valoriser les résultats obtenus et renforcer la confiance.' },
+    { match: /expertise|autorit[ée]|savoir.?faire/, type: 'image', label: 'PHOTO — EXPERTISE', body: 'Positionner l\'entreprise ou le professionnel comme une référence dans son domaine. Visuel incarnant autorité, crédibilité et savoir-faire.' },
+    { match: /r[ée]sultat client|case|cas client/, type: 'image', label: 'PHOTO — RÉSULTAT CLIENT', body: 'Mettre visuellement en scène les bénéfices concrets obtenus grâce au service. Le résultat doit être immédiatement compréhensible.' },
+    { match: /offre de service|service offert|prestation/, type: 'image', label: 'PHOTO — OFFRE DE SERVICE', body: 'Présenter l\'offre de manière claire et attractive. Mettre en avant bénéfices principaux, transformation promise et proposition de valeur.' },
+    // CARROUSEL
+    { match: /5 b[ée]n[ée]fices|b[ée]n[ée]fices/, type: 'carousel', label: 'CARROUSEL — BÉNÉFICES', body: 'Carrousel professionnel avec progression logique. Chaque slide développe un bénéfice majeur. Design cohérent, moderne, premium, optimisé lecture mobile.' },
+    { match: /comparatif|versus|vs /, type: 'carousel', label: 'CARROUSEL — COMPARATIF', body: 'Comparatif visuellement impactant. Mettre en évidence les différences majeures entre la solution proposée et les alternatives. Faciliter la prise de décision.' },
+    { match: /erreurs?|à éviter|a eviter/, type: 'carousel', label: 'CARROUSEL — ERREURS À ÉVITER', body: 'Contenu éducatif révélant les erreurs fréquentes du marché. Visuels pédagogiques et titres accrocheurs favorisant sauvegardes et partages.' },
+    { match: /faq|objection|question/, type: 'carousel', label: 'CARROUSEL — FAQ', body: 'Répondre aux principales objections dans un format clair, rassurant et structuré. Chaque slide apporte une réponse simple et convaincante.' },
+    { match: /[ée]tude de cas|case study/, type: 'carousel', label: 'CARROUSEL — ÉTUDE DE CAS', body: 'Présenter un cas réel : contexte, problématique, solution appliquée, résultat obtenu. Narration progressive et preuves visuelles.' },
+    { match: /m[ée]thode|[ée]tape|step.?by.?step|process/, type: 'carousel', label: 'CARROUSEL — MÉTHODE ÉTAPE PAR ÉTAPE', body: 'Décomposer clairement le processus utilisé. Chaque étape simple à comprendre, démontre l\'expertise de l\'entreprise.' },
+    { match: /t[ée]moignage/, type: 'carousel', label: 'CARROUSEL — TÉMOIGNAGE CLIENT', body: 'Raconter le parcours d\'un client avant, pendant et après l\'utilisation de la solution. Renforcer preuve sociale et crédibilité.' },
+    // VIDÉO
+    { match: /hook|viral/, type: 'video', label: 'VIDÉO — HOOK VIRAL', body: 'Captiver immédiatement dans les 3 premières secondes : scène forte, promesse percutante ou situation intrigante. Rythme dynamique jusqu\'à la fin.' },
+    { match: /ugc/, type: 'video', label: 'VIDÉO — UGC', body: 'Reproduire l\'esthétique authentique des contenus générés par les utilisateurs tout en conservant une qualité professionnelle. Fort sentiment de proximité et confiance.' },
+    { match: /d[ée]monstration produit|demo produit/, type: 'video', label: 'VIDÉO — DÉMONSTRATION PRODUIT', body: 'Mettre en scène le produit sous plusieurs angles. Montrer utilisation, fonctionnalités et bénéfices de manière claire et attractive.' },
+    { match: /probl[èe]me.?solution|pain/, type: 'video', label: 'VIDÉO — PROBLÈME → SOLUTION', body: 'Commencer par illustrer la frustration/problème de la cible. Introduire progressivement la solution puis démontrer les bénéfices obtenus.' },
+    { match: /storytelling|histoire/, type: 'video', label: 'VIDÉO — STORYTELLING', body: 'Construire une histoire émotionnelle autour du produit/service. Créer une connexion forte avec le spectateur tout en mettant en valeur la transformation obtenue.' },
+    { match: /[ée]tude.*vid|case.*video/, type: 'video', label: 'VIDÉO — ÉTUDE DE CAS', body: 'Présenter une situation réelle : défis rencontrés, solution apportée, résultats obtenus. Narration engageante et crédible.' },
+    { match: /d[ée]monstration m[ée]thode|m[ée]thode/, type: 'video', label: 'VIDÉO — DÉMONSTRATION MÉTHODE', body: 'Montrer étape par étape la méthode utilisée afin de démontrer l\'expertise et la valeur du service.' },
+  ];
+  const matchedUseCase = useCaseKey
+    ? useCaseDirectiveMap.find(d => d.type === params.contentType && d.match.test(useCaseKey))
+      || useCaseDirectiveMap.find(d => d.match.test(useCaseKey))
+    : undefined;
+  const useCaseDirectiveBlock = params.useCase
+    ? `\n━━━━━━━━━━━━━━━━━━\nCAS D'UTILISATION — COHÉRENCE 100% OBLIGATOIRE\n━━━━━━━━━━━━━━━━━━\nCas d'utilisation sélectionné : "${params.useCase}". L'ensemble du contenu (concept narratif, mise en scène, hiérarchie visuelle, textes, CTA, ambiance) DOIT être à 100% cohérent avec ce cas d'utilisation. C'est le format narratif OBLIGATOIRE — toute déviation est invalide.\n${matchedUseCase ? `\nDIRECTIVE SPÉCIFIQUE (${matchedUseCase.label}) :\n${matchedUseCase.body}` : ''}\n`
+    : '';
+  const toneCoherenceBlock = params.ton
+    ? `\n━━━━━━━━━━━━━━━━━━\nTON D'ÉCRITURE — COHÉRENCE 100% OBLIGATOIRE\n━━━━━━━━━━━━━━━━━━\nTon d'écriture imposé : "${params.ton}". TOUS les textes visibles (titres, sous-titres, overlays, CTA, captions de slide, voix off) DOIVENT respecter EXACTEMENT ce ton : vocabulaire, niveau de langue, rythme, énergie, registre. Aucun écart toléré.\n`
+    : '';
+  const premiumDirectionBlock = `
+━━━━━━━━━━━━━━━━━━
+STRUCTURE PROMPT (MOTEUR PREMIUM — ORDRE OBLIGATOIRE)
+━━━━━━━━━━━━━━━━━━
+1) Objectif marketing → 2) Type d'offre → 3) Cas d'utilisation → 4) Direction artistique → 5) Mise en page → 6) Gestion des textes → 7) Style visuel → 8) Adaptation secteur → 9) Contraintes qualité.
+
+━━━━━━━━━━━━━━━━━━
+DIRECTION ARTISTIQUE PREMIUM (BLOC GLOBAL — TOUTES IMAGES / CARROUSEL / VIDÉO)
+━━━━━━━━━━━━━━━━━━
+Créer un contenu publicitaire haut de gamme digne d'une agence créative internationale. Adapter automatiquement l'univers visuel au secteur, au produit/service, à la cible et au positionnement de la marque. Composition professionnelle, moderne, impactante. Respecter les codes visuels du marché tout en conservant une identité premium et différenciante.
+
+DESIGN & MISE EN PAGE : hiérarchie visuelle forte, regard guidé naturellement vers l'élément principal, contrastes efficaces, disposition équilibrée, lisibilité excellente, design pensé réseaux sociaux.
+
+GESTION DES TEXTES : intégration élégante et professionnelle, typographie premium adaptée au secteur, hiérarchie claire entre titre principal / sous-titre / bénéfices / CTA. Aucun effet amateur ni surcharge.
+
+ADAPTATION AUTOMATIQUE À L'OFFRE : style graphique adapté au nom de l'offre, à la description, au secteur, au métier, au produit/service et à la cible. Le contenu doit sembler avoir été conçu spécifiquement pour cette activité.
+
+QUALITÉ VISUELLE : qualité publicitaire professionnelle, éclairage maîtrisé, couleurs harmonieuses, composition haut de gamme, profondeur visuelle, niveau de détail élevé, esthétique premium. Aucun rendu amateur.
+${params.contentType === 'video' ? `
+━━━━━━━━━━━━━━━━━━
+BLOC CINÉMATOGRAPHIQUE (TOUTES VIDÉOS)
+━━━━━━━━━━━━━━━━━━
+Produire une vidéo publicitaire premium digne des plus grandes agences créatives internationales. Mouvements de caméra fluides, cadrages professionnels, éclairages cinématographiques, profondeur de champ maîtrisée, transitions naturelles, étalonnage couleur haut de gamme, rythme dynamique, storytelling visuel puissant, qualité publicitaire de niveau international. Chaque scène renforce émotion, crédibilité et désir. Optimisation verticale réseaux sociaux, qualité cinéma, rendu ultra réaliste, esthétique publicitaire premium.
+` : ''}${useCaseDirectiveBlock}${toneCoherenceBlock}`;
 
   const systemPrompt = `Tu es un système expert en direction artistique publicitaire, marketing émotionnel, storytelling visuel, branding premium, psychologie de conversion et génération de prompts IA ultra avancés.
 
@@ -696,7 +761,7 @@ Si produit : ADN intouchable, proportions exactes, couleurs exactes, branding ex
 VIRALITÉ
 ━━━━━━━━━━━━━━━━━━
 Le contenu doit pouvoir arrêter le scroll, augmenter rétention, sauvegardes, partages, commentaires, clics, conversion. Utiliser curiosité, tension, surprise, preuve sociale, contraste fort, dopamine visuelle, transformation, relatable, émotion forte.
-
+${premiumDirectionBlock}
 ━━━━━━━━━━━━━━━━━━
 TEXTE ÉCRAN
 ━━━━━━━━━━━━━━━━━━
@@ -817,6 +882,7 @@ INTERDITS STRICTS : changer la forme, la couleur, le packaging, l'étiquette ou 
 === RÉGLAGES AVANCÉS ===
 ${params.ton ? `Ton: ${params.ton}` : 'Ton: automatique'}
 ${params.visualStyle ? `Style visuel: ${params.visualStyle}` : 'Style: automatique'}
+${params.useCase ? `Cas d'utilisation (format narratif OBLIGATOIRE — cohérence 100%) : ${params.useCase}` : ''}
 ${params.showText
   ? (params.contentType === 'carousel' && params.slideTexts && params.slideTexts.filter(Boolean).length > 0
     ? `Textes des slides du carrousel (À REPRODUIRE EXACTEMENT MOT POUR MOT — UN texte PAR slide, dans l'ordre, AUCUNE modification ni ajout) :
