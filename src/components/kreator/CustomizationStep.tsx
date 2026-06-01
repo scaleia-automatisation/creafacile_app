@@ -74,6 +74,51 @@ const normalizeHex = (v: string): string | null => {
   return null;
 };
 
+// Extract up to N dominant colors from a logo image URL (client-side, canvas-based).
+async function extractLogoColors(url: string, count = 5): Promise<string[]> {
+  return new Promise((resolve) => {
+    try {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try {
+          const w = 64, h = 64;
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return resolve([]);
+          ctx.drawImage(img, 0, 0, w, h);
+          const data = ctx.getImageData(0, 0, w, h).data;
+          const buckets: Record<string, number> = {};
+          for (let i = 0; i < data.length; i += 4) {
+            const a = data[i + 3];
+            if (a < 200) continue;
+            const r = data[i] & 0xE0;
+            const g = data[i + 1] & 0xE0;
+            const b = data[i + 2] & 0xE0;
+            if (r >= 224 && g >= 224 && b >= 224) continue; // near-white
+            if (r <= 16 && g <= 16 && b <= 16) continue;    // near-black
+            const key = `${r},${g},${b}`;
+            buckets[key] = (buckets[key] || 0) + 1;
+          }
+          const sorted = Object.entries(buckets).sort((a, b) => b[1] - a[1]).slice(0, count);
+          const hexes = sorted.map(([k]) => {
+            const [r, g, b] = k.split(',').map(Number);
+            return '#' + [r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+          });
+          resolve(hexes);
+        } catch {
+          resolve([]);
+        }
+      };
+      img.onerror = () => resolve([]);
+      img.src = url;
+    } catch {
+      resolve([]);
+    }
+  });
+}
+
 const CustomizationStep = () => {
   const {
     type, user_mode, showAdvanced, setShowAdvanced, options, setOptions,
