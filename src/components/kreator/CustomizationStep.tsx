@@ -691,6 +691,32 @@ const CustomizationStep = () => {
                             );
                           })}
                         </div>
+                        {logoColors.length > 0 && (
+                          <div className="space-y-1">
+                            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Couleurs du logo</div>
+                            <div className="grid grid-cols-8 gap-2">
+                              {logoColors.map((hex) => {
+                                const selected = options.text_color?.toUpperCase() === hex.toUpperCase();
+                                return (
+                                  <button
+                                    key={`logo-${hex}`}
+                                    type="button"
+                                    title={`Logo ${hex}`}
+                                    onClick={() => {
+                                      setOptions({ text_color: hex });
+                                      setHexInput(hex);
+                                    }}
+                                    className={`h-7 w-7 rounded-full border transition-all ${
+                                      selected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background border-foreground/40' : 'border-foreground/10 hover:scale-110'
+                                    }`}
+                                    style={{ backgroundColor: hex }}
+                                    aria-label={`Couleur logo ${hex}`}
+                                  />
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-muted-foreground">Code hex</span>
                           <Input
@@ -864,6 +890,32 @@ const CustomizationStep = () => {
                                   );
                                 })}
                               </div>
+                              {logoColors.length > 0 && (
+                                <div className="space-y-1">
+                                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Couleurs du logo</div>
+                                  <div className="grid grid-cols-8 gap-2">
+                                    {logoColors.map((hex) => {
+                                      const selected = options.text_color_2?.toUpperCase() === hex.toUpperCase();
+                                      return (
+                                        <button
+                                          key={`logo2-${hex}`}
+                                          type="button"
+                                          title={`Logo ${hex}`}
+                                          onClick={() => {
+                                            setOptions({ text_color_2: hex });
+                                            setHexInput2(hex);
+                                          }}
+                                          className={`h-7 w-7 rounded-full border transition-all ${
+                                            selected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background border-foreground/40' : 'border-foreground/10 hover:scale-110'
+                                          }`}
+                                          style={{ backgroundColor: hex }}
+                                          aria-label={`Couleur logo ${hex}`}
+                                        />
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
                               <div className="flex items-center gap-2">
                                 <span className="text-xs text-muted-foreground">Code hex</span>
                                 <Input
