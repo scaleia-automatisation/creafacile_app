@@ -143,6 +143,21 @@ const CustomizationStep = () => {
   const [text1Generating, setText1Generating] = useState(false);
   const [text2Generating, setText2Generating] = useState(false);
   const [slidesGenerating, setSlidesGenerating] = useState(false);
+  const [logoColors, setLogoColors] = useState<string[]>([]);
+
+  // Extract dominant colors from the logo whenever it changes; only used when
+  // the colour palette is enabled and a logo is uploaded.
+  useEffect(() => {
+    if (!options.logo_url || !options.palette_enabled || !options.logo_enabled) {
+      setLogoColors([]);
+      return;
+    }
+    let cancelled = false;
+    extractLogoColors(options.logo_url, 6).then((cols) => {
+      if (!cancelled) setLogoColors(cols);
+    });
+    return () => { cancelled = true; };
+  }, [options.logo_url, options.palette_enabled, options.logo_enabled]);
 
   const videoDurationSec = isVideo ? getVideoDurationSec(ai_model, model_settings) : 8;
   const voMaxSec = Math.max(1, videoDurationSec - 2);
