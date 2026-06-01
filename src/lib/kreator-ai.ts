@@ -882,6 +882,7 @@ INTERDITS STRICTS : changer la forme, la couleur, le packaging, l'étiquette ou 
 === RÉGLAGES AVANCÉS ===
 ${params.ton ? `Ton: ${params.ton}` : 'Ton: automatique'}
 ${params.visualStyle ? `Style visuel: ${params.visualStyle}` : 'Style: automatique'}
+${params.useCase ? `Cas d'utilisation (format narratif OBLIGATOIRE — cohérence 100%) : ${params.useCase}` : ''}
 ${params.showText
   ? (params.contentType === 'carousel' && params.slideTexts && params.slideTexts.filter(Boolean).length > 0
     ? `Textes des slides du carrousel (À REPRODUIRE EXACTEMENT MOT POUR MOT — UN texte PAR slide, dans l'ordre, AUCUNE modification ni ajout) :
