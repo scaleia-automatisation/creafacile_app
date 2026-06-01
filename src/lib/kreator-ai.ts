@@ -797,6 +797,7 @@ Position du texte (IDENTIQUE sur TOUTES les slides): ${
       : 'centré en bas'
     }.
 Police d'écriture (IDENTIQUE sur TOUTES les slides): "${params.textFont || 'Montserrat'}".
+${params.textColor ? `🎨 Couleur du texte (IDENTIQUE sur TOUTES les slides — OBLIGATOIRE) : ${params.textColor} (code hexadécimal exact). Tous les textes affichés DOIVENT être rendus EXACTEMENT dans cette couleur, sans variation entre slides. Ajouter uniquement un léger contour/ombre subtil pour la lisibilité si nécessaire, sans altérer la teinte.` : ''}
 ⚡ HARMONIE PARFAITE OBLIGATOIRE entre TOUTES les slides du carrousel : même typographie, même taille relative, même position, même hiérarchie visuelle, même palette, même traitement (ombre/contour si nécessaire), même rythme et même style éditorial — comme un seul système de design cohérent du début à la fin. Lisibilité maximale sur mobile, contraste fort, intégration native dans la composition (pas un simple sticker collé). Rendu digne d'un grand directeur artistique, optimisé pour la conversion. La slide 1 doit porter le hook le plus puissant ; les slides suivantes développent et culminent sur un call-to-action implicite ou explicite. Ne JAMAIS modifier le wording fourni.`
     : `Texte overlay (À REPRODUIRE EXACTEMENT, MOT POUR MOT, AUCUNE MODIFICATION NI AJOUT): "${params.textContent}"
 Position du texte: ${
