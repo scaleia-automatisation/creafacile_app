@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import facebookLogo from '@/assets/facebook-logo.png';
 import instagramLogo from '@/assets/instagram-logo.png';
 import tiktokLogo from '@/assets/tiktok-logo.png';
@@ -297,6 +297,14 @@ const GenerationStep = () => {
     }
   };
 
+  const handleGenerateRef = useRef(handleGenerate);
+  handleGenerateRef.current = handleGenerate;
+  useEffect(() => {
+    const onTrigger = () => { handleGenerateRef.current(); };
+    window.addEventListener('kreator:generate', onTrigger);
+    return () => window.removeEventListener('kreator:generate', onTrigger);
+  }, []);
+
   const handleCopyCaption = () => {
     if (!currentCaption) return;
     const text = `${currentCaption.hook}\n${currentCaption.description}\n${currentCaption.cta}\n\n${currentCaption.hashtags}`;
@@ -441,14 +449,11 @@ const GenerationStep = () => {
   return (
     <>
       <StepContainer stepNumber={5} title="Génération">
+        <div id="generation-step-block" />
         {status === 'idle' && (
-          <Button
-            id="prompt-generate-btn"
-            onClick={handleGenerate}
-            className="w-full py-6 text-base font-bold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
-          >
-            {buttonLabel}
-          </Button>
+          <p className="text-sm text-muted-foreground text-center py-4">
+            Choisissez une idée ci-dessus et cliquez sur « Générer le contenu » pour lancer la génération.
+          </p>
         )}
 
         {status === 'generating' && (
