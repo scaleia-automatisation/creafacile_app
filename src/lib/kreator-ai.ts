@@ -1353,13 +1353,13 @@ export async function generateSlideTexts(params: {
   maxWords?: number;
 }): Promise<string[]> {
   const count = Math.max(1, Math.min(4, params.count || 2));
-  const maxWords = Math.max(1, Math.min(5, params.maxWords ?? 5));
+  const maxWords = Math.max(1, Math.min(7, params.maxWords ?? 7));
   const systemPrompt = `Tu es un expert en copywriting publicitaire pour carrousels Instagram/TikTok/LinkedIn.
 Tu génères ${count} textes courts à afficher à l'écran, UN PAR SLIDE d'un carrousel de ${count} slides, parfaitement HARMONIEUX entre eux, qui maximisent la conversion.
 
 RÈGLES ABSOLUES :
 - Langue : français.
-- Chaque texte : ENTRE 1 ET ${maxWords} MOTS MAXIMUM. Compte chaque mot. Non négociable.
+- Chaque texte : ENTRE 3 ET ${maxWords} MOTS MAXIMUM. Compte chaque mot. Non négociable.
 - Un seul texte par slide (pas de retour à la ligne).
 - HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé.
 - Progression narrative orientée conversion :
