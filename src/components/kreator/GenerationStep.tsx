@@ -9,7 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock } from 'lucide-react';
 import StepContainer from './StepContainer';
-import { generateImage, generateVideo, generateCaption, type PlatformCaptions } from '@/lib/kreator-ai';
+import { generateImage, generateVideo, generateCaption, generatePrompt, type PlatformCaptions } from '@/lib/kreator-ai';
+import { getVideoDurationSec, supportsVoiceOver } from '@/lib/voice-over';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -49,13 +50,14 @@ const GenerationStep = () => {
   const { user, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const {
-    type, prompt_en, prompt_fr, status, setStatus, result_url, setResultUrl,
+    type, prompt_en, prompt_fr, setPromptFr, status, setStatus, result_url, setResultUrl,
     ai_model, format, setCreditsUsed, objective, marketing_angle, input_text, idea_chosen,
     company_sector, company_activity, input_photos, resetProject,
     model_settings, sora_character_scenes,
     offer_type, product_service, product_description, target_persona, market,
     options, slides_count, visual_style_brief, render_style, video_render_style,
-    input_image_description,
+    input_image_description, simple_images, starting_choice,
+    voice_over_enabled, voice_over_text, user_mode,
   } = useKreatorStore();
   const [progress, setProgress] = useState(0);
   const [generating, setGenerating] = useState(false);
@@ -74,15 +76,106 @@ const GenerationStep = () => {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const hasPrompt = prompt_fr.length > 0;
   const buttonLabel = type === 'image' ? 'Générer le contenu' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
 
   const currentCaption = captions ? captions[selectedPlatform] : null;
 
+  // Validation des champs requis (identique à PromptStep)
+  const isProduct = offer_type === '📦 Produit';
+  const isBeginner = user_mode === 'beginner';
+  const missingFields: string[] = [];
+  if (!offer_type?.trim()) missingFields.push("Type d'offre");
+  if (!product_service?.trim()) missingFields.push("Nom de l'offre");
+  if (isProduct && !useKreatorStore.getState().product_image_url?.trim()) missingFields.push('Image du produit');
+  if (isProduct && !product_description?.trim()) missingFields.push('Description du produit');
+  if (!isBeginner && !objective?.trim()) missingFields.push('Objectif du contenu');
+  if (!isBeginner && !company_activity?.trim()) missingFields.push('Activité principale');
+  if (!isBeginner && !company_sector?.trim()) missingFields.push("Secteur d'activité");
+
+  const getImageSynthesis = (): string => {
+    const source =
+      starting_choice === 'simple'
+        ? (simple_images || []).filter(p => p?.url)
+        : (input_photos || []).filter(p => p?.url);
+    const globalAnalysis = (input_image_description || '').trim();
+    if (source.length === 0) return globalAnalysis;
+    const described = source.map((p, i) => {
+      const desc = p.description?.trim() || 'image uploadée sans description textuelle — analyser visuellement';
+      return `Image ${i + 1}: ${desc}`;
+    });
+    let synthesis =
+      starting_choice === 'simple'
+        ? `Direction UI design de référence (à reproduire FIDÈLEMENT — couleurs, style, composition, typo, ambiance) : ${described[0]}. PRIORITÉ ABSOLUE : adapter parfaitement le visuel généré à cette direction UI design.`
+        : starting_choice === 'perf'
+        ? `Analyse de viralité du post de référence (quintessence à réutiliser FIDÈLEMENT) : ${described[0]}. PRIORITÉ ABSOLUE : générer un visuel 100% cohérent avec cette analyse de viralité.`
+        : source.length === 1
+        ? `Image de référence : ${described[0]}`
+        : `Synthèse de ${source.length} images de référence : ${described.join(' | ')}.`;
+    if (globalAnalysis) synthesis += ` Analyse globale : ${globalAnalysis}`;
+    return synthesis;
+  };
+
+  const buildPromptParams = () => ({
+    contentType: type,
+    format,
+    objective,
+    ton: options.ton,
+    visualStyle: visual_style_brief || options.visual_style,
+    inputText: input_text,
+    ideaChosen: idea_chosen,
+    companyActivity: company_activity,
+    companySector: company_sector,
+    productService: product_service,
+    productDescription: product_description,
+    market,
+    offerType: offer_type,
+    targetPersona: target_persona,
+    marketingAngle: marketing_angle,
+    showText: options.show_text,
+    textContent: options.text_content,
+    slideTexts: options.slide_texts,
+    slidesCount: slides_count,
+    text2Enabled: options.text_2_enabled,
+    textContent2: options.text_content_2,
+    textPosition2: options.text_position_2,
+    textFont2: options.text_font_2,
+    textColor2: options.text_color_2,
+    textDuration1: options.text_duration_1,
+    textDuration2: options.text_duration_2,
+    textStart1: options.text_start_1,
+    textStart2: options.text_start_2,
+    paletteEnabled: options.palette_enabled,
+    paletteHex: options.palette_hex,
+    imageDescription: getImageSynthesis(),
+    referenceImageCount:
+      starting_choice === 'simple'
+        ? (simple_images || []).filter(p => p?.url).length
+        : input_photos.filter(p => p.url).length,
+    aiModel: ai_model,
+    renderStyle: render_style,
+    videoRenderStyle: video_render_style,
+    logoEnabled: options.logo_enabled,
+    logoUrl: options.logo_url,
+    logoPosition: options.logo_position,
+    logoAppearance: options.logo_appearance,
+    textPosition: options.text_position,
+    textFont: options.text_font,
+    textColor: options.text_color,
+    voiceOverText:
+      type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
+        ? voice_over_text.trim()
+        : undefined,
+    videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
+  });
+
   const handleGenerate = async () => {
     if (!user) {
       toast.error('Connectez-vous pour générer du contenu');
+      return;
+    }
+    if (missingFields.length > 0) {
+      toast.error(`Champs requis manquants : ${missingFields.join(' et ')}`);
       return;
     }
 
@@ -107,10 +200,21 @@ const GenerationStep = () => {
     }, 500) : null;
 
     try {
+      // 1) Génération silencieuse du prompt si pas déjà présent
+      let activePrompt = prompt_fr;
+      if (!activePrompt || activePrompt.trim().length === 0) {
+        const promptResult = await generatePrompt(buildPromptParams());
+        activePrompt = promptResult.prompt_fr || '';
+        setPromptFr(activePrompt);
+      }
+      if (!activePrompt || activePrompt.trim().length === 0) {
+        throw new Error('Prompt vide après génération');
+      }
+
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
-          ? generateVideo(prompt_fr, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
-          : generateImage(prompt_fr, ai_model, format, input_photos?.[0]?.url, abortController.signal, options.logo_enabled ? options.logo_url : ''),
+          ? generateVideo(activePrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
+          : generateImage(activePrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, options.logo_enabled ? options.logo_url : ''),
         generateCaption({
           objective: marketing_angle || objective,
           idea: idea_chosen || input_text,
@@ -129,7 +233,7 @@ const GenerationStep = () => {
           ton: options.ton,
           visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
           freeDescription: input_text,
-          promptValide: prompt_fr,
+          promptValide: activePrompt,
           advancedSettings: [
             options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
             options.logo_enabled ? `logo: ${options.logo_position}${type === 'video' ? ` (apparition ${options.logo_appearance})` : ''}` : '',
@@ -163,8 +267,8 @@ const GenerationStep = () => {
         type,
         ai_model,
         format,
-        prompt_en_final: prompt_fr,
-        prompt_fr_final: prompt_fr,
+        prompt_en_final: activePrompt,
+        prompt_fr_final: activePrompt,
         result_url: contentUrl,
         credits_used: creditsNeeded,
         status: 'done',
@@ -334,13 +438,12 @@ const GenerationStep = () => {
     });
   };
 
-  if (!hasPrompt) return null;
-
   return (
     <>
-      <StepContainer stepNumber={6} title="Génération">
+      <StepContainer stepNumber={5} title="Génération">
         {status === 'idle' && (
           <Button
+            id="prompt-generate-btn"
             onClick={handleGenerate}
             className="w-full py-6 text-base font-bold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
           >
