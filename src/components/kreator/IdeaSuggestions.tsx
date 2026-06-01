@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2 } from 'lucide-react';
@@ -7,7 +7,7 @@ import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 
 const IdeaSuggestions = () => {
   const {
-    type, objective, offer_type, product_service, product_description, product_image_url, use_case,
+    user_mode, type, objective, offer_type, product_service, product_description, product_image_url, use_case,
     company_activity, company_sector, target_persona, market, options,
     setInputText, setIdeaChosen,
   } = useKreatorStore();
@@ -52,6 +52,27 @@ const IdeaSuggestions = () => {
       setLoading(false);
     }
   };
+
+  // Auto-generate (and regenerate) ideas in expert mode whenever the required
+  // input fields change. Debounced to avoid spamming the API while typing.
+  const lastKeyRef = useRef<string>('');
+  const depsKey = JSON.stringify({
+    type, objective, offer_type, product_service, product_description,
+    product_image_url, use_case, company_activity, company_sector,
+    target_persona, market, ton: options?.ton,
+  });
+  useEffect(() => {
+    if (user_mode !== 'expert') return;
+    if (!canGenerate) return;
+    if (loading) return;
+    if (lastKeyRef.current === depsKey) return;
+    const t = setTimeout(() => {
+      lastKeyRef.current = depsKey;
+      handleGenerate();
+    }, 900);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [depsKey, user_mode, canGenerate]);
 
   const updateIdea = (idx: number, field: 'hook' | 'concept', value: string) => {
     setIdeas((prev) => prev.map((it, i) => (i === idx ? { ...it, [field]: value } : it)));
