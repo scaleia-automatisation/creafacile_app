@@ -802,6 +802,17 @@ RAPPEL CRITIQUE : tous les chiffres, prix, quantités, noms et mentions visibles
 === IMAGES DE RÉFÉRENCE ===
 ${params.imageDescription ? `Analyse (${params.referenceImageCount || 1} image(s)): ${params.imageDescription}` : 'Aucune image de référence'}
 ${params.referenceImageCount && params.referenceImageCount > 1 ? `IMPORTANT: ${params.referenceImageCount} images fournies — analyser et fusionner les éléments visuels communs pour un rendu cohérent et harmonieux.` : ''}
+${params.offerType === '📦 Produit' && params.referenceImageCount && params.referenceImageCount > 0 ? `
+=== FIDÉLITÉ PRODUIT (RÈGLE ABSOLUE — NON NÉGOCIABLE) ===
+Le produit affiché dans le visuel généré DOIT être STRICTEMENT le MÊME que celui de l'image de référence fournie : forme exacte, proportions, couleurs, matière, texture, packaging, étiquette, logo, typographie de l'étiquette, motifs, finitions, accessoires visibles. Aucune variation de design, aucune réinterprétation, aucune substitution. Le client doit reconnaître INSTANTANÉMENT son produit au premier coup d'œil.
+TRAITEMENT AUTORISÉ — UNIQUEMENT amélioration photographique légère (entre +10% et +40% selon la qualité initiale de la photo de référence) :
+• Nettoyer les imperfections (poussières, rayures parasites, reflets disgracieux, flou de mise au point, bruit numérique, balance des blancs).
+• Améliorer la netteté, la définition des micro-détails, le rendu des matières, la profondeur, le contraste local.
+• Optimiser la lumière (douce, sculptante, professionnelle) et les ombres réalistes cohérentes avec la scène.
+• Conserver les couleurs RÉELLES du produit (pas de virage colorimétrique, pas de saturation excessive qui changerait la teinte d'origine).
+Si la photo de référence est déjà très qualitative → amélioration proche de +10%. Si elle est moyenne/amateur → amélioration jusqu'à +40% maxi. JAMAIS au-delà : on ne redessine pas, on ne stylise pas, on ne "recrée" pas le produit.
+INTERDITS STRICTS : changer la forme, la couleur, le packaging, l'étiquette ou le logo du produit ; remplacer par un produit générique ressemblant ; inventer des éléments absents (texte, mention, label, certification, parfum, variante) ; modifier les proportions ; styliser/illustrer/cartooniser le produit ; produire un rendu visiblement différent où le client ne reconnaîtrait pas son propre produit.
+` : ''}
 
 === RÉGLAGES AVANCÉS ===
 ${params.ton ? `Ton: ${params.ton}` : 'Ton: automatique'}
