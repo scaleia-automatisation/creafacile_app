@@ -699,6 +699,7 @@ serve(async (req) => {
     if (action === "kie_start_image") {
       const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
       if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
+      // Note: a dedicated `openrouter_generate_image` action handles models routed via OpenRouter.
 
       const hasInputImage = !!input_image_url;
       // Map app model IDs to kie.ai model IDs (depends on whether an input image is provided)
