@@ -761,7 +761,7 @@ Si produit : ADN intouchable, proportions exactes, couleurs exactes, branding ex
 VIRALITÉ
 ━━━━━━━━━━━━━━━━━━
 Le contenu doit pouvoir arrêter le scroll, augmenter rétention, sauvegardes, partages, commentaires, clics, conversion. Utiliser curiosité, tension, surprise, preuve sociale, contraste fort, dopamine visuelle, transformation, relatable, émotion forte.
-
+${premiumDirectionBlock}
 ━━━━━━━━━━━━━━━━━━
 TEXTE ÉCRAN
 ━━━━━━━━━━━━━━━━━━
