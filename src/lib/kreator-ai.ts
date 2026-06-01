@@ -816,7 +816,7 @@ Position du texte 2: ${
       : 'centré en bas'
     } — respecter STRICTEMENT cette position.
 Police d'écriture 2: "${params.textFont2 || 'Montserrat'}".
-${params.textColor2 ? `Couleur du texte 2: ${params.textColor2}.` : ''}
+${params.textColor2 ? `🎨 Couleur du texte 2 (OBLIGATOIRE) : ${params.textColor2} (code hexadécimal exact) — appliquer EXACTEMENT cette couleur, sans dérive ni variation. Léger contour/ombre subtil autorisé uniquement pour la lisibilité.` : ''}
 ${params.contentType === 'video' ? `Timing à l'écran : Texte 1 apparaît à ${params.textStart1 ?? 0}s pendant ${params.textDuration1 ?? 3}s, puis Texte 2 apparaît à ${params.textStart2 ?? 0}s pendant ${params.textDuration2 ?? 3}s.` : ''}
 ⚡ HARMONIE OBLIGATOIRE entre Texte 1 et Texte 2 : cohérence typographique parfaite (même famille ou pair harmonieux), hiérarchie visuelle claire (poids/taille), palette cohérente, espacements équilibrés, rythme de lecture professionnel. Rendu digne d'un grand directeur artistique — composition équilibrée, lisibilité maximale, aucun chevauchement. Convertir avec impact, sans surcharge.`
   : ''}`)
