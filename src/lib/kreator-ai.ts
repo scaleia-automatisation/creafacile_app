@@ -806,8 +806,9 @@ Position du texte: ${
     } — respecter STRICTEMENT cette position et ce nombre de lignes.
 Police d'écriture: "${params.textFont || 'Montserrat'}" — utiliser cette typographie (ou la plus proche visuellement disponible), bien lisible, kerning soigné.
 ${params.contentType === 'video' && params.textColor ? `Couleur du texte: ${params.textColor} — appliquer EXACTEMENT cette couleur au texte affiché à l'écran (avec contour ou ombre subtile pour la lisibilité si nécessaire).` : ''}
-${params.contentType === 'video' && params.text2Enabled && params.textContent2
-  ? `\n--- TEXTE À L'ÉCRAN N°2 (vidéo) — À REPRODUIRE EXACTEMENT MOT POUR MOT : "${params.textContent2}"
+${(params.contentType === 'video' || params.contentType === 'image') && params.text2Enabled && params.textContent2
+  ? `\n--- TEXTE À L'ÉCRAN N°2 — À REPRODUIRE EXACTEMENT MOT POUR MOT : "${params.textContent2}"
+⚡ CONTINUITÉ NARRATIVE OBLIGATOIRE : ce Texte 2 est la SUITE COHÉRENTE et NATURELLE du Texte 1 ("${params.textContent}"). Les deux forment UN MÊME message en deux temps (hook → chute / call-to-action), sans répétition. ${params.contentType === 'image' ? 'Les deux textes sont visibles SIMULTANÉMENT dans l\'image, hiérarchisés visuellement (Texte 1 = accroche principale, Texte 2 = punchline / CTA secondaire). Chacun fait entre 3 et 7 mots MAXIMUM — JAMAIS plus.' : ''}
 Position du texte 2: ${
         params.textPosition2 === 'top-center' ? 'centré en haut'
       : params.textPosition2 === 'middle-center' ? 'centré au centre'
@@ -815,8 +816,8 @@ Position du texte 2: ${
     } — respecter STRICTEMENT cette position.
 Police d'écriture 2: "${params.textFont2 || 'Montserrat'}".
 ${params.textColor2 ? `Couleur du texte 2: ${params.textColor2}.` : ''}
-Timing à l'écran : Texte 1 apparaît à ${params.textStart1 ?? 0}s pendant ${params.textDuration1 ?? 3}s, puis Texte 2 apparaît à ${params.textStart2 ?? 0}s pendant ${params.textDuration2 ?? 3}s.
-⚡ HARMONIE OBLIGATOIRE entre Texte 1 et Texte 2 : cohérence typographique parfaite (même famille ou pair harmonieux), hiérarchie visuelle claire (poids/taille), palette cohérente, espacements équilibrés, transitions fluides, rythme de lecture professionnel. Rendu digne d'un grand directeur artistique — composition équilibrée, lisibilité maximale sur fond vidéo (ombre/contour subtil si nécessaire), aucun chevauchement, jamais simultanés sauf si explicitement demandé. Convertir avec impact, sans surcharge.`
+${params.contentType === 'video' ? `Timing à l'écran : Texte 1 apparaît à ${params.textStart1 ?? 0}s pendant ${params.textDuration1 ?? 3}s, puis Texte 2 apparaît à ${params.textStart2 ?? 0}s pendant ${params.textDuration2 ?? 3}s.` : ''}
+⚡ HARMONIE OBLIGATOIRE entre Texte 1 et Texte 2 : cohérence typographique parfaite (même famille ou pair harmonieux), hiérarchie visuelle claire (poids/taille), palette cohérente, espacements équilibrés, rythme de lecture professionnel. Rendu digne d'un grand directeur artistique — composition équilibrée, lisibilité maximale, aucun chevauchement. Convertir avec impact, sans surcharge.`
   : ''}`)
   : 'Pas de texte overlay — NE PAS générer de texte, pancarte, étiquette, logo ou enseigne dans l\'image'}
 ${params.logoEnabled && params.logoUrl
