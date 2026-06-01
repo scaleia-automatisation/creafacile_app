@@ -7,7 +7,6 @@ import StartingChoiceButtons from '@/components/kreator/StartingChoiceButtons';
 import ObjectiveStep from '@/components/kreator/ObjectiveStep';
 import StepContainer from '@/components/kreator/StepContainer';
 import CustomizationStep from '@/components/kreator/CustomizationStep';
-import PromptStep from '@/components/kreator/PromptStep';
 import GenerationStep from '@/components/kreator/GenerationStep';
 import IdeaSuggestions from '@/components/kreator/IdeaSuggestions';
 import { useAuth } from '@/contexts/AuthContext';
@@ -103,7 +102,6 @@ const Index = () => {
           <StartingPointBlock />
           <CustomizationStep />
           <IdeaSuggestions />
-          <PromptStep />
           <GenerationStep />
         </div>
       </main>
