@@ -62,16 +62,11 @@ const IdeaSuggestions = () => {
     setInputText(text);
     setIdeaChosen(text);
     toast.success('Idée sélectionnée. Lancement de la génération…');
-    // Scroll to prompt block and auto-trigger prompt generation
+    // Scroll to generation block and trigger generation via custom event
     setTimeout(() => {
-      const btn = document.getElementById('prompt-generate-btn') as HTMLButtonElement | null;
-      if (btn) {
-        btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        if (!btn.disabled) btn.click();
-      } else {
-        const ta = document.querySelector('textarea');
-        ta?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      const target = document.getElementById('generation-step-block');
+      target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window.dispatchEvent(new CustomEvent('kreator:generate'));
     }, 200);
   };
 
@@ -121,7 +116,7 @@ const IdeaSuggestions = () => {
                 className="mt-auto gap-1.5 gradient-bg border-0 text-primary-foreground hover:opacity-90 text-xs font-bold"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                Générer le prompt
+                Générer le contenu
               </Button>
             </div>
           ))}
