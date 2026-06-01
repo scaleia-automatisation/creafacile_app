@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import facebookLogo from '@/assets/facebook-logo.png';
 import instagramLogo from '@/assets/instagram-logo.png';
 import tiktokLogo from '@/assets/tiktok-logo.png';
