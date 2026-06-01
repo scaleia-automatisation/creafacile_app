@@ -441,14 +441,11 @@ const GenerationStep = () => {
   return (
     <>
       <StepContainer stepNumber={5} title="Génération">
+        <div id="generation-step-block" />
         {status === 'idle' && (
-          <Button
-            id="prompt-generate-btn"
-            onClick={handleGenerate}
-            className="w-full py-6 text-base font-bold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
-          >
-            {buttonLabel}
-          </Button>
+          <p className="text-sm text-muted-foreground text-center py-4">
+            Choisissez une idée ci-dessus et cliquez sur « Générer le contenu » pour lancer la génération.
+          </p>
         )}
 
         {status === 'generating' && (
