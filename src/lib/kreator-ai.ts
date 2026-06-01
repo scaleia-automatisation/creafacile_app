@@ -1056,6 +1056,30 @@ export async function generateImage(
   inputImageUrl?: string,
   abortSignal?: AbortSignal
 ) {
+  // === OpenRouter models (Nano Banana, Imagen 4, GPT Image 5, Grok) ===
+  const openRouterModels: AIModel[] = [
+    'nano-banana-2', 'nano-banana-pro',
+    'imagen-4', 'imagen-4-ultra', 'imagen-4-fast',
+    'gpt-image-5', 'gpt-image-5-mini', 'grok-image',
+  ];
+  if (openRouterModels.includes(aiModel)) {
+    if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+    const { data, error } = await supabase.functions.invoke('kreator-ai', {
+      body: {
+        action: 'openrouter_generate_image',
+        prompt: promptEn,
+        ai_model: aiModel,
+        size: format,
+        input_image_url: inputImageUrl || '',
+      },
+    });
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    const imageUrl = data?.image_url;
+    if (!imageUrl) throw new Error('No image generated (OpenRouter)');
+    return imageUrl;
+  }
+
   // All image models are now routed through kie.ai
   const isKieImageModel = [
     'qwen/image-edit', 'ideogram/character', 'ideogram/image',
