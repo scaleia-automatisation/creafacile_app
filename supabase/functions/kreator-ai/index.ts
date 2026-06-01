@@ -844,7 +844,7 @@ serve(async (req) => {
       if (!OPENROUTER_API_KEY) return jsonError(500, "OPENROUTER_API_KEY non configurée");
 
       const orModelMap: Record<string, string> = {
-        "nano-banana-2": "google/gemini-2.5-flash-image-preview",
+        "nano-banana-2": "google/gemini-2.5-flash-image",
         "nano-banana-pro": "google/gemini-3-pro-image-preview",
         "imagen-4": "google/imagen-4",
         "imagen-4-ultra": "google/imagen-4-ultra",
