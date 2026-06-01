@@ -476,6 +476,7 @@ export async function generatePrompt(params: {
   offerType?: string;
   targetPersona?: string;
   marketingAngle?: string;
+  useCase?: string;
   showText: boolean;
   textContent: string;
   slideTexts?: string[];
