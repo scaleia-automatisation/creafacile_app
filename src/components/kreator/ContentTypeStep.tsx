@@ -52,7 +52,7 @@ const ContentTypeStep = () => {
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
-  const isGptImage = ai_model === 'gpt-image-5' || ai_model === 'gpt-image-5-mini';
+  const isGptImage = ai_model === 'gpt-image-5' || ai_model === 'gpt-image-5-mini' || ai_model === 'gpt-5.4-image-2';
   const availableFormats = type === 'video'
     ? formats.filter((f) => f.value === '9:16' || f.value === '16:9')
     : isGptImage
