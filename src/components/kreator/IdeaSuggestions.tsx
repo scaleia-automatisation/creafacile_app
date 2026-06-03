@@ -21,7 +21,6 @@ const IdeaSuggestions = () => {
   if (offer_type === 'produit' && !product_image_url?.trim()) missing.push('Image de référence');
   if (!product_description?.trim()) missing.push('Description');
   if (!objective?.trim()) missing.push('Objectif du contenu');
-  if (!use_case?.trim()) missing.push("Cas d'utilisation");
   const canGenerate = missing.length === 0;
 
   const handleGenerate = async () => {
@@ -95,7 +94,7 @@ const IdeaSuggestions = () => {
     <div className="md:col-span-2 flex flex-col items-center gap-4 py-6 px-4">
       {!canGenerate && (
         <p className="text-muted-foreground text-sm text-center max-w-4xl line-clamp-2">
-          Avant de générer 3 idées de contenu, veuillez renseigner&nbsp;: type d'offre, Nom, Image de référence si produit, Description, objectif du contenu, cas d'utilisations sont requis pour générer les 3 idées de contenus.
+          Avant de générer 3 idées de contenu, veuillez renseigner les 3 premiers blocs&nbsp;: type d'offre, Nom, Image de référence si produit, Description et objectif du contenu.
         </p>
       )}
       <Button
