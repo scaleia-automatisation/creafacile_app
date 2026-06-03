@@ -786,6 +786,17 @@ CADRAGE & VISIBILITÉ DES ÉLÉMENTS ESSENTIELS (RÈGLE ABSOLUE)
 INTERDICTION FORMELLE de produire un visuel où des éléments essentiels (produit, assiette, plat, packaging, sujet humain, logo, texte clé, CTA) sont coupés, tronqués, recadrés, sortis du cadre ou partiellement masqués. Tout élément essentiel DOIT apparaître ENTIÈREMENT dans le cadre, avec des marges de sécurité confortables autour. Cadrer la scène en fonction du format ${params.format} pour garantir cette visibilité intégrale. Si un doute existe sur l'espace disponible, reculer le plan / dézoomer plutôt que de couper. Aucun élément essentiel ne doit toucher ni dépasser les bords.
 
 ━━━━━━━━━━━━━━━━━━
+MISE EN PAGE TEXTE & LOGO — UI / DESIGN ARTISTIQUE (RÈGLE ABSOLUE)
+━━━━━━━━━━━━━━━━━━
+Composition à pensée de directeur artistique senior. Le visuel DOIT respecter STRICTEMENT les règles suivantes — toute violation = visuel à rejeter et régénérer :
+1) TEXTE OVERLAY — JAMAIS écrit PAR-DESSUS le sujet principal (visage, produit hero, packaging, plat, assiette, personnage). Le texte DOIT être placé dans une ZONE NÉGATIVE dédiée (ciel, fond flou, mur uni, sol, espace vide volontairement laissé dans la composition). Cadrer la scène en CONSÉQUENCE pour réserver une bande de respiration (haut, bas ou côté selon la position demandée) où le texte vit sans toucher ni masquer le sujet. Contraste fort garanti (fond sombre → texte clair, fond clair → texte sombre), légère ombre portée ou contour fin uniquement si la lisibilité l'exige. Aucune lettre ne doit chevaucher le sujet, la nourriture, le visage, le produit ou les zones de détail importantes.
+2) HIÉRARCHIE & LISIBILITÉ — taille du texte adaptée au format mobile : titre principal entre 6% et 12% de la hauteur du visuel (jamais gigantesque au point d'écraser le sujet, jamais minuscule au point d'être illisible). Marges latérales minimum 6% du bord. Interlignage aéré. Kerning soigné. Le texte est INTÉGRÉ NATIVEMENT à la composition, pas plaqué comme un sticker.
+3) LOGO — TOUJOURS DISCRET ET PROFESSIONNEL : taille maximale ≈ 8% de la plus petite dimension du visuel (signature, jamais hero). Placé strictement dans le coin/position demandée, avec une marge de sécurité d'au moins 4% du bord. Le logo NE DOIT JAMAIS : être surdimensionné, couvrir une partie du sujet principal, se superposer au texte overlay, dupliquer ou concurrencer le texte, être centré quand une position de coin est demandée, être déformé/rogné/recoloré. Il reste un filigrane de marque élégant, parfaitement net, fond transparent préservé.
+4) SÉPARATION TEXTE / LOGO / SUJET — les trois zones (sujet hero, texte overlay, logo signature) sont CLAIREMENT DISTINCTES dans la composition, sans chevauchement, sans collision, sans ambiguïté visuelle. Penser la composition AVANT le rendu : où va vivre le sujet, où va vivre le texte, où va vivre le logo — chacun a sa zone réservée.
+5) PROPORTIONS GLOBALES — équilibre type affiche pro : sujet hero domine (40-60% de la surface utile), texte occupe une zone calme et lisible (10-20% de la surface), logo reste signature discrète (≈3-8%). Aucun élément graphique parasite ne vient écraser cette hiérarchie.
+RAPPEL FINAL : si la scène imaginée ne permet pas naturellement de placer le texte hors du sujet, REPENSER LA COMPOSITION (recul, plongée/contre-plongée, décentrement du sujet, ajout d'une zone de respiration) — JAMAIS écrire sur le sujet par défaut.
+
+━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE CARROUSEL
 ━━━━━━━━━━━━━━━━━━
 Prompt carrousel : max 400 mots, storytelling cohérent, continuité visuelle ABSOLUE entre slides (même univers graphique, même palette, même typographie, même traitement lumière, même style d'éléments décoratifs — SYSTÈME DE DESIGN unifié comme une vraie campagne d'agence).
@@ -1250,6 +1261,79 @@ export async function generateImage(
   if (!imageUrl) throw new Error('No image generated');
 
   return imageUrl;
+}
+
+export interface ImageVerifyResult {
+  ok: boolean;
+  issues: string[];
+  improved_prompt_fr?: string;
+}
+
+/**
+ * Vérifie visuellement une image générée contre les contraintes de composition
+ * (texte non superposé au sujet, logo discret, hiérarchie respectée, marges).
+ * Si non conforme, renvoie un prompt amélioré pour régénération.
+ */
+export async function verifyGeneratedImage(params: {
+  imageUrl: string;
+  promptFr: string;
+  format: string;
+  hasText: boolean;
+  textContent?: string;
+  textPosition?: string;
+  hasLogo: boolean;
+  logoPosition?: string;
+}): Promise<ImageVerifyResult> {
+  const systemPrompt = `Tu es directeur artistique senior. Tu audites une image marketing générée par IA et vérifies STRICTEMENT le respect de règles de composition non négociables. Tu réponds UNIQUEMENT en JSON valide.
+
+RÈGLES À VÉRIFIER (chaque violation = échec) :
+1) Le texte overlay n'est JAMAIS écrit par-dessus le sujet principal (visage, produit hero, plat, packaging, personnage). Il vit dans une zone négative (fond, ciel, mur, sol, espace vide).
+2) Le texte est parfaitement lisible (contraste suffisant, taille adaptée mobile 6-12% hauteur, marges ≥6%, kerning correct, intégré nativement).
+3) Le logo est DISCRET : taille ≈3-8% de la plus petite dimension, placé en signature dans le coin/position attendue, jamais sur le sujet, jamais surdimensionné, jamais déformé/recoloré.
+4) Aucun élément essentiel coupé/tronqué/sortant du cadre, marges de sécurité respectées.
+5) Hiérarchie claire : sujet hero domine, texte zone calme, logo signature — pas de collision/chevauchement entre les trois zones.
+6) Wording du texte affiché STRICTEMENT identique au texte demandé (pas d'invention, pas de faute).
+7) Cohérence visuelle premium digne d'une affiche pro (pas de rendu "template Canva basique").
+
+SORTIE JSON :
+{"ok": boolean, "issues": ["..."], "improved_prompt_fr": "..."}
+- "ok" = true UNIQUEMENT si toutes les règles applicables sont respectées.
+- "issues" = liste courte et précise des violations constatées.
+- "improved_prompt_fr" = OBLIGATOIRE si ok=false. Reprends le prompt original et REFORMULE-le pour corriger explicitement chaque violation (réserver zone négative pour le texte, recadrer pour libérer espace, imposer taille discrète du logo dans le coin demandé, etc.). Conserve la structure et l'esprit du prompt original, ajoute des consignes de composition correctives très explicites. Reste en français, prêt à envoyer au modèle image.`;
+
+  const userText = `PROMPT ORIGINAL UTILISÉ POUR GÉNÉRER L'IMAGE :
+"""
+${params.promptFr}
+"""
+
+CONTEXTE :
+- Format : ${params.format}
+- Texte overlay demandé : ${params.hasText ? `"${params.textContent || ''}" (position attendue : ${params.textPosition || 'n/c'})` : 'aucun'}
+- Logo demandé : ${params.hasLogo ? `oui (position attendue : ${params.logoPosition || 'n/c'}, taille discrète signature)` : 'aucun'}
+
+Analyse l'image jointe et retourne le JSON.`;
+
+  const data = await callKreatorAI({
+    action: 'verify_image',
+    model: 'gpt-4o',
+    messages: [{ role: 'user', content: userText }],
+    system_prompt: systemPrompt,
+    image_base64s: [params.imageUrl],
+  });
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) return { ok: true, issues: [] };
+  try {
+    const cleaned = String(content).replace(/```json\n?|\n?```/g, '').trim();
+    const parsed = JSON.parse(cleaned);
+    return {
+      ok: !!parsed.ok,
+      issues: Array.isArray(parsed.issues) ? parsed.issues : [],
+      improved_prompt_fr: parsed.improved_prompt_fr || undefined,
+    };
+  } catch {
+    return { ok: true, issues: [] };
+  }
 }
 
 export async function generateVideo(
