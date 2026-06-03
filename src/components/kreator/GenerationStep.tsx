@@ -171,7 +171,7 @@ const GenerationStep = () => {
     videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
   });
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (opts?: { forcePromptRegen?: boolean }) => {
     if (!user) {
       toast.error('Connectez-vous pour générer du contenu');
       return;
@@ -202,9 +202,10 @@ const GenerationStep = () => {
     }, 500) : null;
 
     try {
-      // 1) Génération silencieuse du prompt si pas déjà présent
+      // 1) Génération silencieuse du prompt si pas déjà présent OU si on force la régénération
+      // (régénération = on reprend en compte tous les nouveaux inputs : modèle, format, type, etc.)
       let activePrompt = prompt_fr;
-      if (!activePrompt || activePrompt.trim().length === 0) {
+      if (opts?.forcePromptRegen || !activePrompt || activePrompt.trim().length === 0) {
         const promptResult = await generatePrompt(buildPromptParams());
         activePrompt = promptResult.prompt_fr || '';
         setPromptFr(activePrompt);
@@ -328,8 +329,11 @@ const GenerationStep = () => {
   };
 
   const handleRegenerate = () => {
+    // Reprendre TOUS les nouveaux inputs (modèle IA, format, type de contenu, réglages, etc.)
+    // en forçant la régénération du prompt depuis les valeurs courantes du store.
     setCaptions(null);
-    handleGenerate();
+    setResultUrl('');
+    handleGenerate({ forcePromptRegen: true });
   };
 
   const handleShare = (platform: string) => {
@@ -768,7 +772,7 @@ const GenerationStep = () => {
           <div className="text-center py-6">
             <p className="text-destructive font-medium mb-3">Erreur lors de la génération</p>
             <p className="text-sm text-muted-foreground mb-4">Aucun crédit n'a été déduit.</p>
-            <Button onClick={handleGenerate} className="gradient-bg border-0 text-primary-foreground">
+            <Button onClick={() => handleGenerate()} className="gradient-bg border-0 text-primary-foreground">
               <RefreshCw className="w-4 h-4 mr-2" /> Réessayer
             </Button>
           </div>
