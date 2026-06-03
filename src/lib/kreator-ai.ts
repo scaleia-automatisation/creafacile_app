@@ -781,6 +781,11 @@ RENDU FINAL : doit ressembler à une AFFICHE PUBLICITAIRE PRO digne d'une marque
 INTERDIT ABSOLU : fond uni plat sans texture ni élément graphique, produit seul centré sans contexte, typographie unique fade, absence totale de badge/accent/forme décorative, look "post Canva basique", composition symétrique ennuyeuse, palette pastel sans contraste.
 
 ━━━━━━━━━━━━━━━━━━
+CADRAGE & VISIBILITÉ DES ÉLÉMENTS ESSENTIELS (RÈGLE ABSOLUE)
+━━━━━━━━━━━━━━━━━━
+INTERDICTION FORMELLE de produire un visuel où des éléments essentiels (produit, assiette, plat, packaging, sujet humain, logo, texte clé, CTA) sont coupés, tronqués, recadrés, sortis du cadre ou partiellement masqués. Tout élément essentiel DOIT apparaître ENTIÈREMENT dans le cadre, avec des marges de sécurité confortables autour. Cadrer la scène en fonction du format ${params.format} pour garantir cette visibilité intégrale. Si un doute existe sur l'espace disponible, reculer le plan / dézoomer plutôt que de couper. Aucun élément essentiel ne doit toucher ni dépasser les bords.
+
+━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE CARROUSEL
 ━━━━━━━━━━━━━━━━━━
 Prompt carrousel : max 400 mots, storytelling cohérent, continuité visuelle ABSOLUE entre slides (même univers graphique, même palette, même typographie, même traitement lumière, même style d'éléments décoratifs — SYSTÈME DE DESIGN unifié comme une vraie campagne d'agence).
