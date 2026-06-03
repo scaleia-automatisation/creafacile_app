@@ -47,6 +47,110 @@ const platformLabels: Record<Platform, string> = {
   linkedin: '💼 Caption LinkedIn',
 };
 
+const loadCanvasImage = (src: string) => new Promise<HTMLImageElement>((resolve, reject) => {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => resolve(img);
+  img.onerror = reject;
+  img.src = src;
+});
+
+const toDrawableImageSrc = async (src: string) => {
+  if (src.startsWith('data:')) return src;
+  try {
+    const response = await fetch(src, { mode: 'cors' });
+    if (!response.ok) return src;
+    const blob = await response.blob();
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return src;
+  }
+};
+
+const logoPositionLabel = (position?: string) => ({
+  'bottom-right': 'en bas à droite',
+  'bottom-left': 'en bas à gauche',
+  'top-left': 'en haut à gauche',
+  'top-right': 'en haut à droite',
+  'top-center': 'en haut au centre',
+  'middle-left': 'au milieu à gauche',
+  'middle-right': 'au milieu à droite',
+  'bottom-center': 'en bas au centre',
+}[position || 'bottom-center'] || 'en bas au centre');
+
+const xmlEscape = (value: string) => value
+  .replace(/&/g, '&amp;')
+  .replace(/"/g, '&quot;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;');
+
+const composeImageWithExactLogo = async (imageUrl: string, logoUrl: string, position: string, format: string) => {
+  if (!imageUrl || !logoUrl) return imageUrl;
+  try {
+    const [baseSrc, logoSrc] = await Promise.all([toDrawableImageSrc(imageUrl), toDrawableImageSrc(logoUrl)]);
+    const [base, logo] = await Promise.all([loadCanvasImage(baseSrc), loadCanvasImage(logoSrc)]);
+    const width = base.naturalWidth || base.width;
+    const height = base.naturalHeight || base.height;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return imageUrl;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(base, 0, 0, width, height);
+
+    const minDim = Math.min(width, height);
+    const margin = minDim * (format === '9:16' ? 0.06 : format === '16:9' ? 0.045 : 0.055);
+    const maxLogoHeight = minDim * (format === '16:9' ? 0.055 : 0.07);
+    const maxLogoWidth = width * (format === '9:16' ? 0.2 : 0.16);
+    const logoNaturalWidth = logo.naturalWidth || logo.width;
+    const logoNaturalHeight = logo.naturalHeight || logo.height;
+    const scale = Math.min(maxLogoWidth / logoNaturalWidth, maxLogoHeight / logoNaturalHeight);
+    const logoW = logoNaturalWidth * scale;
+    const logoH = logoNaturalHeight * scale;
+
+    const x = position?.includes('right')
+      ? width - margin - logoW
+      : position?.includes('left')
+      ? margin
+      : (width - logoW) / 2;
+    const y = position?.includes('top')
+      ? margin
+      : position?.includes('middle')
+      ? (height - logoH) / 2
+      : height - margin - logoH;
+
+    ctx.drawImage(logo, x, y, logoW, logoH);
+    return canvas.toDataURL('image/png');
+  } catch (error) {
+    console.warn('[logo overlay] impossible de composer le logo exact:', error);
+    try {
+      const [base, logo] = await Promise.all([loadCanvasImage(imageUrl), loadCanvasImage(logoUrl)]);
+      const width = base.naturalWidth || base.width || 1024;
+      const height = base.naturalHeight || base.height || 1024;
+      const minDim = Math.min(width, height);
+      const margin = minDim * (format === '9:16' ? 0.06 : format === '16:9' ? 0.045 : 0.055);
+      const logoNaturalWidth = logo.naturalWidth || logo.width || 256;
+      const logoNaturalHeight = logo.naturalHeight || logo.height || 256;
+      const scale = Math.min((width * (format === '9:16' ? 0.2 : 0.16)) / logoNaturalWidth, (minDim * (format === '16:9' ? 0.055 : 0.07)) / logoNaturalHeight);
+      const logoW = logoNaturalWidth * scale;
+      const logoH = logoNaturalHeight * scale;
+      const x = position?.includes('right') ? width - margin - logoW : position?.includes('left') ? margin : (width - logoW) / 2;
+      const y = position?.includes('top') ? margin : position?.includes('middle') ? (height - logoH) / 2 : height - margin - logoH;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><image href="${xmlEscape(imageUrl)}" x="0" y="0" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/><image href="${xmlEscape(logoUrl)}" x="${x}" y="${y}" width="${logoW}" height="${logoH}" preserveAspectRatio="xMidYMid meet"/></svg>`;
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    } catch {
+      return imageUrl;
+    }
+  }
+};
+
 const GenerationStep = () => {
   const { user, refreshProfile } = useAuth();
   const navigate = useNavigate();
@@ -176,6 +280,13 @@ const GenerationStep = () => {
 
 CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le contenu final STRICTEMENT en ${format}. Ce ratio ${format} est prioritaire sur toute autre indication du prompt. Adapter cadrage, composition et marges de sécurité à ce format, sans couper les éléments essentiels.`;
 
+  const withLogoOverlayInstruction = (prompt: string) => {
+    if (!options.logo_enabled || !options.logo_url || type === 'video') return prompt;
+    return `${prompt.trim()}
+
+CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recréer, styliser, écrire ou intégrer lui-même un logo, un monogramme, une icône de marque ou un lettrage de marque. Il doit seulement réserver un petit espace propre et vide ${logoPositionLabel(options.logo_position)}, avec marges de sécurité, car le vrai logo PNG importé par l'utilisateur sera appliqué APRÈS génération en surimpression exacte. Aucun autre logo ne doit apparaître dans l'image.`;
+  };
+
   const handleGenerate = async (opts?: { forcePromptRegen?: boolean }) => {
     if (!user) {
       toast.error('Connectez-vous pour générer du contenu');
@@ -218,12 +329,12 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
       if (!activePrompt || activePrompt.trim().length === 0) {
         throw new Error('Prompt vide après génération');
       }
-      const generationPrompt = withSelectedFormatInstruction(activePrompt);
+      const generationPrompt = withLogoOverlayInstruction(withSelectedFormatInstruction(activePrompt));
 
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
           ? generateVideo(generationPrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
-          : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, options.logo_enabled ? options.logo_url : ''),
+          : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
         generateCaption({
           objective: marketing_angle || objective,
           idea: idea_chosen || input_text,
@@ -259,12 +370,14 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
       setProgress(100);
 
       // === AUTO-VÉRIFICATION VISUELLE (image uniquement, une seule régénération max) ===
-      let finalContentUrl = contentUrl;
+      let finalContentUrl = !isVideo && options.logo_enabled && options.logo_url
+        ? await composeImageWithExactLogo(contentUrl, options.logo_url, options.logo_position, format)
+        : contentUrl;
       let finalActivePrompt = activePrompt;
-      if (!isVideo && contentUrl && !abortController.signal.aborted) {
+      if (!isVideo && finalContentUrl && !abortController.signal.aborted) {
         try {
           const verdict = await verifyGeneratedImage({
-            imageUrl: contentUrl,
+            imageUrl: finalContentUrl,
             promptFr: activePrompt,
             format,
             hasText: !!options.show_text,
@@ -280,17 +393,19 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
             });
             const improved = verdict.improved_prompt_fr;
             setPromptFr(improved);
-            const improvedGenerationPrompt = withSelectedFormatInstruction(improved);
+            const improvedGenerationPrompt = withLogoOverlayInstruction(withSelectedFormatInstruction(improved));
             const retryUrl = await generateImage(
               improvedGenerationPrompt,
               ai_model,
               format,
               input_photos?.[0]?.url,
               abortController.signal,
-              options.logo_enabled ? options.logo_url : '',
+              '',
             );
             if (retryUrl) {
-              finalContentUrl = retryUrl;
+              finalContentUrl = options.logo_enabled && options.logo_url
+                ? await composeImageWithExactLogo(retryUrl, options.logo_url, options.logo_position, format)
+                : retryUrl;
               finalActivePrompt = improved;
             }
           }
