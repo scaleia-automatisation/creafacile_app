@@ -13,6 +13,7 @@ const imageModels: { value: AIModel; label: string }[] = [
   { value: 'gpt-image-5-mini', label: 'GPT Image 5 Mini' },
   { value: 'gpt-5.4-image-2', label: 'GPT 5.4 Image 2' },
   { value: 'grok-image', label: 'Grok AI 🤖' },
+  { value: 'seedream-4.5', label: 'Seedream 4.5 🌱' },
 ];
 
 const videoModels: { value: AIModel; label: string }[] = [
