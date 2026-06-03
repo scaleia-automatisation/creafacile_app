@@ -750,32 +750,21 @@ const GenerationStep = () => {
                 </Button>
               </div>
             )}
+
+            {/* New content button */}
+            <div className="pt-4 border-t border-foreground/10">
+              <Button
+                onClick={handleNewProject}
+                variant="outline"
+                className="w-full border-foreground/10 text-foreground hover:border-secondary rounded-btn py-5 text-sm font-bold"
+              >
+                <FilePlus className="w-4 h-4 mr-2" /> Générer un nouveau contenu
+              </Button>
+            </div>
           </div>
         )}
 
         {status === 'error' && (
-          <div className="text-center py-6">
-            <p className="text-destructive font-medium mb-3">Erreur lors de la génération</p>
-            <p className="text-sm text-muted-foreground mb-4">Aucun crédit n'a été déduit.</p>
-            <Button onClick={handleGenerate} className="gradient-bg border-0 text-primary-foreground">
-              <RefreshCw className="w-4 h-4 mr-2" /> Réessayer
-            </Button>
-          </div>
-        )}
-      </StepContainer>
-
-      {/* New project button - only after generation is done */}
-      {status === 'done' && (
-        <div className="flex justify-center mt-6">
-          <Button
-            onClick={handleNewProject}
-            variant="outline"
-            className="border-foreground/10 text-foreground hover:border-secondary px-8 py-5 text-base font-semibold"
-          >
-            <FilePlus className="w-5 h-5 mr-2" /> Nouveau projet
-          </Button>
-        </div>
-      )}
 
       {/* New project confirmation dialog */}
       <Dialog open={showNewProjectDialog} onOpenChange={setShowNewProjectDialog}>
