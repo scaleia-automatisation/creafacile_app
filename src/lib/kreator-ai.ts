@@ -825,7 +825,7 @@ Adapter STRICTEMENT la composition, le cadrage, la taille et la POSITION EXACTE 
   - Sous-texte : juste sous le titre dans le même tiers, taille 5-7% hauteur.
   - Emoji : intégré dans le titre, jamais sur le sujet, jamais dispersé dans le visuel.
   - Badge : coin du tiers texte (top-left/right), marge ≥5%, taille ≈ 10-13% hauteur.
-  - Logo : coin opposé au titre (par défaut bottom-right), marge ≥4%, taille ≈ 4-6% largeur.
+  - Logo : coin opposé au titre (par défaut bottom-right), marge ≥10%, taille ≈ 4-6% largeur.
 
 RÈGLE COMMUNE — DÉCLARATION DE POSITIONS OBLIGATOIRE DANS LE PROMPT :
 Dans le prompt_fr généré, lister EXPLICITEMENT pour CHAQUE élément (sujet, texte titre, sous-texte, emoji, badge, logo) sa POSITION précise selon la grille + coordonnées en % adaptées au ratio ${params.format}. Exemple attendu (style — adapter au cas réel) : « titre en bandeau bottom-center, y 80-90%, taille 10% hauteur, marges 8% ; logo en bottom-right, marge 6%, taille 6% largeur ; sujet hero centré, x 20-80% y 25-75% ». Aucun élément ne doit être laissé sans position explicite. Composer le visuel SPÉCIFIQUEMENT pour le ratio ${params.format} dès la phase scène (ne pas générer en 1:1 puis recadrer mentalement). Si une position demandée entre en conflit avec une safe-zone, ajuster la scène (recul, décentrement, plongée) plutôt que d'enfreindre la règle.
