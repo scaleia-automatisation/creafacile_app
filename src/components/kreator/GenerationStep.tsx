@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock, Eye, EyeOff } from 'lucide-react';
 import StepContainer from './StepContainer';
-import { generateImage, generateVideo, generateCaption, generatePrompt, type PlatformCaptions } from '@/lib/kreator-ai';
+import { generateImage, generateVideo, generateCaption, generatePrompt, verifyGeneratedImage, type PlatformCaptions } from '@/lib/kreator-ai';
 import type { Json } from '@/integrations/supabase/types';
 import { getVideoDurationSec, supportsVoiceOver } from '@/lib/voice-over';
 import { supabase } from '@/integrations/supabase/client';
@@ -258,6 +258,47 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
       if (progressInterval) clearInterval(progressInterval);
       setProgress(100);
 
+      // === AUTO-VÉRIFICATION VISUELLE (image uniquement, une seule régénération max) ===
+      let finalContentUrl = contentUrl;
+      let finalActivePrompt = activePrompt;
+      if (!isVideo && contentUrl && !abortController.signal.aborted) {
+        try {
+          const verdict = await verifyGeneratedImage({
+            imageUrl: contentUrl,
+            promptFr: activePrompt,
+            format,
+            hasText: !!options.show_text,
+            textContent: options.text_content,
+            textPosition: options.text_position,
+            hasLogo: !!options.logo_enabled,
+            logoPosition: options.logo_position,
+          });
+          if (!verdict.ok && verdict.improved_prompt_fr && !abortController.signal.aborted) {
+            console.warn('[verify] image non conforme, régénération:', verdict.issues);
+            toast.message('Optimisation visuelle automatique en cours…', {
+              description: verdict.issues.slice(0, 2).join(' • '),
+            });
+            const improved = verdict.improved_prompt_fr;
+            setPromptFr(improved);
+            const improvedGenerationPrompt = withSelectedFormatInstruction(improved);
+            const retryUrl = await generateImage(
+              improvedGenerationPrompt,
+              ai_model,
+              format,
+              input_photos?.[0]?.url,
+              abortController.signal,
+              options.logo_enabled ? options.logo_url : '',
+            );
+            if (retryUrl) {
+              finalContentUrl = retryUrl;
+              finalActivePrompt = improved;
+            }
+          }
+        } catch (e) {
+          console.warn('[verify] échec auto-vérification (non bloquant):', e);
+        }
+      }
+
       const { data: deducted } = await supabase.rpc('deduct_credits', {
         p_user_id: user.id,
         p_amount: creditsNeeded,
@@ -276,15 +317,15 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
         type,
         ai_model,
         format,
-        prompt_en_final: activePrompt,
-        prompt_fr_final: activePrompt,
-        result_url: contentUrl,
+        prompt_en_final: finalActivePrompt,
+        prompt_fr_final: finalActivePrompt,
+        result_url: finalContentUrl,
         credits_used: creditsNeeded,
         status: 'done',
         captions: (captionResult ?? null) as unknown as Json,
       }]);
 
-      setResultUrl(contentUrl);
+      setResultUrl(finalContentUrl);
       setCreditsUsed(creditsNeeded);
       setCaptions(captionResult);
       setStatus('done');
