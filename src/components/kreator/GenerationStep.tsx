@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock, Eye, EyeOff } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { generateImage, generateVideo, generateCaption, generatePrompt, type PlatformCaptions } from '@/lib/kreator-ai';
+import type { Json } from '@/integrations/supabase/types';
 import { getVideoDurationSec, supportsVoiceOver } from '@/lib/voice-over';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -171,6 +172,10 @@ const GenerationStep = () => {
     videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
   });
 
+  const withSelectedFormatInstruction = (prompt: string) => `${prompt.trim()}
+
+CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le contenu final STRICTEMENT en ${format}. Ce ratio ${format} est prioritaire sur toute autre indication du prompt. Adapter cadrage, composition et marges de sécurité à ce format, sans couper les éléments essentiels.`;
+
   const handleGenerate = async (opts?: { forcePromptRegen?: boolean }) => {
     if (!user) {
       toast.error('Connectez-vous pour générer du contenu');
@@ -213,11 +218,12 @@ const GenerationStep = () => {
       if (!activePrompt || activePrompt.trim().length === 0) {
         throw new Error('Prompt vide après génération');
       }
+      const generationPrompt = withSelectedFormatInstruction(activePrompt);
 
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
-          ? generateVideo(activePrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
-          : generateImage(activePrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, options.logo_enabled ? options.logo_url : ''),
+          ? generateVideo(generationPrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
+          : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, options.logo_enabled ? options.logo_url : ''),
         generateCaption({
           objective: marketing_angle || objective,
           idea: idea_chosen || input_text,
@@ -236,7 +242,7 @@ const GenerationStep = () => {
           ton: options.ton,
           visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
           freeDescription: input_text,
-          promptValide: activePrompt,
+          promptValide: generationPrompt,
           advancedSettings: [
             options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
             options.logo_enabled ? `logo: ${options.logo_position}${type === 'video' ? ` (apparition ${options.logo_appearance})` : ''}` : '',
@@ -275,7 +281,7 @@ const GenerationStep = () => {
         result_url: contentUrl,
         credits_used: creditsNeeded,
         status: 'done',
-        captions: (captionResult ?? null) as any,
+        captions: (captionResult ?? null) as unknown as Json,
       }]);
 
       setResultUrl(contentUrl);
@@ -283,9 +289,9 @@ const GenerationStep = () => {
       setCaptions(captionResult);
       setStatus('done');
       await refreshProfile();
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (progressInterval) clearInterval(progressInterval);
-      if (err?.name === 'AbortError' || err?.message === 'Generation cancelled') {
+      if (err instanceof DOMException && err.name === 'AbortError' || err instanceof Error && err.message === 'Generation cancelled') {
         toast.info('Génération annulée');
         setStatus('idle');
       } else {

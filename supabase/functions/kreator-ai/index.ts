@@ -14,6 +14,30 @@ const jsonResp = (body: object, status = 200) =>
 
 const jsonError = (status: number, error: string) => jsonResp({ error }, status);
 
+const normalizeAspectRatio = (value: unknown): "1:1" | "3:4" | "9:16" | "4:3" | "16:9" => {
+  const raw = String(value || "").trim();
+  if (["1:1", "3:4", "9:16", "4:3", "16:9"].includes(raw)) return raw as any;
+  if (["1024x1792", "1024x1536"].includes(raw)) return "9:16";
+  if (["1792x1024", "1536x1024"].includes(raw)) return "16:9";
+  return "1:1";
+};
+
+const aspectLabel = (aspect: string) => aspect === "9:16"
+  ? "vertical 9:16 story"
+  : aspect === "3:4"
+  ? "vertical 3:4 portrait"
+  : aspect === "16:9"
+  ? "horizontal 16:9 widescreen"
+  : aspect === "4:3"
+  ? "horizontal 4:3 landscape"
+  : "square 1:1";
+
+const gatewaySizeFromAspect = (aspect: string) => aspect === "9:16" || aspect === "3:4"
+  ? "1024x1536"
+  : aspect === "16:9" || aspect === "4:3"
+  ? "1536x1024"
+  : "1024x1024";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -41,8 +65,9 @@ serve(async (req) => {
       };
       const geminiModel = nanoBananaModelMap[ai_model] || "google/gemini-3.1-flash-image-preview";
 
-      const aspectLabel = size === "9:16" ? "vertical 9:16 portrait" : size === "16:9" ? "horizontal 16:9 landscape" : "square 1:1";
-      const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}${logo_url ? "\n\nIMPORTANT: The second reference image is the user's brand logo. You MUST integrate this EXACT logo into the generated image — do NOT invent, redraw, restyle or substitute any other logo. Reproduce it identically (same shapes, colors, typography, proportions)." : ""}`;
+      const selectedAspect = normalizeAspectRatio(size);
+      const selectedAspectLabel = aspectLabel(selectedAspect);
+      const enhancedPrompt = `Generate an image with aspect ratio ${selectedAspect} (${selectedAspectLabel}). IMPORTANT: this aspect ratio comes from the user's Format field and must be respected strictly. ${prompt || ""}${logo_url ? "\n\nIMPORTANT: The second reference image is the user's brand logo. You MUST integrate this EXACT logo into the generated image — do NOT invent, redraw, restyle or substitute any other logo. Reproduce it identically (same shapes, colors, typography, proportions)." : ""}`;
 
       const nbRes = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
         method: "POST",
@@ -82,11 +107,8 @@ serve(async (req) => {
       const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
       if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-      const gatewaySize = size === "9:16"
-        ? "1024x1536"
-        : size === "16:9"
-          ? "1536x1024"
-          : "1024x1024";
+      const selectedAspect = normalizeAspectRatio(size);
+      const gatewaySize = gatewaySizeFromAspect(selectedAspect);
 
       const imageRes = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
         method: "POST",
@@ -96,7 +118,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           model: "openai/gpt-image-2",
-          prompt: prompt || "",
+          prompt: `Generate strictly in aspect ratio ${selectedAspect}. ${prompt || ""}`,
           n: 1,
           size: gatewaySize,
           quality: "low",
@@ -132,7 +154,7 @@ serve(async (req) => {
 
       const geminiModel = imagenModelMap[ai_model] || "imagen-4.0-generate-001";
 
-      const aspectRatio = size === "1024x1792" || size === "9:16" ? "9:16" : size === "1792x1024" || size === "16:9" ? "16:9" : "1:1";
+      const aspectRatio = normalizeAspectRatio(size);
 
       const imagenRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:predict?key=${VERTEX_API_KEY}`, {
         method: "POST",
