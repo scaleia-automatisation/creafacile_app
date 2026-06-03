@@ -868,7 +868,11 @@ serve(async (req) => {
         : size === "4:3"
         ? "horizontal 4:3 landscape"
         : "square 1:1";
-      const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}`;
+      const hasInput = !!input_image_url;
+      const logoInstruction = logo_url
+        ? `\n\nIMPORTANT: The ${hasInput ? "second" : "first"} reference image is the user's brand logo. You MUST integrate this EXACT logo into the generated image — do NOT invent, redraw, restyle or substitute any other logo. Reproduce it identically (same shapes, colors, typography, proportions), keep its transparent background, do not crop or rotate it, and place it discreetly without covering the main subject.`
+        : "";
+      const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}${logoInstruction}`;
 
       const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
