@@ -876,6 +876,8 @@ serve(async (req) => {
         : "";
       const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}${logoInstruction}`;
 
+      const aspectRatioParam = size === "9:16" || size === "16:9" || size === "1:1" || size === "3:4" || size === "4:3" ? size : "1:1";
+
       const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -887,6 +889,8 @@ serve(async (req) => {
         body: JSON.stringify({
           model: orModel,
           modalities: outputModalities,
+          aspect_ratio: aspectRatioParam,
+          extra_body: { aspect_ratio: aspectRatioParam },
           messages: [
             (() => {
               const parts: any[] = [{ type: "text", text: enhancedPrompt }];
