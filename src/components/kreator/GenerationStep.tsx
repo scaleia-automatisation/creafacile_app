@@ -772,7 +772,7 @@ const GenerationStep = () => {
           <div className="text-center py-6">
             <p className="text-destructive font-medium mb-3">Erreur lors de la génération</p>
             <p className="text-sm text-muted-foreground mb-4">Aucun crédit n'a été déduit.</p>
-            <Button onClick={handleGenerate} className="gradient-bg border-0 text-primary-foreground">
+            <Button onClick={() => handleGenerate()} className="gradient-bg border-0 text-primary-foreground">
               <RefreshCw className="w-4 h-4 mr-2" /> Réessayer
             </Button>
           </div>
