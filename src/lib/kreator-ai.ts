@@ -1191,6 +1191,7 @@ export async function generateImage(
     'qwen/image-edit', 'ideogram/character', 'ideogram/image',
     'dall-e-3', 'nano-banana-2', 'nano-banana-pro',
     'imagen-4', 'imagen-4-ultra', 'imagen-4-fast',
+    'seedream-4.5',
   ].includes(aiModel);
 
   // === kie.ai image models — start + polling ===
