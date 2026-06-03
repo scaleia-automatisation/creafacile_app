@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock, Eye, EyeOff } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { generateImage, generateVideo, generateCaption, generatePrompt, type PlatformCaptions } from '@/lib/kreator-ai';
+import type { Json } from '@/integrations/supabase/types';
 import { getVideoDurationSec, supportsVoiceOver } from '@/lib/voice-over';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -280,7 +281,7 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
         result_url: contentUrl,
         credits_used: creditsNeeded,
         status: 'done',
-        captions: captionResult ?? null,
+        captions: (captionResult ?? null) as Json,
       }]);
 
       setResultUrl(contentUrl);
