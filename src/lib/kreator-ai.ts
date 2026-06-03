@@ -799,11 +799,35 @@ RAPPEL FINAL : si la scène imaginée ne permet pas naturellement de placer le t
 ━━━━━━━━━━━━━━━━━━
 RÈGLES SPÉCIFIQUES PAR FORMAT / RATIO (${params.format})
 ━━━━━━━━━━━━━━━━━━
-Adapter STRICTEMENT la composition, le cadrage, la taille du texte et la position du logo au ratio demandé :
-• FORMAT 9:16 (vertical / Reels / Stories / TikTok) — composition verticale plein écran mobile. Sujet hero occupe le tiers central. Zone texte = tiers haut OU tiers bas (jamais sur le sujet du milieu). Marges latérales ≥8% (safe-zone UI plateformes). Titre max 8-10% de la hauteur. Logo dans un coin haut ou bas avec ≥6% de marge, taille ≈5-7% de la largeur. Réserver visuellement les 12% supérieurs (UI profil/handle) et 18% inférieurs (UI captions/CTA plateforme) — y placer le texte uniquement si demandé, sinon laisser respirer.
-• FORMAT 1:1 (carré / Instagram feed) — composition centrée équilibrée. Sujet hero occupe le centre (40-55% surface). Zone texte = bandeau haut OU bandeau bas, jamais sur le sujet. Marges ≥6% sur les 4 côtés. Titre max 8-12% de la hauteur. Logo dans un coin avec ≥5% de marge, taille ≈6-8% du côté.
-• FORMAT 16:9 (horizontal / YouTube / LinkedIn / desktop) — composition cinématographique large. Sujet hero décentré (règle des tiers, point fort gauche ou droit). Zone texte = tiers gauche ou tiers droit libre (composition asymétrique), jamais sur le sujet. Marges ≥5% latérales, ≥7% haut/bas. Titre max 10-14% de la hauteur. Logo dans un coin avec ≥4% de marge, taille ≈4-6% de la largeur.
-RÈGLE COMMUNE : composer le visuel SPÉCIFIQUEMENT pour le ratio ${params.format} dès la phase scène (ne pas générer en 1:1 puis recadrer mentalement). Les éléments essentiels (sujet, texte, logo) DOIVENT respecter les safe-zones du format ci-dessus. Si la position demandée pour le texte ou le logo entre en conflit avec la lisibilité ou la safe-zone, ajuster la composition (recul, décentrement) plutôt que d'enfreindre la règle.
+Adapter STRICTEMENT la composition, le cadrage, la taille et la POSITION EXACTE de chaque élément (sujet/image hero, texte titre, sous-texte, emoji, badge, logo) au ratio demandé. Utiliser une GRILLE 9 ZONES (top-left, top-center, top-right, mid-left, center, mid-right, bottom-left, bottom-center, bottom-right) + coordonnées en POURCENTAGE (x%, y%, w%, h%) pour DÉCRIRE EXPLICITEMENT dans le prompt_fr la position de CHAQUE élément.
+
+• FORMAT 9:16 (vertical / Reels / Stories / TikTok — ratio 1080×1920) — composition verticale plein écran mobile.
+  - Sujet/image hero : zone mid-center, centré horizontalement (x ≈ 10-90%), bande verticale y ≈ 25-72% (tiers central). Occupe 50-65% de la surface utile.
+  - Texte titre : zone top-center (y ≈ 14-24%) OU bottom-center (y ≈ 76-86%), JAMAIS y ≈ 25-72% (réservé sujet). Largeur max 84% (marges latérales ≥8%). Taille 8-10% hauteur. Aligné centre.
+  - Sous-texte / accroche secondaire : juste sous le titre (haut) ou juste au-dessus du CTA (bas), 4-6% hauteur, marges ≥10%.
+  - Emoji : intégré DANS le titre (avant ou après le mot clé), même taille que le texte associé (jamais flottant aléatoirement). Pas d'emoji sur le sujet.
+  - Badge / pastille (prix, promo) : top-left ou top-right (x ≈ 6-26% ou 74-94%, y ≈ 14-22%), taille ≈ 12-16% largeur, n'écrase JAMAIS le titre ni le sujet.
+  - Logo : coin top-right OU bottom-right (par défaut bottom-right), marge ≥6%, taille ≈ 5-7% de la largeur, jamais sur sujet/texte.
+  - Safe-UI plateforme : zones y ≤12% (handle profil) et y ≥82% (captions/CTA TikTok/Reels) doivent rester visuellement aérées si non utilisées pour le texte/logo.
+
+• FORMAT 1:1 (carré / Instagram feed — ratio 1080×1080) — composition centrée équilibrée.
+  - Sujet/image hero : zone center (x ≈ 22-78%, y ≈ 22-78%), 40-55% surface, hiérarchie hero claire.
+  - Texte titre : bandeau top-center (y ≈ 8-20%) OU bottom-center (y ≈ 80-92%), largeur max 88% (marges ≥6%), taille 8-12% hauteur, aligné centre.
+  - Sous-texte : sous/au-dessus du titre (3-5% hauteur), marges ≥10%.
+  - Emoji : intégré dans le titre (jamais flottant), même taille que le texte ; un emoji décoratif possible en coin opposé au logo (top-left si logo bottom-right), taille ≈ 6-8% côté.
+  - Badge : top-left ou top-right (marge ≥6%), taille ≈ 12-15% côté.
+  - Logo : coin (par défaut bottom-right), marge ≥5%, taille ≈ 6-8% du côté.
+
+• FORMAT 16:9 (horizontal / YouTube / LinkedIn / desktop — ratio 1920×1080) — composition cinématographique asymétrique (règle des tiers).
+  - Sujet/image hero : tiers gauche (x ≈ 5-45%) OU tiers droit (x ≈ 55-95%), pleine hauteur utile (y ≈ 8-92%), 40-55% surface. Choisir UN côté en fonction du sens de lecture (texte côté opposé).
+  - Texte titre : tiers OPPOSÉ au sujet (x ≈ 55-95% si sujet à gauche, sinon x ≈ 5-45%), aligné gauche, bloc vertical centré (y ≈ 25-75%), taille titre 10-14% hauteur, marges latérales ≥5% / haut-bas ≥7%.
+  - Sous-texte : juste sous le titre dans le même tiers, taille 5-7% hauteur.
+  - Emoji : intégré dans le titre, jamais sur le sujet, jamais dispersé dans le visuel.
+  - Badge : coin du tiers texte (top-left/right), marge ≥5%, taille ≈ 10-13% hauteur.
+  - Logo : coin opposé au titre (par défaut bottom-right), marge ≥4%, taille ≈ 4-6% largeur.
+
+RÈGLE COMMUNE — DÉCLARATION DE POSITIONS OBLIGATOIRE DANS LE PROMPT :
+Dans le prompt_fr généré, lister EXPLICITEMENT pour CHAQUE élément (sujet, texte titre, sous-texte, emoji, badge, logo) sa POSITION précise selon la grille + coordonnées en % adaptées au ratio ${params.format}. Exemple attendu (style — adapter au cas réel) : « titre en bandeau bottom-center, y 80-90%, taille 10% hauteur, marges 8% ; logo en bottom-right, marge 6%, taille 6% largeur ; sujet hero centré, x 20-80% y 25-75% ». Aucun élément ne doit être laissé sans position explicite. Composer le visuel SPÉCIFIQUEMENT pour le ratio ${params.format} dès la phase scène (ne pas générer en 1:1 puis recadrer mentalement). Si une position demandée entre en conflit avec une safe-zone, ajuster la scène (recul, décentrement, plongée) plutôt que d'enfreindre la règle.
 
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE CARROUSEL
@@ -852,6 +876,9 @@ ${params.contentType === 'video' ? `Déroulé / scènes :
 
 Format & rendu technique :
 [aspect ratio ${params.format}, modèle IA ${aiModelName}, qualité photoréaliste premium, contraintes techniques spécifiques]
+
+Positions exactes des éléments (OBLIGATOIRE — adapté au ratio ${params.format}) :
+[Lister EXPLICITEMENT la position de CHAQUE élément visible avec la grille 9 zones (top-left, top-center, top-right, mid-left, center, mid-right, bottom-left, bottom-center, bottom-right) + coordonnées en pourcentage (x%, y%, w%, h%) + taille relative. Inclure systématiquement : sujet/image hero, texte titre, sous-texte (si présent), emoji (s'il y en a — toujours intégré au texte), badge/pastille (si activé), logo (si activé). Format attendu pour chaque ligne : « élément → zone, x ≈ A-B%, y ≈ C-D%, taille ≈ E% de [hauteur|largeur|plus petit côté], marges ≥ F% ». Respecter STRICTEMENT les safe-zones du format ${params.format} décrites plus haut. Aucun chevauchement, aucune collision, aucun élément sur le sujet.]
 
 ${params.contentType === 'image' || params.contentType === 'carousel' ? `Direction artistique premium (OBLIGATOIRE — RÉDIGER SUR-MESURE, JAMAIS COPIER-COLLER UN GÉNÉRIQUE) :
 [Rédige ICI un paragraphe de direction artistique 100% SUR-MESURE, dérivé STRICTEMENT des inputs utilisateur (type d'offre = ${params.offerType || 'n/c'}, produit/service = ${params.productService || 'n/c'}, description = ${params.productDescription || 'n/c'}, secteur = ${params.companySector || 'n/c'}, activité = ${params.companyActivity || 'n/c'}, objectif = ${params.objective || 'n/c'}, persona = ${params.targetPersona || 'n/c'}, marché = ${params.market || 'n/c'}, réglages avancés activés). RÈGLES DE PRIORITÉ ABSOLUE :
@@ -1307,15 +1334,18 @@ RÈGLES À VÉRIFIER (chaque violation = échec) :
 7) Cohérence visuelle premium digne d'une affiche pro (pas de rendu "template Canva basique").
 8) RATIO/FORMAT : l'image respecte EXACTEMENT le ratio demandé (1:1 carré, 16:9 horizontal cinéma, 9:16 vertical mobile). Aucune déformation, aucun cadrage incohérent avec le format.
 9) SAFE-ZONES SPÉCIFIQUES AU FORMAT :
-   - 9:16 vertical : marges latérales ≥8%, titre max 8-10% hauteur, sujet en tiers central, texte en tiers haut OU bas (jamais centre sur le sujet), logo en coin avec ≥6% marge et taille ≈5-7% largeur. Les 12% du haut et 18% du bas doivent rester lisibles malgré l'UI plateforme.
-   - 1:1 carré : marges ≥6% sur les 4 côtés, sujet hero centré 40-55% surface, texte en bandeau haut ou bas, logo coin avec ≥5% marge et taille ≈6-8% côté.
-   - 16:9 horizontal : composition asymétrique (règle des tiers), texte sur le tiers gauche OU droit libre (jamais sur le sujet), marges ≥5% lat/≥7% haut-bas, titre max 10-14% hauteur, logo coin avec ≥4% marge et taille ≈4-6% largeur.
+   Grille de référence : 9 zones (top-left, top-center, top-right, mid-left, center, mid-right, bottom-left, bottom-center, bottom-right) + coordonnées en pourcentage (x%, y%).
+   - 9:16 vertical (1080×1920) : sujet hero zone mid-center (x 10-90%, y 25-72%, 50-65% surface) ; titre top-center (y 14-24%) OU bottom-center (y 76-86%), largeur max 84%, taille 8-10% hauteur ; sous-texte attaché au titre ; emoji intégré au titre (même taille, jamais flottant) ; badge en top-left/top-right (12-16% largeur) ; logo coin (par défaut bottom-right), marge ≥6%, taille 5-7% largeur. Safe-UI : 12% du haut et 18% du bas réservés/aérés.
+   - 1:1 carré (1080×1080) : sujet hero centré (x 22-78%, y 22-78%, 40-55% surface) ; titre bandeau top-center (y 8-20%) OU bottom-center (y 80-92%), largeur ≤88%, taille 8-12% hauteur ; sous-texte collé au titre ; emoji intégré au titre (un emoji décoratif possible en coin opposé au logo, 6-8% côté) ; badge top-left/top-right (12-15% côté) ; logo coin (par défaut bottom-right), marge ≥5%, taille 6-8% côté.
+   - 16:9 horizontal (1920×1080) : composition asymétrique règle des tiers — sujet hero tiers gauche (x 5-45%) OU tiers droit (x 55-95%), pleine hauteur utile (y 8-92%) ; titre dans le tiers OPPOSÉ (aligné gauche, y 25-75%), taille 10-14% hauteur, marges latérales ≥5%, haut-bas ≥7% ; sous-texte sous le titre (5-7% hauteur) ; emoji intégré au titre uniquement ; badge coin du tiers texte ; logo coin opposé au titre (par défaut bottom-right), marge ≥4%, taille 4-6% largeur.
+10) POSITIONS EXPLICITES DANS LE PROMPT : vérifier que le prompt déclarait bien la position de CHAQUE élément (sujet, titre, sous-texte, emoji, badge, logo) avec zone + coordonnées % adaptées au ratio. Si l'image ne respecte pas ces positions OU si le prompt n'en déclarait pas → échec.
+11) EMOJI : aucun emoji parasite flottant dans la scène ou sur le sujet. Tout emoji visible doit être intégré au bloc texte (titre/sous-texte) à la même hauteur de ligne, sauf cas explicite de pictogramme décoratif en coin opposé au logo (taille 6-8%).
 
 SORTIE JSON :
 {"ok": boolean, "issues": ["..."], "improved_prompt_fr": "..."}
 - "ok" = true UNIQUEMENT si toutes les règles applicables sont respectées.
 - "issues" = liste courte et précise des violations constatées.
-- "improved_prompt_fr" = OBLIGATOIRE si ok=false. Reprends le prompt original et REFORMULE-le pour corriger explicitement chaque violation, en intégrant les contraintes spécifiques au ratio demandé (safe-zones, marges, tailles relatives, position sujet/texte/logo selon le format). Conserve la structure et l'esprit du prompt original, ajoute des consignes de composition correctives très explicites adaptées au format ${params.format}. Reste en français, prêt à envoyer au modèle image.`;
+- "improved_prompt_fr" = OBLIGATOIRE si ok=false. Reprends le prompt original et REFORMULE-le en AJOUTANT/CORRIGEANT un bloc « Positions exactes des éléments » qui déclare pour CHAQUE élément (sujet, titre, sous-texte, emoji, badge, logo) sa zone (grille 9) + coordonnées (x%, y%) + taille relative + marges, parfaitement adaptés au ratio ${params.format} (safe-zones décrites règle 9). Conserve la structure et l'esprit du prompt original. Reste en français, prêt à envoyer au modèle image.`;
 
   const userText = `PROMPT ORIGINAL UTILISÉ POUR GÉNÉRER L'IMAGE :
 """
