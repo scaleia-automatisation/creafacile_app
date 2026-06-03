@@ -54,9 +54,10 @@ const ContentTypeStep = () => {
 
   const models = type === 'video' ? videoModels : imageModels;
   const isGptImage = ai_model === 'gpt-image-5' || ai_model === 'gpt-image-5-mini' || ai_model === 'gpt-5.4-image-2';
+  const isSeedream = ai_model === 'seedream-4.5';
   const availableFormats = type === 'video'
     ? formats.filter((f) => f.value === '9:16' || f.value === '16:9')
-    : isGptImage
+    : isGptImage || isSeedream
     ? formats
     : formats.filter((f) => f.value === '1:1' || f.value === '9:16' || f.value === '16:9');
 
