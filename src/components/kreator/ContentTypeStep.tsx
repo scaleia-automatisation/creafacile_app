@@ -11,6 +11,7 @@ const imageModels: { value: AIModel; label: string }[] = [
   { value: 'imagen-4-fast', label: 'Imagen 4 Fast' },
   { value: 'gpt-image-5', label: 'GPT Image 5' },
   { value: 'gpt-image-5-mini', label: 'GPT Image 5 Mini' },
+  { value: 'gpt-5.4-image-2', label: 'GPT 5.4 Image 2' },
   { value: 'grok-image', label: 'Grok AI 🤖' },
 ];
 
