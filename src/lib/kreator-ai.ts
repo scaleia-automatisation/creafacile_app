@@ -817,7 +817,7 @@ Adapter STRICTEMENT la composition, le cadrage, la taille et la POSITION EXACTE 
   - Sous-texte : sous/au-dessus du titre (3-5% hauteur), marges ≥10%.
   - Emoji : intégré dans le titre (jamais flottant), même taille que le texte ; un emoji décoratif possible en coin opposé au logo (top-left si logo bottom-right), taille ≈ 6-8% côté.
   - Badge : top-left ou top-right (marge ≥6%), taille ≈ 12-15% côté.
-  - Logo : coin (par défaut bottom-right), marge ≥5%, taille ≈ 6-8% du côté.
+  - Logo : coin (par défaut bottom-right), marge ≥10%, taille ≈ 6-8% du côté.
 
 • FORMAT 16:9 (horizontal / YouTube / LinkedIn / desktop — ratio 1920×1080) — composition cinématographique asymétrique (règle des tiers).
   - Sujet/image hero : tiers gauche (x ≈ 5-45%) OU tiers droit (x ≈ 55-95%), pleine hauteur utile (y ≈ 8-92%), 40-55% surface. Choisir UN côté en fonction du sens de lecture (texte côté opposé).
