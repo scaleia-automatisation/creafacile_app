@@ -828,7 +828,7 @@ Adapter STRICTEMENT la composition, le cadrage, la taille et la POSITION EXACTE 
   - Logo : coin opposé au titre (par défaut bottom-right), marge ≥10%, taille ≈ 4-6% largeur.
 
 RÈGLE COMMUNE — DÉCLARATION DE POSITIONS OBLIGATOIRE DANS LE PROMPT :
-Dans le prompt_fr généré, lister EXPLICITEMENT pour CHAQUE élément (sujet, texte titre, sous-texte, emoji, badge, logo) sa POSITION précise selon la grille + coordonnées en % adaptées au ratio ${params.format}. Exemple attendu (style — adapter au cas réel) : « titre en bandeau bottom-center, y 80-90%, taille 10% hauteur, marges 8% ; logo en bottom-right, marge 6%, taille 6% largeur ; sujet hero centré, x 20-80% y 25-75% ». Aucun élément ne doit être laissé sans position explicite. Composer le visuel SPÉCIFIQUEMENT pour le ratio ${params.format} dès la phase scène (ne pas générer en 1:1 puis recadrer mentalement). Si une position demandée entre en conflit avec une safe-zone, ajuster la scène (recul, décentrement, plongée) plutôt que d'enfreindre la règle.
+Dans le prompt_fr généré, lister EXPLICITEMENT pour CHAQUE élément (sujet, texte titre, sous-texte, emoji, badge, logo) sa POSITION précise selon la grille + coordonnées en % adaptées au ratio ${params.format}. Exemple attendu (style — adapter au cas réel) : « titre en bandeau bottom-center, y 80-90%, taille 10% hauteur, marges 8% ; logo en bottom-right, marge 10%, taille 6% largeur ; sujet hero centré, x 20-80% y 25-75% ». Aucun élément ne doit être laissé sans position explicite. Composer le visuel SPÉCIFIQUEMENT pour le ratio ${params.format} dès la phase scène (ne pas générer en 1:1 puis recadrer mentalement). Si une position demandée entre en conflit avec une safe-zone, ajuster la scène (recul, décentrement, plongée) plutôt que d'enfreindre la règle.
 
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE CARROUSEL
@@ -1327,9 +1327,9 @@ export async function verifyGeneratedImage(params: {
 
 RÈGLES À VÉRIFIER (chaque violation = échec) :
 1) Le texte overlay n'est JAMAIS écrit par-dessus le sujet principal (visage, produit hero, plat, packaging, personnage). Il vit dans une zone négative (fond, ciel, mur, sol, espace vide).
-2) Le texte est parfaitement lisible (contraste suffisant, taille adaptée mobile 6-12% hauteur, marges ≥6%, kerning correct, intégré nativement).
+2) Le texte est parfaitement lisible (contraste suffisant, taille adaptée mobile 6-12% hauteur, marges ≥10%, kerning correct, intégré nativement).
 3) Le logo est DISCRET : taille ≈3-8% de la plus petite dimension, placé en signature dans le coin/position attendue, jamais sur le sujet, jamais surdimensionné, jamais déformé/recoloré.
-3-bis) Le logo n'est JAMAIS superposé, ni chevauchant, ni en contact, ni dans la même bande horizontale/verticale que le texte overlay (titre, sous-texte, CTA, badge, emoji du titre). Marge minimale de 4% (idéal ≥6%) entre tout pixel du logo et tout glyphe de texte. Toute proximité visible logo↔texte = échec.
+3-bis) Le logo n'est JAMAIS superposé, ni chevauchant, ni en contact, ni dans la même bande horizontale/verticale que le texte overlay (titre, sous-texte, CTA, badge, emoji du titre). Marge minimale STRICTEMENT SUPÉRIEURE À 10% entre tout pixel du logo et tout glyphe de texte. Toute proximité visible logo↔texte = échec.
 4) Aucun élément essentiel coupé/tronqué/sortant du cadre, marges de sécurité respectées.
 5) Hiérarchie claire : sujet hero domine, texte zone calme, logo signature — pas de collision/chevauchement entre les trois zones.
 6) Wording du texte affiché STRICTEMENT identique au texte demandé (pas d'invention, pas de faute).
