@@ -55,6 +55,23 @@ const loadCanvasImage = (src: string) => new Promise<HTMLImageElement>((resolve,
   img.src = src;
 });
 
+const toDrawableImageSrc = async (src: string) => {
+  if (src.startsWith('data:')) return src;
+  try {
+    const response = await fetch(src, { mode: 'cors' });
+    if (!response.ok) return src;
+    const blob = await response.blob();
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return src;
+  }
+};
+
 const logoPositionLabel = (position?: string) => ({
   'bottom-right': 'en bas à droite',
   'bottom-left': 'en bas à gauche',
@@ -75,7 +92,8 @@ const xmlEscape = (value: string) => value
 const composeImageWithExactLogo = async (imageUrl: string, logoUrl: string, position: string, format: string) => {
   if (!imageUrl || !logoUrl) return imageUrl;
   try {
-    const [base, logo] = await Promise.all([loadCanvasImage(imageUrl), loadCanvasImage(logoUrl)]);
+    const [baseSrc, logoSrc] = await Promise.all([toDrawableImageSrc(imageUrl), toDrawableImageSrc(logoUrl)]);
+    const [base, logo] = await Promise.all([loadCanvasImage(baseSrc), loadCanvasImage(logoSrc)]);
     const width = base.naturalWidth || base.width;
     const height = base.naturalHeight || base.height;
     const canvas = document.createElement('canvas');
