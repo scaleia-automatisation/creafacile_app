@@ -854,7 +854,7 @@ serve(async (req) => {
         "imagen-4-fast": "google/imagen-4-fast",
         "gpt-image-5": "openai/gpt-5-image",
         "gpt-image-5-mini": "openai/gpt-5-image-mini",
-        "grok-image": "x-ai/grok-2-image-1212",
+        "grok-image": "x-ai/grok-4-image",
       };
       const orModel = orModelMap[ai_model || ""];
       if (!orModel) return jsonError(400, `Modèle OpenRouter non mappé: ${ai_model}`);
