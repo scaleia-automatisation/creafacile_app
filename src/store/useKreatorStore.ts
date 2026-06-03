@@ -6,6 +6,7 @@ export type AIModel =
   | 'dall-e-3' | 'imagen-4' | 'imagen-4-ultra' | 'imagen-4-fast' | 'nano-banana-2' | 'nano-banana-pro'
   | 'qwen/image-edit' | 'ideogram/character' | 'ideogram/image'
   | 'gpt-image-5' | 'gpt-image-5-mini' | 'gpt-5.4-image-2' | 'grok-image'
+  | 'seedream-4.5'
   | 'sora-2-t2v' | 'sora-2-i2v' | 'sora-2-pro-i2v' | 'sora-2-pro-t2v' | 'sora-2-pro-character'
   // legacy/alt
   | 'veo-3' | 'veo-3.1'
