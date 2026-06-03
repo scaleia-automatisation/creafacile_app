@@ -858,6 +858,8 @@ serve(async (req) => {
       };
       const orModel = orModelMap[ai_model || ""];
       if (!orModel) return jsonError(400, `Modèle OpenRouter non mappé: ${ai_model}`);
+      const imageOnlyOpenRouterModels = new Set(["x-ai/grok-imagine-image-quality"]);
+      const outputModalities = imageOnlyOpenRouterModels.has(orModel) ? ["image"] : ["image", "text"];
 
       const aspectLabel = size === "9:16"
         ? "vertical 9:16 story"
@@ -884,7 +886,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           model: orModel,
-          modalities: ["image", "text"],
+          modalities: outputModalities,
           messages: [
             (() => {
               const parts: any[] = [{ type: "text", text: enhancedPrompt }];
