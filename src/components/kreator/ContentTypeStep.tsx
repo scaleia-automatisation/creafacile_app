@@ -13,6 +13,7 @@ const imageModels: { value: AIModel; label: string }[] = [
   { value: 'gpt-image-5-mini', label: 'GPT Image 5 Mini' },
   { value: 'gpt-5.4-image-2', label: 'GPT 5.4 Image 2' },
   { value: 'grok-image', label: 'Grok AI 🤖' },
+  { value: 'seedream-4.5', label: 'Seedream 4.5 🌱' },
 ];
 
 const videoModels: { value: AIModel; label: string }[] = [
@@ -53,9 +54,10 @@ const ContentTypeStep = () => {
 
   const models = type === 'video' ? videoModels : imageModels;
   const isGptImage = ai_model === 'gpt-image-5' || ai_model === 'gpt-image-5-mini' || ai_model === 'gpt-5.4-image-2';
+  const isSeedream = ai_model === 'seedream-4.5';
   const availableFormats = type === 'video'
     ? formats.filter((f) => f.value === '9:16' || f.value === '16:9')
-    : isGptImage
+    : isGptImage || isSeedream
     ? formats
     : formats.filter((f) => f.value === '1:1' || f.value === '9:16' || f.value === '16:9');
 
