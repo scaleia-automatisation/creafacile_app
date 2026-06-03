@@ -1334,15 +1334,18 @@ RÈGLES À VÉRIFIER (chaque violation = échec) :
 7) Cohérence visuelle premium digne d'une affiche pro (pas de rendu "template Canva basique").
 8) RATIO/FORMAT : l'image respecte EXACTEMENT le ratio demandé (1:1 carré, 16:9 horizontal cinéma, 9:16 vertical mobile). Aucune déformation, aucun cadrage incohérent avec le format.
 9) SAFE-ZONES SPÉCIFIQUES AU FORMAT :
-   - 9:16 vertical : marges latérales ≥8%, titre max 8-10% hauteur, sujet en tiers central, texte en tiers haut OU bas (jamais centre sur le sujet), logo en coin avec ≥6% marge et taille ≈5-7% largeur. Les 12% du haut et 18% du bas doivent rester lisibles malgré l'UI plateforme.
-   - 1:1 carré : marges ≥6% sur les 4 côtés, sujet hero centré 40-55% surface, texte en bandeau haut ou bas, logo coin avec ≥5% marge et taille ≈6-8% côté.
-   - 16:9 horizontal : composition asymétrique (règle des tiers), texte sur le tiers gauche OU droit libre (jamais sur le sujet), marges ≥5% lat/≥7% haut-bas, titre max 10-14% hauteur, logo coin avec ≥4% marge et taille ≈4-6% largeur.
+   Grille de référence : 9 zones (top-left, top-center, top-right, mid-left, center, mid-right, bottom-left, bottom-center, bottom-right) + coordonnées en pourcentage (x%, y%).
+   - 9:16 vertical (1080×1920) : sujet hero zone mid-center (x 10-90%, y 25-72%, 50-65% surface) ; titre top-center (y 14-24%) OU bottom-center (y 76-86%), largeur max 84%, taille 8-10% hauteur ; sous-texte attaché au titre ; emoji intégré au titre (même taille, jamais flottant) ; badge en top-left/top-right (12-16% largeur) ; logo coin (par défaut bottom-right), marge ≥6%, taille 5-7% largeur. Safe-UI : 12% du haut et 18% du bas réservés/aérés.
+   - 1:1 carré (1080×1080) : sujet hero centré (x 22-78%, y 22-78%, 40-55% surface) ; titre bandeau top-center (y 8-20%) OU bottom-center (y 80-92%), largeur ≤88%, taille 8-12% hauteur ; sous-texte collé au titre ; emoji intégré au titre (un emoji décoratif possible en coin opposé au logo, 6-8% côté) ; badge top-left/top-right (12-15% côté) ; logo coin (par défaut bottom-right), marge ≥5%, taille 6-8% côté.
+   - 16:9 horizontal (1920×1080) : composition asymétrique règle des tiers — sujet hero tiers gauche (x 5-45%) OU tiers droit (x 55-95%), pleine hauteur utile (y 8-92%) ; titre dans le tiers OPPOSÉ (aligné gauche, y 25-75%), taille 10-14% hauteur, marges latérales ≥5%, haut-bas ≥7% ; sous-texte sous le titre (5-7% hauteur) ; emoji intégré au titre uniquement ; badge coin du tiers texte ; logo coin opposé au titre (par défaut bottom-right), marge ≥4%, taille 4-6% largeur.
+10) POSITIONS EXPLICITES DANS LE PROMPT : vérifier que le prompt déclarait bien la position de CHAQUE élément (sujet, titre, sous-texte, emoji, badge, logo) avec zone + coordonnées % adaptées au ratio. Si l'image ne respecte pas ces positions OU si le prompt n'en déclarait pas → échec.
+11) EMOJI : aucun emoji parasite flottant dans la scène ou sur le sujet. Tout emoji visible doit être intégré au bloc texte (titre/sous-texte) à la même hauteur de ligne, sauf cas explicite de pictogramme décoratif en coin opposé au logo (taille 6-8%).
 
 SORTIE JSON :
 {"ok": boolean, "issues": ["..."], "improved_prompt_fr": "..."}
 - "ok" = true UNIQUEMENT si toutes les règles applicables sont respectées.
 - "issues" = liste courte et précise des violations constatées.
-- "improved_prompt_fr" = OBLIGATOIRE si ok=false. Reprends le prompt original et REFORMULE-le pour corriger explicitement chaque violation, en intégrant les contraintes spécifiques au ratio demandé (safe-zones, marges, tailles relatives, position sujet/texte/logo selon le format). Conserve la structure et l'esprit du prompt original, ajoute des consignes de composition correctives très explicites adaptées au format ${params.format}. Reste en français, prêt à envoyer au modèle image.`;
+- "improved_prompt_fr" = OBLIGATOIRE si ok=false. Reprends le prompt original et REFORMULE-le en AJOUTANT/CORRIGEANT un bloc « Positions exactes des éléments » qui déclare pour CHAQUE élément (sujet, titre, sous-texte, emoji, badge, logo) sa zone (grille 9) + coordonnées (x%, y%) + taille relative + marges, parfaitement adaptés au ratio ${params.format} (safe-zones décrites règle 9). Conserve la structure et l'esprit du prompt original. Reste en français, prêt à envoyer au modèle image.`;
 
   const userText = `PROMPT ORIGINAL UTILISÉ POUR GÉNÉRER L'IMAGE :
 """
