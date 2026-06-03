@@ -281,7 +281,7 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
         result_url: contentUrl,
         credits_used: creditsNeeded,
         status: 'done',
-        captions: (captionResult ?? null) as Json,
+        captions: (captionResult ?? null) as unknown as Json,
       }]);
 
       setResultUrl(contentUrl);
