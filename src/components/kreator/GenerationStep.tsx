@@ -238,7 +238,7 @@ const GenerationStep = () => {
 CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le contenu final STRICTEMENT en ${format}. Ce ratio ${format} est prioritaire sur toute autre indication du prompt. Adapter cadrage, composition et marges de sécurité à ce format, sans couper les éléments essentiels.`;
 
   const withLogoOverlayInstruction = (prompt: string) => {
-    if (!options.logo_enabled || !options.logo_url || isVideo) return prompt;
+    if (!options.logo_enabled || !options.logo_url || type === 'video') return prompt;
     return `${prompt.trim()}
 
 CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recréer, styliser, écrire ou intégrer lui-même un logo, un monogramme, une icône de marque ou un lettrage de marque. Il doit seulement réserver un petit espace propre et vide ${logoPositionLabel(options.logo_position)}, avec marges de sécurité, car le vrai logo PNG importé par l'utilisateur sera appliqué APRÈS génération en surimpression exacte. Aucun autre logo ne doit apparaître dans l'image.`;
