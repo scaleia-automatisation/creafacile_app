@@ -1329,6 +1329,7 @@ RÈGLES À VÉRIFIER (chaque violation = échec) :
 1) Le texte overlay n'est JAMAIS écrit par-dessus le sujet principal (visage, produit hero, plat, packaging, personnage). Il vit dans une zone négative (fond, ciel, mur, sol, espace vide).
 2) Le texte est parfaitement lisible (contraste suffisant, taille adaptée mobile 6-12% hauteur, marges ≥6%, kerning correct, intégré nativement).
 3) Le logo est DISCRET : taille ≈3-8% de la plus petite dimension, placé en signature dans le coin/position attendue, jamais sur le sujet, jamais surdimensionné, jamais déformé/recoloré.
+3-bis) Le logo n'est JAMAIS superposé, ni chevauchant, ni en contact, ni dans la même bande horizontale/verticale que le texte overlay (titre, sous-texte, CTA, badge, emoji du titre). Marge minimale de 4% (idéal ≥6%) entre tout pixel du logo et tout glyphe de texte. Toute proximité visible logo↔texte = échec.
 4) Aucun élément essentiel coupé/tronqué/sortant du cadre, marges de sécurité respectées.
 5) Hiérarchie claire : sujet hero domine, texte zone calme, logo signature — pas de collision/chevauchement entre les trois zones.
 6) Wording du texte affiché STRICTEMENT identique au texte demandé (pas d'invention, pas de faute).
