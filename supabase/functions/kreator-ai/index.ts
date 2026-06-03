@@ -874,9 +874,9 @@ serve(async (req) => {
       const logoInstruction = logo_url
         ? `\n\nIMPORTANT: The ${hasInput ? "second" : "first"} reference image is the user's brand logo. You MUST integrate this EXACT logo into the generated image — do NOT invent, redraw, restyle or substitute any other logo. Reproduce it identically (same shapes, colors, typography, proportions), keep its transparent background, do not crop or rotate it, and place it discreetly without covering the main subject.`
         : "";
-      const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}${logoInstruction}`;
-
       const aspectRatioParam = size === "9:16" || size === "16:9" || size === "1:1" || size === "3:4" || size === "4:3" ? size : "1:1";
+      const framingInstruction = ` IMPORTANT: strictly respect the ${aspectRatioParam} aspect ratio coming from the user's "format" field. Frame the scene so that ALL essential elements (the plate/dish, product, subject, logo, text) are FULLY VISIBLE within the frame — never crop, cut off, or hide any essential element. Leave safe margins around the subject. Compose the shot specifically for a ${aspectLabel} canvas.`;
+      const enhancedPrompt = `Generate an image with aspect ratio ${aspectRatioParam} (${aspectLabel}).${framingInstruction} ${prompt || ""}${logoInstruction}`;
 
       const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
