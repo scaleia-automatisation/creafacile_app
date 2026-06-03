@@ -1303,12 +1303,17 @@ RÈGLES À VÉRIFIER (chaque violation = échec) :
 5) Hiérarchie claire : sujet hero domine, texte zone calme, logo signature — pas de collision/chevauchement entre les trois zones.
 6) Wording du texte affiché STRICTEMENT identique au texte demandé (pas d'invention, pas de faute).
 7) Cohérence visuelle premium digne d'une affiche pro (pas de rendu "template Canva basique").
+8) RATIO/FORMAT : l'image respecte EXACTEMENT le ratio demandé (1:1 carré, 16:9 horizontal cinéma, 9:16 vertical mobile). Aucune déformation, aucun cadrage incohérent avec le format.
+9) SAFE-ZONES SPÉCIFIQUES AU FORMAT :
+   - 9:16 vertical : marges latérales ≥8%, titre max 8-10% hauteur, sujet en tiers central, texte en tiers haut OU bas (jamais centre sur le sujet), logo en coin avec ≥6% marge et taille ≈5-7% largeur. Les 12% du haut et 18% du bas doivent rester lisibles malgré l'UI plateforme.
+   - 1:1 carré : marges ≥6% sur les 4 côtés, sujet hero centré 40-55% surface, texte en bandeau haut ou bas, logo coin avec ≥5% marge et taille ≈6-8% côté.
+   - 16:9 horizontal : composition asymétrique (règle des tiers), texte sur le tiers gauche OU droit libre (jamais sur le sujet), marges ≥5% lat/≥7% haut-bas, titre max 10-14% hauteur, logo coin avec ≥4% marge et taille ≈4-6% largeur.
 
 SORTIE JSON :
 {"ok": boolean, "issues": ["..."], "improved_prompt_fr": "..."}
 - "ok" = true UNIQUEMENT si toutes les règles applicables sont respectées.
 - "issues" = liste courte et précise des violations constatées.
-- "improved_prompt_fr" = OBLIGATOIRE si ok=false. Reprends le prompt original et REFORMULE-le pour corriger explicitement chaque violation (réserver zone négative pour le texte, recadrer pour libérer espace, imposer taille discrète du logo dans le coin demandé, etc.). Conserve la structure et l'esprit du prompt original, ajoute des consignes de composition correctives très explicites. Reste en français, prêt à envoyer au modèle image.`;
+- "improved_prompt_fr" = OBLIGATOIRE si ok=false. Reprends le prompt original et REFORMULE-le pour corriger explicitement chaque violation, en intégrant les contraintes spécifiques au ratio demandé (safe-zones, marges, tailles relatives, position sujet/texte/logo selon le format). Conserve la structure et l'esprit du prompt original, ajoute des consignes de composition correctives très explicites adaptées au format ${params.format}. Reste en français, prêt à envoyer au modèle image.`;
 
   const userText = `PROMPT ORIGINAL UTILISÉ POUR GÉNÉRER L'IMAGE :
 """
@@ -1316,11 +1321,11 @@ ${params.promptFr}
 """
 
 CONTEXTE :
-- Format : ${params.format}
+- Format / ratio attendu : ${params.format} ${params.format === '9:16' ? '(vertical mobile — Reels/Stories/TikTok)' : params.format === '16:9' ? '(horizontal cinéma — YouTube/LinkedIn/desktop)' : params.format === '1:1' ? '(carré — Instagram feed)' : ''}
 - Texte overlay demandé : ${params.hasText ? `"${params.textContent || ''}" (position attendue : ${params.textPosition || 'n/c'})` : 'aucun'}
 - Logo demandé : ${params.hasLogo ? `oui (position attendue : ${params.logoPosition || 'n/c'}, taille discrète signature)` : 'aucun'}
 
-Analyse l'image jointe et retourne le JSON.`;
+Analyse l'image jointe en tenant compte du ratio ${params.format} et de ses safe-zones spécifiques, et retourne le JSON.`;
 
   const data = await callKreatorAI({
     action: 'verify_image',
