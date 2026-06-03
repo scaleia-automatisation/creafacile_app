@@ -877,6 +877,9 @@ ${params.contentType === 'video' ? `Déroulé / scènes :
 Format & rendu technique :
 [aspect ratio ${params.format}, modèle IA ${aiModelName}, qualité photoréaliste premium, contraintes techniques spécifiques]
 
+Positions exactes des éléments (OBLIGATOIRE — adapté au ratio ${params.format}) :
+[Lister EXPLICITEMENT la position de CHAQUE élément visible avec la grille 9 zones (top-left, top-center, top-right, mid-left, center, mid-right, bottom-left, bottom-center, bottom-right) + coordonnées en pourcentage (x%, y%, w%, h%) + taille relative. Inclure systématiquement : sujet/image hero, texte titre, sous-texte (si présent), emoji (s'il y en a — toujours intégré au texte), badge/pastille (si activé), logo (si activé). Format attendu pour chaque ligne : « élément → zone, x ≈ A-B%, y ≈ C-D%, taille ≈ E% de [hauteur|largeur|plus petit côté], marges ≥ F% ». Respecter STRICTEMENT les safe-zones du format ${params.format} décrites plus haut. Aucun chevauchement, aucune collision, aucun élément sur le sujet.]
+
 ${params.contentType === 'image' || params.contentType === 'carousel' ? `Direction artistique premium (OBLIGATOIRE — RÉDIGER SUR-MESURE, JAMAIS COPIER-COLLER UN GÉNÉRIQUE) :
 [Rédige ICI un paragraphe de direction artistique 100% SUR-MESURE, dérivé STRICTEMENT des inputs utilisateur (type d'offre = ${params.offerType || 'n/c'}, produit/service = ${params.productService || 'n/c'}, description = ${params.productDescription || 'n/c'}, secteur = ${params.companySector || 'n/c'}, activité = ${params.companyActivity || 'n/c'}, objectif = ${params.objective || 'n/c'}, persona = ${params.targetPersona || 'n/c'}, marché = ${params.market || 'n/c'}, réglages avancés activés). RÈGLES DE PRIORITÉ ABSOLUE :
 1) Les INPUTS UTILISATEUR sont PRIORITAIRES sur toute consigne stylistique générique. Si un réglage avancé impose une palette, un style de rendu, un ton, une typographie, un texte overlay, un logo → respecter à 100% sans contradiction.
