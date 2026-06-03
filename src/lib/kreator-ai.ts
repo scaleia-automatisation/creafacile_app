@@ -808,7 +808,7 @@ Adapter STRICTEMENT la composition, le cadrage, la taille et la POSITION EXACTE 
   - Sous-texte / accroche secondaire : juste sous le titre (haut) ou juste au-dessus du CTA (bas), 4-6% hauteur, marges ≥10%.
   - Emoji : intégré DANS le titre (avant ou après le mot clé), même taille que le texte associé (jamais flottant aléatoirement). Pas d'emoji sur le sujet.
   - Badge / pastille (prix, promo) : top-left ou top-right (x ≈ 6-26% ou 74-94%, y ≈ 14-22%), taille ≈ 12-16% largeur, n'écrase JAMAIS le titre ni le sujet.
-  - Logo : coin top-right OU bottom-right (par défaut bottom-right), marge ≥6%, taille ≈ 5-7% de la largeur, jamais sur sujet/texte.
+  - Logo : coin top-right OU bottom-right (par défaut bottom-right), marge ≥10%, taille ≈ 5-7% de la largeur, jamais sur sujet/texte.
   - Safe-UI plateforme : zones y ≤12% (handle profil) et y ≥82% (captions/CTA TikTok/Reels) doivent rester visuellement aérées si non utilisées pour le texte/logo.
 
 • FORMAT 1:1 (carré / Instagram feed — ratio 1080×1080) — composition centrée équilibrée.
