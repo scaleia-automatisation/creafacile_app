@@ -854,7 +854,6 @@ serve(async (req) => {
         "imagen-4-fast": "google/imagen-4-fast",
         "gpt-image-5": "openai/gpt-image-2",
         "gpt-image-5-mini": "openai/gpt-image-1-mini",
-        "gpt-5.4-image-2": "openai/gpt-5.4-image-2",
         "grok-image": "x-ai/grok-2-image-1212",
       };
       const orModel = orModelMap[ai_model || ""];
