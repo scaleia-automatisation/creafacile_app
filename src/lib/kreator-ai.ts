@@ -1263,6 +1263,79 @@ export async function generateImage(
   return imageUrl;
 }
 
+export interface ImageVerifyResult {
+  ok: boolean;
+  issues: string[];
+  improved_prompt_fr?: string;
+}
+
+/**
+ * Vérifie visuellement une image générée contre les contraintes de composition
+ * (texte non superposé au sujet, logo discret, hiérarchie respectée, marges).
+ * Si non conforme, renvoie un prompt amélioré pour régénération.
+ */
+export async function verifyGeneratedImage(params: {
+  imageUrl: string;
+  promptFr: string;
+  format: string;
+  hasText: boolean;
+  textContent?: string;
+  textPosition?: string;
+  hasLogo: boolean;
+  logoPosition?: string;
+}): Promise<ImageVerifyResult> {
+  const systemPrompt = `Tu es directeur artistique senior. Tu audites une image marketing générée par IA et vérifies STRICTEMENT le respect de règles de composition non négociables. Tu réponds UNIQUEMENT en JSON valide.
+
+RÈGLES À VÉRIFIER (chaque violation = échec) :
+1) Le texte overlay n'est JAMAIS écrit par-dessus le sujet principal (visage, produit hero, plat, packaging, personnage). Il vit dans une zone négative (fond, ciel, mur, sol, espace vide).
+2) Le texte est parfaitement lisible (contraste suffisant, taille adaptée mobile 6-12% hauteur, marges ≥6%, kerning correct, intégré nativement).
+3) Le logo est DISCRET : taille ≈3-8% de la plus petite dimension, placé en signature dans le coin/position attendue, jamais sur le sujet, jamais surdimensionné, jamais déformé/recoloré.
+4) Aucun élément essentiel coupé/tronqué/sortant du cadre, marges de sécurité respectées.
+5) Hiérarchie claire : sujet hero domine, texte zone calme, logo signature — pas de collision/chevauchement entre les trois zones.
+6) Wording du texte affiché STRICTEMENT identique au texte demandé (pas d'invention, pas de faute).
+7) Cohérence visuelle premium digne d'une affiche pro (pas de rendu "template Canva basique").
+
+SORTIE JSON :
+{"ok": boolean, "issues": ["..."], "improved_prompt_fr": "..."}
+- "ok" = true UNIQUEMENT si toutes les règles applicables sont respectées.
+- "issues" = liste courte et précise des violations constatées.
+- "improved_prompt_fr" = OBLIGATOIRE si ok=false. Reprends le prompt original et REFORMULE-le pour corriger explicitement chaque violation (réserver zone négative pour le texte, recadrer pour libérer espace, imposer taille discrète du logo dans le coin demandé, etc.). Conserve la structure et l'esprit du prompt original, ajoute des consignes de composition correctives très explicites. Reste en français, prêt à envoyer au modèle image.`;
+
+  const userText = `PROMPT ORIGINAL UTILISÉ POUR GÉNÉRER L'IMAGE :
+"""
+${params.promptFr}
+"""
+
+CONTEXTE :
+- Format : ${params.format}
+- Texte overlay demandé : ${params.hasText ? `"${params.textContent || ''}" (position attendue : ${params.textPosition || 'n/c'})` : 'aucun'}
+- Logo demandé : ${params.hasLogo ? `oui (position attendue : ${params.logoPosition || 'n/c'}, taille discrète signature)` : 'aucun'}
+
+Analyse l'image jointe et retourne le JSON.`;
+
+  const data = await callKreatorAI({
+    action: 'verify_image',
+    model: 'gpt-4o',
+    messages: [{ role: 'user', content: userText }],
+    system_prompt: systemPrompt,
+    image_base64s: [params.imageUrl],
+  });
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) return { ok: true, issues: [] };
+  try {
+    const cleaned = String(content).replace(/```json\n?|\n?```/g, '').trim();
+    const parsed = JSON.parse(cleaned);
+    return {
+      ok: !!parsed.ok,
+      issues: Array.isArray(parsed.issues) ? parsed.issues : [],
+      improved_prompt_fr: parsed.improved_prompt_fr || undefined,
+    };
+  } catch {
+    return { ok: true, issues: [] };
+  }
+}
+
 export async function generateVideo(
   promptEn: string,
   aiModel: AIModel = 'veo-3',
