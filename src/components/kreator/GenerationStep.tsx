@@ -47,6 +47,67 @@ const platformLabels: Record<Platform, string> = {
   linkedin: '💼 Caption LinkedIn',
 };
 
+const loadCanvasImage = (src: string) => new Promise<HTMLImageElement>((resolve, reject) => {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => resolve(img);
+  img.onerror = reject;
+  img.src = src;
+});
+
+const logoPositionLabel = (position?: string) => ({
+  'bottom-right': 'en bas à droite',
+  'bottom-left': 'en bas à gauche',
+  'top-left': 'en haut à gauche',
+  'top-right': 'en haut à droite',
+  'top-center': 'en haut au centre',
+  'middle-left': 'au milieu à gauche',
+  'middle-right': 'au milieu à droite',
+  'bottom-center': 'en bas au centre',
+}[position || 'bottom-center'] || 'en bas au centre');
+
+const composeImageWithExactLogo = async (imageUrl: string, logoUrl: string, position: string, format: string) => {
+  if (!imageUrl || !logoUrl) return imageUrl;
+  try {
+    const [base, logo] = await Promise.all([loadCanvasImage(imageUrl), loadCanvasImage(logoUrl)]);
+    const width = base.naturalWidth || base.width;
+    const height = base.naturalHeight || base.height;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return imageUrl;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(base, 0, 0, width, height);
+
+    const minDim = Math.min(width, height);
+    const margin = minDim * (format === '9:16' ? 0.06 : format === '16:9' ? 0.045 : 0.055);
+    const maxLogoHeight = minDim * (format === '16:9' ? 0.055 : 0.07);
+    const maxLogoWidth = width * (format === '9:16' ? 0.2 : 0.16);
+    const scale = Math.min(maxLogoWidth / logo.width, maxLogoHeight / logo.height);
+    const logoW = logo.width * scale;
+    const logoH = logo.height * scale;
+
+    const x = position?.includes('right')
+      ? width - margin - logoW
+      : position?.includes('left')
+      ? margin
+      : (width - logoW) / 2;
+    const y = position?.includes('top')
+      ? margin
+      : position?.includes('middle')
+      ? (height - logoH) / 2
+      : height - margin - logoH;
+
+    ctx.drawImage(logo, x, y, logoW, logoH);
+    return canvas.toDataURL('image/png');
+  } catch (error) {
+    console.warn('[logo overlay] impossible de composer le logo exact:', error);
+    return imageUrl;
+  }
+};
+
 const GenerationStep = () => {
   const { user, refreshProfile } = useAuth();
   const navigate = useNavigate();
@@ -176,6 +237,13 @@ const GenerationStep = () => {
 
 CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le contenu final STRICTEMENT en ${format}. Ce ratio ${format} est prioritaire sur toute autre indication du prompt. Adapter cadrage, composition et marges de sécurité à ce format, sans couper les éléments essentiels.`;
 
+  const withLogoOverlayInstruction = (prompt: string) => {
+    if (!options.logo_enabled || !options.logo_url || isVideo) return prompt;
+    return `${prompt.trim()}
+
+CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recréer, styliser, écrire ou intégrer lui-même un logo, un monogramme, une icône de marque ou un lettrage de marque. Il doit seulement réserver un petit espace propre et vide ${logoPositionLabel(options.logo_position)}, avec marges de sécurité, car le vrai logo PNG importé par l'utilisateur sera appliqué APRÈS génération en surimpression exacte. Aucun autre logo ne doit apparaître dans l'image.`;
+  };
+
   const handleGenerate = async (opts?: { forcePromptRegen?: boolean }) => {
     if (!user) {
       toast.error('Connectez-vous pour générer du contenu');
@@ -218,12 +286,12 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
       if (!activePrompt || activePrompt.trim().length === 0) {
         throw new Error('Prompt vide après génération');
       }
-      const generationPrompt = withSelectedFormatInstruction(activePrompt);
+      const generationPrompt = withLogoOverlayInstruction(withSelectedFormatInstruction(activePrompt));
 
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
           ? generateVideo(generationPrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
-          : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, options.logo_enabled ? options.logo_url : ''),
+          : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
         generateCaption({
           objective: marketing_angle || objective,
           idea: idea_chosen || input_text,
@@ -259,12 +327,14 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
       setProgress(100);
 
       // === AUTO-VÉRIFICATION VISUELLE (image uniquement, une seule régénération max) ===
-      let finalContentUrl = contentUrl;
+      let finalContentUrl = !isVideo && options.logo_enabled && options.logo_url
+        ? await composeImageWithExactLogo(contentUrl, options.logo_url, options.logo_position, format)
+        : contentUrl;
       let finalActivePrompt = activePrompt;
-      if (!isVideo && contentUrl && !abortController.signal.aborted) {
+      if (!isVideo && finalContentUrl && !abortController.signal.aborted) {
         try {
           const verdict = await verifyGeneratedImage({
-            imageUrl: contentUrl,
+            imageUrl: finalContentUrl,
             promptFr: activePrompt,
             format,
             hasText: !!options.show_text,
@@ -280,17 +350,19 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
             });
             const improved = verdict.improved_prompt_fr;
             setPromptFr(improved);
-            const improvedGenerationPrompt = withSelectedFormatInstruction(improved);
+            const improvedGenerationPrompt = withLogoOverlayInstruction(withSelectedFormatInstruction(improved));
             const retryUrl = await generateImage(
               improvedGenerationPrompt,
               ai_model,
               format,
               input_photos?.[0]?.url,
               abortController.signal,
-              options.logo_enabled ? options.logo_url : '',
+              '',
             );
             if (retryUrl) {
-              finalContentUrl = retryUrl;
+              finalContentUrl = options.logo_enabled && options.logo_url
+                ? await composeImageWithExactLogo(retryUrl, options.logo_url, options.logo_position, format)
+                : retryUrl;
               finalActivePrompt = improved;
             }
           }
