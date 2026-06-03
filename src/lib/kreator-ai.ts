@@ -1160,7 +1160,7 @@ export async function generateImage(
   // NOTE: Imagen 4 variants are NOT on OpenRouter — they route through kie.ai below.
   const openRouterModels: AIModel[] = [
     'nano-banana-2', 'nano-banana-pro',
-    'gpt-image-5', 'gpt-image-5-mini', 'grok-image',
+    'gpt-image-5', 'gpt-image-5-mini', 'gpt-5.4-image-2', 'grok-image',
   ];
   if (openRouterModels.includes(aiModel)) {
     if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
