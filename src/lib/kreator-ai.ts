@@ -1166,6 +1166,7 @@ export async function generateImage(
   const openRouterModels: AIModel[] = [
     'nano-banana-2', 'nano-banana-pro',
     'gpt-image-5', 'gpt-image-5-mini', 'grok-image',
+    'seedream-4.5',
   ];
   if (openRouterModels.includes(aiModel)) {
     if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
@@ -1191,7 +1192,6 @@ export async function generateImage(
     'qwen/image-edit', 'ideogram/character', 'ideogram/image',
     'dall-e-3', 'nano-banana-2', 'nano-banana-pro',
     'imagen-4', 'imagen-4-ultra', 'imagen-4-fast',
-    'seedream-4.5',
   ].includes(aiModel);
 
   // === kie.ai image models — start + polling ===

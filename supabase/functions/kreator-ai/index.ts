@@ -745,7 +745,6 @@ serve(async (req) => {
         "imagen-4": "imagen4",
         "imagen-4-ultra": "imagen4-ultra",
         "imagen-4-fast": "imagen4-fast",
-        "seedream-4.5": hasInputImage ? "seedream/4-5-edit" : "seedream/4-5-text-to-image",
       };
 
       const kieModel = kieImageModelMap[ai_model || ""] || ai_model;
@@ -896,6 +895,7 @@ serve(async (req) => {
         "gpt-image-5": "openai/gpt-5-image",
         "gpt-image-5-mini": "openai/gpt-5-image-mini",
         "grok-image": "x-ai/grok-imagine-image-quality",
+        "seedream-4.5": "bytedance/seedream-4.5",
       };
       const orModel = orModelMap[ai_model || ""];
       if (!orModel) return jsonError(400, `Modèle OpenRouter non mappé: ${ai_model}`);
