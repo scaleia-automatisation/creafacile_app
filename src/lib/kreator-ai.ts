@@ -797,6 +797,15 @@ Composition à pensée de directeur artistique senior. Le visuel DOIT respecter 
 RAPPEL FINAL : si la scène imaginée ne permet pas naturellement de placer le texte hors du sujet, REPENSER LA COMPOSITION (recul, plongée/contre-plongée, décentrement du sujet, ajout d'une zone de respiration) — JAMAIS écrire sur le sujet par défaut.
 
 ━━━━━━━━━━━━━━━━━━
+RÈGLES SPÉCIFIQUES PAR FORMAT / RATIO (${params.format})
+━━━━━━━━━━━━━━━━━━
+Adapter STRICTEMENT la composition, le cadrage, la taille du texte et la position du logo au ratio demandé :
+• FORMAT 9:16 (vertical / Reels / Stories / TikTok) — composition verticale plein écran mobile. Sujet hero occupe le tiers central. Zone texte = tiers haut OU tiers bas (jamais sur le sujet du milieu). Marges latérales ≥8% (safe-zone UI plateformes). Titre max 8-10% de la hauteur. Logo dans un coin haut ou bas avec ≥6% de marge, taille ≈5-7% de la largeur. Réserver visuellement les 12% supérieurs (UI profil/handle) et 18% inférieurs (UI captions/CTA plateforme) — y placer le texte uniquement si demandé, sinon laisser respirer.
+• FORMAT 1:1 (carré / Instagram feed) — composition centrée équilibrée. Sujet hero occupe le centre (40-55% surface). Zone texte = bandeau haut OU bandeau bas, jamais sur le sujet. Marges ≥6% sur les 4 côtés. Titre max 8-12% de la hauteur. Logo dans un coin avec ≥5% de marge, taille ≈6-8% du côté.
+• FORMAT 16:9 (horizontal / YouTube / LinkedIn / desktop) — composition cinématographique large. Sujet hero décentré (règle des tiers, point fort gauche ou droit). Zone texte = tiers gauche ou tiers droit libre (composition asymétrique), jamais sur le sujet. Marges ≥5% latérales, ≥7% haut/bas. Titre max 10-14% de la hauteur. Logo dans un coin avec ≥4% de marge, taille ≈4-6% de la largeur.
+RÈGLE COMMUNE : composer le visuel SPÉCIFIQUEMENT pour le ratio ${params.format} dès la phase scène (ne pas générer en 1:1 puis recadrer mentalement). Les éléments essentiels (sujet, texte, logo) DOIVENT respecter les safe-zones du format ci-dessus. Si la position demandée pour le texte ou le logo entre en conflit avec la lisibilité ou la safe-zone, ajuster la composition (recul, décentrement) plutôt que d'enfreindre la règle.
+
+━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE CARROUSEL
 ━━━━━━━━━━━━━━━━━━
 Prompt carrousel : max 400 mots, storytelling cohérent, continuité visuelle ABSOLUE entre slides (même univers graphique, même palette, même typographie, même traitement lumière, même style d'éléments décoratifs — SYSTÈME DE DESIGN unifié comme une vraie campagne d'agence).
