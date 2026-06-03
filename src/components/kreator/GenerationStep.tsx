@@ -171,6 +171,10 @@ const GenerationStep = () => {
     videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
   });
 
+  const withSelectedFormatInstruction = (prompt: string) => `${prompt.trim()}
+
+CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le contenu final STRICTEMENT en ${format}. Ce ratio ${format} est prioritaire sur toute autre indication du prompt. Adapter cadrage, composition et marges de sécurité à ce format, sans couper les éléments essentiels.`;
+
   const handleGenerate = async (opts?: { forcePromptRegen?: boolean }) => {
     if (!user) {
       toast.error('Connectez-vous pour générer du contenu');
@@ -213,11 +217,12 @@ const GenerationStep = () => {
       if (!activePrompt || activePrompt.trim().length === 0) {
         throw new Error('Prompt vide après génération');
       }
+      const generationPrompt = withSelectedFormatInstruction(activePrompt);
 
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
-          ? generateVideo(activePrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
-          : generateImage(activePrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, options.logo_enabled ? options.logo_url : ''),
+          ? generateVideo(generationPrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
+          : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, options.logo_enabled ? options.logo_url : ''),
         generateCaption({
           objective: marketing_angle || objective,
           idea: idea_chosen || input_text,
@@ -236,7 +241,7 @@ const GenerationStep = () => {
           ton: options.ton,
           visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
           freeDescription: input_text,
-          promptValide: activePrompt,
+          promptValide: generationPrompt,
           advancedSettings: [
             options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
             options.logo_enabled ? `logo: ${options.logo_position}${type === 'video' ? ` (apparition ${options.logo_appearance})` : ''}` : '',
