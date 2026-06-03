@@ -14,6 +14,30 @@ const jsonResp = (body: object, status = 200) =>
 
 const jsonError = (status: number, error: string) => jsonResp({ error }, status);
 
+const normalizeAspectRatio = (value: unknown): "1:1" | "3:4" | "9:16" | "4:3" | "16:9" => {
+  const raw = String(value || "").trim();
+  if (["1:1", "3:4", "9:16", "4:3", "16:9"].includes(raw)) return raw as any;
+  if (["1024x1792", "1024x1536"].includes(raw)) return "9:16";
+  if (["1792x1024", "1536x1024"].includes(raw)) return "16:9";
+  return "1:1";
+};
+
+const aspectLabel = (aspect: string) => aspect === "9:16"
+  ? "vertical 9:16 story"
+  : aspect === "3:4"
+  ? "vertical 3:4 portrait"
+  : aspect === "16:9"
+  ? "horizontal 16:9 widescreen"
+  : aspect === "4:3"
+  ? "horizontal 4:3 landscape"
+  : "square 1:1";
+
+const gatewaySizeFromAspect = (aspect: string) => aspect === "9:16" || aspect === "3:4"
+  ? "1024x1536"
+  : aspect === "16:9" || aspect === "4:3"
+  ? "1536x1024"
+  : "1024x1024";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
