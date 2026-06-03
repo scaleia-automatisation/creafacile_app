@@ -280,7 +280,7 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
         result_url: contentUrl,
         credits_used: creditsNeeded,
         status: 'done',
-        captions: (captionResult ?? null) as any,
+        captions: captionResult ?? null,
       }]);
 
       setResultUrl(contentUrl);
@@ -288,9 +288,9 @@ CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le co
       setCaptions(captionResult);
       setStatus('done');
       await refreshProfile();
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (progressInterval) clearInterval(progressInterval);
-      if (err?.name === 'AbortError' || err?.message === 'Generation cancelled') {
+      if (err instanceof DOMException && err.name === 'AbortError' || err instanceof Error && err.message === 'Generation cancelled') {
         toast.info('Génération annulée');
         setStatus('idle');
       } else {
