@@ -66,6 +66,12 @@ const logoPositionLabel = (position?: string) => ({
   'bottom-center': 'en bas au centre',
 }[position || 'bottom-center'] || 'en bas au centre');
 
+const xmlEscape = (value: string) => value
+  .replace(/&/g, '&amp;')
+  .replace(/"/g, '&quot;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;');
+
 const composeImageWithExactLogo = async (imageUrl: string, logoUrl: string, position: string, format: string) => {
   if (!imageUrl || !logoUrl) return imageUrl;
   try {
@@ -85,9 +91,11 @@ const composeImageWithExactLogo = async (imageUrl: string, logoUrl: string, posi
     const margin = minDim * (format === '9:16' ? 0.06 : format === '16:9' ? 0.045 : 0.055);
     const maxLogoHeight = minDim * (format === '16:9' ? 0.055 : 0.07);
     const maxLogoWidth = width * (format === '9:16' ? 0.2 : 0.16);
-    const scale = Math.min(maxLogoWidth / logo.width, maxLogoHeight / logo.height);
-    const logoW = logo.width * scale;
-    const logoH = logo.height * scale;
+    const logoNaturalWidth = logo.naturalWidth || logo.width;
+    const logoNaturalHeight = logo.naturalHeight || logo.height;
+    const scale = Math.min(maxLogoWidth / logoNaturalWidth, maxLogoHeight / logoNaturalHeight);
+    const logoW = logoNaturalWidth * scale;
+    const logoH = logoNaturalHeight * scale;
 
     const x = position?.includes('right')
       ? width - margin - logoW
@@ -104,7 +112,24 @@ const composeImageWithExactLogo = async (imageUrl: string, logoUrl: string, posi
     return canvas.toDataURL('image/png');
   } catch (error) {
     console.warn('[logo overlay] impossible de composer le logo exact:', error);
-    return imageUrl;
+    try {
+      const [base, logo] = await Promise.all([loadCanvasImage(imageUrl), loadCanvasImage(logoUrl)]);
+      const width = base.naturalWidth || base.width || 1024;
+      const height = base.naturalHeight || base.height || 1024;
+      const minDim = Math.min(width, height);
+      const margin = minDim * (format === '9:16' ? 0.06 : format === '16:9' ? 0.045 : 0.055);
+      const logoNaturalWidth = logo.naturalWidth || logo.width || 256;
+      const logoNaturalHeight = logo.naturalHeight || logo.height || 256;
+      const scale = Math.min((width * (format === '9:16' ? 0.2 : 0.16)) / logoNaturalWidth, (minDim * (format === '16:9' ? 0.055 : 0.07)) / logoNaturalHeight);
+      const logoW = logoNaturalWidth * scale;
+      const logoH = logoNaturalHeight * scale;
+      const x = position?.includes('right') ? width - margin - logoW : position?.includes('left') ? margin : (width - logoW) / 2;
+      const y = position?.includes('top') ? margin : position?.includes('middle') ? (height - logoH) / 2 : height - margin - logoH;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><image href="${xmlEscape(imageUrl)}" x="0" y="0" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/><image href="${xmlEscape(logoUrl)}" x="${x}" y="${y}" width="${logoW}" height="${logoH}" preserveAspectRatio="xMidYMid meet"/></svg>`;
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    } catch {
+      return imageUrl;
+    }
   }
 };
 
