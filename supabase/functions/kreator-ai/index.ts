@@ -751,9 +751,18 @@ serve(async (req) => {
       const kieModel = kieImageModelMap[ai_model || ""] || ai_model;
       const aspectRatio = size === "9:16" ? "9:16" : size === "1:1" ? "1:1" : "16:9";
 
+      // If a logo is provided, prepend an explicit instruction so the model
+      // reuses the EXACT logo image instead of inventing/redesigning one.
+      const hasInputImageKie = !!input_image_url;
+      const logoOrderLabelKie = logo_url ? (hasInputImageKie ? "second" : "first") : "";
+      const logoPromptKie = logo_url
+        ? `IMPORTANT: The ${logoOrderLabelKie} reference image is the user's brand logo (PNG, transparent background). You MUST integrate this EXACT logo into the generated image — do NOT invent, redraw, restyle, recolor, retype, or substitute any other logo, monogram, lettering, icon or brand. Reproduce it pixel-identical (same shapes, colors, typography, proportions), keep its transparent background, do not crop or rotate it, place it discreetly without covering the main subject.\n\n`
+        : "";
+      const promptWithLogo = `${logoPromptKie}${prompt || ""}`;
+
       // Build input — qwen/image-edit and ideogram/character require an input image
       const input: Record<string, any> = {
-        prompt: prompt || "",
+        prompt: promptWithLogo,
         aspect_ratio: aspectRatio,
       };
       const needsImage = ai_model === "qwen/image-edit" || ai_model === "ideogram/character";
