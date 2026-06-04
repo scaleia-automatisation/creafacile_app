@@ -868,7 +868,117 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
               </div>
             )}
 
-            {/* Caption section with platform dropdown */}
+            {/* Carousel: N rows of [slide image | caption] */}
+            {type === 'carousel' && carouselSlides && carouselSlides.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Carrousel — {carouselSlides.length} slides
+                  </h3>
+                  <Select value={selectedPlatform} onValueChange={(v) => setSelectedPlatform(v as Platform)}>
+                    <SelectTrigger className="w-[220px] bg-background border-foreground/10 text-foreground text-sm font-bold">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-foreground/10">
+                      {(Object.keys(platformLabels) as Platform[]).map((p) => (
+                        <SelectItem key={p} value={p} className="text-foreground focus:bg-secondary/20 cursor-pointer">
+                          {platformLabels[p]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {carouselSlides.map((slide, idx) => {
+                  const cap = slide.captions[selectedPlatform];
+                  return (
+                    <div
+                      key={idx}
+                      className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-card rounded-card border border-foreground/10 p-4"
+                    >
+                      <div className="space-y-2">
+                        <div className="text-xs font-semibold text-muted-foreground">
+                          Slide {idx + 1}
+                        </div>
+                        <div className="rounded-card overflow-hidden bg-background border border-foreground/10">
+                          <img src={slide.url} alt={`Slide ${idx + 1}`} className="w-full object-cover" />
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-foreground/10 text-foreground hover:border-secondary text-xs"
+                            onClick={() => {
+                              const a = document.createElement('a');
+                              a.href = slide.url;
+                              a.download = `kreator-carousel-slide-${idx + 1}.png`;
+                              a.click();
+                            }}
+                          >
+                            <Download className="w-3.5 h-3.5 mr-1" /> Slide {idx + 1}
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="text-xs font-semibold text-muted-foreground">
+                          Caption — Slide {idx + 1}
+                        </div>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-1 block">Hook</label>
+                          <Textarea
+                            value={cap.hook}
+                            onChange={(e) => updateSlideCaption(idx, 'hook', e.target.value)}
+                            className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                            rows={1}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-1 block">Description</label>
+                          <Textarea
+                            value={cap.description}
+                            onChange={(e) => updateSlideCaption(idx, 'description', e.target.value)}
+                            className="bg-background border-foreground/10 text-foreground text-sm min-h-[60px] resize-none"
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-1 block">Appel à l'action</label>
+                          <Textarea
+                            value={cap.cta}
+                            onChange={(e) => updateSlideCaption(idx, 'cta', e.target.value)}
+                            className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                            rows={1}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-1 block">Hashtags</label>
+                          <Textarea
+                            value={cap.hashtags}
+                            onChange={(e) => updateSlideCaption(idx, 'hashtags', e.target.value)}
+                            className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                            rows={1}
+                          />
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-muted-foreground hover:text-foreground"
+                          onClick={() => {
+                            const text = `${cap.hook}\n${cap.description}\n${cap.cta}\n\n${cap.hashtags}`;
+                            navigator.clipboard.writeText(text);
+                            toast.success(`Caption slide ${idx + 1} copié !`);
+                          }}
+                        >
+                          <Copy className="w-3.5 h-3.5 mr-1" /> Copier
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Caption section with platform dropdown (image / video only) */}
+            {!(type === 'carousel' && carouselSlides && carouselSlides.length > 0) && (
             <div className="bg-card rounded-card p-4 md:p-5 border border-foreground/10">
               <div className="flex items-center justify-between mb-4">
                 <Select value={selectedPlatform} onValueChange={(v) => setSelectedPlatform(v as Platform)}>
@@ -949,6 +1059,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
                 )
               )}
             </div>
+            )}
 
             {/* Publish buttons */}
             <div className="grid grid-cols-2 gap-3">
