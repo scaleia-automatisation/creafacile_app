@@ -1043,7 +1043,11 @@ Génère un prompt unifié, cohérent et fidèle à l'offre. Sobriété et préc
 
   try {
     const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
-    return JSON.parse(cleaned);
+    const parsed = JSON.parse(cleaned);
+    if (parsed && typeof parsed.prompt_fr === 'string') {
+      parsed.prompt_fr = formatPromptWithLineBreaks(parsed.prompt_fr);
+    }
+    return parsed;
   } catch {
     throw new Error('Failed to parse AI response');
   }
