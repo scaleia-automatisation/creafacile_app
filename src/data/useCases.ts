@@ -9,7 +9,7 @@ type ByOffer = Record<OfferKind, ByType>;
 // Pour "Attirer du trafic" la spec ne couvre que Produit : on réutilise la
 // même liste pour Service afin de toujours proposer 4 cas.
 export const USE_CASES: Record<string, ByOffer> = {
-  '🧲 Attirer du trafic': {
+  '🧲 Attirer': {
     produit: {
       image: ['Publicité Premium', 'Lifestyle', 'Promotion', 'Avant / Après'],
       carousel: ['5 Bénéfices', 'Comparatif', 'Erreurs à éviter', 'FAQ Produit'],
@@ -21,7 +21,7 @@ export const USE_CASES: Record<string, ByOffer> = {
       video: ['Hook Viral', 'UGC', 'Démonstration Méthode', 'Avant / Après'],
     },
   },
-  '🎯 Générer des prospects': {
+  '📚 Éduquer': {
     produit: {
       image: ['Promotion', 'Avis Client', 'Comparatif', 'Avant / Après'],
       carousel: ['Comparatif', 'FAQ Produit', 'Témoignage Client', '5 Bénéfices'],
@@ -33,7 +33,7 @@ export const USE_CASES: Record<string, ByOffer> = {
       video: ['Problème → Solution', 'Étude de Cas', 'Témoignage Client', 'Démonstration Méthode'],
     },
   },
-  '🛡️ Rassurer': {
+  '🤝 Convaincre': {
     produit: {
       image: ['Avis Client', 'Avant / Après', 'Comparatif', 'Lifestyle'],
       carousel: ['Témoignage Client', 'FAQ Produit', 'Comparatif', '5 Bénéfices'],

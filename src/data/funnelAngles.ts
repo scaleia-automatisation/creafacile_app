@@ -4,9 +4,9 @@
 import type { ContentType } from '@/store/useKreatorStore';
 
 export const FUNNEL_OBJECTIVES = [
-  '🧲 Attirer du trafic',
-  '🎯 Générer des prospects',
-  '🛡️ Rassurer',
+  '🧲 Attirer',
+  '📚 Éduquer',
+  '🤝 Convaincre',
   '💰 Vendre',
   '🔁 Fidéliser',
 ] as const;
@@ -16,7 +16,7 @@ export type FunnelObjective = typeof FUNNEL_OBJECTIVES[number];
 type AnglesByType = Record<ContentType, string[]>;
 
 export const FUNNEL_ANGLES: Record<FunnelObjective, AnglesByType> = {
-  '🧲 Attirer du trafic': {
+  '🧲 Attirer': {
     image: [
       '🔢 Chiffre choc qui surprend instantanément',
       '❓ Question directe qui parle à ta cible',
@@ -69,7 +69,7 @@ export const FUNNEL_ANGLES: Record<FunnelObjective, AnglesByType> = {
       '⏸️ Cliffhanger coupure avant la révélation',
     ],
   },
-  '🎯 Générer des prospects': {
+  '📚 Éduquer': {
     image: [
       '😩 Problème illustré la galère exacte',
       '⏱️ Promesse chiffrée "Économise X heures"',
@@ -122,7 +122,7 @@ export const FUNNEL_ANGLES: Record<FunnelObjective, AnglesByType> = {
       '🥽 POV problème résolu soulagement filmé',
     ],
   },
-  '🛡️ Rassurer': {
+  '🤝 Convaincre': {
     image: [
       '✅ Garantie visible "Satisfait ou remboursé"',
       '🏅 Certification officielle label, agrément, norme',

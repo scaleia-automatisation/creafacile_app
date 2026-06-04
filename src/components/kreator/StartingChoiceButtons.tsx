@@ -1,6 +1,7 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
 import ContentTypeStep from './ContentTypeStep';
 import UseCaseStep from './UseCaseStep';
+import MarketingAngleStep from './MarketingAngleStep';
 
 const StartingChoiceButtons = () => {
   const {
@@ -46,6 +47,11 @@ const StartingChoiceButtons = () => {
             </button>
           );
         })}
+      </div>
+
+      {/* Angle marketing (filtré par objectif / type d'offre / type de contenu) */}
+      <div className="w-full pt-2">
+        <MarketingAngleStep />
       </div>
 
       {/* Cas d'utilisation (filtré par objectif / type d'offre / type de contenu) */}
