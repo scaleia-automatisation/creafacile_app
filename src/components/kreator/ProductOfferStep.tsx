@@ -366,7 +366,7 @@ const ProductOfferStep = () => {
             }}
             onBlur={handleDescriptionBlur}
             placeholder={descPlaceholder}
-            rows={2}
+            rows={isProduct ? 3 : 2}
             className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[60px] resize-none"
           />
           <p className="text-[11px] text-muted-foreground mt-1">
