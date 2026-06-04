@@ -758,15 +758,30 @@ serve(async (req) => {
         }
         if (status === "completed") {
           // Récupère le binaire vidéo
-          const contentRes = await fetch(`https://api.openai.com/v1/videos/${encodeURIComponent(oaiId)}/content`, {
-            headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
-          });
+          let contentRes: Response;
+          try {
+            contentRes = await fetch(`https://api.openai.com/v1/videos/${encodeURIComponent(oaiId)}/content`, {
+              headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
+            });
+          } catch (e) {
+            console.warn("Sora content fetch transient error (retry):", (e as Error)?.message);
+            return jsonResp({ done: false });
+          }
           if (!contentRes.ok) {
             const t = await contentRes.text();
-            console.error("OpenAI Sora content error:", contentRes.status, t.slice(0, 200));
-            return jsonError(500, "Téléchargement vidéo OpenAI Sora échoué");
+            console.warn("Sora content non-OK (retry):", contentRes.status, t.slice(0, 200));
+            if (contentRes.status >= 500 || contentRes.status === 408 || contentRes.status === 429) {
+              return jsonResp({ done: false });
+            }
+            return jsonError(contentRes.status, "Téléchargement vidéo OpenAI Sora échoué");
           }
-          const videoBuf = new Uint8Array(await contentRes.arrayBuffer());
+          let videoBuf: Uint8Array;
+          try {
+            videoBuf = new Uint8Array(await contentRes.arrayBuffer());
+          } catch (e) {
+            console.warn("Sora content read transient error (retry):", (e as Error)?.message);
+            return jsonResp({ done: false });
+          }
 
           // Upload vers Supabase Storage (bucket public)
           const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
