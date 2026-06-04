@@ -521,9 +521,7 @@ export async function generatePrompt(params: {
   
   const aiModelName = params.aiModel || 'dall-e-3';
   let formatAdaptation = '';
-  if (['imagen-4', 'imagen-4-ultra', 'imagen-4-fast'].includes(aiModelName)) {
-    formatAdaptation = `Modèle IA: ${aiModelName} — Préciser explicitement "aspect ratio ${params.format}" dans le prompt FR.`;
-  } else if (aiModelName === 'dall-e-3') {
+  if (aiModelName === 'dall-e-3') {
     const dalleFormat = params.format === '1:1' ? 'image carrée' : params.format === '16:9' ? 'cadre cinématographique large' : 'format vertical mobile';
     formatAdaptation = `Modèle IA: DALL·E 3 — Intégrer "${dalleFormat}" dans la description du prompt FR.`;
   } else if (['veo-2', 'veo-3', 'veo-3-fast'].includes(aiModelName)) {
@@ -1215,9 +1213,7 @@ export async function generateImage(
   // === OpenRouter models (Nano Banana, GPT Image 5, Grok) ===
   // NOTE: Imagen 4 variants are NOT on OpenRouter — they route through kie.ai below.
   const openRouterModels: AIModel[] = [
-    'nano-banana-2', 'nano-banana-pro',
-    'gpt-image-5', 'gpt-image-5-mini', 'grok-image',
-    'seedream-4.5',
+    'nano-banana-2', 'nano-banana-pro', 'grok-image',
   ];
   if (openRouterModels.includes(aiModel)) {
     if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
@@ -1242,7 +1238,6 @@ export async function generateImage(
   const isKieImageModel = [
     'qwen/image-edit', 'ideogram/character', 'ideogram/image',
     'dall-e-3', 'nano-banana-2', 'nano-banana-pro',
-    'imagen-4', 'imagen-4-ultra', 'imagen-4-fast',
   ].includes(aiModel);
 
   // === kie.ai image models — start + polling ===
