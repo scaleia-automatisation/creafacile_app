@@ -63,7 +63,14 @@ Génère 3 idées virales, persuasives, impactantes et engageantes qui suscitent
 
   try {
     const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
-    return JSON.parse(cleaned);
+    const parsed = JSON.parse(cleaned);
+    // Force the chosen idea hook as the hook on all 4 platforms (non-negotiable rule).
+    if (params.ideaHook) {
+      for (const p of ['facebook', 'instagram', 'tiktok', 'linkedin'] as const) {
+        if (parsed?.[p]) parsed[p].hook = params.ideaHook;
+      }
+    }
+    return parsed;
   } catch {
     throw new Error('Failed to parse AI response');
   }
