@@ -594,7 +594,7 @@ Plan 3 (Impact + CTA – 5-8s) : Image forte / résultat, texte court, call to a
 - 1 message = + conversion
 
 ${params.videoRenderStyle ? `TYPE DE RENDU VIDÉO SÉLECTIONNÉ : "${params.videoRenderStyle}" — Adapter TOUTE la direction artistique, l'ambiance, le cadrage et le style de montage à ce rendu vidéo.` : ''}
-${params.voiceOverText ? `\n🎙️ VOIX OFF (OBLIGATOIRE — À INTÉGRER DANS LA VIDÉO) :\nLe texte de voix off à dire EXACTEMENT (mot pour mot, sans modification) est : "${params.voiceOverText}".\nVoix naturelle, humaine, cohérente avec le ton et le marché.\nLa voix off doit IMPÉRATIVEMENT se terminer au moins 2 secondes AVANT la fin de la vidéo${params.videoDurationSec ? ` (durée totale ${params.videoDurationSec}s — voix off ≤ ${Math.max(1, params.videoDurationSec - 2)}s)` : ''}. Aucun mot ne doit être prononcé dans les 2 dernières secondes.` : ''}
+${params.voiceOverText ? `\n🎙️ VOIX OFF (OBLIGATOIRE — À INTÉGRER DANS LA VIDÉO) :\nLe texte de voix off à dire EXACTEMENT (mot pour mot, sans modification, sans traduction, sans reformulation, sans ajout, sans suppression) est : "${params.voiceOverText}".\n🌐 LANGUE DE LA VOIX OFF — RÈGLE ABSOLUE : la voix off DOIT être prononcée DANS LA MÊME LANGUE EXACTE que le texte de voix off ci-dessus (en l'occurrence : FRANÇAIS). INTERDICTION FORMELLE de traduire, doubler, sous-titrer dans une autre langue, mixer plusieurs langues, ou utiliser un accent étranger qui altère la langue. Accent : français naturel et neutre. Toute autre langue (anglais, espagnol, etc.) est STRICTEMENT INTERDITE.\nVoix naturelle, humaine, cohérente avec le ton et le marché.\nLa voix off doit IMPÉRATIVEMENT se terminer au moins 2 secondes AVANT la fin de la vidéo${params.videoDurationSec ? ` (durée totale ${params.videoDurationSec}s — voix off ≤ ${Math.max(1, params.videoDurationSec - 2)}s)` : ''}. Aucun mot ne doit être prononcé dans les 2 dernières secondes.` : ''}
 ` : '';
 
   // Determine the active render style
@@ -740,10 +740,14 @@ CAS 4 — JE N'AI PAS D'IDÉE : transformer l'idée choisie en contenu viral, cr
 ━━━━━━━━━━━━━━━━━━
 RÈGLE ABSOLUE — RÉGLAGES AVANCÉS PRIORITAIRES (NON NÉGOCIABLE)
 ━━━━━━━━━━━━━━━━━━
-Si l'utilisateur a activé/renseigné un quelconque réglage avancé (palette, ton, style visuel, texte overlay et contenu, position, police, couleur, second texte, durées/timings, logo, position/timing logo, voix off, paramètres modèle), TOUS ces paramètres sont STRICTEMENT PRIORITAIRES sur toute suggestion automatique, sur l'analyse d'images de référence et sur les choix esthétiques par défaut. Ils DOIVENT être intégrés FIDÈLEMENT et VISIBLEMENT.
-- Palette active : couleurs fournies dominent 60-80% du visuel.
-- Ton, style visuel, texte overlay, logo, police, couleur : appliquer EXACTEMENT.
+Si l'utilisateur a activé/renseigné un quelconque réglage avancé (palette, ton, style visuel, type de rendu image/vidéo, texte overlay et contenu, position, police, couleur, second texte, durées/timings, logo, position/timing logo, voix off + texte exact + langue, paramètres modèle, format/aspect ratio, durée vidéo, nombre de slides), TOUS ces paramètres sont STRICTEMENT PRIORITAIRES sur toute suggestion automatique, sur l'analyse d'images de référence et sur les choix esthétiques par défaut. Ils DOIVENT être intégrés FIDÈLEMENT et VISIBLEMENT.
+- S'APPLIQUE SYSTÉMATIQUEMENT À TOUS LES TYPES DE CONTENU : IMAGE, CAROUSEL, VIDÉO — sans exception. Aucun réglage avancé activé ne peut être ignoré, partiellement appliqué ou réinterprété, quel que soit le format produit.
+- AVANT de générer le prompt final, PARCOURIR systématiquement chaque champ de réglages avancés activé/renseigné, l'énumérer dans la section Personnalisation, et l'appliquer fidèlement dans la Direction artistique.
+- Palette active : couleurs fournies dominent 60-80% du visuel (image, chaque slide carousel, chaque scène vidéo).
+- Ton, style visuel, texte overlay, logo, police, couleur : appliquer EXACTEMENT, sur tous les supports (image fixe, toutes les slides d'un carousel, toutes les scènes/frames d'une vidéo).
+- Voix off : texte EXACT et LANGUE EXACTE du texte fourni (français si le texte est en français). Aucune traduction, aucun changement de langue.
 - En cas de conflit avec l'analyse d'image, la palette et les réglages avancés GAGNENT TOUJOURS.
+- Si un réglage avancé n'est pas activé : ne PAS l'inventer, ne PAS le mentionner.
 
 ━━━━━━━━━━━━━━━━━━
 RÈGLE ABSOLUE — VISUEL ORIENTÉ CONVERSION
