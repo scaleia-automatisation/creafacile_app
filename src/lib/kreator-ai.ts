@@ -829,6 +829,13 @@ Ultra lisibles mobile, parfaitement intégrés, jamais coupés, cohérents avec 
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE IMAGE
 ━━━━━━━━━━━━━━━━━━
+RÈGLE ABSOLUE — BACKGROUND PUISSANT + ANGLE MARKETING FORT (IMAGE & CAROUSEL)
+Pour CHAQUE image et CHAQUE slide de carousel, le prompt_fr DOIT contenir EXPLICITEMENT et de manière VISIBLE un bloc dédié intitulé « BACKGROUND PUISSANT & ANGLE MARKETING » décrivant :
+- un ARRIÈRE-PLAN fort, contextuel, riche et travaillé (jamais un fond plat ou neutre vide) : décor réel cohérent avec le produit/service, ambiance lumineuse cinématographique, texture/matière, profondeur, éléments secondaires soigneusement choisis pour renforcer le désir et l'univers de la marque (ex : surface en marbre + vapeur pour food premium, atelier brut + outils pour artisanat, intérieur lifestyle haut de gamme pour beauté, environnement urbain dynamique pour sport, etc.). Le background DOIT MAGNIFIER le produit/service sans jamais le concurrencer.
+- un ANGLE MARKETING FORT explicitement énoncé (ex : transformation avant/après, désir immédiat, statut/aspiration, urgence/rareté, preuve sociale visuelle, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) qui structure la composition entière et met le produit/service au centre du message.
+- la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (mise en lumière, contraste produit/fond, direction du regard, hiérarchie visuelle, codes émotionnels mobilisés).
+Ce bloc est OBLIGATOIRE et NON NÉGOCIABLE pour les types "image" et "carousel" — il doit apparaître TEL QUEL dans le prompt_fr final, visible et identifiable. Aucun fond plat, uni vide, ou générique n'est toléré.
+
 Prompt image : max 180 mots, sauts de ligne, fluide, sans markdown ni listes.
 EXIGENCE PREMIUM NON NÉGOCIABLE — niveau "agence créative top mondiale / graphiste senior / directeur artistique award-winning (Behance / Dribbble / Awwwards / Cannes Lions)". JAMAIS de visuel plat, simpliste, amateur, générique ou "template gratuit".
 Le visuel DOIT contenir une vraie RECHERCHE de design : composition travaillée (grille, règle des tiers, équilibre asymétrique maîtrisé, layering, profondeur), HIÉRARCHIE typographique forte (titre massif impactant + sous-éléments contrastés en taille/poids), TYPOGRAPHIE display moderne (sans-serif condensé bold, serif éditorial, ou display script selon le secteur — JAMAIS d'Arial/Times basique), MIX de polices intelligent (1 display + 1 sans-serif neutre).
@@ -930,7 +937,10 @@ STRUCTURE OBLIGATOIRE du prompt_fr — dans cet ordre exact, avec un double saut
 [SECTION 2] Produit / offre mis en avant :
 [présentation fidèle du produit ou service, intégration naturelle dans la scène, bénéfice implicite, cohérence avec persona et marché]
 
-${params.contentType === 'video' ? `[SECTION 3] Déroulé / scènes :
+${params.contentType !== 'video' ? `[SECTION 2bis] BACKGROUND PUISSANT & ANGLE MARKETING (OBLIGATOIRE pour image et carousel — NON NÉGOCIABLE) :
+[Décrire EXPLICITEMENT et de façon visible : (a) un ARRIÈRE-PLAN fort, travaillé, contextuel, cinématographique (jamais plat / uni vide / générique), cohérent avec le produit/service "${params.productService || 'le produit/service'}" et le secteur "${params.companySector || 'n/c'}" — préciser décor réel, ambiance lumineuse, textures, profondeur, éléments secondaires choisis pour magnifier le produit sans le concurrencer ; (b) un ANGLE MARKETING FORT nommé clairement (ex : transformation, désir immédiat, statut/aspiration, urgence, preuve sociale, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) ; (c) la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (contraste produit/fond, direction du regard, hiérarchie, codes émotionnels). Pour le carousel : décliner ce background et cet angle de manière cohérente sur toutes les slides.]
+
+` : ''}${params.contentType === 'video' ? `[SECTION 3] Déroulé / scènes :
 [plan 1 hook, plan 2 valeur, plan 3 impact + CTA — mouvements caméra, transitions, rythme]
 
 ` : params.contentType === 'carousel' ? `[SECTION 3] Déroulé des slides :
