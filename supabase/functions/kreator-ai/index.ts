@@ -120,7 +120,7 @@ serve(async (req) => {
       const selectedAspect = normalizeAspectRatio(size);
       const gatewaySize = gatewaySizeFromAspect(selectedAspect);
 
-      const imageRes = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
+      const callGptImage = () => fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -134,6 +134,11 @@ serve(async (req) => {
           quality: "low",
         }),
       });
+      let imageRes = await callGptImage();
+      if (imageRes.status >= 500) {
+        await new Promise((r) => setTimeout(r, 1500));
+        imageRes = await callGptImage();
+      }
 
       if (!imageRes.ok) {
         const errText = await imageRes.text();
