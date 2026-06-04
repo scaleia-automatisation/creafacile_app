@@ -685,7 +685,7 @@ serve(async (req) => {
       return jsonResp({ done: false });
     }
 
-    // === kie.ai: START image generation (qwen/image-edit, ideogram/*) ===
+    // === kie.ai: START image generation (nano-banana) ===
     if (action === "kie_start_image") {
       const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
       if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
@@ -694,11 +694,6 @@ serve(async (req) => {
       const hasInputImage = !!input_image_url;
       // Map app model IDs to kie.ai model IDs (depends on whether an input image is provided)
       const kieImageModelMap: Record<string, string> = {
-        "qwen/image-edit": "qwen/image-edit",
-        "ideogram/character": "ideogram/character",
-        "ideogram/image": "ideogram/image",
-        // Migrated to kie.ai
-        "dall-e-3": hasInputImage ? "gpt-image-2-image-to-image" : "gpt-image-2-text-to-image",
         "nano-banana-2": "nano-banana-2",
         "nano-banana-pro": "nano-banana-pro",
       };
@@ -720,7 +715,7 @@ serve(async (req) => {
         prompt: promptWithLogo,
         aspect_ratio: aspectRatio,
       };
-      const needsImage = ai_model === "qwen/image-edit" || ai_model === "ideogram/character";
+      const needsImage = false;
       const refImages: string[] = [];
       if (input_image_url) refImages.push(input_image_url);
       if (logo_url) refImages.push(logo_url);
