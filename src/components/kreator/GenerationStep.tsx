@@ -612,6 +612,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
     resetProject();
     setShowNewProjectDialog(false);
     setCaptions(null);
+    setCarouselSlides(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
