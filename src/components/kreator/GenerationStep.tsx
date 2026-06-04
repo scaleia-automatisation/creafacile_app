@@ -571,7 +571,17 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
   const handleGenerateRef = useRef(handleGenerate);
   handleGenerateRef.current = handleGenerate;
   useEffect(() => {
-    const onTrigger = () => { handleGenerateRef.current(); };
+    const onTrigger = () => {
+      // Si un contenu a déjà été généré, on reprend tous les champs à jour
+      // et on relance le prompt maître avant de régénérer le contenu.
+      const hasPrevious = Boolean(useKreatorStore.getState().result_url);
+      if (hasPrevious) {
+        setCaptions(null);
+        setCarouselSlides(null);
+        setResultUrl('');
+      }
+      handleGenerateRef.current({ forcePromptRegen: hasPrevious });
+    };
     window.addEventListener('kreator:generate', onTrigger);
     return () => window.removeEventListener('kreator:generate', onTrigger);
   }, []);
