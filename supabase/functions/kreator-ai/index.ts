@@ -771,25 +771,16 @@ serve(async (req) => {
           // Upload vers Supabase Storage (bucket public)
           const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
           const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
-            || Deno.env.get("SUPABASE_SECRET_KEYS")
-            || Deno.env.get("SUPABASE_ANON_KEY")
-            || Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
+            || Deno.env.get("SUPABASE_SECRET_KEYS");
           if (!SUPABASE_URL || !SERVICE_ROLE) return jsonError(500, "Storage non configuré");
           const objectPath = `sora/${oaiId}.mp4`;
-          const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/kreator-uploads/${objectPath}`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${SERVICE_ROLE}`,
-              apikey: SERVICE_ROLE,
-              "Content-Type": "video/mp4",
-              "x-upsert": "true",
-            },
-            body: videoBuf,
-          });
-          if (!uploadRes.ok) {
-            const t = await uploadRes.text();
-            console.error("Sora upload storage error:", uploadRes.status, t.slice(0, 200));
-            return jsonError(500, "Upload vidéo Sora échoué");
+          const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE);
+          const { error: upErr } = await adminClient.storage
+            .from("kreator-uploads")
+            .upload(objectPath, videoBuf, { contentType: "video/mp4", upsert: true });
+          if (upErr) {
+            console.error("Sora upload storage error:", upErr.message);
+            return jsonError(500, `Upload vidéo Sora échoué: ${upErr.message}`);
           }
           const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/kreator-uploads/${objectPath}`;
           return jsonResp({ video_url: publicUrl, done: true });
