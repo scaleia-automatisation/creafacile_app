@@ -47,12 +47,10 @@ serve(async (req) => {
     const isNanoBananaModel = ["nano-banana-2", "nano-banana-pro"].includes(ai_model || "");
 
     const isVertexModel = [
-      "imagen-4", "imagen-4-ultra", "imagen-4-fast",
       "veo-2", "veo-3", "veo-3-fast"
     ].includes(ai_model || "");
 
     const isVeoModel = ["veo-2", "veo-3", "veo-3-fast"].includes(ai_model || "");
-    const isImagenModel = ["imagen-4", "imagen-4-ultra", "imagen-4-fast"].includes(ai_model || "");
 
     // === Nano Banana 2 / Pro image generation (Vertex AI / Gemini API) ===
     if (action === "generate_image" && isNanoBananaModel) {
