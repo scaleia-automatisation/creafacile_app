@@ -27,6 +27,9 @@ const videoModels: { value: AIModel; label: string }[] = [
   { value: 'kling-2.5', label: 'Kling 2.5' },
   { value: 'kling-2.6', label: 'Kling 2.6' },
   { value: 'kling-3.0', label: 'Kling 3.0' },
+  { value: 'kwaivgi/kling-video-o1', label: 'Kling Video O1' },
+  { value: 'minimax/hailuo-2.3', label: 'Hailuo 2.3' },
+  { value: 'alibaba/wan-2.7', label: 'Wan 2.7' },
 ];
 
 
