@@ -436,7 +436,7 @@ serve(async (req) => {
           if (!imgRes.ok) return jsonError(400, "Impossible de récupérer l'image source.");
           const imgBuf = new Uint8Array(await imgRes.arrayBuffer());
           // Sora exige que l'image input_reference corresponde EXACTEMENT à size (width x height).
-          // On redimensionne avec ImageScript (cover) et on ré-encode en PNG.
+          // On redimensionne en cover, on ré-encode en PNG, puis on vérifie l'IHDR du PNG avant l'envoi.
           const [targetW, targetH] = oaiSize.split("x").map((n) => parseInt(n, 10));
           let finalBytes: Uint8Array = imgBuf;
           let finalMime = "image/png";
@@ -444,19 +444,15 @@ serve(async (req) => {
           try {
             const { Image } = await import("https://deno.land/x/imagescript@1.2.17/mod.ts");
             const img = await Image.decode(imgBuf);
-            const srcRatio = img.width / img.height;
-            const dstRatio = targetW / targetH;
-            let cropW = img.width, cropH = img.height, cropX = 0, cropY = 0;
-            if (srcRatio > dstRatio) {
-              cropW = Math.round(img.height * dstRatio);
-              cropX = Math.round((img.width - cropW) / 2);
-            } else if (srcRatio < dstRatio) {
-              cropH = Math.round(img.width / dstRatio);
-              cropY = Math.round((img.height - cropH) / 2);
-            }
-            const cropped = img.crop(cropX, cropY, cropW, cropH);
-            const resized = cropped.resize(targetW, targetH);
+            const resized = img.cover(targetW, targetH);
             finalBytes = await resized.encode();
+            const view = new DataView(finalBytes.buffer, finalBytes.byteOffset, finalBytes.byteLength);
+            const pngW = view.getUint32(16);
+            const pngH = view.getUint32(20);
+            console.log(`[sora_i2v_reference] source=${img.width}x${img.height} target=${targetW}x${targetH} output=${pngW}x${pngH} bytes=${finalBytes.byteLength}`);
+            if (pngW !== targetW || pngH !== targetH) {
+              throw new Error(`PNG output mismatch ${pngW}x${pngH}, expected ${targetW}x${targetH}`);
+            }
           } catch (e) {
             console.error("Sora I2V resize error:", (e as Error)?.message);
             return jsonError(400, "Impossible de redimensionner l'image source pour Sora.");
