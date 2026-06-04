@@ -327,6 +327,96 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
       }
       const generationPrompt = withLogoOverlayInstruction(withSelectedFormatInstruction(activePrompt));
 
+      // === CAROUSEL: N images (one per slide) + N captions ===
+      if (type === 'carousel') {
+        const n = Math.max(1, Math.min(4, slides_count || 1));
+        const slideTexts = options.slide_texts || [];
+        const baseCaptionParams = {
+          objective: marketing_angle || objective,
+          contentType: 'image' as const,
+          sector: company_sector,
+          activity: company_activity,
+          aiModel: ai_model,
+          format,
+          slidesCount: 1,
+          offerType: offer_type,
+          offerName: product_service,
+          offerDescription: product_description,
+          persona: target_persona,
+          market,
+          marketingAngle: marketing_angle,
+          ton: options.ton,
+          visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
+          freeDescription: input_text,
+          promptValide: generationPrompt,
+          advancedSettings: [
+            options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
+            options.logo_enabled ? `logo: ${options.logo_position}` : '',
+            options.show_text ? `texte overlay slides` : '',
+          ].filter(Boolean).join(' | '),
+          productAnalysis: input_image_description,
+        };
+
+        const slideResults = await Promise.all(
+          Array.from({ length: n }).map(async (_, i) => {
+            const slideText = (slideTexts[i] || '').trim();
+            const perSlidePrompt = `${generationPrompt}\n\n🎯 GÉNÈRE EXCLUSIVEMENT LA SLIDE ${i + 1} sur ${n} du carrousel. Texte affiché EXACTEMENT (mot pour mot, sans modification): "${slideText}". Maintenir une cohérence visuelle STRICTE avec les autres slides du carrousel (même style, palette, typographie, composition, ambiance, traitement). Ne pas inclure le texte des autres slides.`;
+            const [url, caps] = await Promise.all([
+              generateImage(perSlidePrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
+              generateCaption({
+                ...baseCaptionParams,
+                idea: slideText || idea_chosen || input_text,
+                text1: slideText,
+                slideTexts: [slideText],
+              }),
+            ]);
+            const finalUrl = options.logo_enabled && options.logo_url
+              ? await composeImageWithExactLogo(url, options.logo_url, options.logo_position, format)
+              : url;
+            return { url: finalUrl, captions: caps };
+          }),
+        );
+
+        if (progressInterval) clearInterval(progressInterval);
+        setProgress(100);
+
+        const { data: deducted } = await supabase.rpc('deduct_credits', {
+          p_user_id: user.id,
+          p_amount: creditsNeeded,
+          p_action: `generate_${type}`,
+        });
+        if (!deducted) {
+          toast.error('Crédits insuffisants');
+          setStatus('idle');
+          setGenerating(false);
+          return;
+        }
+
+        // Insert one generation row per slide for traceability
+        await supabase.from('generations').insert(
+          slideResults.map((s, i) => ({
+            user_id: user.id,
+            type,
+            ai_model,
+            format,
+            prompt_en_final: activePrompt,
+            prompt_fr_final: activePrompt,
+            result_url: s.url,
+            credits_used: i === 0 ? creditsNeeded : 0,
+            status: 'done' as const,
+            captions: (s.captions ?? null) as unknown as Json,
+          })),
+        );
+
+        setCarouselSlides(slideResults);
+        setResultUrl(slideResults[0].url);
+        setCreditsUsed(creditsNeeded);
+        setCaptions(slideResults[0].captions);
+        setStatus('done');
+        await refreshProfile();
+        return;
+      }
+
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
           ? generateVideo(generationPrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
