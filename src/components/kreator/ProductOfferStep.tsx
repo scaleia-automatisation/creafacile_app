@@ -218,6 +218,8 @@ const ProductOfferStep = () => {
         activity: company_activity,
         sector: company_sector,
         offerType: offer_type,
+        productService: product_service,
+        productDescription: product_description,
       });
       const list: Persona[] = result.personas || [];
       setPersonas(list);
@@ -252,7 +254,7 @@ const ProductOfferStep = () => {
     (async () => {
       setLoadingPersonas(true);
       try {
-        const result = await generatePersonas({ activity, sector, offerType: offer });
+        const result = await generatePersonas({ activity, sector, offerType: offer, productService: product_service, productDescription: desc });
         const list: Persona[] = result.personas || [];
         setPersonas(list);
         // Auto-sélection du meilleur persona (conversion / douleur / revenus)
