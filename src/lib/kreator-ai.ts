@@ -176,6 +176,8 @@ export async function generatePersonas(params: {
   activity: string;
   sector: string;
   offerType: string;
+  productService?: string;
+  productDescription?: string;
 }) {
   const systemPrompt = `Tu es un expert en marketing et personas client. Génère exactement 3 profils de persona ULTRA pertinents pour le contexte fourni.
 
@@ -183,6 +185,11 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown, exactement ce format :
 {"personas":[{"id":1,"profil":"Nom + âge + situation courte (ex: Marie, 34 ans, maman active)","contexte_rapide":"1 phrase sur son contexte de vie / pro","csp":"CSP+ / CSP / employé / étudiant / retraité / dirigeant…","probleme":"problème principal qu'il/elle rencontre","objectif":"objectif principal qu'il/elle cherche à atteindre"},{"id":2,...},{"id":3,...}],"best_id":1,"best_reason":"raison courte"}
 
 Les 3 personas doivent être DIFFÉRENTS (âges, situations, motivations différentes) mais tous cohérents avec l'activité, le secteur et le type d'offre.
+
+RÈGLE ABSOLUE DE COHÉRENCE D'AUDIENCE (priorité maximale) :
+- Analyse la description et le nom de l'offre pour détecter toute contrainte démographique implicite ou explicite : genre (femmes / hommes uniquement), tranche d'âge (enfants, ados, seniors), état (femmes enceintes, jeunes mamans, retraités, étudiants, sportifs, professionnels d'un métier précis…), etc.
+- Si l'offre s'adresse à un genre ou une catégorie spécifique (ex : coaching pour femmes enceintes → UNIQUEMENT des femmes enceintes ; soins barbe → UNIQUEMENT des hommes ; produits seniors → UNIQUEMENT des 60+), les 3 personas DOIVENT TOUS respecter cette contrainte. Aucun persona hors cible n'est autorisé, même pour "varier".
+- Choisis prénoms, âges, situations et pronoms strictement compatibles avec cette audience cible.
 
 ANALYSE OBLIGATOIRE : après avoir généré les 3 personas, compare-les et désigne dans "best_id" le persona qui :
 1) convertit le plus (intention d'achat la plus forte),
@@ -193,6 +200,8 @@ Le champ "best_id" doit correspondre EXACTEMENT à l'id (1, 2 ou 3) du meilleur 
   const userPrompt = `Activité principale: ${params.activity}
 Secteur d'activité: ${params.sector || 'non précisé'}
 Type d'offre: ${params.offerType}
+${params.productService ? `Nom de l'offre: ${params.productService}` : ''}
+${params.productDescription ? `Description de l'offre: ${params.productDescription}` : ''}
 
 Génère 3 personas clients cibles parfaitement adaptés.`;
 
