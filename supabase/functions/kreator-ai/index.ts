@@ -423,8 +423,7 @@ serve(async (req) => {
           kieModel = "sora-2-pro-text-to-video";
           input.aspect_ratio = soraAspect;
           if (ms.sora_n_frames) input.n_frames = ms.sora_n_frames;
-          if (!ms.sora_pro_size) return jsonError(400, "Sora 2 Pro requiert un champ qualité (standard/high).");
-          input.size = ms.sora_pro_size;
+          input.size = ms.sora_pro_size || "standard";
           if (typeof ms.sora_remove_watermark === "boolean") input.remove_watermark = ms.sora_remove_watermark;
           break;
         case "sora-2-pro-i2v":
@@ -433,8 +432,7 @@ serve(async (req) => {
           input.image_urls = [ms.sora_image_url];
           input.aspect_ratio = soraAspect;
           if (ms.sora_n_frames) input.n_frames = ms.sora_n_frames;
-          if (!ms.sora_pro_size) return jsonError(400, "Sora 2 Pro requiert un champ qualité (standard/high).");
-          input.size = ms.sora_pro_size;
+          input.size = ms.sora_pro_size || "standard";
           break;
         case "sora-2-pro-character": {
           kieModel = "sora-2-pro-character";
