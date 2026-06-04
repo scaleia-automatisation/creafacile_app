@@ -937,7 +937,10 @@ STRUCTURE OBLIGATOIRE du prompt_fr — dans cet ordre exact, avec un double saut
 [SECTION 2] Produit / offre mis en avant :
 [présentation fidèle du produit ou service, intégration naturelle dans la scène, bénéfice implicite, cohérence avec persona et marché]
 
-${params.contentType === 'video' ? `[SECTION 3] Déroulé / scènes :
+${params.contentType !== 'video' ? `[SECTION 2bis] BACKGROUND PUISSANT & ANGLE MARKETING (OBLIGATOIRE pour image et carousel — NON NÉGOCIABLE) :
+[Décrire EXPLICITEMENT et de façon visible : (a) un ARRIÈRE-PLAN fort, travaillé, contextuel, cinématographique (jamais plat / uni vide / générique), cohérent avec le produit/service "${params.productService || 'le produit/service'}" et le secteur "${params.companySector || 'n/c'}" — préciser décor réel, ambiance lumineuse, textures, profondeur, éléments secondaires choisis pour magnifier le produit sans le concurrencer ; (b) un ANGLE MARKETING FORT nommé clairement (ex : transformation, désir immédiat, statut/aspiration, urgence, preuve sociale, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) ; (c) la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (contraste produit/fond, direction du regard, hiérarchie, codes émotionnels). Pour le carousel : décliner ce background et cet angle de manière cohérente sur toutes les slides.]
+
+` : ''}${params.contentType === 'video' ? `[SECTION 3] Déroulé / scènes :
 [plan 1 hook, plan 2 valeur, plan 3 impact + CTA — mouvements caméra, transitions, rythme]
 
 ` : params.contentType === 'carousel' ? `[SECTION 3] Déroulé des slides :
