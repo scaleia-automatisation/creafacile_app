@@ -1138,7 +1138,15 @@ serve(async (req) => {
       const imageUrl = imgFromImages || imgFromContent;
       if (!imageUrl) {
         console.error("OpenRouter no image in response:", orText.slice(0, 500));
-        return jsonError(500, "Pas d'image dans la réponse OpenRouter");
+        const kieFallbackModels = new Set(["nano-banana-2", "nano-banana-pro"]);
+        if (kieFallbackModels.has(ai_model || "")) {
+          return jsonFallback("Aucune image renvoyée par OpenRouter. Bascule automatique vers un fournisseur alternatif.", {
+            fallback_provider: "kie",
+          });
+        }
+        return jsonFallback("Aucune image renvoyée par le modèle. Essayez un autre modèle.", {
+          fallback_model: "nano-banana-pro",
+        });
       }
       return jsonResp({ image_url: imageUrl });
     }
