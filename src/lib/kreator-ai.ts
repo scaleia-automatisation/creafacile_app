@@ -626,12 +626,13 @@ ${params.voiceOverText ? `\n🎙️ VOIX OFF (OBLIGATOIRE — À INTÉGRER DANS 
     { match: /d[ée]monstration produit|demo produit/, type: 'video', label: 'VIDÉO — DÉMONSTRATION PRODUIT', body: 'Mettre en scène le produit sous plusieurs angles. Montrer utilisation, fonctionnalités et bénéfices de manière claire et attractive.' },
     { match: /probl[èe]me.?solution|pain/, type: 'video', label: 'VIDÉO — PROBLÈME → SOLUTION', body: 'Commencer par illustrer la frustration/problème de la cible. Introduire progressivement la solution puis démontrer les bénéfices obtenus.' },
     { match: /storytelling|histoire/, type: 'video', label: 'VIDÉO — STORYTELLING', body: 'Construire une histoire émotionnelle autour du produit/service. Créer une connexion forte avec le spectateur tout en mettant en valeur la transformation obtenue.' },
-    { match: /[ée]tude.*vid|case.*video/, type: 'video', label: 'VIDÉO — ÉTUDE DE CAS', body: 'Présenter une situation réelle : défis rencontrés, solution apportée, résultats obtenus. Narration engageante et crédible.' },
+    { match: /[ée]tude de cas|case study/, type: 'video', label: 'VIDÉO — ÉTUDE DE CAS', body: 'Présenter une situation réelle : défis rencontrés, solution apportée, résultats obtenus. Narration engageante et crédible.' },
     { match: /d[ée]monstration m[ée]thode|m[ée]thode/, type: 'video', label: 'VIDÉO — DÉMONSTRATION MÉTHODE', body: 'Montrer étape par étape la méthode utilisée afin de démontrer l\'expertise et la valeur du service.' },
+    { match: /t[ée]moignage/, type: 'video', label: 'VIDÉO — TÉMOIGNAGE CLIENT', body: 'Mettre en avant une expérience client authentique et inspirante. Renforcer la confiance grâce à des résultats concrets, visages et émotions sincères.' },
+    { match: /avant.?apr[èe]s|before.?after|transformation/, type: 'video', label: 'VIDÉO — AVANT / APRÈS', body: 'Mettre en scène une transformation spectaculaire en split-screen ou montage rapide. Avant → frustration / état initial, Après → résultat impressionnant grâce au produit/service.' },
   ];
   const matchedUseCase = useCaseKey
     ? useCaseDirectiveMap.find(d => d.type === params.contentType && d.match.test(useCaseKey))
-      || useCaseDirectiveMap.find(d => d.match.test(useCaseKey))
     : undefined;
   const useCaseDirectiveBlock = params.useCase
     ? `\n━━━━━━━━━━━━━━━━━━\nCAS D'UTILISATION — COHÉRENCE 100% OBLIGATOIRE\n━━━━━━━━━━━━━━━━━━\nCas d'utilisation sélectionné : "${params.useCase}". L'ensemble du contenu (concept narratif, mise en scène, hiérarchie visuelle, textes, CTA, ambiance) DOIT être à 100% cohérent avec ce cas d'utilisation. C'est le format narratif OBLIGATOIRE — toute déviation est invalide.\n${matchedUseCase ? `\nDIRECTIVE SPÉCIFIQUE (${matchedUseCase.label}) :\n${matchedUseCase.body}` : ''}\n`
