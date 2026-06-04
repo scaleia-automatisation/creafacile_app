@@ -31,5 +31,8 @@ export const getVideoDurationSec = (
   if (model === 'bytedance/seedance-1.5-pro') return s.seedance_duration ?? 8;
   if (model === 'bytedance/seedance-2') return s.seedance2_duration ?? 8;
   if (model.startsWith('grok-imagine')) return s.grok_duration ?? 6;
+  if (model === 'kwaivgi/kling-video-o1') return s.klingo1_duration ?? 5;
+  if (model === 'minimax/hailuo-2.3') return s.hailuo_duration ?? 6;
+  if (model === 'alibaba/wan-2.7') return s.wan_duration ?? 5;
   return 8;
 };

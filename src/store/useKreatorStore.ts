@@ -10,7 +10,11 @@ export type AIModel =
   | 'veo-3' | 'veo-3.1'
   | 'grok-imagine-i2v' | 'grok-imagine-t2v'
   | 'bytedance/seedance-1.5-pro' | 'bytedance/seedance-2'
-  | 'kling-2.1' | 'kling-2.5' | 'kling-2.6' | 'kling-3.0';
+  | 'kling-2.1' | 'kling-2.5' | 'kling-2.6' | 'kling-3.0'
+  // OpenRouter additions
+  | 'kwaivgi/kling-video-o1'
+  | 'minimax/hailuo-2.3'
+  | 'alibaba/wan-2.7';
 export type VideoResolution = '720p' | '1080p';
 export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
@@ -42,6 +46,23 @@ export type Kling21SubModel = 'master-t2v' | 'image-to-video' | 'pro' | 'standar
 export type Kling25SubModel = 'turbo-t2v-pro' | 'turbo-i2v-pro';
 export type Kling26SubModel = 't2v' | 'i2v';
 export type Kling30Mode = 'std' | 'pro';
+
+// Kling Video O1 (OpenRouter)
+export type KlingO1SubModel = 't2v' | 'i2v';
+export type KlingO1Aspect = '16:9' | '9:16' | '1:1';
+export type KlingO1Duration = 5 | 10;
+
+// Hailuo 2.3 (OpenRouter - Minimax)
+export type HailuoSubModel = 't2v' | 'i2v';
+export type HailuoAspect = '16:9' | '9:16' | '1:1';
+export type HailuoDuration = 6 | 10;
+export type HailuoResolution = '768p' | '1080p';
+
+// Wan 2.7 (OpenRouter - Alibaba)
+export type WanSubMode = 't2v' | 'i2v' | 'reference';
+export type WanAspect = '16:9' | '9:16' | '1:1';
+export type WanDuration = 5 | 10;
+export type WanResolution = '480p' | '720p' | '1080p';
 
 export interface ModelSettings {
   // Sora 2 / Sora 2 Pro
@@ -104,6 +125,24 @@ export interface ModelSettings {
   kling30_audio_enabled?: boolean;
   kling30_duration?: number; // 3..15
   kling30_mode?: Kling30Mode;
+  // Kling Video O1
+  klingo1_sub_model?: KlingO1SubModel;
+  klingo1_image_url?: string;
+  klingo1_aspect?: KlingO1Aspect;
+  klingo1_duration?: KlingO1Duration;
+  // Hailuo 2.3
+  hailuo_sub_model?: HailuoSubModel;
+  hailuo_image_url?: string;
+  hailuo_aspect?: HailuoAspect;
+  hailuo_duration?: HailuoDuration;
+  hailuo_resolution?: HailuoResolution;
+  // Wan 2.7
+  wan_sub_mode?: WanSubMode;
+  wan_image_url?: string;
+  wan_reference_image_urls?: string[]; // max 4
+  wan_aspect?: WanAspect;
+  wan_duration?: WanDuration;
+  wan_resolution?: WanResolution;
 }
 
 interface KreatorOptions {
