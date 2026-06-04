@@ -100,8 +100,11 @@ STRUCTURE STRICTE de chaque idée :
 - concept : description SIMPLE, claire et concise de l'idée (ce qu'on voit / entend / lit), STRICTEMENT ENTRE 15 ET 20 MOTS (jamais moins de 15, jamais plus de 20), orientée conversion, STRICTEMENT en lien avec le nom de l'offre, la description, l'objectif du contenu et SURTOUT le cas d'utilisation choisi.
 - angle : nom court de l'angle marketing (1 à 3 mots), sans explication supplémentaire.
 
-RÈGLE HOOK — ABSOLUE :
-Le hook DOIT être directement dans le SENS de l'OBJECTIF DU CONTENU et respecter EXACTEMENT le TON D'ÉCRITURE demandé (vocabulaire, niveau de langue, énergie, rythme). C'est non négociable : un hook qui s'écarte de l'objectif ou du ton est invalide.
+RÈGLE HOOK — ABSOLUE (NON NÉGOCIABLE) :
+Le hook DOIT être ULTRA PUISSANT, scroll-stop immédiat (0-2s), émotionnel/intrigant/choquant/provoquant une curiosité irrésistible, JAMAIS mou, descriptif ni générique. Il doit être directement dans le SENS de l'OBJECTIF DU CONTENU et respecter EXACTEMENT le TON D'ÉCRITURE demandé (vocabulaire, niveau de langue, énergie, rythme, registre). Un hook qui s'écarte de l'objectif, du ton ou du cas d'utilisation est INVALIDE.
+
+RÈGLE CAS D'UTILISATION — ABSOLUE (NON NÉGOCIABLE) :
+Les 3 idées DOIVENT être en ACCORD PARFAIT À 100% avec le CAS D'UTILISATION choisi (format narratif obligatoire : Avant/Après, UGC, Témoignage, Démonstration, Comparatif, FAQ, Hook Viral, etc.), QUEL QUE SOIT le TYPE DE CONTENU (image, carrousel, vidéo). Aucune idée hors-format n'est tolérée. Le hook lui-même doit refléter ce cas d'utilisation.
 
 RÈGLES :
 - Toujours STRICTEMENT COHÉRENT avec TOUS les éléments fournis : type d'offre, nom, description, activité/métier, secteur, marché, persona, objectif, type de contenu, cas d'utilisation et ton d'écriture.
@@ -1045,6 +1048,8 @@ export async function generateCaption(params: {
   text1?: string;
   text2?: string;
   slideTexts?: string[];
+  ideaHook?: string;
+  useCase?: string;
 }): Promise<PlatformCaptions> {
   const isVideo = params.contentType === 'video';
   const isCarousel = params.contentType === 'carousel';
@@ -1083,6 +1088,13 @@ CTA — naturel, jamais agressif, format conversationnel/question.
 HASHTAGS — SEO 2026 : mix niche + activité + secteur + marché + intention + tendance + branding, séparés par espaces, tous préfixés #.
 
 SÉPARATION STRICTE : le CTA va UNIQUEMENT dans le champ "cta". Il ne doit JAMAIS apparaître dans "description". La description ne se termine pas par une question/CTA.
+
+${params.ideaHook ? `━━━━━━━━━━━━━━━━━━
+HOOK IMPOSÉ — ABSOLU (NON NÉGOCIABLE)
+━━━━━━━━━━━━━━━━━━
+Le HOOK de l'idée retenue est : "${params.ideaHook}".
+Ce hook DOIT être utilisé MOT POUR MOT, IDENTIQUE, comme champ "hook" de CHAQUE caption (facebook, instagram, tiktok, linkedin). Ne le reformule pas, ne le traduis pas, ne le raccourcis pas, ne change pas l'emoji, ne change pas la ponctuation. Aucune variation, aucune adaptation par réseau. Ce hook s'applique IDENTIQUEMENT aux 4 plateformes.
+` : ''}
 
 ━━━━━━━━━━━━━━━━━━
 RÈGLES ALGORITHMES 2026 PAR RÉSEAU
@@ -1210,7 +1222,13 @@ Génère maintenant les captions Facebook, Instagram, TikTok et LinkedIn${isCaro
 
   try {
     const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
-    return JSON.parse(cleaned);
+    const parsed = JSON.parse(cleaned);
+    if (params.ideaHook) {
+      for (const p of ['facebook', 'instagram', 'tiktok', 'linkedin'] as const) {
+        if (parsed?.[p]) parsed[p].hook = params.ideaHook;
+      }
+    }
+    return parsed;
   } catch {
     throw new Error('Failed to parse AI response');
   }
