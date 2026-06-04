@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useKreatorStore, type AIModel, type Format } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ModelSettings from './ModelSettings';
@@ -46,7 +47,11 @@ const ContentTypeStep = () => {
     sora_character_scenes, setSoraCharacterScenes,
   } = useKreatorStore();
 
-  const models = type === 'video' ? videoModels : imageModels;
+  const models = type === 'video'
+    ? videoModels
+    : type === 'carousel'
+    ? imageModels.filter((m) => m.value === 'nano-banana-pro')
+    : imageModels;
   const isGptImage = ai_model === 'gpt-5.4-image-2';
   const availableFormats = type === 'video'
     ? formats.filter((f) => f.value === '9:16' || f.value === '16:9')
@@ -57,6 +62,13 @@ const ContentTypeStep = () => {
   const isSoraCharacter = type === 'video' && ai_model === 'sora-2-pro-character';
   const scenesTotal = sora_character_scenes.reduce((sum, s) => sum + (Number(s.duration) || 0), 0);
   const scenesValid = scenesTotal === sora_character_total_duration;
+
+  // Force nano-banana-pro for carousel
+  useEffect(() => {
+    if (type === 'carousel' && ai_model !== 'nano-banana-pro') {
+      setAiModel('nano-banana-pro');
+    }
+  }, [type, ai_model, setAiModel]);
 
   const updateSceneCount = (count: number) => {
     const current = sora_character_scenes;
