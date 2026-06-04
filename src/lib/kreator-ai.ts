@@ -899,30 +899,32 @@ FORMAT DE SORTIE
 ━━━━━━━━━━━━━━━━━━
 Le champ "prompt_fr" doit contenir UNIQUEMENT le prompt final, en français, prêt à envoyer au modèle IA. Sans markdown, sans listes à puces, sans commentaires, sans explications.
 
-STRUCTURE OBLIGATOIRE du prompt_fr (avec sauts de ligne RÉELS \\n\\n entre chaque bloc, dans cet ordre exact) :
+Le prompt_fr DOIT être un texte fluide, structuré et agréable à lire, aéré par des sauts de ligne RÉELS (\\n\\n) entre chaque section majeure. Chaque bloc DOIT être précédé d'un titre de section suivi d'un retour à la ligne, puis du contenu. Le texte ne doit JAMAIS être un mur de texte dense : il doit ressembler à un brief créatif professionnel, avec des paragraphes bien séparés, lisibles et clairs.
 
-Scène & sujet principal :
+STRUCTURE OBLIGATOIRE du prompt_fr — dans cet ordre exact, avec un double saut de ligne (\\n\\n) entre chaque section :
+
+[SECTION 1] Scène & sujet principal :
 [description fluide du visuel/scène, sujet, cadrage, composition, ambiance, lumière, émotion, hook visuel 0-2s — adapté au format ${params.format} et au type ${params.contentType}]
 
-Produit / offre mis en avant :
+[SECTION 2] Produit / offre mis en avant :
 [présentation fidèle du produit ou service, intégration naturelle dans la scène, bénéfice implicite, cohérence avec persona et marché]
 
-${params.contentType === 'video' ? `Déroulé / scènes :
+${params.contentType === 'video' ? `[SECTION 3] Déroulé / scènes :
 [plan 1 hook, plan 2 valeur, plan 3 impact + CTA — mouvements caméra, transitions, rythme]
 
-` : params.contentType === 'carousel' ? `Déroulé des slides :
+` : params.contentType === 'carousel' ? `[SECTION 3] Déroulé des slides :
 [slide 1 hook, slide 2 émotion/problème, slide 3 preuve/résultat, slide 4 CTA — cohérence visuelle entre slides]
 
-` : ''}Personnalisation (réglages avancés prioritaires) :
+` : ''}[SECTION ${params.contentType === 'video' || params.contentType === 'carousel' ? '4' : '3'}] Personnalisation (réglages avancés prioritaires) :
 [lister ICI de façon fluide UNIQUEMENT les réglages avancés activés par l'utilisateur et les appliquer STRICTEMENT : palette de couleurs exactes (dominer 60-80% du visuel), ton d'écriture, style visuel, type de rendu, texte(s) overlay avec wording exact + position + police + couleur + durée + timing, logo avec URL + position + timing d'apparition, voix off avec texte exact, paramètres modèle IA. Si un réglage n'est pas activé, NE PAS l'inventer ni le mentionner. Cette section doit être clairement séparée et reconnaissable.]
 
-Format & rendu technique :
+[SECTION ${params.contentType === 'video' || params.contentType === 'carousel' ? '5' : '4'}] Format & rendu technique :
 [aspect ratio ${params.format}, modèle IA ${aiModelName}, qualité photoréaliste premium, contraintes techniques spécifiques]
 
-Positions exactes des éléments (OBLIGATOIRE — adapté au ratio ${params.format}) :
+[SECTION ${params.contentType === 'video' || params.contentType === 'carousel' ? '6' : '5'}] Positions exactes des éléments (OBLIGATOIRE — adapté au ratio ${params.format}) :
 [Lister EXPLICITEMENT la position de CHAQUE élément visible avec la grille 9 zones (top-left, top-center, top-right, mid-left, center, mid-right, bottom-left, bottom-center, bottom-right) + coordonnées en pourcentage (x%, y%, w%, h%) + taille relative. Inclure systématiquement : sujet/image hero, texte titre, sous-texte (si présent), emoji (s'il y en a — toujours intégré au texte), badge/pastille (si activé), logo (si activé). Format attendu pour chaque ligne : « élément → zone, x ≈ A-B%, y ≈ C-D%, taille ≈ E% de [hauteur|largeur|plus petit côté], marges ≥ F% ». Respecter STRICTEMENT les safe-zones du format ${params.format} décrites plus haut. Aucun chevauchement, aucune collision, aucun élément sur le sujet.]
 
-${params.contentType === 'image' || params.contentType === 'carousel' ? `Direction artistique premium (OBLIGATOIRE — RÉDIGER SUR-MESURE, JAMAIS COPIER-COLLER UN GÉNÉRIQUE) :
+${params.contentType === 'image' || params.contentType === 'carousel' ? `[SECTION ${params.contentType === 'carousel' ? '7' : '6'}] Direction artistique premium (OBLIGATOIRE — RÉDIGER SUR-MESURE, JAMAIS COPIER-COLLER UN GÉNÉRIQUE) :
 [Rédige ICI un paragraphe de direction artistique 100% SUR-MESURE, dérivé STRICTEMENT des inputs utilisateur (type d'offre = ${params.offerType || 'n/c'}, produit/service = ${params.productService || 'n/c'}, description = ${params.productDescription || 'n/c'}, secteur = ${params.companySector || 'n/c'}, activité = ${params.companyActivity || 'n/c'}, objectif = ${params.objective || 'n/c'}, persona = ${params.targetPersona || 'n/c'}, marché = ${params.market || 'n/c'}, réglages avancés activés). RÈGLES DE PRIORITÉ ABSOLUE :
 1) Les INPUTS UTILISATEUR sont PRIORITAIRES sur toute consigne stylistique générique. Si un réglage avancé impose une palette, un style de rendu, un ton, une typographie, un texte overlay, un logo → respecter à 100% sans contradiction.
 2) Adapter chaque élément (composition, palette, typographie, éléments graphiques, textures, accents, mise en scène produit, références culturelles, codes de marché) au SECTEUR + ACTIVITÉ + TYPE D'OFFRE (produit physique vs service immatériel vs digital vs formation) et à l'OBJECTIF marketing du contenu (notoriété, conversion, engagement, éducation, lancement, promo).
@@ -931,7 +933,10 @@ ${params.contentType === 'image' || params.contentType === 'carousel' ? `Directi
 5) INTERDITS : contredire un réglage avancé utilisateur, plaquer un style food sur un service B2B (ou inversement), inventer des éléments hors brief, "template Canva basique", composition plate sans hiérarchie, palette en contradiction avec la palette fournie par l'utilisateur, références culturelles incohérentes avec le marché ciblé, surcharge graphique inadaptée au secteur.
 Le paragraphe doit être DENSE, SPÉCIFIQUE au produit/service exact, et lisiblement personnalisé — pas une liste générique réutilisable pour n'importe quel brief.]${params.contentType === 'carousel' ? `\nAjouter pour le CARROUSEL : système de design UNIFIÉ sur les ${params.slidesCount || 4} slides (même palette, typographie, éléments décoratifs, lumière), chaque slide publiable seule comme une affiche pro, cohérence visuelle stricte avec les inputs utilisateur.` : ''}
 
-` : ''}Chaque bloc DOIT être séparé par une ligne vide (\\n\\n). Les titres de bloc (ex: "Scène & sujet principal :") DOIVENT apparaître tels quels suivis d'un saut de ligne puis du contenu.
+` : ''}[SECTION FINALE] Instructions négatives (à intégrer naturellement) :
+[Reprendre les interdictions essentielles sous forme de phrase fluide : pas de rendu IA, pas de CGI, anatomie parfaite, pas de superposition logo/texte, pas de cadre autour du logo, pas de fond blanc derrière le produit, etc.]
+
+Chaque bloc DOIT être séparé par une ligne vide (\\n\\n). Les titres de bloc DOIVENT apparaître tels quels suivis d'un saut de ligne puis du contenu. Le prompt_fr final doit être LISIBLE, AÉRÉ et structuré comme un brief créatif professionnel — jamais un mur de texte continu.
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
