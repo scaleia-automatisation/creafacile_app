@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Users, CheckCircle, Sparkles, Upload, X, Replace, ImagePlus, RefreshCw } from 'lucide-react';
+import { Loader2, Users, CheckCircle, Sparkles, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { generatePersonas, generateIdeas, detectSectorFromImage, detectOfferTypeFromDescription, describeProductImages, detectActivityFromDescription, detectSectorFromActivity, generateServiceDescription } from '@/lib/kreator-ai';
+import { generatePersonas, generateIdeas, detectOfferTypeFromDescription, generateServiceDescription, detectActivityFromDescription, detectSectorFromActivity } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
@@ -15,8 +15,6 @@ const OFFER_TYPES = [
   '📦 Produit',
   '🛠️ Service',
 ];
-const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_SIZE_MB = 5;
 
 type Persona = {
   id: number;
@@ -48,7 +46,6 @@ const ProductOfferStep = () => {
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [loadingPersonas, setLoadingPersonas] = useState(false);
   const [selectedPersonaId, setSelectedPersonaId] = useState<number | null>(null);
-  const [describing, setDescribing] = useState(false);
   const [generatingServiceDesc, setGeneratingServiceDesc] = useState(false);
   const autoServiceDescKeyRef = useRef<string>('');
   const [detectingOfferType, setDetectingOfferType] = useState(false);
@@ -56,7 +53,6 @@ const ProductOfferStep = () => {
   const autoActivityKeyRef = useRef<string>('');
   const [detectingSector, setDetectingSector] = useState(false);
   const autoSectorKeyRef = useRef<string>('');
-  const fileRef = useRef<HTMLInputElement>(null);
   const autoPersonasKeyRef = useRef<string>('');
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
@@ -168,50 +164,6 @@ const ProductOfferStep = () => {
     } finally {
       setGeneratingServiceDesc(false);
     }
-  };
-
-  const handleFile = (file: File) => {
-    if (!ACCEPTED_TYPES.includes(file.type)) {
-      toast.error('Format non supporté. Utilisez JPG, PNG ou WEBP.');
-      return;
-    }
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      toast.error(`Le fichier dépasse ${MAX_SIZE_MB}MB`);
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const dataUrl = reader.result as string;
-      setProductImageUrl(dataUrl);
-      if (isProduct) {
-        setDescribing(true);
-        try {
-          const desc = await describeProductImages([dataUrl]);
-          const cleanedDesc = toSentences(desc, 1);
-          setProductDescription(cleanedDesc);
-          // Génère activité + secteur EN MÊME TEMPS que la description
-          const [activity, sectorFromDesc, sectorFromImage] = await Promise.all([
-            detectActivityFromDescription(cleanedDesc).catch(() => ''),
-            detectSectorFromActivity(cleanedDesc, SECTORS).catch(() => ''),
-            detectSectorFromImage(dataUrl, SECTORS).catch(() => ''),
-          ]);
-          if (activity) {
-            setCompanyActivity(activity);
-            autoActivityKeyRef.current = cleanedDesc;
-          }
-          const sector = sectorFromDesc || sectorFromImage;
-          if (sector) {
-            setCompanySector(sector);
-            autoSectorKeyRef.current = cleanedDesc;
-          }
-        } catch (e) {
-          console.error(e);
-        } finally {
-          setDescribing(false);
-        }
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   const handleNoIdea = async () => {
