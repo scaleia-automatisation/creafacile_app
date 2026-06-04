@@ -137,7 +137,13 @@ serve(async (req) => {
       if (!imageRes.ok) {
         const errText = await imageRes.text();
         console.error("OpenAI image generation error:", imageRes.status, errText);
-        return jsonError(imageRes.status === 429 ? 429 : 500, imageRes.status === 429 ? "Limite de génération d'image atteinte." : "Erreur génération image OpenAI");
+        const isModeration = /moderation_blocked|safety system|content_policy/i.test(errText);
+        if (isModeration) {
+          return jsonError(400, "Votre prompt a été refusé par le filtre de sécurité OpenAI. Reformulez votre description (évitez marques, personnes réelles, contenus sensibles) puis réessayez.");
+        }
+        if (imageRes.status === 429) return jsonError(429, "Limite de génération d'image atteinte.");
+        if (imageRes.status === 401 || imageRes.status === 402) return jsonError(imageRes.status, "Problème d'authentification ou de crédits sur la passerelle IA.");
+        return jsonError(imageRes.status >= 500 ? 503 : imageRes.status, `Erreur génération image (${imageRes.status})`);
       }
 
       const imageData = await imageRes.json();
