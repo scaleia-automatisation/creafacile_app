@@ -18,6 +18,23 @@ export async function callKreatorAI(options: AICallOptions) {
   return data;
 }
 
+/**
+ * Ensure the generated French prompt is aerated with real line breaks
+ * between every "[SECTION ...]" block, even when the LLM returns it as
+ * a single dense line.
+ */
+function formatPromptWithLineBreaks(raw: string): string {
+  if (!raw || typeof raw !== 'string') return raw;
+  let txt = raw.replace(/\r\n/g, '\n');
+  // Insert a blank line before every [SECTION ...] / [SECTION FINALE] marker
+  txt = txt.replace(/\s*(\[SECTION[^\]]*\])\s*/g, '\n\n$1\n');
+  // After the section title, ensure the content starts on a new line
+  txt = txt.replace(/(\[SECTION[^\]]*\][^:\n]*:)\s*/g, '$1\n');
+  // Collapse 3+ blank lines to exactly one blank line
+  txt = txt.replace(/\n{3,}/g, '\n\n');
+  return txt.trim();
+}
+
 export async function generateIdeas(
   activity: string,
   sector: string,
