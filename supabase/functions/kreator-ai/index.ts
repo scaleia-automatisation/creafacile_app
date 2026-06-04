@@ -769,13 +769,17 @@ serve(async (req) => {
 
           // Upload vers Supabase Storage (bucket public)
           const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-          const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+          const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
+            || Deno.env.get("SUPABASE_SECRET_KEYS")
+            || Deno.env.get("SUPABASE_ANON_KEY")
+            || Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
           if (!SUPABASE_URL || !SERVICE_ROLE) return jsonError(500, "Storage non configuré");
           const objectPath = `sora/${oaiId}.mp4`;
           const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/kreator-uploads/${objectPath}`, {
             method: "POST",
             headers: {
               Authorization: `Bearer ${SERVICE_ROLE}`,
+              apikey: SERVICE_ROLE,
               "Content-Type": "video/mp4",
               "x-upsert": "true",
             },
