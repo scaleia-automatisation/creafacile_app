@@ -901,9 +901,11 @@ serve(async (req) => {
         "gpt-image-5": "openai/gpt-5-image",
         "gpt-image-5-mini": "openai/gpt-5-image-mini",
         "grok-image": "x-ai/grok-imagine-image-quality",
-        "seedream-4.5": "bytedance/seedream-4.5",
       };
       const orModel = orModelMap[ai_model || ""];
+      if (ai_model === "seedream-4.5") {
+        return jsonError(400, "Le modèle Seedream 4.5 n'est plus disponible via OpenRouter. Veuillez choisir un autre modèle d'image (ex. Nano Banana, Imagen 4, GPT Image).");
+      }
       if (!orModel) return jsonError(400, `Modèle OpenRouter non mappé: ${ai_model}`);
       const imageOnlyOpenRouterModels = new Set(["x-ai/grok-imagine-image-quality"]);
       const outputModalities = imageOnlyOpenRouterModels.has(orModel) ? ["image"] : ["image", "text"];
