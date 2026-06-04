@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { describeProductImages } from '@/lib/kreator-ai';
+import { describeProductImages, describeSubjectShort } from '@/lib/kreator-ai';
 
 const MAX_PHOTOS = 4;
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -27,6 +27,7 @@ const PhotoUpload = () => {
   const [groupAnalysis, setGroupAnalysis] = useState('');
   const [analyzingGroup, setAnalyzingGroup] = useState(false);
   const groupKeyRef = useRef<string>('');
+  const [describingIndex, setDescribingIndex] = useState<Record<number, boolean>>({});
 
   const handleFile = (file: File, index: number) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
@@ -43,8 +44,22 @@ const PhotoUpload = () => {
     reader.onload = () => {
       const base64 = reader.result as string;
       const newPhotos = [...input_photos];
-      newPhotos[index] = { url: base64, description: newPhotos[index]?.description || '' };
+      newPhotos[index] = { url: base64, description: '' };
       setInputPhotos(newPhotos);
+      // Auto description centrée sur le sujet (1 phrase, modifiable)
+      setDescribingIndex((s) => ({ ...s, [index]: true }));
+      describeSubjectShort(base64)
+        .then((desc) => {
+          const arr = [...useKreatorStore.getState().input_photos];
+          if (arr[index]?.url === base64 && !arr[index].description) {
+            arr[index] = { ...arr[index], description: desc };
+            setInputPhotos(arr);
+          }
+        })
+        .catch((e) => {
+          console.error('Auto-description failed', e);
+        })
+        .finally(() => setDescribingIndex((s) => ({ ...s, [index]: false })));
     };
     reader.readAsDataURL(file);
   };
@@ -132,12 +147,18 @@ const PhotoUpload = () => {
 
             {/* Description field per photo */}
             {slot.url && (
-              <Input
-                value={slot.description}
-                onChange={(e) => handleDescriptionChange(index, e.target.value)}
-                placeholder={`Décris la photo ${index + 1}…`}
-                className="bg-card border-foreground/10 text-foreground text-xs placeholder:text-muted-foreground h-8"
-              />
+              <div className="relative">
+                <Input
+                  value={slot.description}
+                  onChange={(e) => handleDescriptionChange(index, e.target.value)}
+                  placeholder={describingIndex[index] ? 'Analyse en cours…' : `Décris la photo ${index + 1}…`}
+                  disabled={describingIndex[index]}
+                  className="bg-card border-foreground/10 text-foreground text-xs placeholder:text-muted-foreground h-8 pr-7"
+                />
+                {describingIndex[index] && (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-primary absolute right-2 top-1/2 -translate-y-1/2" />
+                )}
+              </div>
             )}
 
             <input
