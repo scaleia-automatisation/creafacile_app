@@ -1108,7 +1108,16 @@ serve(async (req) => {
       if (!orRes.ok) {
         console.error("OpenRouter image error:", orRes.status, orText.slice(0, 500));
         if (orRes.status === 429) return jsonError(429, "Limite OpenRouter atteinte. Réessayez.");
-        if (orRes.status === 402) return jsonError(402, "Crédits OpenRouter épuisés.");
+        if (orRes.status === 402) {
+          // Crédits OpenRouter épuisés — bascule automatique vers kie.ai pour les modèles compatibles
+          const kieFallbackModels = new Set(["nano-banana-2", "nano-banana-pro"]);
+          if (kieFallbackModels.has(ai_model || "")) {
+            return jsonFallback("Crédits OpenRouter épuisés. Bascule automatique vers un fournisseur alternatif.", {
+              fallback_provider: "kie",
+            });
+          }
+          return jsonFallback("Crédits OpenRouter épuisés. Merci de réessayer plus tard ou de choisir un autre modèle.", {});
+        }
         return jsonError(500, `Erreur OpenRouter: ${orText.slice(0, 300)}`);
       }
 

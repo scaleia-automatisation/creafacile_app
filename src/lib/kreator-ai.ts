@@ -1315,6 +1315,39 @@ export async function generateImage(
       },
     });
     if (error) throw error;
+    if (data?.fallback && data?.fallback_provider === 'kie') {
+      if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+      // Bascule vers kie.ai pour le même modèle (start + polling)
+      const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
+        body: {
+          action: 'kie_start_image',
+          prompt: promptEn,
+          ai_model: aiModel,
+          size: format,
+          input_image_url: inputImageUrl || '',
+          logo_url: logoUrl || '',
+        },
+      });
+      if (startError) throw startError;
+      if (startData?.error) throw new Error(startData.error);
+      if (startData?.done && startData?.image_url) return startData.image_url;
+      const taskId = startData?.task_id;
+      if (!taskId) throw new Error('No task_id returned from kie.ai');
+      const maxAttempts = 60;
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        await new Promise((r) => setTimeout(r, 4000));
+        if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+        const { data: pollData, error: pollError } = await supabase.functions.invoke('kreator-ai', {
+          body: { action: 'kie_poll_image', task_id: taskId },
+        });
+        if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+        if (pollError) { console.warn('kie.ai poll error', pollError); continue; }
+        if (pollData?.error) throw new Error(pollData.error);
+        if (pollData?.done && pollData?.image_url) return pollData.image_url;
+      }
+      throw new Error('La génération image kie.ai a pris trop de temps. Réessayez.');
+    }
+    if (data?.fallback) throw new Error(data?.error || 'Service image indisponible');
     if (data?.error) throw new Error(data.error);
     const imageUrl = data?.image_url;
     if (!imageUrl) throw new Error('No image generated (OpenRouter)');
