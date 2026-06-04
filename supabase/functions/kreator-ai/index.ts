@@ -47,12 +47,10 @@ serve(async (req) => {
     const isNanoBananaModel = ["nano-banana-2", "nano-banana-pro"].includes(ai_model || "");
 
     const isVertexModel = [
-      "imagen-4", "imagen-4-ultra", "imagen-4-fast",
       "veo-2", "veo-3", "veo-3-fast"
     ].includes(ai_model || "");
 
     const isVeoModel = ["veo-2", "veo-3", "veo-3-fast"].includes(ai_model || "");
-    const isImagenModel = ["imagen-4", "imagen-4-ultra", "imagen-4-fast"].includes(ai_model || "");
 
     // === Nano Banana 2 / Pro image generation (Vertex AI / Gemini API) ===
     if (action === "generate_image" && isNanoBananaModel) {
@@ -112,7 +110,7 @@ serve(async (req) => {
     }
 
     // === OpenAI image generation via Lovable AI Gateway ===
-    if (action === "generate_image" && !isImagenModel && !isNanoBananaModel) {
+    if (action === "generate_image" && !isNanoBananaModel) {
       const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
       if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -156,51 +154,6 @@ serve(async (req) => {
       return jsonResp({ image_url: imageUrl });
     }
 
-    // === Imagen 4 image generation (Vertex AI / Gemini API) ===
-    if (action === "generate_image" && isImagenModel) {
-      const VERTEX_API_KEY = Deno.env.get("VERTEX_API_KEY");
-      if (!VERTEX_API_KEY) throw new Error("VERTEX_API_KEY is not configured");
-
-      const imagenModelMap: Record<string, string> = {
-        "imagen-4": "imagen-4.0-generate-001",
-        "imagen-4-ultra": "imagen-4.0-ultra-generate-001",
-        "imagen-4-fast": "imagen-4.0-fast-generate-001",
-      };
-
-      const geminiModel = imagenModelMap[ai_model] || "imagen-4.0-generate-001";
-
-      const aspectRatio = normalizeAspectRatio(size);
-
-      const imagenRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:predict?key=${VERTEX_API_KEY}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          instances: [{ prompt: prompt || "" }],
-          parameters: { sampleCount: 1, aspectRatio },
-        }),
-      });
-
-      if (!imagenRes.ok) {
-        const errText = await imagenRes.text();
-        console.error("Imagen error:", imagenRes.status, errText);
-        let msg = "Erreur Imagen";
-        try {
-          const parsed = JSON.parse(errText);
-          msg = parsed?.error?.message || msg;
-        } catch { msg = errText || msg; }
-        if (imagenRes.status === 429 || msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("resource_exhausted")) {
-          msg = "Quota Vertex AI dépassé. Vérifiez la facturation et les limites de votre clé API.";
-        }
-        return jsonError(imagenRes.status === 429 ? 429 : 500, msg);
-      }
-
-      const imagenData = await imagenRes.json();
-      const b64 = imagenData?.predictions?.[0]?.bytesBase64Encoded;
-      if (b64) {
-        return jsonResp({ image_url: `data:image/png;base64,${b64}` });
-      }
-      return jsonError(500, "Pas d'image générée par Imagen");
-    }
 
     // === Sora 2 video generation (OpenAI) ===
     if (action === "generate_video" && !isVeoModel) {
@@ -748,9 +701,6 @@ serve(async (req) => {
         "dall-e-3": hasInputImage ? "gpt-image-2-image-to-image" : "gpt-image-2-text-to-image",
         "nano-banana-2": "nano-banana-2",
         "nano-banana-pro": "nano-banana-pro",
-        "imagen-4": "imagen4",
-        "imagen-4-ultra": "imagen4-ultra",
-        "imagen-4-fast": "imagen4-fast",
       };
 
       const kieModel = kieImageModelMap[ai_model || ""] || ai_model;
@@ -887,7 +837,7 @@ serve(async (req) => {
       return jsonResp({ done: false });
     }
 
-    // === OpenRouter: synchronous image generation (Nano Banana, Imagen, GPT Image, Grok) ===
+    // === OpenRouter: synchronous image generation (Nano Banana, GPT Image, Grok) ===
     if (action === "openrouter_generate_image") {
       const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
       if (!OPENROUTER_API_KEY) return jsonError(500, "OPENROUTER_API_KEY non configurée");
@@ -895,17 +845,9 @@ serve(async (req) => {
       const orModelMap: Record<string, string> = {
         "nano-banana-2": "google/gemini-2.5-flash-image",
         "nano-banana-pro": "google/gemini-3-pro-image-preview",
-        "imagen-4": "google/imagen-4",
-        "imagen-4-ultra": "google/imagen-4-ultra",
-        "imagen-4-fast": "google/imagen-4-fast",
-        "gpt-image-5": "openai/gpt-5-image",
-        "gpt-image-5-mini": "openai/gpt-5-image-mini",
         "grok-image": "x-ai/grok-imagine-image-quality",
       };
       const orModel = orModelMap[ai_model || ""];
-      if (ai_model === "seedream-4.5") {
-        return jsonError(400, "Le modèle Seedream 4.5 n'est plus disponible via OpenRouter. Veuillez choisir un autre modèle d'image (ex. Nano Banana, Imagen 4, GPT Image).");
-      }
       if (!orModel) return jsonError(400, `Modèle OpenRouter non mappé: ${ai_model}`);
       const imageOnlyOpenRouterModels = new Set(["x-ai/grok-imagine-image-quality"]);
       const outputModalities = imageOnlyOpenRouterModels.has(orModel) ? ["image"] : ["image", "text"];

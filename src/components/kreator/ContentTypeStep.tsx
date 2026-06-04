@@ -6,14 +6,8 @@ import ModelSettings from './ModelSettings';
 const imageModels: { value: AIModel; label: string }[] = [
   { value: 'nano-banana-2', label: 'Nano Banana 2 ⚡' },
   { value: 'nano-banana-pro', label: 'Nano Banana Pro 🎨' },
-  { value: 'imagen-4', label: 'Imagen 4' },
-  { value: 'imagen-4-ultra', label: 'Imagen 4 Ultra' },
-  { value: 'imagen-4-fast', label: 'Imagen 4 Fast' },
-  { value: 'gpt-image-5', label: 'GPT Image 5' },
-  { value: 'gpt-image-5-mini', label: 'GPT Image 5 Mini' },
   { value: 'gpt-5.4-image-2', label: 'GPT 5.4 Image 2' },
   { value: 'grok-image', label: 'Grok AI 🤖' },
-  { value: 'seedream-4.5', label: 'Seedream 4.5 🌱' },
 ];
 
 const videoModels: { value: AIModel; label: string }[] = [
@@ -53,11 +47,10 @@ const ContentTypeStep = () => {
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
-  const isGptImage = ai_model === 'gpt-image-5' || ai_model === 'gpt-image-5-mini' || ai_model === 'gpt-5.4-image-2';
-  const isSeedream = ai_model === 'seedream-4.5';
+  const isGptImage = ai_model === 'gpt-5.4-image-2';
   const availableFormats = type === 'video'
     ? formats.filter((f) => f.value === '9:16' || f.value === '16:9')
-    : isGptImage || isSeedream
+    : isGptImage
     ? formats
     : formats.filter((f) => f.value === '1:1' || f.value === '9:16' || f.value === '16:9');
 
