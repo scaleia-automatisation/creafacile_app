@@ -843,6 +843,7 @@ serve(async (req) => {
         "nano-banana-2": "google/gemini-2.5-flash-image",
         "nano-banana-pro": "google/gemini-3-pro-image-preview",
         "grok-image": "x-ai/grok-imagine-image-quality",
+        "gpt-5.4-image-2": "google/gemini-3-pro-image-preview",
       };
       const orModel = orModelMap[ai_model || ""];
       if (!orModel) return jsonError(400, `Modèle OpenRouter non mappé: ${ai_model}`);
