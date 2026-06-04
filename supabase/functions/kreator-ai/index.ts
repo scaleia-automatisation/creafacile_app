@@ -149,7 +149,13 @@ serve(async (req) => {
         }
         if (imageRes.status === 429) return jsonError(429, "Limite de génération d'image atteinte.");
         if (imageRes.status === 401 || imageRes.status === 402) return jsonError(imageRes.status, "Problème d'authentification ou de crédits sur la passerelle IA.");
-        return jsonError(imageRes.status >= 500 ? 503 : imageRes.status, `Erreur génération image (${imageRes.status})`);
+        if (imageRes.status >= 500) {
+          return jsonFallback("Le modèle GPT Image est temporairement indisponible. Bascule automatique vers un modèle image alternatif.", {
+            provider_status: imageRes.status,
+            fallback_model: "nano-banana-pro",
+          });
+        }
+        return jsonError(imageRes.status, `Erreur génération image (${imageRes.status})`);
       }
 
       const imageData = await imageRes.json();
