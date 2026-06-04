@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Users, CheckCircle, Sparkles, Upload, X, Replace, ImagePlus, RefreshCw } from 'lucide-react';
+import { Loader2, Users, CheckCircle, Sparkles, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { generatePersonas, generateIdeas, detectSectorFromImage, detectOfferTypeFromDescription, describeProductImages, detectActivityFromDescription, detectSectorFromActivity, generateServiceDescription } from '@/lib/kreator-ai';
+import { generatePersonas, generateIdeas, detectOfferTypeFromDescription, generateServiceDescription, detectActivityFromDescription, detectSectorFromActivity } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
@@ -15,8 +15,6 @@ const OFFER_TYPES = [
   '📦 Produit',
   '🛠️ Service',
 ];
-const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_SIZE_MB = 5;
 
 type Persona = {
   id: number;
@@ -48,7 +46,6 @@ const ProductOfferStep = () => {
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [loadingPersonas, setLoadingPersonas] = useState(false);
   const [selectedPersonaId, setSelectedPersonaId] = useState<number | null>(null);
-  const [describing, setDescribing] = useState(false);
   const [generatingServiceDesc, setGeneratingServiceDesc] = useState(false);
   const autoServiceDescKeyRef = useRef<string>('');
   const [detectingOfferType, setDetectingOfferType] = useState(false);
@@ -56,7 +53,6 @@ const ProductOfferStep = () => {
   const autoActivityKeyRef = useRef<string>('');
   const [detectingSector, setDetectingSector] = useState(false);
   const autoSectorKeyRef = useRef<string>('');
-  const fileRef = useRef<HTMLInputElement>(null);
   const autoPersonasKeyRef = useRef<string>('');
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
@@ -168,50 +164,6 @@ const ProductOfferStep = () => {
     } finally {
       setGeneratingServiceDesc(false);
     }
-  };
-
-  const handleFile = (file: File) => {
-    if (!ACCEPTED_TYPES.includes(file.type)) {
-      toast.error('Format non supporté. Utilisez JPG, PNG ou WEBP.');
-      return;
-    }
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      toast.error(`Le fichier dépasse ${MAX_SIZE_MB}MB`);
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const dataUrl = reader.result as string;
-      setProductImageUrl(dataUrl);
-      if (isProduct) {
-        setDescribing(true);
-        try {
-          const desc = await describeProductImages([dataUrl]);
-          const cleanedDesc = toSentences(desc, 1);
-          setProductDescription(cleanedDesc);
-          // Génère activité + secteur EN MÊME TEMPS que la description
-          const [activity, sectorFromDesc, sectorFromImage] = await Promise.all([
-            detectActivityFromDescription(cleanedDesc).catch(() => ''),
-            detectSectorFromActivity(cleanedDesc, SECTORS).catch(() => ''),
-            detectSectorFromImage(dataUrl, SECTORS).catch(() => ''),
-          ]);
-          if (activity) {
-            setCompanyActivity(activity);
-            autoActivityKeyRef.current = cleanedDesc;
-          }
-          const sector = sectorFromDesc || sectorFromImage;
-          if (sector) {
-            setCompanySector(sector);
-            autoSectorKeyRef.current = cleanedDesc;
-          }
-        } catch (e) {
-          console.error(e);
-        } finally {
-          setDescribing(false);
-        }
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   const handleNoIdea = async () => {
@@ -375,47 +327,6 @@ const ProductOfferStep = () => {
             </SelectContent>
           </Select>
         </div>
-        {isProduct && (
-          <div>
-            <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
-              <ImagePlus className="w-4 h-4 text-primary" />
-              Image de référence du produit
-            </label>
-            {product_image_url ? (
-              <div className="relative group aspect-square w-full max-w-[180px] rounded-lg overflow-hidden border border-foreground/10 bg-card">
-                <img src={product_image_url} alt="Produit" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-foreground bg-card/80 hover:bg-destructive hover:text-destructive-foreground" onClick={() => setProductImageUrl('')}>
-                    <X className="w-3.5 h-3.5" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-foreground bg-card/80 hover:bg-primary hover:text-primary-foreground" onClick={() => fileRef.current?.click()}>
-                    <Replace className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={() => fileRef.current?.click()}
-                className="aspect-square w-full max-w-[180px] rounded-lg border-2 border-dashed border-foreground/10 bg-card hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary"
-              >
-                <Upload className="w-6 h-6" />
-                <span className="text-xs font-medium">Importer une image</span>
-              </button>
-            )}
-            <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value=''; }} />
-            {product_image_url && (
-              <p className="text-[11px] text-muted-foreground mt-1.5">
-                1 seule image de référence possible. La description est générée automatiquement à partir de cette image.
-              </p>
-            )}
-            {describing && (
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
-                Analyse de l'image…
-              </div>
-            )}
-          </div>
-        )}
 
         <div className={isProduct ? 'md:col-span-2' : ''}>
           <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
