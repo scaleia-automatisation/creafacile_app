@@ -1201,7 +1201,7 @@ Génère maintenant les captions Facebook, Instagram, TikTok et LinkedIn${isCaro
 
 export async function generateImage(
   promptEn: string,
-  aiModel: AIModel = 'dall-e-3',
+  aiModel: AIModel = 'nano-banana-2',
   format: string = '1:1',
   inputImageUrl?: string,
   abortSignal?: AbortSignal,
@@ -1233,8 +1233,7 @@ export async function generateImage(
 
   // All image models are now routed through kie.ai
   const isKieImageModel = [
-    'qwen/image-edit', 'ideogram/character', 'ideogram/image',
-    'dall-e-3', 'nano-banana-2', 'nano-banana-pro',
+    'nano-banana-2', 'nano-banana-pro',
   ].includes(aiModel);
 
   // === kie.ai image models — start + polling ===
