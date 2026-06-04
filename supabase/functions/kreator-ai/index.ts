@@ -414,8 +414,11 @@ serve(async (req) => {
           break;
         case "sora-2-i2v":
           kieModel = "sora-2-image-to-video";
-          if (!ms.sora_image_url) return jsonError(400, "Sora 2 I2V requiert une image source.");
-          input.image_urls = [ms.sora_image_url];
+          {
+            const img = ms.sora_image_url || input_image_url;
+            if (!img) return jsonError(400, "Sora 2 I2V requiert une image source. Ajoutez-la dans les réglages du modèle ou via l'image de référence.");
+            input.image_urls = [img];
+          }
           input.aspect_ratio = soraAspect;
           if (ms.sora_n_frames) input.n_frames = ms.sora_n_frames;
           if (typeof ms.sora_remove_watermark === "boolean") input.remove_watermark = ms.sora_remove_watermark;
@@ -429,17 +432,23 @@ serve(async (req) => {
           break;
         case "sora-2-pro-i2v":
           kieModel = "sora-2-pro-image-to-video";
-          if (!ms.sora_image_url) return jsonError(400, "Sora 2 Pro I2V requiert une image source.");
-          input.image_urls = [ms.sora_image_url];
+          {
+            const img = ms.sora_image_url || input_image_url;
+            if (!img) return jsonError(400, "Sora 2 Pro I2V requiert une image source. Ajoutez-la dans les réglages du modèle ou via l'image de référence.");
+            input.image_urls = [img];
+          }
           input.aspect_ratio = soraAspect;
           if (ms.sora_n_frames) input.n_frames = ms.sora_n_frames;
           input.size = ms.sora_pro_size || "standard";
           break;
         case "sora-2-pro-character": {
           kieModel = "sora-2-pro-character";
-          if (!ms.sora_image_url) return jsonError(400, "Sora 2 Pro Character requiert une image source.");
+          {
+            const img = ms.sora_image_url || input_image_url;
+            if (!img) return jsonError(400, "Sora 2 Pro Character requiert une image source.");
+            input.image = img;
+          }
           if (!ms.sora_aspect_ratio) return jsonError(400, "Sora 2 Pro Character requiert un format.");
-          input.image = ms.sora_image_url;
           input.aspect_ratio = soraAspect;
           input.n_frames = ms.sora_n_frames || 10;
           if (Array.isArray(sora_character_scenes) && sora_character_scenes.length > 0) {
