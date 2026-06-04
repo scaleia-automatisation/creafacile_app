@@ -729,13 +729,23 @@ serve(async (req) => {
         if (!OPENAI_API_KEY) return jsonError(500, "OPENAI_API_KEY non configurée");
         const oaiId = task_id.slice(4);
 
-        const pollRes = await fetch(`https://api.openai.com/v1/videos/${encodeURIComponent(oaiId)}`, {
-          headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
-        });
+        let pollRes: Response;
+        try {
+          pollRes = await fetch(`https://api.openai.com/v1/videos/${encodeURIComponent(oaiId)}`, {
+            headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
+          });
+        } catch (e) {
+          console.warn("OpenAI Sora poll transient fetch error, will retry:", (e as Error)?.message);
+          return jsonResp({ done: false });
+        }
         const pollText = await pollRes.text();
         if (!pollRes.ok) {
-          console.error("OpenAI Sora poll error:", pollRes.status, pollText);
-          return jsonError(500, `Erreur polling OpenAI Sora: ${pollText.slice(0, 200)}`);
+          console.warn("OpenAI Sora poll non-OK, will retry:", pollRes.status, pollText.slice(0, 200));
+          // Transient upstream errors (503/504/connection timeout) → retry next tick
+          if (pollRes.status >= 500 || pollRes.status === 408 || pollRes.status === 429) {
+            return jsonResp({ done: false });
+          }
+          return jsonError(pollRes.status, `Erreur polling OpenAI Sora: ${pollText.slice(0, 200)}`);
         }
         let pollJson: any;
         try { pollJson = JSON.parse(pollText); } catch { return jsonError(500, "Réponse OpenAI Sora invalide"); }
