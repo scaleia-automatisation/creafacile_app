@@ -167,6 +167,7 @@ const GenerationStep = () => {
   const [progress, setProgress] = useState(0);
   const [generating, setGenerating] = useState(false);
   const [captions, setCaptions] = useState<PlatformCaptions | null>(null);
+  const [carouselSlides, setCarouselSlides] = useState<Array<{ url: string; captions: PlatformCaptions }> | null>(null);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('instagram');
   const [captionEditing, setCaptionEditing] = useState(false);
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
@@ -325,6 +326,96 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
         throw new Error('Prompt vide après génération');
       }
       const generationPrompt = withLogoOverlayInstruction(withSelectedFormatInstruction(activePrompt));
+
+      // === CAROUSEL: N images (one per slide) + N captions ===
+      if (type === 'carousel') {
+        const n = Math.max(1, Math.min(4, slides_count || 1));
+        const slideTexts = options.slide_texts || [];
+        const baseCaptionParams = {
+          objective: marketing_angle || objective,
+          contentType: 'image' as const,
+          sector: company_sector,
+          activity: company_activity,
+          aiModel: ai_model,
+          format,
+          slidesCount: 1,
+          offerType: offer_type,
+          offerName: product_service,
+          offerDescription: product_description,
+          persona: target_persona,
+          market,
+          marketingAngle: marketing_angle,
+          ton: options.ton,
+          visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
+          freeDescription: input_text,
+          promptValide: generationPrompt,
+          advancedSettings: [
+            options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
+            options.logo_enabled ? `logo: ${options.logo_position}` : '',
+            options.show_text ? `texte overlay slides` : '',
+          ].filter(Boolean).join(' | '),
+          productAnalysis: input_image_description,
+        };
+
+        const slideResults = await Promise.all(
+          Array.from({ length: n }).map(async (_, i) => {
+            const slideText = (slideTexts[i] || '').trim();
+            const perSlidePrompt = `${generationPrompt}\n\n🎯 GÉNÈRE EXCLUSIVEMENT LA SLIDE ${i + 1} sur ${n} du carrousel. Texte affiché EXACTEMENT (mot pour mot, sans modification): "${slideText}". Maintenir une cohérence visuelle STRICTE avec les autres slides du carrousel (même style, palette, typographie, composition, ambiance, traitement). Ne pas inclure le texte des autres slides.`;
+            const [url, caps] = await Promise.all([
+              generateImage(perSlidePrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
+              generateCaption({
+                ...baseCaptionParams,
+                idea: slideText || idea_chosen || input_text,
+                text1: slideText,
+                slideTexts: [slideText],
+              }),
+            ]);
+            const finalUrl = options.logo_enabled && options.logo_url
+              ? await composeImageWithExactLogo(url, options.logo_url, options.logo_position, format)
+              : url;
+            return { url: finalUrl, captions: caps };
+          }),
+        );
+
+        if (progressInterval) clearInterval(progressInterval);
+        setProgress(100);
+
+        const { data: deducted } = await supabase.rpc('deduct_credits', {
+          p_user_id: user.id,
+          p_amount: creditsNeeded,
+          p_action: `generate_${type}`,
+        });
+        if (!deducted) {
+          toast.error('Crédits insuffisants');
+          setStatus('idle');
+          setGenerating(false);
+          return;
+        }
+
+        // Insert one generation row per slide for traceability
+        await supabase.from('generations').insert(
+          slideResults.map((s, i) => ({
+            user_id: user.id,
+            type,
+            ai_model,
+            format,
+            prompt_en_final: activePrompt,
+            prompt_fr_final: activePrompt,
+            result_url: s.url,
+            credits_used: i === 0 ? creditsNeeded : 0,
+            status: 'done' as const,
+            captions: (s.captions ?? null) as unknown as Json,
+          })),
+        );
+
+        setCarouselSlides(slideResults);
+        setResultUrl(slideResults[0].url);
+        setCreditsUsed(creditsNeeded);
+        setCaptions(slideResults[0].captions);
+        setStatus('done');
+        await refreshProfile();
+        return;
+      }
 
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
@@ -489,6 +580,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
     // Reprendre TOUS les nouveaux inputs (modèle IA, format, type de contenu, réglages, etc.)
     // en forçant la régénération du prompt depuis les valeurs courantes du store.
     setCaptions(null);
+    setCarouselSlides(null);
     setResultUrl('');
     handleGenerate({ forcePromptRegen: true });
   };
@@ -520,6 +612,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
     resetProject();
     setShowNewProjectDialog(false);
     setCaptions(null);
+    setCarouselSlides(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -608,6 +701,27 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
     });
   };
 
+  const updateSlideCaption = (slideIndex: number, field: string, value: string) => {
+    if (!carouselSlides) return;
+    const next = carouselSlides.map((s, i) => {
+      if (i !== slideIndex) return s;
+      return {
+        ...s,
+        captions: {
+          ...s.captions,
+          [selectedPlatform]: {
+            ...s.captions[selectedPlatform],
+            [field]: value,
+          },
+        },
+      };
+    });
+    setCarouselSlides(next);
+    if (slideIndex === 0) {
+      setCaptions(next[0].captions);
+    }
+  };
+
   return (
     <>
       <StepContainer stepNumber={5} title="Génération">
@@ -660,22 +774,24 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
 
         {status === 'done' && result_url && (
           <div className="space-y-6">
-            {/* Result preview */}
-            <div className="rounded-card overflow-hidden bg-card border border-foreground/10">
-              {type === 'video' ? (
-                <video
-                  src={result_url}
-                  controls
-                  autoPlay
-                  loop
-                  playsInline
-                  className="w-full rounded-card"
-                  style={{ maxHeight: '70vh' }}
-                />
-              ) : (
-                <img src={result_url} alt="Résultat" className="w-full object-cover" />
-              )}
-            </div>
+            {/* Result preview — carousel shows N rows (slide + caption) below */}
+            {!(type === 'carousel' && carouselSlides && carouselSlides.length > 0) && (
+              <div className="rounded-card overflow-hidden bg-card border border-foreground/10">
+                {type === 'video' ? (
+                  <video
+                    src={result_url}
+                    controls
+                    autoPlay
+                    loop
+                    playsInline
+                    className="w-full rounded-card"
+                    style={{ maxHeight: '70vh' }}
+                  />
+                ) : (
+                  <img src={result_url} alt="Résultat" className="w-full object-cover" />
+                )}
+              </div>
+            )}
 
             {/* 4 action buttons in one row */}
             <div className="grid grid-cols-5 gap-2">
@@ -752,7 +868,117 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
               </div>
             )}
 
-            {/* Caption section with platform dropdown */}
+            {/* Carousel: N rows of [slide image | caption] */}
+            {type === 'carousel' && carouselSlides && carouselSlides.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Carrousel — {carouselSlides.length} slides
+                  </h3>
+                  <Select value={selectedPlatform} onValueChange={(v) => setSelectedPlatform(v as Platform)}>
+                    <SelectTrigger className="w-[220px] bg-background border-foreground/10 text-foreground text-sm font-bold">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-foreground/10">
+                      {(Object.keys(platformLabels) as Platform[]).map((p) => (
+                        <SelectItem key={p} value={p} className="text-foreground focus:bg-secondary/20 cursor-pointer">
+                          {platformLabels[p]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {carouselSlides.map((slide, idx) => {
+                  const cap = slide.captions[selectedPlatform];
+                  return (
+                    <div
+                      key={idx}
+                      className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-card rounded-card border border-foreground/10 p-4"
+                    >
+                      <div className="space-y-2">
+                        <div className="text-xs font-semibold text-muted-foreground">
+                          Slide {idx + 1}
+                        </div>
+                        <div className="rounded-card overflow-hidden bg-background border border-foreground/10">
+                          <img src={slide.url} alt={`Slide ${idx + 1}`} className="w-full object-cover" />
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-foreground/10 text-foreground hover:border-secondary text-xs"
+                            onClick={() => {
+                              const a = document.createElement('a');
+                              a.href = slide.url;
+                              a.download = `kreator-carousel-slide-${idx + 1}.png`;
+                              a.click();
+                            }}
+                          >
+                            <Download className="w-3.5 h-3.5 mr-1" /> Slide {idx + 1}
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="text-xs font-semibold text-muted-foreground">
+                          Caption — Slide {idx + 1}
+                        </div>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-1 block">Hook</label>
+                          <Textarea
+                            value={cap.hook}
+                            onChange={(e) => updateSlideCaption(idx, 'hook', e.target.value)}
+                            className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                            rows={1}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-1 block">Description</label>
+                          <Textarea
+                            value={cap.description}
+                            onChange={(e) => updateSlideCaption(idx, 'description', e.target.value)}
+                            className="bg-background border-foreground/10 text-foreground text-sm min-h-[60px] resize-none"
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-1 block">Appel à l'action</label>
+                          <Textarea
+                            value={cap.cta}
+                            onChange={(e) => updateSlideCaption(idx, 'cta', e.target.value)}
+                            className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                            rows={1}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-1 block">Hashtags</label>
+                          <Textarea
+                            value={cap.hashtags}
+                            onChange={(e) => updateSlideCaption(idx, 'hashtags', e.target.value)}
+                            className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                            rows={1}
+                          />
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-muted-foreground hover:text-foreground"
+                          onClick={() => {
+                            const text = `${cap.hook}\n${cap.description}\n${cap.cta}\n\n${cap.hashtags}`;
+                            navigator.clipboard.writeText(text);
+                            toast.success(`Caption slide ${idx + 1} copié !`);
+                          }}
+                        >
+                          <Copy className="w-3.5 h-3.5 mr-1" /> Copier
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Caption section with platform dropdown (image / video only) */}
+            {!(type === 'carousel' && carouselSlides && carouselSlides.length > 0) && (
             <div className="bg-card rounded-card p-4 md:p-5 border border-foreground/10">
               <div className="flex items-center justify-between mb-4">
                 <Select value={selectedPlatform} onValueChange={(v) => setSelectedPlatform(v as Platform)}>
@@ -833,6 +1059,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
                 )
               )}
             </div>
+            )}
 
             {/* Publish buttons */}
             <div className="grid grid-cols-2 gap-3">
