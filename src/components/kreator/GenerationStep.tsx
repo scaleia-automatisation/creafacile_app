@@ -297,12 +297,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
       return;
     }
 
-    // Modèles d'édition d'image nécessitant une image de référence
-    const requiresReferenceImage = ['qwen/image-edit', 'ideogram/character'].includes(ai_model);
-    if (requiresReferenceImage && !input_photos?.[0]?.url) {
-      toast.error("Ce modèle nécessite une image de référence. Ajoutez-en une dans le bloc 'Point de départ'.");
-      return;
-    }
+    // (no image-edit-only models currently require a reference image)
 
     setGenerating(true);
     setStatus('generating');

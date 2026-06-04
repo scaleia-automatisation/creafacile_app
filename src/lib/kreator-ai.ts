@@ -519,12 +519,9 @@ export async function generatePrompt(params: {
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
   
-  const aiModelName = params.aiModel || 'dall-e-3';
+  const aiModelName = params.aiModel || 'nano-banana-2';
   let formatAdaptation = '';
-  if (aiModelName === 'dall-e-3') {
-    const dalleFormat = params.format === '1:1' ? 'image carrée' : params.format === '16:9' ? 'cadre cinématographique large' : 'format vertical mobile';
-    formatAdaptation = `Modèle IA: DALL·E 3 — Intégrer "${dalleFormat}" dans la description du prompt FR.`;
-  } else if (['veo-2', 'veo-3', 'veo-3-fast'].includes(aiModelName)) {
+  if (['veo-2', 'veo-3', 'veo-3-fast'].includes(aiModelName)) {
     const veoFormat = params.format === '9:16' ? 'vidéo verticale 9:16' : params.format === '16:9' ? 'vidéo horizontale 16:9' : 'vidéo carrée 1:1';
     formatAdaptation = `Modèle IA: ${aiModelName} — Préciser "${veoFormat}" et optimiser le cadrage pour ce ratio.`;
   } else if (aiModelName === 'sora-2') {
@@ -1204,7 +1201,7 @@ Génère maintenant les captions Facebook, Instagram, TikTok et LinkedIn${isCaro
 
 export async function generateImage(
   promptEn: string,
-  aiModel: AIModel = 'dall-e-3',
+  aiModel: AIModel = 'nano-banana-2',
   format: string = '1:1',
   inputImageUrl?: string,
   abortSignal?: AbortSignal,
@@ -1236,8 +1233,7 @@ export async function generateImage(
 
   // All image models are now routed through kie.ai
   const isKieImageModel = [
-    'qwen/image-edit', 'ideogram/character', 'ideogram/image',
-    'dall-e-3', 'nano-banana-2', 'nano-banana-pro',
+    'nano-banana-2', 'nano-banana-pro',
   ].includes(aiModel);
 
   // === kie.ai image models — start + polling ===

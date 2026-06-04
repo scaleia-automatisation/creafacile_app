@@ -3,8 +3,7 @@ import { create } from 'zustand';
 export type ContentType = 'image' | 'carousel' | 'video';
 export type Format = '9:16' | '16:9' | '1:1' | '3:4' | '4:3';
 export type AIModel =
-  | 'dall-e-3' | 'nano-banana-2' | 'nano-banana-pro'
-  | 'qwen/image-edit' | 'ideogram/character' | 'ideogram/image'
+  | 'nano-banana-2' | 'nano-banana-pro'
   | 'gpt-5.4-image-2' | 'grok-image'
   | 'sora-2-t2v' | 'sora-2-i2v' | 'sora-2-pro-i2v' | 'sora-2-pro-t2v' | 'sora-2-pro-character'
   // legacy/alt
