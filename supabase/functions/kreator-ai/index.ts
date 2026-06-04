@@ -434,15 +434,39 @@ serve(async (req) => {
           if (!imgUrl) return jsonError(400, "Sora I2V requiert une image source.");
           const imgRes = await fetch(imgUrl);
           if (!imgRes.ok) return jsonError(400, "Impossible de récupérer l'image source.");
-          const imgBlob = await imgRes.blob();
-          const ext = (imgUrl.split("?")[0].split(".").pop() || "png").toLowerCase();
-          const mime = imgBlob.type || (ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "image/png");
+          const imgBuf = new Uint8Array(await imgRes.arrayBuffer());
+          // Sora exige que l'image input_reference corresponde EXACTEMENT à size (width x height).
+          // On redimensionne avec ImageScript (cover) et on ré-encode en PNG.
+          const [targetW, targetH] = oaiSize.split("x").map((n) => parseInt(n, 10));
+          let finalBytes: Uint8Array = imgBuf;
+          let finalMime = "image/png";
+          let finalName = "ref.png";
+          try {
+            const { Image } = await import("https://deno.land/x/imagescript@1.2.17/mod.ts");
+            const img = await Image.decode(imgBuf);
+            const srcRatio = img.width / img.height;
+            const dstRatio = targetW / targetH;
+            let cropW = img.width, cropH = img.height, cropX = 0, cropY = 0;
+            if (srcRatio > dstRatio) {
+              cropW = Math.round(img.height * dstRatio);
+              cropX = Math.round((img.width - cropW) / 2);
+            } else if (srcRatio < dstRatio) {
+              cropH = Math.round(img.width / dstRatio);
+              cropY = Math.round((img.height - cropH) / 2);
+            }
+            const cropped = img.crop(cropX, cropY, cropW, cropH);
+            const resized = cropped.resize(targetW, targetH);
+            finalBytes = await resized.encode();
+          } catch (e) {
+            console.error("Sora I2V resize error:", (e as Error)?.message);
+            return jsonError(400, "Impossible de redimensionner l'image source pour Sora.");
+          }
           const fd = new FormData();
           fd.append("model", oaiModel);
           fd.append("prompt", prompt || "");
           fd.append("seconds", seconds);
           fd.append("size", oaiSize);
-          fd.append("input_reference", new File([imgBlob], `ref.${ext}`, { type: mime }));
+          fd.append("input_reference", new File([finalBytes], finalName, { type: finalMime }));
           body = fd;
         } else {
           headers["Content-Type"] = "application/json";
