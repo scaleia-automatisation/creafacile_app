@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { describeProductImages } from '@/lib/kreator-ai';
 
-const MAX_PHOTOS = 3;
+const MAX_PHOTOS = 4;
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
 
@@ -87,10 +87,10 @@ const PhotoUpload = () => {
   return (
     <div className="space-y-3">
       <label className="text-sm font-medium text-muted-foreground block">
-        Images de référence (max {MAX_PHOTOS})
+        Images du produit (max {MAX_PHOTOS}) — utilisées pour générer le contenu
       </label>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-4 gap-3">
         {slots.map((slot, index) => (
           <div key={index} className="space-y-2">
             {slot.url ? (
