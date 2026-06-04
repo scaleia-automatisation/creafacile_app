@@ -308,6 +308,33 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
     abortControllerRef.current = abortController;
     elapsedRef.current = setInterval(() => setElapsedSeconds(s => s + 1), 1000);
 
+    // Helpers d'annulation : interrompent immédiatement le flux dès que
+    // l'utilisateur clique sur "Annuler", même pour les appels qui ne
+    // supportent pas nativement AbortSignal (generatePrompt, generateCaption,
+    // composeImageWithExactLogo, verifyGeneratedImage, supabase rpc/insert).
+    const checkAbort = () => {
+      if (abortController.signal.aborted) {
+        throw new DOMException('Aborted', 'AbortError');
+      }
+    };
+    const raceAbort = <T,>(p: Promise<T>): Promise<T> => {
+      return new Promise<T>((resolve, reject) => {
+        if (abortController.signal.aborted) {
+          reject(new DOMException('Aborted', 'AbortError'));
+          return;
+        }
+        const onAbort = () => {
+          abortController.signal.removeEventListener('abort', onAbort);
+          reject(new DOMException('Aborted', 'AbortError'));
+        };
+        abortController.signal.addEventListener('abort', onAbort);
+        p.then(
+          (v) => { abortController.signal.removeEventListener('abort', onAbort); resolve(v); },
+          (e) => { abortController.signal.removeEventListener('abort', onAbort); reject(e); },
+        );
+      });
+    };
+
     const isVideo = type === 'video';
     const progressInterval = !isVideo ? setInterval(() => {
       setProgress((p) => (p >= 95 ? p : p + Math.random() * 8));
@@ -318,10 +345,11 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
       // (régénération = on reprend en compte tous les nouveaux inputs : modèle, format, type, etc.)
       let activePrompt = prompt_fr;
       if (opts?.forcePromptRegen || !activePrompt || activePrompt.trim().length === 0) {
-        const promptResult = await generatePrompt(buildPromptParams());
+        const promptResult = await raceAbort(generatePrompt(buildPromptParams()));
         activePrompt = promptResult.prompt_fr || '';
         setPromptFr(activePrompt);
       }
+      checkAbort();
       if (!activePrompt || activePrompt.trim().length === 0) {
         throw new Error('Prompt vide après génération');
       }
@@ -360,7 +388,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
           productAnalysis: input_image_description,
         };
 
-        const slideResults = await Promise.all(
+        const slideResults = await raceAbort(Promise.all(
           Array.from({ length: n }).map(async (_, i) => {
             const slideText = (slideTexts[i] || '').trim();
             const perSlidePrompt = `${generationPrompt}
@@ -385,21 +413,24 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
                 slideTexts: [slideText],
               }),
             ]);
+            checkAbort();
             const finalUrl = options.logo_enabled && options.logo_url
               ? await composeImageWithExactLogo(url, options.logo_url, options.logo_position, format)
               : url;
             return { url: finalUrl, captions: caps };
           }),
-        );
+        ));
+        checkAbort();
 
         if (progressInterval) clearInterval(progressInterval);
         setProgress(100);
 
-        const { data: deducted } = await supabase.rpc('deduct_credits', {
+        const { data: deducted } = await raceAbort(supabase.rpc('deduct_credits', {
           p_user_id: user.id,
           p_amount: creditsNeeded,
           p_action: `generate_${type}`,
-        });
+        }));
+        checkAbort();
         if (!deducted) {
           toast.error('Crédits insuffisants');
           setStatus('idle');
@@ -432,7 +463,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         return;
       }
 
-      const [contentUrl, captionResult] = await Promise.all([
+      const [contentUrl, captionResult] = await raceAbort(Promise.all([
         isVideo
           ? generateVideo(generationPrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
           : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
@@ -467,19 +498,21 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
           text2: options.text_2_enabled ? options.text_content_2 : '',
           slideTexts: options.slide_texts,
         }),
-      ]);
+      ]));
+      checkAbort();
 
       if (progressInterval) clearInterval(progressInterval);
       setProgress(100);
 
       // === AUTO-VÉRIFICATION VISUELLE (image uniquement, une seule régénération max) ===
       let finalContentUrl = !isVideo && options.logo_enabled && options.logo_url
-        ? await composeImageWithExactLogo(contentUrl, options.logo_url, options.logo_position, format)
+        ? await raceAbort(composeImageWithExactLogo(contentUrl, options.logo_url, options.logo_position, format))
         : contentUrl;
+      checkAbort();
       let finalActivePrompt = activePrompt;
       if (!isVideo && finalContentUrl && !abortController.signal.aborted) {
         try {
-          const verdict = await verifyGeneratedImage({
+          const verdict = await raceAbort(verifyGeneratedImage({
             imageUrl: finalContentUrl,
             promptFr: activePrompt,
             format,
@@ -488,7 +521,8 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
             textPosition: options.text_position,
             hasLogo: !!options.logo_enabled,
             logoPosition: options.logo_position,
-          });
+          }));
+          checkAbort();
           if (!verdict.ok && verdict.improved_prompt_fr && !abortController.signal.aborted) {
             console.warn('[verify] image non conforme, régénération:', verdict.issues);
             toast.message('Optimisation visuelle automatique en cours…', {
@@ -505,23 +539,27 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
               abortController.signal,
               '',
             );
+            checkAbort();
             if (retryUrl) {
               finalContentUrl = options.logo_enabled && options.logo_url
-                ? await composeImageWithExactLogo(retryUrl, options.logo_url, options.logo_position, format)
+                ? await raceAbort(composeImageWithExactLogo(retryUrl, options.logo_url, options.logo_position, format))
                 : retryUrl;
               finalActivePrompt = improved;
             }
           }
         } catch (e) {
+          if (e instanceof DOMException && e.name === 'AbortError') throw e;
           console.warn('[verify] échec auto-vérification (non bloquant):', e);
         }
       }
+      checkAbort();
 
-      const { data: deducted } = await supabase.rpc('deduct_credits', {
+      const { data: deducted } = await raceAbort(supabase.rpc('deduct_credits', {
         p_user_id: user.id,
         p_amount: creditsNeeded,
         p_action: `generate_${type}`,
-      });
+      }));
+      checkAbort();
 
       if (!deducted) {
         toast.error('Crédits insuffisants');
