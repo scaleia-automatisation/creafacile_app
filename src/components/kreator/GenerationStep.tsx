@@ -580,6 +580,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
     // Reprendre TOUS les nouveaux inputs (modèle IA, format, type de contenu, réglages, etc.)
     // en forçant la régénération du prompt depuis les valeurs courantes du store.
     setCaptions(null);
+    setCarouselSlides(null);
     setResultUrl('');
     handleGenerate({ forcePromptRegen: true });
   };
