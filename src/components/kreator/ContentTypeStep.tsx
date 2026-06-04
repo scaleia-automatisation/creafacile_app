@@ -47,7 +47,11 @@ const ContentTypeStep = () => {
     sora_character_scenes, setSoraCharacterScenes,
   } = useKreatorStore();
 
-  const models = type === 'video' ? videoModels : imageModels;
+  const models = type === 'video'
+    ? videoModels
+    : type === 'carousel'
+    ? imageModels.filter((m) => m.value === 'nano-banana-pro')
+    : imageModels;
   const isGptImage = ai_model === 'gpt-5.4-image-2';
   const availableFormats = type === 'video'
     ? formats.filter((f) => f.value === '9:16' || f.value === '16:9')
