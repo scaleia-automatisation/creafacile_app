@@ -281,6 +281,23 @@ Pas d'introduction, pas de guillemets, pas de liste, pas de mention du sujet de 
   return s;
 }
 
+export async function describeSubjectShort(imageBase64: string) {
+  const systemPrompt = `Tu es un expert en analyse visuelle. On te fournit UNE image.
+Décris en FRANÇAIS, en UNE SEULE PHRASE simple et claire (max ~25 mots), le sujet principal (produit, élément ou personne) : apparence visible, attitude/posture et ce qu'il/elle fait.
+Règles : 100% factuel (rien d'inventé), pas de marketing, pas d'adjectifs subjectifs, pas d'introduction, pas de guillemets, pas de liste, pas de markdown. Uniquement la phrase finale.`;
+  const data = await callKreatorAI({
+    action: 'describe_image',
+    image_base64s: [imageBase64],
+    messages: [{ role: 'user', content: "Décris en UNE phrase le sujet principal de cette image : apparence, attitude et ce qu'il fait." }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  let s = content.trim().replace(/^["'`]+|["'`]+$/g, '').replace(/\s+/g, ' ');
+  if (!/[.!?]$/.test(s)) s += '.';
+  return s;
+}
+
 export async function describeProductImages(imageBase64s: string[]) {
   const single = imageBase64s.length <= 1;
   const systemPrompt = `Tu es un expert en analyse visuelle de produits avec un œil de designer industriel et de directeur artistique packaging.
