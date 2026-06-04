@@ -167,6 +167,7 @@ const GenerationStep = () => {
   const [progress, setProgress] = useState(0);
   const [generating, setGenerating] = useState(false);
   const [captions, setCaptions] = useState<PlatformCaptions | null>(null);
+  const [carouselSlides, setCarouselSlides] = useState<Array<{ url: string; captions: PlatformCaptions }> | null>(null);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('instagram');
   const [captionEditing, setCaptionEditing] = useState(false);
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
