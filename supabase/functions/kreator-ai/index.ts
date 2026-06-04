@@ -618,6 +618,10 @@ serve(async (req) => {
         console.error("kie.ai no taskId:", startText);
         const apiMsg = startJson?.msg || startJson?.message || startJson?.error;
         const apiCode = startJson?.code;
+        const paused = typeof apiMsg === "string" && /paused|unavailable|maintenance/i.test(apiMsg);
+        if (paused) {
+          return jsonError(503, `Le modèle vidéo sélectionné (${ai_model}) est temporairement indisponible chez le fournisseur. Merci d'en choisir un autre (Sora 2 Pro, Veo 3.1, Kling, Seedance ou Grok Imagine).`);
+        }
         return jsonError(400, apiMsg ? `kie.ai: ${apiMsg}${apiCode ? ` (code ${apiCode})` : ""}` : "kie.ai n'a pas retourné de taskId");
       }
 
