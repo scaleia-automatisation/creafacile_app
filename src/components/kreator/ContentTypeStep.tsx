@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useKreatorStore, type AIModel, type Format } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ModelSettings from './ModelSettings';
+import PhotoUpload from './PhotoUpload';
 
 
 const imageModels: { value: AIModel; label: string }[] = [
@@ -133,6 +134,13 @@ const ContentTypeStep = () => {
       {type === 'video' && ai_model && (
         <div className="mb-6">
           <ModelSettings />
+        </div>
+      )}
+
+      {/* Images du produit (jusqu'à 4) — pour la génération image / carousel */}
+      {type !== 'video' && ai_model && (
+        <div className="mb-6">
+          <PhotoUpload />
         </div>
       )}
 
