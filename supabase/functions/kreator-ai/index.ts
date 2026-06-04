@@ -13,6 +13,7 @@ const jsonResp = (body: object, status = 200) =>
   });
 
 const jsonError = (status: number, error: string) => jsonResp({ error }, status);
+const jsonFallback = (error: string, details?: object) => jsonResp({ error, fallback: true, ...(details || {}) }, 200);
 
 const normalizeAspectRatio = (value: unknown): "1:1" | "3:4" | "9:16" | "4:3" | "16:9" => {
   const raw = String(value || "").trim();
@@ -605,7 +606,14 @@ serve(async (req) => {
       const startText = await startRes.text();
       if (!startRes.ok) {
         console.error("kie.ai start error:", startRes.status, startText);
-        return jsonError(startRes.status === 429 ? 429 : 500, `Erreur kie.ai: ${startText.slice(0, 300)}`);
+        const isFallbackable = startRes.status >= 500 || /paused|unavailable|maintenance|temporarily/i.test(startText);
+        if (isFallbackable) {
+          return jsonFallback(`Le modèle vidéo sélectionné (${ai_model}) est temporairement indisponible chez le fournisseur. Merci d'en choisir un autre (Sora 2 Pro, Veo 3.1, Kling, Seedance ou Grok Imagine).`, {
+            provider_status: startRes.status,
+            provider: "kie.ai",
+          });
+        }
+        return jsonError(startRes.status === 429 ? 429 : 400, `Erreur kie.ai: ${startText.slice(0, 300)}`);
       }
 
       let startJson: any;
@@ -618,7 +626,10 @@ serve(async (req) => {
         const apiCode = startJson?.code;
         const paused = typeof apiMsg === "string" && /paused|unavailable|maintenance/i.test(apiMsg);
         if (paused) {
-          return jsonError(503, `Le modèle vidéo sélectionné (${ai_model}) est temporairement indisponible chez le fournisseur. Merci d'en choisir un autre (Sora 2 Pro, Veo 3.1, Kling, Seedance ou Grok Imagine).`);
+          return jsonFallback(`Le modèle vidéo sélectionné (${ai_model}) est temporairement indisponible chez le fournisseur. Merci d'en choisir un autre (Sora 2 Pro, Veo 3.1, Kling, Seedance ou Grok Imagine).`, {
+            provider_code: apiCode,
+            provider: "kie.ai",
+          });
         }
         return jsonError(400, apiMsg ? `kie.ai: ${apiMsg}${apiCode ? ` (code ${apiCode})` : ""}` : "kie.ai n'a pas retourné de taskId");
       }

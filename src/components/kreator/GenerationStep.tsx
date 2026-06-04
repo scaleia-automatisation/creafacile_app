@@ -555,7 +555,10 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         setStatus('idle');
       } else {
         console.error(err);
-        toast.error('Erreur lors de la génération. Aucun crédit déduit.');
+        const message = err instanceof Error && err.message
+          ? err.message
+          : 'Erreur lors de la génération. Aucun crédit déduit.';
+        toast.error(message, { description: 'Aucun crédit déduit.' });
         setStatus('error');
       }
     } finally {
