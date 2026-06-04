@@ -393,6 +393,81 @@ serve(async (req) => {
 
     // === kie.ai: START video generation ===
     if (action === "kie_start_video") {
+      // ---- OpenAI Sora routing: T2V / I2V (Standard + Pro). "Character" reste sur kie.ai. ----
+      const OPENAI_SORA_MODELS: Record<string, "sora-2" | "sora-2-pro"> = {
+        "sora-2-t2v": "sora-2",
+        "sora-2-i2v": "sora-2",
+        "sora-2-pro-t2v": "sora-2-pro",
+        "sora-2-pro-i2v": "sora-2-pro",
+      };
+      if (ai_model && OPENAI_SORA_MODELS[ai_model]) {
+        const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+        if (!OPENAI_API_KEY) return jsonError(500, "OPENAI_API_KEY non configurée");
+
+        const ms = (model_settings || {}) as Record<string, any>;
+        const isPro = ai_model.includes("pro");
+        const isI2V = ai_model.includes("i2v");
+        const oaiModel = OPENAI_SORA_MODELS[ai_model];
+
+        // Orientation : sora_aspect_ratio (portrait/paysage) > size (9:16/16:9/1:1)
+        const orient = ms.sora_aspect_ratio === "portrait"
+          ? "portrait"
+          : ms.sora_aspect_ratio === "paysage"
+          ? "landscape"
+          : size === "9:16" ? "portrait" : "landscape";
+
+        // Tailles OpenAI Sora supportées : 720x1280, 1280x720 (standard) ; pro/high → 1024x1792, 1792x1024
+        const highRes = isPro && ms.sora_pro_size === "high";
+        const oaiSize = orient === "portrait"
+          ? (highRes ? "1024x1792" : "720x1280")
+          : (highRes ? "1792x1024" : "1280x720");
+
+        // Durée : n_frames (10/15) → seconds ("8"/"12"). Défaut "8".
+        const seconds = ms.sora_n_frames === 15 ? "12" : ms.sora_n_frames === 10 ? "8" : "8";
+
+        let body: BodyInit;
+        const headers: Record<string, string> = { Authorization: `Bearer ${OPENAI_API_KEY}` };
+
+        if (isI2V) {
+          const imgUrl = ms.sora_image_url || input_image_url;
+          if (!imgUrl) return jsonError(400, "Sora I2V requiert une image source.");
+          const imgRes = await fetch(imgUrl);
+          if (!imgRes.ok) return jsonError(400, "Impossible de récupérer l'image source.");
+          const imgBlob = await imgRes.blob();
+          const ext = (imgUrl.split("?")[0].split(".").pop() || "png").toLowerCase();
+          const mime = imgBlob.type || (ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "image/png");
+          const fd = new FormData();
+          fd.append("model", oaiModel);
+          fd.append("prompt", prompt || "");
+          fd.append("seconds", seconds);
+          fd.append("size", oaiSize);
+          fd.append("input_reference", new File([imgBlob], `ref.${ext}`, { type: mime }));
+          body = fd;
+        } else {
+          headers["Content-Type"] = "application/json";
+          body = JSON.stringify({ model: oaiModel, prompt: prompt || "", seconds, size: oaiSize });
+        }
+
+        console.log(`[openai_sora_start] ai_model=${ai_model} model=${oaiModel} size=${oaiSize} seconds=${seconds} i2v=${isI2V}`);
+
+        const startRes = await fetch("https://api.openai.com/v1/videos", { method: "POST", headers, body });
+        const startText = await startRes.text();
+        if (!startRes.ok) {
+          console.error("OpenAI Sora start error:", startRes.status, startText);
+          const fallbackable = startRes.status >= 500 || /unavailable|maintenance|temporarily|overloaded/i.test(startText);
+          if (fallbackable) {
+            return jsonFallback(`Sora (OpenAI) est temporairement indisponible. Merci d'en choisir un autre (Veo 3.1, Kling, Seedance ou Grok Imagine).`, { provider_status: startRes.status, provider: "openai" });
+          }
+          return jsonError(startRes.status === 429 ? 429 : 400, `Erreur OpenAI Sora: ${startText.slice(0, 300)}`);
+        }
+        let startJson: any;
+        try { startJson = JSON.parse(startText); } catch { return jsonError(500, "Réponse OpenAI Sora invalide"); }
+        const oaiId = startJson?.id;
+        if (!oaiId) return jsonError(500, "OpenAI Sora n'a pas retourné d'id");
+        // Préfixe pour router le polling vers OpenAI
+        return jsonResp({ task_id: `oai:${oaiId}`, done: false });
+      }
+
       const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
       if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
 
@@ -648,6 +723,65 @@ serve(async (req) => {
 
     // === kie.ai: POLL video generation ===
     if (action === "kie_poll_video") {
+      // ---- OpenAI Sora polling ----
+      if (typeof task_id === "string" && task_id.startsWith("oai:")) {
+        const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+        if (!OPENAI_API_KEY) return jsonError(500, "OPENAI_API_KEY non configurée");
+        const oaiId = task_id.slice(4);
+
+        const pollRes = await fetch(`https://api.openai.com/v1/videos/${encodeURIComponent(oaiId)}`, {
+          headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
+        });
+        const pollText = await pollRes.text();
+        if (!pollRes.ok) {
+          console.error("OpenAI Sora poll error:", pollRes.status, pollText);
+          return jsonError(500, `Erreur polling OpenAI Sora: ${pollText.slice(0, 200)}`);
+        }
+        let pollJson: any;
+        try { pollJson = JSON.parse(pollText); } catch { return jsonError(500, "Réponse OpenAI Sora invalide"); }
+        const status = (pollJson?.status || "").toLowerCase();
+
+        if (["failed", "error", "cancelled", "canceled"].includes(status)) {
+          const msg = pollJson?.error?.message || pollJson?.last_error?.message || "Échec de la génération OpenAI Sora";
+          return jsonError(500, msg);
+        }
+        if (status === "completed") {
+          // Récupère le binaire vidéo
+          const contentRes = await fetch(`https://api.openai.com/v1/videos/${encodeURIComponent(oaiId)}/content`, {
+            headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
+          });
+          if (!contentRes.ok) {
+            const t = await contentRes.text();
+            console.error("OpenAI Sora content error:", contentRes.status, t.slice(0, 200));
+            return jsonError(500, "Téléchargement vidéo OpenAI Sora échoué");
+          }
+          const videoBuf = new Uint8Array(await contentRes.arrayBuffer());
+
+          // Upload vers Supabase Storage (bucket public)
+          const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+          const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+          if (!SUPABASE_URL || !SERVICE_ROLE) return jsonError(500, "Storage non configuré");
+          const objectPath = `sora/${oaiId}.mp4`;
+          const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/kreator-uploads/${objectPath}`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${SERVICE_ROLE}`,
+              "Content-Type": "video/mp4",
+              "x-upsert": "true",
+            },
+            body: videoBuf,
+          });
+          if (!uploadRes.ok) {
+            const t = await uploadRes.text();
+            console.error("Sora upload storage error:", uploadRes.status, t.slice(0, 200));
+            return jsonError(500, "Upload vidéo Sora échoué");
+          }
+          const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/kreator-uploads/${objectPath}`;
+          return jsonResp({ video_url: publicUrl, done: true });
+        }
+        return jsonResp({ done: false });
+      }
+
       const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
       if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
       if (!task_id) return jsonError(400, "Missing task_id");
