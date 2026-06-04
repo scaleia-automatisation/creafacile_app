@@ -67,12 +67,13 @@ serve(async (req) => {
 
       const selectedAspect = normalizeAspectRatio(size);
       const selectedAspectLabel = aspectLabel(selectedAspect);
+      const gatewaySize = gatewaySizeFromAspect(selectedAspect);
       const hasInputImg = !!input_image_url;
       const logoOrderLabel = logo_url ? (hasInputImg ? "second" : "first") : "";
       const logoInstr = logo_url
         ? `\n\nIMPORTANT: The ${logoOrderLabel} reference image attached is the user's brand logo (PNG, transparent background). You MUST integrate this EXACT logo into the generated image — do NOT invent, redraw, restyle, recolor, retype, or substitute any other logo, monogram, lettering, icon or brand. Reproduce it pixel-identical (same shapes, colors, typography, proportions), keep its transparent background, do not crop or rotate it, place it discreetly without covering the main subject.`
         : "";
-      const enhancedPrompt = `Generate an image with aspect ratio ${selectedAspect} (${selectedAspectLabel}). IMPORTANT: this aspect ratio comes from the user's Format field and must be respected strictly. ${prompt || ""}${logoInstr}`;
+      const enhancedPrompt = `Generate an image STRICTLY in aspect ratio ${selectedAspect} (${selectedAspectLabel}), output canvas ${gatewaySize}. IMPORTANT: this aspect ratio comes from the user's Format field and MUST be respected exactly — do NOT output a square or any other ratio. Compose the entire scene to fit a ${selectedAspectLabel} ${selectedAspect} canvas. ${prompt || ""}${logoInstr}`;
 
       const userParts: any[] = [{ type: "text", text: enhancedPrompt }];
       if (input_image_url) userParts.push({ type: "image_url", image_url: { url: input_image_url } });
@@ -88,6 +89,8 @@ serve(async (req) => {
           model: geminiModel,
           messages: [{ role: "user", content: userParts.length === 1 ? enhancedPrompt : userParts }],
           modalities: ["image", "text"],
+          size: gatewaySize,
+          aspect_ratio: selectedAspect,
           stream: false,
         }),
       });
