@@ -723,6 +723,65 @@ serve(async (req) => {
 
     // === kie.ai: POLL video generation ===
     if (action === "kie_poll_video") {
+      // ---- OpenAI Sora polling ----
+      if (typeof task_id === "string" && task_id.startsWith("oai:")) {
+        const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+        if (!OPENAI_API_KEY) return jsonError(500, "OPENAI_API_KEY non configurée");
+        const oaiId = task_id.slice(4);
+
+        const pollRes = await fetch(`https://api.openai.com/v1/videos/${encodeURIComponent(oaiId)}`, {
+          headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
+        });
+        const pollText = await pollRes.text();
+        if (!pollRes.ok) {
+          console.error("OpenAI Sora poll error:", pollRes.status, pollText);
+          return jsonError(500, `Erreur polling OpenAI Sora: ${pollText.slice(0, 200)}`);
+        }
+        let pollJson: any;
+        try { pollJson = JSON.parse(pollText); } catch { return jsonError(500, "Réponse OpenAI Sora invalide"); }
+        const status = (pollJson?.status || "").toLowerCase();
+
+        if (["failed", "error", "cancelled", "canceled"].includes(status)) {
+          const msg = pollJson?.error?.message || pollJson?.last_error?.message || "Échec de la génération OpenAI Sora";
+          return jsonError(500, msg);
+        }
+        if (status === "completed") {
+          // Récupère le binaire vidéo
+          const contentRes = await fetch(`https://api.openai.com/v1/videos/${encodeURIComponent(oaiId)}/content`, {
+            headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
+          });
+          if (!contentRes.ok) {
+            const t = await contentRes.text();
+            console.error("OpenAI Sora content error:", contentRes.status, t.slice(0, 200));
+            return jsonError(500, "Téléchargement vidéo OpenAI Sora échoué");
+          }
+          const videoBuf = new Uint8Array(await contentRes.arrayBuffer());
+
+          // Upload vers Supabase Storage (bucket public)
+          const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+          const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+          if (!SUPABASE_URL || !SERVICE_ROLE) return jsonError(500, "Storage non configuré");
+          const objectPath = `sora/${oaiId}.mp4`;
+          const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/kreator-uploads/${objectPath}`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${SERVICE_ROLE}`,
+              "Content-Type": "video/mp4",
+              "x-upsert": "true",
+            },
+            body: videoBuf,
+          });
+          if (!uploadRes.ok) {
+            const t = await uploadRes.text();
+            console.error("Sora upload storage error:", uploadRes.status, t.slice(0, 200));
+            return jsonError(500, "Upload vidéo Sora échoué");
+          }
+          const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/kreator-uploads/${objectPath}`;
+          return jsonResp({ video_url: publicUrl, done: true });
+        }
+        return jsonResp({ done: false });
+      }
+
       const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
       if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
       if (!task_id) return jsonError(400, "Missing task_id");
