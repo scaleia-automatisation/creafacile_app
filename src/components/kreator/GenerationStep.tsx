@@ -331,6 +331,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
       if (type === 'carousel') {
         const n = Math.max(1, Math.min(4, slides_count || 1));
         const slideTexts = options.slide_texts || [];
+        const chosenIdeaHook = (idea_chosen || '').split(' — ')[0].trim();
         const baseCaptionParams = {
           objective: marketing_angle || objective,
           contentType: 'image' as const,
@@ -349,6 +350,8 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
           visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
           freeDescription: input_text,
           promptValide: generationPrompt,
+          ideaHook: chosenIdeaHook,
+          useCase: use_case,
           advancedSettings: [
             options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
             options.logo_enabled ? `logo: ${options.logo_position}` : '',
@@ -436,6 +439,8 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         generateCaption({
           objective: marketing_angle || objective,
           idea: idea_chosen || input_text,
+          ideaHook: (idea_chosen || '').split(' — ')[0].trim(),
+          useCase: use_case,
           contentType: type,
           sector: company_sector,
           activity: company_activity,
