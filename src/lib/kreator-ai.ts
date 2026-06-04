@@ -1376,6 +1376,10 @@ export async function generateImage(
   });
 
   if (error) throw error;
+  if (data?.fallback && data?.fallback_model) {
+    if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+    return generateImage(promptEn, data.fallback_model as AIModel, format, inputImageUrl, abortSignal, logoUrl);
+  }
   if (data?.error) throw new Error(data.error);
 
   const imageUrl = data?.image_url;
