@@ -1048,6 +1048,8 @@ export async function generateCaption(params: {
   text1?: string;
   text2?: string;
   slideTexts?: string[];
+  ideaHook?: string;
+  useCase?: string;
 }): Promise<PlatformCaptions> {
   const isVideo = params.contentType === 'video';
   const isCarousel = params.contentType === 'carousel';
@@ -1086,6 +1088,13 @@ CTA — naturel, jamais agressif, format conversationnel/question.
 HASHTAGS — SEO 2026 : mix niche + activité + secteur + marché + intention + tendance + branding, séparés par espaces, tous préfixés #.
 
 SÉPARATION STRICTE : le CTA va UNIQUEMENT dans le champ "cta". Il ne doit JAMAIS apparaître dans "description". La description ne se termine pas par une question/CTA.
+
+${params.ideaHook ? `━━━━━━━━━━━━━━━━━━
+HOOK IMPOSÉ — ABSOLU (NON NÉGOCIABLE)
+━━━━━━━━━━━━━━━━━━
+Le HOOK de l'idée retenue est : "${params.ideaHook}".
+Ce hook DOIT être utilisé MOT POUR MOT, IDENTIQUE, comme champ "hook" de CHAQUE caption (facebook, instagram, tiktok, linkedin). Ne le reformule pas, ne le traduis pas, ne le raccourcis pas, ne change pas l'emoji, ne change pas la ponctuation. Aucune variation, aucune adaptation par réseau. Ce hook s'applique IDENTIQUEMENT aux 4 plateformes.
+` : ''}
 
 ━━━━━━━━━━━━━━━━━━
 RÈGLES ALGORITHMES 2026 PAR RÉSEAU
