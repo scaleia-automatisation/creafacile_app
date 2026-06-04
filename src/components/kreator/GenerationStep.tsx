@@ -425,11 +425,11 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         if (progressInterval) clearInterval(progressInterval);
         setProgress(100);
 
-        const { data: deducted } = await raceAbort(supabase.rpc('deduct_credits', {
+        const { data: deducted } = await raceAbort(Promise.resolve(supabase.rpc('deduct_credits', {
           p_user_id: user.id,
           p_amount: creditsNeeded,
           p_action: `generate_${type}`,
-        }));
+        })));
         checkAbort();
         if (!deducted) {
           toast.error('Crédits insuffisants');
@@ -554,11 +554,11 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       }
       checkAbort();
 
-      const { data: deducted } = await raceAbort(supabase.rpc('deduct_credits', {
+      const { data: deducted } = await raceAbort(Promise.resolve(supabase.rpc('deduct_credits', {
         p_user_id: user.id,
         p_amount: creditsNeeded,
         p_action: `generate_${type}`,
-      }));
+      })));
       checkAbort();
 
       if (!deducted) {
