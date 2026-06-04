@@ -360,7 +360,19 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
         const slideResults = await Promise.all(
           Array.from({ length: n }).map(async (_, i) => {
             const slideText = (slideTexts[i] || '').trim();
-            const perSlidePrompt = `${generationPrompt}\n\n🎯 GÉNÈRE EXCLUSIVEMENT LA SLIDE ${i + 1} sur ${n} du carrousel. Texte affiché EXACTEMENT (mot pour mot, sans modification): "${slideText}". Maintenir une cohérence visuelle STRICTE avec les autres slides du carrousel (même style, palette, typographie, composition, ambiance, traitement). Ne pas inclure le texte des autres slides.`;
+            const perSlidePrompt = `${generationPrompt}
+
+🎯 GÉNÈRE EXCLUSIVEMENT LA SLIDE ${i + 1} sur ${n} du carrousel.
+Texte affiché EXACTEMENT (mot pour mot, sans modification, sans ajout, sans traduction): "${slideText}".
+Ne pas inclure le texte des autres slides.
+
+⚠️ COHÉRENCE VISUELLE ABSOLUE entre TOUTES les slides du carrousel (slide 1 à ${n}) — règles NON négociables, identiques pour chaque slide :
+- TYPOGRAPHIE STRICTEMENT IDENTIQUE sur toutes les slides : même police (font family), même graisse (weight), même style (italic/regular), même casse, même interlignage, même tracking, même couleur de texte, même contour/ombre éventuels.
+- TAILLE DE TEXTE STRICTEMENT IDENTIQUE en proportion du cadre sur toutes les slides (mêmes pixels relatifs). Le texte de cette slide doit occuper la MÊME surface visuelle relative que celui des autres slides — ne jamais agrandir ni réduire selon la longueur du texte.
+- POSITION DU TEXTE identique sur toutes les slides (même zone, même alignement, mêmes marges).
+- BACKGROUND STRICTEMENT IDENTIQUE sur toutes les slides : même couleur/dégradé/texture/scène de fond, même luminosité, même traitement, même composition générale. Ne pas changer le décor entre les slides.
+- Même palette, même ambiance, même style graphique, même traitement photo, même éclairage, même grain.
+Cette slide doit être visuellement interchangeable avec les autres du carrousel à l'exception du contenu textuel "${slideText}".`;
             const [url, caps] = await Promise.all([
               generateImage(perSlidePrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
               generateCaption({
