@@ -63,6 +63,13 @@ const ContentTypeStep = () => {
   const scenesTotal = sora_character_scenes.reduce((sum, s) => sum + (Number(s.duration) || 0), 0);
   const scenesValid = scenesTotal === sora_character_total_duration;
 
+  // Force nano-banana-pro for carousel
+  useEffect(() => {
+    if (type === 'carousel' && ai_model !== 'nano-banana-pro') {
+      setAiModel('nano-banana-pro');
+    }
+  }, [type, ai_model, setAiModel]);
+
   const updateSceneCount = (count: number) => {
     const current = sora_character_scenes;
     if (count > current.length) {
