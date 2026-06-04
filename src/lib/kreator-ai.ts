@@ -829,6 +829,13 @@ Ultra lisibles mobile, parfaitement intégrés, jamais coupés, cohérents avec 
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE IMAGE
 ━━━━━━━━━━━━━━━━━━
+RÈGLE ABSOLUE — BACKGROUND PUISSANT + ANGLE MARKETING FORT (IMAGE & CAROUSEL)
+Pour CHAQUE image et CHAQUE slide de carousel, le prompt_fr DOIT contenir EXPLICITEMENT et de manière VISIBLE un bloc dédié intitulé « BACKGROUND PUISSANT & ANGLE MARKETING » décrivant :
+- un ARRIÈRE-PLAN fort, contextuel, riche et travaillé (jamais un fond plat ou neutre vide) : décor réel cohérent avec le produit/service, ambiance lumineuse cinématographique, texture/matière, profondeur, éléments secondaires soigneusement choisis pour renforcer le désir et l'univers de la marque (ex : surface en marbre + vapeur pour food premium, atelier brut + outils pour artisanat, intérieur lifestyle haut de gamme pour beauté, environnement urbain dynamique pour sport, etc.). Le background DOIT MAGNIFIER le produit/service sans jamais le concurrencer.
+- un ANGLE MARKETING FORT explicitement énoncé (ex : transformation avant/après, désir immédiat, statut/aspiration, urgence/rareté, preuve sociale visuelle, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) qui structure la composition entière et met le produit/service au centre du message.
+- la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (mise en lumière, contraste produit/fond, direction du regard, hiérarchie visuelle, codes émotionnels mobilisés).
+Ce bloc est OBLIGATOIRE et NON NÉGOCIABLE pour les types "image" et "carousel" — il doit apparaître TEL QUEL dans le prompt_fr final, visible et identifiable. Aucun fond plat, uni vide, ou générique n'est toléré.
+
 Prompt image : max 180 mots, sauts de ligne, fluide, sans markdown ni listes.
 EXIGENCE PREMIUM NON NÉGOCIABLE — niveau "agence créative top mondiale / graphiste senior / directeur artistique award-winning (Behance / Dribbble / Awwwards / Cannes Lions)". JAMAIS de visuel plat, simpliste, amateur, générique ou "template gratuit".
 Le visuel DOIT contenir une vraie RECHERCHE de design : composition travaillée (grille, règle des tiers, équilibre asymétrique maîtrisé, layering, profondeur), HIÉRARCHIE typographique forte (titre massif impactant + sous-éléments contrastés en taille/poids), TYPOGRAPHIE display moderne (sans-serif condensé bold, serif éditorial, ou display script selon le secteur — JAMAIS d'Arial/Times basique), MIX de polices intelligent (1 display + 1 sans-serif neutre).
