@@ -109,11 +109,12 @@ export async function generateContentIdeas(input: {
   market?: string;
   useCase?: string;
   tone?: string;
+  marketingAngle?: string;
 }): Promise<{ ideas: ContentIdea[] }> {
   const systemPrompt = `Tu es un expert en marketing digital viral et copywriting de conversion (Facebook, Instagram, TikTok, LinkedIn — recommandations algorithmes 2026).
 
 OBJECTIF : Générer EXACTEMENT 3 idées de contenu ULTIMES, IDÉALES, qui CONVERTISSENT LE PLUS, avec un ANGLE MARKETING PUISSANT ET FORT chacune.
-Les 3 idées doivent être TRÈS DIFFÉRENTES avec des angles radicalement distincts (ex : douleur / transformation / curiosité ; ou preuve sociale / urgence / éducation). Jamais 2 angles similaires.
+Les 3 idées doivent être TRÈS DIFFÉRENTES dans leur exécution (hook, mise en scène, accroche émotionnelle), MAIS si un ANGLE MARKETING est fourni, elles doivent TOUTES les 3 respecter STRICTEMENT cet angle imposé (c'est le fil conducteur narratif obligatoire).
 Chaque idée doit être en COHÉRENCE PARFAITE avec : type d'offre, nom de l'offre, description, activité/métier, persona cible, objectif du contenu, type de contenu (image / carousel / vidéo), et cas d'utilisation.
 
 STRUCTURE STRICTE de chaque idée :
@@ -126,6 +127,9 @@ Le hook DOIT être ULTRA PUISSANT, scroll-stop immédiat (0-2s), émotionnel/int
 
 RÈGLE CAS D'UTILISATION — ABSOLUE (NON NÉGOCIABLE) :
 Les 3 idées DOIVENT être en ACCORD PARFAIT À 100% avec le CAS D'UTILISATION choisi (format narratif obligatoire : Avant/Après, UGC, Témoignage, Démonstration, Comparatif, FAQ, Hook Viral, etc.), QUEL QUE SOIT le TYPE DE CONTENU (image, carrousel, vidéo). Aucune idée hors-format n'est tolérée. Le hook lui-même doit refléter ce cas d'utilisation.
+
+RÈGLE ANGLE MARKETING — ABSOLUE (NON NÉGOCIABLE, PRIORITÉ MAXIMALE) :
+Si un ANGLE MARKETING est fourni en contexte, il est PRIORITAIRE sur tout le reste (avant même le cas d'utilisation). Les 3 idées DOIVENT impérativement décliner cet angle exact (ex : "Avant / Après", "Comparatif", "Témoignage client", "Démonstration produit", "Offre spéciale", "Storytelling", etc.). Le champ "angle" de chaque idée DOIT reprendre littéralement le nom de cet angle imposé. Toute idée qui s'écarte de l'angle marketing fourni est INVALIDE.
 
 RÈGLES :
 - Toujours STRICTEMENT COHÉRENT avec TOUS les éléments fournis : type d'offre, nom, description, activité/métier, secteur, marché, persona, objectif, type de contenu, cas d'utilisation et ton d'écriture.
@@ -153,6 +157,7 @@ ${input.sector ? `Secteur : ${input.sector}` : ''}
 ${input.persona ? `Client cible / Persona : ${input.persona}` : ''}
 ${input.market ? `Marché : ${input.market}` : ''}
 ${input.useCase ? `Cas d'utilisation (format narratif OBLIGATOIRE) : ${input.useCase}` : ''}
+${input.marketingAngle ? `Angle marketing (PRIORITAIRE — fil conducteur OBLIGATOIRE des 3 idées) : ${input.marketingAngle}` : ''}
 ${input.tone ? `Ton d'écriture : ${input.tone}` : ''}
 
 Génère 3 idées de contenu ULTIMES qui convertissent le plus, avec des angles marketing puissants et TRÈS différents, en cohérence parfaite avec TOUT ce contexte (notamment le cas d'utilisation et le type de contenu).`;

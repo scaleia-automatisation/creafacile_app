@@ -7,7 +7,7 @@ import { generateContentIdeas, callKreatorAI, type ContentIdea } from '@/lib/kre
 
 const IdeaSuggestions = () => {
   const {
-    type, objective, offer_type, product_service, product_description, product_image_url, use_case,
+    type, objective, offer_type, product_service, product_description, product_image_url, use_case, marketing_angle,
     company_activity, company_sector, target_persona, market, options,
     setInputText, setIdeaChosen, setUseCase,
   } = useKreatorStore();
@@ -45,6 +45,7 @@ const IdeaSuggestions = () => {
         market,
         useCase: use_case,
         tone: options?.ton,
+        marketingAngle: marketing_angle,
       });
       setIdeas(res.ideas || []);
       setMode('generated');
