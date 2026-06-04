@@ -701,6 +701,27 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
     });
   };
 
+  const updateSlideCaption = (slideIndex: number, field: string, value: string) => {
+    if (!carouselSlides) return;
+    const next = carouselSlides.map((s, i) => {
+      if (i !== slideIndex) return s;
+      return {
+        ...s,
+        captions: {
+          ...s.captions,
+          [selectedPlatform]: {
+            ...s.captions[selectedPlatform],
+            [field]: value,
+          },
+        },
+      };
+    });
+    setCarouselSlides(next);
+    if (slideIndex === 0) {
+      setCaptions(next[0].captions);
+    }
+  };
+
   return (
     <>
       <StepContainer stepNumber={5} title="Génération">
