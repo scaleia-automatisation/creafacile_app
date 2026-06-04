@@ -327,47 +327,6 @@ const ProductOfferStep = () => {
             </SelectContent>
           </Select>
         </div>
-        {isProduct && (
-          <div>
-            <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
-              <ImagePlus className="w-4 h-4 text-primary" />
-              Image de référence du produit
-            </label>
-            {product_image_url ? (
-              <div className="relative group aspect-square w-full max-w-[180px] rounded-lg overflow-hidden border border-foreground/10 bg-card">
-                <img src={product_image_url} alt="Produit" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-foreground bg-card/80 hover:bg-destructive hover:text-destructive-foreground" onClick={() => setProductImageUrl('')}>
-                    <X className="w-3.5 h-3.5" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-foreground bg-card/80 hover:bg-primary hover:text-primary-foreground" onClick={() => fileRef.current?.click()}>
-                    <Replace className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={() => fileRef.current?.click()}
-                className="aspect-square w-full max-w-[180px] rounded-lg border-2 border-dashed border-foreground/10 bg-card hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary"
-              >
-                <Upload className="w-6 h-6" />
-                <span className="text-xs font-medium">Importer une image</span>
-              </button>
-            )}
-            <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value=''; }} />
-            {product_image_url && (
-              <p className="text-[11px] text-muted-foreground mt-1.5">
-                1 seule image de référence possible. La description est générée automatiquement à partir de cette image.
-              </p>
-            )}
-            {describing && (
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
-                Analyse de l'image…
-              </div>
-            )}
-          </div>
-        )}
 
         <div className={isProduct ? 'md:col-span-2' : ''}>
           <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
