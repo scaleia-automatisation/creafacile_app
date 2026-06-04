@@ -89,8 +89,6 @@ serve(async (req) => {
           model: geminiModel,
           messages: [{ role: "user", content: userParts.length === 1 ? enhancedPrompt : userParts }],
           modalities: ["image", "text"],
-          size: gatewaySize,
-          aspect_ratio: selectedAspect,
           stream: false,
         }),
       });
