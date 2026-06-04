@@ -100,8 +100,11 @@ STRUCTURE STRICTE de chaque idée :
 - concept : description SIMPLE, claire et concise de l'idée (ce qu'on voit / entend / lit), STRICTEMENT ENTRE 15 ET 20 MOTS (jamais moins de 15, jamais plus de 20), orientée conversion, STRICTEMENT en lien avec le nom de l'offre, la description, l'objectif du contenu et SURTOUT le cas d'utilisation choisi.
 - angle : nom court de l'angle marketing (1 à 3 mots), sans explication supplémentaire.
 
-RÈGLE HOOK — ABSOLUE :
-Le hook DOIT être directement dans le SENS de l'OBJECTIF DU CONTENU et respecter EXACTEMENT le TON D'ÉCRITURE demandé (vocabulaire, niveau de langue, énergie, rythme). C'est non négociable : un hook qui s'écarte de l'objectif ou du ton est invalide.
+RÈGLE HOOK — ABSOLUE (NON NÉGOCIABLE) :
+Le hook DOIT être ULTRA PUISSANT, scroll-stop immédiat (0-2s), émotionnel/intrigant/choquant/provoquant une curiosité irrésistible, JAMAIS mou, descriptif ni générique. Il doit être directement dans le SENS de l'OBJECTIF DU CONTENU et respecter EXACTEMENT le TON D'ÉCRITURE demandé (vocabulaire, niveau de langue, énergie, rythme, registre). Un hook qui s'écarte de l'objectif, du ton ou du cas d'utilisation est INVALIDE.
+
+RÈGLE CAS D'UTILISATION — ABSOLUE (NON NÉGOCIABLE) :
+Les 3 idées DOIVENT être en ACCORD PARFAIT À 100% avec le CAS D'UTILISATION choisi (format narratif obligatoire : Avant/Après, UGC, Témoignage, Démonstration, Comparatif, FAQ, Hook Viral, etc.), QUEL QUE SOIT le TYPE DE CONTENU (image, carrousel, vidéo). Aucune idée hors-format n'est tolérée. Le hook lui-même doit refléter ce cas d'utilisation.
 
 RÈGLES :
 - Toujours STRICTEMENT COHÉRENT avec TOUS les éléments fournis : type d'offre, nom, description, activité/métier, secteur, marché, persona, objectif, type de contenu, cas d'utilisation et ton d'écriture.
