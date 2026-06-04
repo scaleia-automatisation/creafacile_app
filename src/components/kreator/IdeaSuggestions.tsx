@@ -9,7 +9,7 @@ const IdeaSuggestions = () => {
   const {
     type, objective, offer_type, product_service, product_description, product_image_url, use_case,
     company_activity, company_sector, target_persona, market, options,
-    setInputText, setIdeaChosen,
+    setInputText, setIdeaChosen, setUseCase,
   } = useKreatorStore();
 
   const [loading, setLoading] = useState(false);
@@ -117,6 +117,8 @@ ${manualIdea}`;
       return;
     }
     const text = manualIdea.trim().slice(0, 500);
+    // L'idée insérée est prioritaire : on ignore le cas d'utilisation
+    setUseCase('');
     setInputText(text);
     setIdeaChosen(text);
     toast.success('Idée insérée. Lancement de la génération…');
