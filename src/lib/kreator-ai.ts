@@ -697,6 +697,22 @@ Utiliser les informations utilisateur dans cet ordre :
 Si une donnée manque : la déduire intelligemment, rester crédible, cohérent, compatible avec le secteur et l'objectif marketing. Ne jamais extrapoler excessivement.
 
 ━━━━━━━━━━━━━━━━━━
+RÈGLE ABSOLUE — RÉALISME 100% NATUREL (NON NÉGOCIABLE)
+━━━━━━━━━━━━━━━━━━
+TOUS les contenus générés (image, carrousel, vidéo) DOIVENT être strictement réalistes, 100% naturels, au rendu professionnel indiscernable d'une vraie production humaine (photographe / vidéaste / studio réel). Les personnes, objets, décors, textures, lumières, peaux, mains, yeux, regards, vêtements, matières et environnements ne doivent JAMAIS ressembler de près ou de loin à du contenu généré par IA.
+
+OBLIGATOIRE dans le prompt_fr :
+- photographie / cinématographie RÉELLE, capteur plein format, objectif premium (ex : 35mm/50mm/85mm f/1.4-f/2.8), profondeur de champ naturelle, micro-imperfections crédibles, grain photo subtil, lumière physiquement plausible (naturelle ou éclairage studio réaliste), ombres et reflets cohérents avec la source de lumière.
+- anatomie humaine PARFAITE : mains, doigts, dents, yeux, oreilles, symétrie du visage, proportions corporelles, posture naturelle, expressions sincères et non figées, peau avec pores et texture réelle (jamais lissée à l'excès).
+- objets et produits avec matériaux crédibles (textures, reflets, usures légères), perspectives correctes, échelles cohérentes, étiquettes/textes lisibles et non déformés.
+- AUCUN artefact IA : pas de plastique brillant artificiel, pas de peau en cire, pas de yeux vitreux, pas de symétrie suspecte, pas de membres en trop, pas de fusion d'objets, pas de "look IA générique", pas de style hyper-saturé / hyper-stylisé synthétique, pas d'arrière-plan flou irréel, pas de fond CGI évident.
+- rendu de niveau reportage / éditorial / publicité tournée en studio réel — comme capturé par un humain avec un vrai matériel.
+
+INTERDICTIONS EXPLICITES à inscrire systématiquement dans le prompt_fr (negative prompt intégré) : « pas de rendu IA, pas d'aspect 3D synthétique, pas de CGI, pas de uncanny valley, pas de peau plastique, pas de visage déformé, pas de mains/doigts incorrects, pas de texte illisible, pas d'over-smoothing, pas de bokeh artificiel, pas de saturation excessive, pas de style cartoon/illustration sauf si explicitement demandé ».
+
+Cette règle PRIME sur toute esthétique et s'applique SYSTÉMATIQUEMENT à chaque génération, sans exception.
+
+━━━━━━━━━━━━━━━━━━
 RÈGLE ABSOLUE — FORMAT / RATIO
 ━━━━━━━━━━━━━━━━━━
 Tu DOIS STRICTEMENT respecter le format ${params.format} (${formatLabel}).
