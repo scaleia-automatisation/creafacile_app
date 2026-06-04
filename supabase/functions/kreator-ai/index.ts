@@ -774,13 +774,18 @@ serve(async (req) => {
             || Deno.env.get("SUPABASE_SECRET_KEYS");
           if (!SUPABASE_URL || !SERVICE_ROLE) return jsonError(500, "Storage non configuré");
           const objectPath = `sora/${oaiId}.mp4`;
-          const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE);
-          const { error: upErr } = await adminClient.storage
-            .from("kreator-uploads")
-            .upload(objectPath, videoBuf, { contentType: "video/mp4", upsert: true });
-          if (upErr) {
-            console.error("Sora upload storage error:", upErr.message);
-            return jsonError(500, `Upload vidéo Sora échoué: ${upErr.message}`);
+          try {
+            const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE);
+            const { error: upErr } = await adminClient.storage
+              .from("kreator-uploads")
+              .upload(objectPath, videoBuf, { contentType: "video/mp4", upsert: true });
+            if (upErr) {
+              console.warn("Sora upload storage error (will retry on next poll):", upErr.message);
+              return jsonResp({ done: false });
+            }
+          } catch (e) {
+            console.warn("Sora upload exception (will retry on next poll):", (e as Error)?.message);
+            return jsonResp({ done: false });
           }
           const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/kreator-uploads/${objectPath}`;
           return jsonResp({ video_url: publicUrl, done: true });
