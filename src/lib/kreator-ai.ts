@@ -1315,6 +1315,12 @@ export async function generateImage(
       },
     });
     if (error) throw error;
+    if (data?.fallback && data?.fallback_provider === 'kie') {
+      if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+      // Bascule vers kie.ai pour le même modèle
+      return generateImageViaKie(promptEn, aiModel, format, inputImageUrl, abortSignal, logoUrl);
+    }
+    if (data?.fallback) throw new Error(data?.error || 'Service image indisponible');
     if (data?.error) throw new Error(data.error);
     const imageUrl = data?.image_url;
     if (!imageUrl) throw new Error('No image generated (OpenRouter)');
