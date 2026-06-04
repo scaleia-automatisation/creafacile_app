@@ -18,7 +18,12 @@ interface PhotoSlot {
 
 const PhotoUpload = () => {
   const { input_photos, setInputPhotos } = useKreatorStore();
-  const fileInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+  const fileInputRefs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+  ];
   const [groupAnalysis, setGroupAnalysis] = useState('');
   const [analyzingGroup, setAnalyzingGroup] = useState(false);
   const groupKeyRef = useRef<string>('');
