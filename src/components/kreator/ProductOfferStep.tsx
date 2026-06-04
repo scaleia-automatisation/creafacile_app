@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Users, CheckCircle, Sparkles, Upload, X, Replace, ImagePlus, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { generatePersonas, generateIdeas, detectSectorFromImage, detectOfferTypeFromDescription, describeProductImages, detectActivityFromDescription, detectSectorFromActivity } from '@/lib/kreator-ai';
+import { generatePersonas, generateIdeas, detectSectorFromImage, detectOfferTypeFromDescription, describeProductImages, detectActivityFromDescription, detectSectorFromActivity, generateServiceDescription } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
@@ -49,6 +49,8 @@ const ProductOfferStep = () => {
   const [loadingPersonas, setLoadingPersonas] = useState(false);
   const [selectedPersonaId, setSelectedPersonaId] = useState<number | null>(null);
   const [describing, setDescribing] = useState(false);
+  const [generatingServiceDesc, setGeneratingServiceDesc] = useState(false);
+  const autoServiceDescKeyRef = useRef<string>('');
   const [detectingOfferType, setDetectingOfferType] = useState(false);
   const [detectingActivity, setDetectingActivity] = useState(false);
   const autoActivityKeyRef = useRef<string>('');
@@ -71,7 +73,7 @@ const ProductOfferStep = () => {
     : 'Donnez un nom court';
   const descPlaceholder = isProduct
     ? 'Une phrase simple (générée auto depuis l\'image)'
-    : 'Une phrase simple (ex : coaching sportif personnalisé à domicile)';
+    : 'Une phrase simple (générée auto depuis le nom)';
 
   const toSentences = (text: string, max: number) => {
     const cleaned = text.trim().replace(/\s+/g, ' ');
@@ -132,6 +134,40 @@ const ProductOfferStep = () => {
       );
     }
     await Promise.all(tasks);
+  };
+
+  const handleServiceNameBlur = async () => {
+    if (!isService) return;
+    const name = (product_service || '').trim();
+    if (!name) return;
+    if (product_description?.trim()) return;
+    if (autoServiceDescKeyRef.current === name) return;
+    autoServiceDescKeyRef.current = name;
+    setGeneratingServiceDesc(true);
+    try {
+      const desc = await generateServiceDescription(name);
+      const cleaned = toOneSentence(desc);
+      if (cleaned) {
+        setProductDescription(cleaned);
+        // Déclenche activité + secteur depuis cette description
+        const [activity, sector] = await Promise.all([
+          detectActivityFromDescription(cleaned).catch(() => ''),
+          detectSectorFromActivity(cleaned, SECTORS).catch(() => ''),
+        ]);
+        if (activity && !company_activity?.trim()) {
+          setCompanyActivity(activity);
+          autoActivityKeyRef.current = cleaned;
+        }
+        if (sector && !company_sector?.trim()) {
+          setCompanySector(sector);
+          autoSectorKeyRef.current = cleaned;
+        }
+      }
+    } catch (e) {
+      console.error('Auto service description generation failed', e);
+    } finally {
+      setGeneratingServiceDesc(false);
+    }
   };
 
   const handleFile = (file: File) => {
@@ -352,12 +388,14 @@ const ProductOfferStep = () => {
         )}
 
         <div className={isProduct ? 'md:col-span-2' : ''}>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">
+          <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
             {nameLabel} *
+            {generatingServiceDesc && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />}
           </label>
           <Input
             value={product_service}
             onChange={(e) => setProductService(e.target.value)}
+            onBlur={handleServiceNameBlur}
             placeholder={namePlaceholder}
             className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm"
           />
@@ -380,6 +418,7 @@ const ProductOfferStep = () => {
                 setSelectedPersonaId(null);
                 autoActivityKeyRef.current = '';
                 autoSectorKeyRef.current = '';
+                autoServiceDescKeyRef.current = '';
               }
             }}
             onBlur={handleDescriptionBlur}
@@ -391,7 +430,7 @@ const ProductOfferStep = () => {
             Une seule phrase simple, exacte
             {isProduct
               ? ' — générée automatiquement à partir de l\'image'
-              : ' — à renseigner manuellement'}
+              : ' — générée automatiquement à partir du nom du service'}
           </p>
         </div>
 
