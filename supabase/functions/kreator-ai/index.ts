@@ -701,9 +701,6 @@ serve(async (req) => {
         "dall-e-3": hasInputImage ? "gpt-image-2-image-to-image" : "gpt-image-2-text-to-image",
         "nano-banana-2": "nano-banana-2",
         "nano-banana-pro": "nano-banana-pro",
-        "imagen-4": "imagen4",
-        "imagen-4-ultra": "imagen4-ultra",
-        "imagen-4-fast": "imagen4-fast",
       };
 
       const kieModel = kieImageModelMap[ai_model || ""] || ai_model;
