@@ -63,7 +63,11 @@ Génère 3 idées virales, persuasives, impactantes et engageantes qui suscitent
 
   try {
     const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
-    return JSON.parse(cleaned);
+    const parsed = JSON.parse(cleaned);
+    if (parsed && typeof parsed.prompt_fr === 'string') {
+      parsed.prompt_fr = formatPromptWithLineBreaks(parsed.prompt_fr);
+    }
+    return parsed;
   } catch {
     throw new Error('Failed to parse AI response');
   }
