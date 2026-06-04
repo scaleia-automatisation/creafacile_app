@@ -349,6 +349,23 @@ RÈGLES STRICTES :
   return content.trim().replace(/^["'`]+|["'`.]+$/g, '').split('\n')[0].trim();
 }
 
+export async function generateServiceDescription(name: string): Promise<string> {
+  const systemPrompt = `Tu es un expert en copywriting. À partir du NOM d'un service, rédige UNE SEULE phrase courte, claire et concrète qui décrit ce service.
+RÈGLES STRICTES :
+- UNE seule phrase (max ~20 mots), en français, se terminant par un point.
+- Pas de guillemets, pas d'emoji, pas de liste, pas de retour à la ligne.
+- Reste factuel et simple, sans superlatifs marketing.`;
+  const data = await callKreatorAI({
+    action: 'generate_service_description',
+    messages: [{ role: 'user', content: `Nom du service : ${name}` }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) return '';
+  const oneLine = content.trim().replace(/[\r\n]+/g, ' ').replace(/^["'`]+|["'`]+$/g, '').trim();
+  return /[.!?]$/.test(oneLine) ? oneLine : oneLine + '.';
+}
+
 export async function summarizePerformingPosts(descriptions: string[]) {
   const systemPrompt = `Tu es un expert en marketing digital et viralité sur les réseaux sociaux. À partir de la description du post fournie, explique pourquoi ce post est devenu viral.
 RÈGLES STRICTES :
