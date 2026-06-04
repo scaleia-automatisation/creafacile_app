@@ -319,6 +319,36 @@ const ProductOfferStep = () => {
     })();
   }, [product_description, company_activity, company_sector, offer_type]);
 
+  // Auto-détection activité + secteur dès qu'une description produit est renseignée (produit comme service)
+  useEffect(() => {
+    const desc = (product_description || '').trim();
+    if (!desc) return;
+    if (autoActivityKeyRef.current === desc && autoSectorKeyRef.current === desc) return;
+    const needActivity = !company_activity?.trim() && !detectingActivity && autoActivityKeyRef.current !== desc;
+    const needSector = !company_sector?.trim() && !detectingSector && autoSectorKeyRef.current !== desc;
+    if (!needActivity && !needSector) return;
+    const t = setTimeout(() => {
+      if (needActivity) {
+        autoActivityKeyRef.current = desc;
+        setDetectingActivity(true);
+        detectActivityFromDescription(desc)
+          .then((a) => { if (a && !company_activity?.trim()) setCompanyActivity(a); })
+          .catch((e) => console.error('Auto activity detection failed', e))
+          .finally(() => setDetectingActivity(false));
+      }
+      if (needSector) {
+        autoSectorKeyRef.current = desc;
+        setDetectingSector(true);
+        detectSectorFromActivity(desc, SECTORS)
+          .then((s) => { if (s && !company_sector?.trim()) setCompanySector(s); })
+          .catch((e) => console.error('Auto sector detection failed', e))
+          .finally(() => setDetectingSector(false));
+      }
+    }, 400);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product_description, company_activity, company_sector]);
+
 
   const handleSelectPersona = (p: Persona) => {
     setSelectedPersonaId(p.id);
