@@ -8,6 +8,7 @@ import { Section, Field, PillGroup, AspectCards, SubModelTabs, IMAGE_HINT } from
 import { GrokT2V, GrokI2V } from './model-settings/GrokSettings';
 import { Seedance15Pro, Seedance2 } from './model-settings/SeedanceSettings';
 import { Kling21, Kling25, Kling26, Kling30 } from './model-settings/KlingSettings';
+import { KlingO1, Hailuo23, Wan27 } from './model-settings/OpenRouterSettings';
 
 // ---------- SORA ----------
 const SoraT2V = ({ pro = false }: { pro?: boolean }) => {
@@ -199,6 +200,9 @@ const ModelSettings = () => {
   if (m === 'kling-2.5') return <Kling25 />;
   if (m === 'kling-2.6') return <Kling26 />;
   if (m === 'kling-3.0') return <Kling30 />;
+  if (m === 'kwaivgi/kling-video-o1') return <KlingO1 />;
+  if (m === 'minimax/hailuo-2.3') return <Hailuo23 />;
+  if (m === 'alibaba/wan-2.7') return <Wan27 />;
 
   return null;
 };
