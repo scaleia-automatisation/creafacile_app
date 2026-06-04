@@ -9,14 +9,10 @@ const StartingChoiceButtons = () => {
     setStartingChoice,
   } = useKreatorStore();
 
-  const isProduct = offer_type === '📦 Produit';
-  const isService = offer_type === '🛠️ Service';
-  const offerLabel = offer_type ? offer_type.replace(/^[^\p{L}\p{N}]+/u, '').trim().toLowerCase() : '';
-
   const cards = [
-    { type: 'image' as const, label: `Image ${offerLabel}`, emoji: '📱' },
-    { type: 'carousel' as const, label: `Carousel ${offerLabel}`, emoji: '🎠' },
-    { type: 'video' as const, label: `Vidéo ${offerLabel}`, emoji: '🎬' },
+    { type: 'image' as const, label: 'Image', emoji: '📱' },
+    { type: 'carousel' as const, label: 'Carousel', emoji: '🎠' },
+    { type: 'video' as const, label: 'Vidéo', emoji: '🎬' },
   ];
 
   const handleSelectType = (t: 'image' | 'carousel' | 'video') => {
@@ -42,7 +38,7 @@ const StartingChoiceButtons = () => {
             >
               <span className="text-2xl">{card.emoji}</span>
               <span className={`font-bold text-sm ${active ? 'text-foreground' : 'text-muted-foreground'}`}>
-                {isProduct || isService ? card.label : card.label.replace(` ${offerLabel}`, '')}
+                {card.label}
               </span>
               {active && (
                 <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full gradient-bg" />
