@@ -928,8 +928,13 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
                 <Textarea
                   value={prompt_fr}
                   onChange={(e) => setPromptFr(e.target.value)}
-                  className="bg-background border-foreground/10 text-foreground text-sm resize-none"
-                  style={{ minHeight: `${Math.max(120, Math.ceil(prompt_fr.length / 60) * 24)}px` }}
+                  className="bg-background border-foreground/10 text-foreground text-sm resize-none whitespace-pre-wrap leading-6 font-mono"
+                  style={{
+                    minHeight: `${Math.max(
+                      160,
+                      (Math.ceil(prompt_fr.length / 70) + (prompt_fr.match(/\n/g)?.length || 0) + 1) * 24
+                    )}px`,
+                  }}
                 />
                 <div className="flex gap-2 mt-2">
                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => { navigator.clipboard.writeText(prompt_fr); toast.success('Prompt copié'); }}>
