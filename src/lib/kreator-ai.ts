@@ -967,6 +967,25 @@ MÊME EXIGENCE PREMIUM QUE L'IMAGE (voir ci-dessus) appliquée à CHAQUE slide :
 SLIDE 1 : hook scroll-stop immédiat (titre énorme percutant + produit hero + accent graphique fort). SLIDE 2 : émotion, problème ou bénéfice (visuel narratif, typographie expressive). SLIDE 3 : preuve, résultat ou transformation (mise en scène crédible, détail produit, micro-textures). SLIDE 4 : CTA subtil premium (call-to-action visuel élégant, badge action, flèche stylisée).
 S'inspirer des références fournies (XO Chinese, Jimbo, Coca-Cola burger series) pour la cohérence de série. JAMAIS de slides simplistes, plates ou amateur. Chaque slide doit pouvoir être publiée seule comme une affiche pro.
 
+IDENTITÉ VISUELLE PREMIUM EXIGÉE (RÉFÉRENCES OBLIGATOIRES) :
+S'inspirer EXPLICITEMENT du niveau de qualité et du langage visuel des références premium suivantes (séries de carrousels d'agences/studios de design reconnus) :
+• Klubi (Family for families) — fond crème, blocs arrondis lilas/vert lime, typographie display sans-serif chaleureuse, illustrations mascotte au trait épais, photo lifestyle authentique, mise en page modulaire type "trading cards".
+• Settle (usesettle) — palette vert forêt + lavande + crème, typographie éditoriale (mix serif/sans), motifs répétés (croix, astérisques, grilles), encadrés contrastés type "highlighter", collage hybride photo N&B + formes vectorielles.
+• Bowl'd (marbstudiio) — palette bleu cobalt / orange vif / vert lime, typographie display ultra-bold condensée, illustrations line-art halftone façon zine, badges rotatifs en cercle, énergie éditoriale brutaliste joyeuse.
+• Bear Milk / Mheenimal — typographie display sticker XXL multicolore en superposition, illustrations stickers vectoriels (étincelles, éclairs, fleurs), photo produit détourée hero, fond clair saturé, vibe pop kawaii premium.
+• Self Care / Good Vibes (groovy retro) — palette vert sapin / corail / crème, typographie groovy 70s arrondie, motifs damier ondulé, formes organiques, badges pilule numérotés.
+• Social Media Academy (pastel modern) — palette lavande / rose bonbon / jaune pastel / vert sapin, typographie serif moderne en bulles, étoiles 4 branches, bandeaux diagonaux "swipe to read", interface IG mockup intégrée.
+• Jimbo / Cheesy Cheese (food street) — typographie display brossée stencil, palette rouge/jaune/vert/orange ultra saturée, motifs hypnotiques en arrière-plan, produit hero centré dans son contenant signature.
+• SEULOGO burger series — palette rouge profond / crème, typographie sans-serif bold condensée, produit hero détouré sur formes graphiques (étoile, rond), badges prix "1$", bandeau footer info contact uniforme — cohérence de série absolue.
+
+RÈGLES DE COHÉRENCE DE SÉRIE (NON NÉGOCIABLE) :
+1. Définir UN système de design unique (palette 2-4 couleurs nommées avec HEX, 1-2 familles typo, 1 set d'éléments graphiques signature, 1 traitement photo) appliqué IDENTIQUEMENT sur les ${params.slidesCount || 4} slides.
+2. Chaque slide DOIT ressembler à une affiche premium publiable seule, niveau studio international (équivalent BBH, Wieden+Kennedy, Pentagram, Marbstudiio).
+3. Typographie display HÉROÏQUE obligatoire (taille XXL, kerning serré, hiérarchie forte titre/sous-titre/caption), JAMAIS de texte fade ou centré timide.
+4. Éléments graphiques signature OBLIGATOIRES sur chaque slide (badge, sticker, forme organique, motif, étoile 4 branches, splash, bandeau, étincelle, halftone) — toujours du même set.
+5. Bandeau/footer signature constant (logo + handle ou info) reproduit à l'identique sur toutes les slides.
+6. Aucun rendu "template Canva générique" : épaisseurs de trait, ombres portées, débordements, superpositions assumées, niveau de détail = artisanat manuel premium.
+
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE VIDÉO
 ━━━━━━━━━━━━━━━━━━
