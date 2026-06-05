@@ -245,7 +245,8 @@ const CustomizationStep = () => {
     persona: target_persona,
     variant,
     excludeText: variant === 2 ? options.text_content : undefined,
-    maxWords: 7,
+    maxWords: 10,
+    minWords: 5,
   });
 
   const missingForText: string[] = [];
@@ -325,7 +326,8 @@ const CustomizationStep = () => {
         activity: company_activity,
         sector: company_sector,
         persona: target_persona,
-        maxWords: 5,
+        maxWords: 15,
+        minWords: 10,
       });
       const next = [...(options.slide_texts || ['', '', '', ''])];
       for (let i = 0; i < 4; i++) next[i] = (texts[i] || '').slice(0, 50);
