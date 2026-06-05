@@ -26,12 +26,33 @@ export async function callKreatorAI(options: AICallOptions) {
 function formatPromptWithLineBreaks(raw: string): string {
   if (!raw || typeof raw !== 'string') return raw;
   let txt = raw.replace(/\r\n/g, '\n');
+  // Convert literal "\n" sequences (when LLM returns them escaped) into real newlines
+  txt = txt.replace(/\\n/g, '\n');
   // Insert a blank line before every [SECTION ...] / [SECTION FINALE] marker
   txt = txt.replace(/\s*(\[SECTION[^\]]*\])\s*/g, '\n\n$1\n');
-  // After the section title, ensure the content starts on a new line
-  txt = txt.replace(/(\[SECTION[^\]]*\][^:\n]*:)\s*/g, '$1\n');
+  // After the section title (ends with ":"), ensure the content starts on a new line
+  txt = txt.replace(/(\[SECTION[^\]]*\][^:\n]*:)[ \t]*/g, '$1\n');
+  // Also break before other well-known section headers the master prompt produces,
+  // in case the LLM emits them without the [SECTION] bracket prefix.
+  const headers = [
+    'Scène & sujet principal',
+    'Produit / offre mis en avant',
+    'BACKGROUND PUISSANT & ANGLE MARKETING',
+    'Déroulé / scènes',
+    'Déroulé des slides',
+    'Personnalisation',
+    'Format & rendu technique',
+    'Positions exactes des éléments',
+    'Direction artistique premium',
+    'Instructions négatives',
+  ];
+  for (const h of headers) {
+    const re = new RegExp(`\\s*(${h.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[^\\n:]{0,80}:)\\s*`, 'g');
+    txt = txt.replace(re, '\n\n$1\n');
+  }
   // Collapse 3+ blank lines to exactly one blank line
   txt = txt.replace(/\n{3,}/g, '\n\n');
+  // Trim trailing/leading whitespace
   return txt.trim();
 }
 
