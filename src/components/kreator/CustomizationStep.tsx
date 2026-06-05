@@ -245,7 +245,8 @@ const CustomizationStep = () => {
     persona: target_persona,
     variant,
     excludeText: variant === 2 ? options.text_content : undefined,
-    maxWords: 7,
+    maxWords: 10,
+    minWords: 5,
   });
 
   const missingForText: string[] = [];
@@ -325,7 +326,8 @@ const CustomizationStep = () => {
         activity: company_activity,
         sector: company_sector,
         persona: target_persona,
-        maxWords: 5,
+        maxWords: 15,
+        minWords: 10,
       });
       const next = [...(options.slide_texts || ['', '', '', ''])];
       for (let i = 0; i < 4; i++) next[i] = (texts[i] || '').slice(0, 50);
@@ -558,7 +560,7 @@ const CustomizationStep = () => {
                             <Input
                               value={(options.slide_texts && options.slide_texts[i]) || ''}
                               onChange={(e) => setSlideText(i, e.target.value)}
-                              placeholder={`Texte slide ${i + 1} (3 à 15 mots)`}
+                              placeholder={`Texte slide ${i + 1} (10 à 15 mots)`}
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
                           </div>
@@ -575,7 +577,7 @@ const CustomizationStep = () => {
                       onChange={(e) => {
                         if (e.target.value.length <= 100) setOptions({ text_content: e.target.value });
                       }}
-                      placeholder={`Texte à afficher (3 à 15 mots)`}
+                      placeholder={`Texte à afficher (5 à 10 mots)`}
                       className="bg-card border-foreground/10 text-foreground text-sm"
                     />}
                     {isVideo && (
@@ -776,7 +778,7 @@ const CustomizationStep = () => {
                               onChange={(e) => {
                                 if (e.target.value.length <= 100) setOptions({ text_content_2: e.target.value });
                               }}
-                              placeholder={`Texte à afficher (3 à 15 mots)`}
+                              placeholder={`Texte à afficher (5 à 10 mots)`}
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
                             {isVideo && (
