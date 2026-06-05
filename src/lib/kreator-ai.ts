@@ -1710,14 +1710,16 @@ export async function generateOnScreenText(params: {
   excludeText?: string;
   variant?: 1 | 2;
   maxWords?: number;
+  minWords?: number;
 }): Promise<string> {
-  const maxWords = Math.max(1, Math.min(7, params.maxWords ?? 7));
+  const maxWords = Math.max(1, Math.min(20, params.maxWords ?? 10));
+  const minWords = Math.max(1, Math.min(maxWords, params.minWords ?? 3));
   const systemPrompt = `Tu es un expert en copywriting publicitaire pour réseaux sociaux (Meta, TikTok, Instagram, LinkedIn).
 Tu écris UN TEXTE court à afficher À L'ÉCRAN dans un visuel (image / carrousel / vidéo) qui MAXIMISE la conversion.
 
 RÈGLES ABSOLUES :
 - Langue : français
-- Longueur : ENTRE 3 ET ${maxWords} MOTS MAXIMUM (compte chaque mot). Non négociable.
+- Longueur : ENTRE ${minWords} ET ${maxWords} MOTS (compte chaque mot, minimum ${minWords}, maximum ${maxWords}). Non négociable.
 - 1 seule phrase ou formule, ultra lisible d'un coup d'œil (scroll-stop)
 - Hook persuasif aligné sur l'objectif marketing et l'angle
 - Adapté au persona, au secteur, au type d'offre, au ton et au style visuel
@@ -1746,7 +1748,7 @@ ${params.activity ? `Activité principale: ${params.activity}` : ''}
 ${params.sector ? `Secteur: ${params.sector}` : ''}
 ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
 
-Écris LE texte à afficher dans le visuel, entre 3 et ${maxWords} mots MAX, qui maximise la conversion.`;
+Écris LE texte à afficher dans le visuel, entre ${minWords} et ${maxWords} mots, qui maximise la conversion.`;
 
   const data = await callKreatorAI({
     action: 'generate_on_screen_text',
@@ -1784,15 +1786,17 @@ export async function generateSlideTexts(params: {
   sector?: string;
   persona?: string;
   maxWords?: number;
+  minWords?: number;
 }): Promise<string[]> {
   const count = Math.max(1, Math.min(4, params.count || 2));
-  const maxWords = Math.max(1, Math.min(7, params.maxWords ?? 7));
+  const maxWords = Math.max(1, Math.min(20, params.maxWords ?? 15));
+  const minWords = Math.max(1, Math.min(maxWords, params.minWords ?? 10));
   const systemPrompt = `Tu es un expert en copywriting publicitaire pour carrousels Instagram/TikTok/LinkedIn.
 Tu génères ${count} textes courts à afficher à l'écran, UN PAR SLIDE d'un carrousel de ${count} slides, parfaitement HARMONIEUX entre eux, qui maximisent la conversion.
 
 RÈGLES ABSOLUES :
 - Langue : français.
-- Chaque texte : ENTRE 3 ET ${maxWords} MOTS MAXIMUM. Compte chaque mot. Non négociable.
+- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords}). Compte chaque mot. Non négociable.
 - Un seul texte par slide (pas de retour à la ligne).
 - HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé.
 - Progression narrative orientée conversion :
@@ -1823,7 +1827,7 @@ ${params.activity ? `Activité principale: ${params.activity}` : ''}
 ${params.sector ? `Secteur: ${params.sector}` : ''}
 ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
 
-Écris les ${count} textes à afficher dans chaque slide (1 à ${maxWords} mots chacun), 100% cohérents entre eux et optimisés pour la conversion.`;
+Écris les ${count} textes à afficher dans chaque slide (${minWords} à ${maxWords} mots chacun), 100% cohérents entre eux et optimisés pour la conversion.`;
 
   const data = await callKreatorAI({
     action: 'generate_slide_texts',
