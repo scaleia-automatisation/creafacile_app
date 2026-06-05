@@ -1,6 +1,5 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
 import ContentTypeStep from './ContentTypeStep';
-import UseCaseStep from './UseCaseStep';
 import MarketingAngleStep from './MarketingAngleStep';
 
 const StartingChoiceButtons = () => {
