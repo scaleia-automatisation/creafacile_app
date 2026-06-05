@@ -99,9 +99,9 @@ const Index = () => {
           <StepContainer stepNumber={3} title="Que voulez-vous créer ?">
             <StartingChoiceButtons />
           </StepContainer>
+          <IdeaSuggestions />
           <StartingPointBlock />
           <CustomizationStep />
-          <IdeaSuggestions />
           <GenerationStep />
         </div>
       </main>
