@@ -613,18 +613,26 @@ export async function generatePrompt(params: {
   const videoDirectives = params.contentType === 'video' ? `
 
 CONSIGNES VIDÉO OBLIGATOIRES :
+🎯 SCRIPT VIDÉO VIRAL (PRIORITÉ ABSOLUE) :
+- Générer un script vidéo viral d'une durée STRICTEMENT calée sur la durée du modèle IA sélectionné${params.videoDurationSec ? ` (durée cible : ${params.videoDurationSec}s, plage tolérée 8–15s)` : ' (entre 8 et 15s)'} — JAMAIS plus court, JAMAIS plus long.
+- Le script doit être 100% optimisé pour la VIRALITÉ, la RÉTENTION et la conversion : retenir le lecteur dès la 1re frame, EMPÊCHER le scroll grâce à un hook parfait, maximiser le watch-time complet.
+${params.voiceOverText ? `- LANGUE DU SCRIPT & DE LA VOIX OFF : strictement IDENTIQUE à la langue du texte voix off fourni ci-dessus. Toute la narration, les overlays, les textes à l'écran et le ton doivent être dans CETTE MÊME LANGUE — aucune autre langue ni traduction.\n` : ''}- Structure narrative virale OBLIGATOIRE (à intégrer explicitement dans le prompt_fr) :
+  1) CHOC COGNITIF (0–1s) : image, phrase ou situation qui crée une rupture immédiate dans le scroll de la cible et capte l'attention sans détour.
+  2) PSYCHOLOGIE DU HOOK (1–2s) : déclencheur émotionnel ou de curiosité parfaitement calibré pour le persona — empêche physiquement de scroller.
+  3) CONTEXTE EXPRESS (2–4s) : répondre TRÈS vite à "de quoi ça parle ?" — clarté immédiate du sujet, aucune ambiguïté.
+  4) LEAN-IN (4–6s) : créer un lien direct, intime et personnel avec la cible (adresse directe, problème vécu, situation miroir).
+  5) CONTRADICTION / FAUSSE CROYANCE (6–10s) : casser une idée reçue ou révéler un angle fort opposé à ce que la cible croit — créer le déclic.
+  6) PAYOFF + CTA (fin) : résolution, preuve, bénéfice clair, call-to-action court et puissant.
+- Qualité de production EXIGÉE : court-métrage publicitaire premium, niveau agences de communication internationales (Apple, Nike, Mercedes, Chanel). Mouvements de caméra fluides et professionnels (travelling, dolly-in, crane, slider, gimbal, rack focus), cadrages cinématographiques, étalonnage couleur cinéma, éclairage maîtrisé, son design soigné.
+- Aucun rendu amateur, aucun mouvement caméra saccadé, aucun hook faible, aucune scène inutile : chaque seconde sert la rétention et la conversion.
+
 🎬 Logique de création (niveau production) :
-- Micro-vidéo ultra impactante (6–8 secondes)
+- Micro-vidéo ultra impactante${params.videoDurationSec ? ` (${params.videoDurationSec}s exactement)` : ' (8–15 secondes selon le modèle IA)'}
 - Émotion naturelle, réalisme élevé, rythme rapide, message clair + CTA
-- 2 à 3 plans MAX (pas plus), chaque plan = 2–3 secondes
+- 2 à 4 plans MAX, chaque plan calibré pour servir la structure virale ci-dessus
 - 1 idée forte par vidéo
 - Continuité visuelle parfaite (lumière, sujet, couleurs)
-- Mouvement de caméra subtil mais professionnel
-
-🎥 Structure du script (obligatoire) :
-Plan 1 (Hook – 0-2s) : Attirer l'attention immédiatement, mouvement léger caméra, déclencheur émotionnel ou curiosité
-Plan 2 (Value – 2-5s) : Montrer usage / bénéfice, interaction humaine ou contexte réel, montée émotionnelle
-Plan 3 (Impact + CTA – 5-8s) : Image forte / résultat, texte court, call to action
+- Mouvements de caméra fluides, professionnels, cinématographiques (jamais amateurs)
 
 🎧 Direction sonore :
 - Bruitages réalistes (pas exagérés)
