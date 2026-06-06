@@ -434,7 +434,7 @@ const ProductOfferStep = () => {
             onBlur={handleDescriptionBlur}
             placeholder={descPlaceholder}
             rows={isProduct ? 3 : 2}
-            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm resize-none overflow-hidden"
+            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm resize-none !min-h-0"
           />
           <p className="text-[11px] text-muted-foreground mt-1">
             {isProduct ? 'Jusqu\'à 3 lignes (retours à la ligne autorisés)' : 'Une seule phrase simple, exacte'}
