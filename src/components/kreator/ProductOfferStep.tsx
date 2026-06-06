@@ -349,11 +349,16 @@ const ProductOfferStep = () => {
   }, [product_description, company_activity, company_sector]);
 
   // Auto-resize du champ description pour que tout le texte soit visible d'un coup
+  // La hauteur minimum reste égale au nombre de rows (3 pour produit, 2 pour service)
   useEffect(() => {
     const el = descTextareaRef.current;
     if (!el) return;
     el.style.height = 'auto';
-    el.style.height = `${el.scrollHeight}px`;
+    const lineHeight = parseInt(getComputedStyle(el).lineHeight) || 20;
+    const padding = parseInt(getComputedStyle(el).paddingTop) + parseInt(getComputedStyle(el).paddingBottom);
+    const border = parseInt(getComputedStyle(el).borderTopWidth) + parseInt(getComputedStyle(el).borderBottomWidth);
+    const minH = lineHeight * el.rows + padding + border;
+    el.style.height = `${Math.max(el.scrollHeight, minH)}px`;
   }, [product_description]);
 
 
@@ -429,7 +434,7 @@ const ProductOfferStep = () => {
             onBlur={handleDescriptionBlur}
             placeholder={descPlaceholder}
             rows={isProduct ? 3 : 2}
-            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm resize-none overflow-hidden"
+            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm resize-none !min-h-0"
           />
           <p className="text-[11px] text-muted-foreground mt-1">
             {isProduct ? 'Jusqu\'à 3 lignes (retours à la ligne autorisés)' : 'Une seule phrase simple, exacte'}
