@@ -60,6 +60,7 @@ const ProductOfferStep = () => {
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
+  const descTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   const isProduct = offer_type === '📦 Produit';
   const isService = offer_type === '🛠️ Service';
@@ -347,6 +348,14 @@ const ProductOfferStep = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product_description, company_activity, company_sector]);
 
+  // Auto-resize du champ description pour que tout le texte soit visible d'un coup
+  useEffect(() => {
+    const el = descTextareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  }, [product_description]);
+
 
   const handleSelectPersona = (p: Persona) => {
     setSelectedPersonaId(p.id);
@@ -393,6 +402,7 @@ const ProductOfferStep = () => {
             {descriptionLabel}
           </label>
           <Textarea
+            ref={descTextareaRef}
             value={product_description}
             onChange={(e) => {
               // Pour un produit, on autorise jusqu'à 3 lignes (retours à la ligne)
@@ -419,7 +429,7 @@ const ProductOfferStep = () => {
             onBlur={handleDescriptionBlur}
             placeholder={descPlaceholder}
             rows={isProduct ? 3 : 2}
-            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[60px] resize-none"
+            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm resize-none overflow-hidden"
           />
           <p className="text-[11px] text-muted-foreground mt-1">
             {isProduct ? 'Jusqu\'à 3 lignes (retours à la ligne autorisés)' : 'Une seule phrase simple, exacte'}
