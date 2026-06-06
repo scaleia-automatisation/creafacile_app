@@ -467,7 +467,7 @@ const CustomizationStep = () => {
                             <Input
                               value={(options.slide_texts && options.slide_texts[i]) || ''}
                               onChange={(e) => setSlideText(i, e.target.value)}
-                              placeholder={`Texte slide ${i + 1} (10 à 15 mots)`}
+                              placeholder={`Phrase complète slide ${i + 1} (- de 10 mots)`}
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
                           </div>
