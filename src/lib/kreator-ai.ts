@@ -1938,7 +1938,8 @@ Tu génères ${count} textes courts à afficher à l'écran, UN PAR SLIDE d'un c
 
 RÈGLES ABSOLUES :
 - Langue : français.
-- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords}). Compte chaque mot. Non négociable.
+- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords} — JAMAIS plus de 15 mots). Compte chaque mot. Non négociable.
+- Chaque texte doit être une PHRASE COMPLÈTE, AUTONOME, qui se suffit à elle-même — JAMAIS coupée, JAMAIS tronquée, JAMAIS suspendue (pas de "...", pas de phrase qui se prolonge sur la slide suivante). Chaque slide délivre son message intégralement.
 - Un seul texte par slide (pas de retour à la ligne).
 - HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé.
 - Progression narrative orientée conversion :
