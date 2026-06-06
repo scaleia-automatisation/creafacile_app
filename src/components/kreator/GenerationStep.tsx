@@ -156,7 +156,7 @@ const GenerationStep = () => {
   const navigate = useNavigate();
   const {
     type, prompt_en, prompt_fr, setPromptFr, status, setStatus, result_url, setResultUrl,
-    ai_model, format, setCreditsUsed, objective, marketing_angle, input_text, idea_chosen,
+    ai_model, format, setCreditsUsed, objective, marketing_angle, offer_nature, input_text, idea_chosen,
     company_sector, company_activity, input_photos, resetProject,
     model_settings, sora_character_scenes,
     offer_type, product_service, product_description, target_persona, market, use_case,
@@ -242,7 +242,7 @@ const GenerationStep = () => {
     market,
     offerType: offer_type,
     targetPersona: target_persona,
-    marketingAngle: marketing_angle,
+    marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
     useCase: use_case,
     showText: options.show_text,
     textContent: options.text_content,
