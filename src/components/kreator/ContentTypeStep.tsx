@@ -134,7 +134,7 @@ const ContentTypeStep = () => {
       )}
 
       {/* Images du produit (jusqu'à 4) — pour la génération image / carousel */}
-      {type !== 'video' && ai_model && (
+      {type !== 'video' && (ai_model || offer_nature === 'produit') && (
         <div className="mb-6">
           <PhotoUpload />
         </div>
