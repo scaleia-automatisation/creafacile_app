@@ -48,6 +48,7 @@ const ContentTypeStep = () => {
     format, setFormat,
     sora_character_total_duration, setSoraCharacterTotalDuration,
     sora_character_scenes, setSoraCharacterScenes,
+    offer_nature,
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
