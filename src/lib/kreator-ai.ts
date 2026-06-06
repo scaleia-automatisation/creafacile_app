@@ -1341,10 +1341,16 @@ INTERDIT : "dans le paysage numérique actuel", "plongeons dans", "sans plus att
 ━━━━━━━━━━━━━━━━━━
 STRUCTURE OBLIGATOIRE (par caption)
 ━━━━━━━━━━━━━━━━━━
-HOOK — accroche ultra forte qui stoppe le scroll immédiatement (0-2s).
-DESCRIPTION — texte humain cohérent avec le visuel et le contexte.
-CTA — naturel, jamais agressif, format conversationnel/question.
-HASHTAGS — SEO 2026 : mix niche + activité + secteur + marché + intention + tendance + branding, séparés par espaces, tous préfixés #.
+HOOK — accroche ultra forte qui stoppe le scroll immédiatement (0-2s). RÈGLE ABSOLUE DE RÉTENTION : les 3 PREMIERS MOTS du hook doivent être des MOTS PUISSANTS (impact, émotion, curiosité, urgence, bénéfice, choc, contradiction) qui capturent l'attention dès la première milliseconde — psychologie de rétention utilisée par les plus grands experts du watch time (Hormozi, MrBeast, Gary Vee). Cette règle s'applique STRICTEMENT et IDENTIQUEMENT à TOUTES les captions (Facebook, Instagram, TikTok, LinkedIn) et à TOUT type de contenu (image, carrousel, vidéo). Aucune exception.
+DESCRIPTION — texte humain cohérent avec le visuel, l'OBJECTIF marketing et l'ANGLE marketing du contenu.
+CTA — orienté CONVERSION, calibré sur l'OBJECTIF du contenu ET l'ANGLE marketing. Le verbe d'action, la promesse et le bénéfice doivent refléter directement l'objectif (ex : notoriété → suivre/partager, engagement → commenter/sauvegarder, trafic → cliquer lien bio, conversion/vente → acheter/réserver/essayer, lead → DM mot-clé/inscription, éducation → sauvegarder/partager). L'angle marketing doit transparaître dans la formulation du CTA (urgence si offre, transformation si avant/après, exclusivité si premium, preuve sociale si témoignage, etc.).
+HASHTAGS — JUSQU'À 8 hashtags MAX par réseau, SIMPLES (un seul mot/concept, lisibles, sans chiffres aléatoires), VIRAUX et correspondant aux REQUÊTES RÉELLES de recherche de la cible SUR CE RÉSEAU précis (mots-clés que le persona tape vraiment dans la barre de recherche du réseau). Mix : niche cible + intention de recherche + secteur + tendance plateforme + branding. Séparés par espaces, tous préfixés #.
+
+━━━━━━━━━━━━━━━━━━
+ANGLE MARKETING — AUTO-SÉLECTION SI ABSENT
+━━━━━━━━━━━━━━━━━━
+Si un ANGLE_MARKETING est fourni dans les inputs : TOUTES les captions doivent être strictement cohérentes avec cet angle (formulation, promesse, ton émotionnel, CTA).
+Si AUCUN angle marketing n'est fourni : sélectionne automatiquement EN INTERNE l'angle marketing le plus performant pour cet objectif + cette offre + ce persona + ce secteur (le plus convertissant et viral), puis applique-le rigoureusement à toutes les captions et au CTA. Ne mentionne jamais l'angle choisi explicitement dans la caption.
 
 SÉPARATION STRICTE : le CTA va UNIQUEMENT dans le champ "cta". Il ne doit JAMAIS apparaître dans "description". La description ne se termine pas par une question/CTA.
 
@@ -1362,27 +1368,27 @@ RÈGLES ALGORITHMES 2026 PAR RÉSEAU
 📘 FACEBOOK — Objectif : commentaires longs, réactions émotionnelles, partages.
 • Style : conversationnel, humain, chaleureux, relatable.
 • Longueur : 40 à 80 mots.
-• CTA : encourager commentaire ou partage.
-• Hashtags : 3 à 8 max.
+• CTA : orienté conversion + objectif/angle, formulé de façon conversationnelle (commentaire, partage, clic, achat selon objectif).
+• Hashtags : jusqu'à 8 max, simples et viraux, correspondant aux requêtes Facebook de la cible.
 
 📸 INSTAGRAM — Objectif : sauvegardes, partages story, commentaires, SEO interne 2026.
 • Style : aspirationnel, authentique, expert ou lifestyle selon secteur.
 • Longueur : 150 à 300 mots max.
-• Hook qui stoppe le scroll immédiatement.
-• CTA : sauvegarde, partage story, commentaire mot-clé, lien bio subtil.
-• Hashtags : 3 à 8 max.
+• Hook : 3 premiers mots = mots puissants scroll-stop (règle absolue de rétention).
+• CTA : orienté conversion + objectif/angle (sauvegarde, partage, DM mot-clé, lien bio, achat).
+• Hashtags : jusqu'à 8 max, simples et viraux, correspondant aux requêtes Instagram de la cible (mots-clés tapés dans la barre de recherche IG).
 
 🎵 TIKTOK — Objectif : rétention, commentaires, SEO TikTok, partages, rewatch.
 • Style : brut, direct, spontané, conversationnel.
 • Longueur : 50 à 150 caractères max.
-• CTA : commentaire, stitch, duet, lien bio subtil.
-• Hashtags : 3 à 8 max, mix niche + viral (#fyp, #pourtoi…) + trending.
+• CTA : orienté conversion + objectif/angle (commentaire, stitch, duet, lien bio, achat).
+• Hashtags : jusqu'à 8 max, simples et viraux, mix niche cible + requêtes TikTok réelles + tendance plateforme (#fyp, #pourtoi…).
 
 💼 LINKEDIN — Objectif : dwell time, conversations, crédibilité, commentaires longs, expertise.
 • Style : professionnel humain, storytelling business, expertise naturelle.
 • Longueur : 150 à 300 mots.
-• CTA : ouvrir une discussion.
-• Hashtags : 3 à 8 max.
+• CTA : orienté conversion + objectif/angle (discussion, DM, inscription, demande de démo).
+• Hashtags : jusqu'à 8 max, simples et viraux, correspondant aux requêtes LinkedIn de la cible BtoB.
 
 ${isCarousel ? `━━━━━━━━━━━━━━━━━━
 CARROUSEL — CAPTIONS PAR SLIDE
@@ -1408,7 +1414,7 @@ Si un marché/localisation est renseigné : adapter expressions, références cu
 ━━━━━━━━━━━━━━━━━━
 RÈGLES HASHTAGS 2026
 ━━━━━━━━━━━━━━━━━━
-Mixer hashtags niche + intention + activité + secteur + tendance + branding. Jamais spammer, jamais > 8, jamais incohérents.
+JUSQU'À 8 hashtags MAX par réseau, SIMPLES (un seul mot/concept), VIRAUX, correspondant aux REQUÊTES RÉELLES de recherche du persona SUR CE RÉSEAU précis. Mixer niche cible + intention de recherche + secteur + tendance plateforme + branding. Jamais spammer, jamais > 8, jamais incohérents, jamais à rallonge ou illisibles.
 
 ━━━━━━━━━━━━━━━━━━
 VALIDATION QUALITÉ AVANT OUTPUT
