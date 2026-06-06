@@ -15,7 +15,7 @@ const PromptStep = () => {
   const {
     prompt_fr, setPromptFr,
     type, format, company_activity, company_sector, product_service, market,
-    offer_type, target_persona, marketing_angle, visual_style_brief,
+    offer_type, target_persona, marketing_angle, offer_nature, visual_style_brief,
     input_text, idea_chosen, input_image_description, input_photos,
     options, slides_count, status, setStatus, setResultUrl, ai_model,
     render_style, video_render_style,
@@ -101,7 +101,7 @@ const PromptStep = () => {
         market,
         offerType: offer_type,
         targetPersona: target_persona,
-        marketingAngle: marketing_angle,
+        marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
         showText: options.show_text,
         textContent: options.text_content,
         slideTexts: options.slide_texts,

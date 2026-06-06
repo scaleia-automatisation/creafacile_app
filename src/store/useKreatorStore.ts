@@ -231,6 +231,8 @@ interface KreatorState {
   setTargetPersona: (val: string) => void;
   marketing_angle: string;
   setMarketingAngle: (val: string) => void;
+  offer_nature: string;
+  setOfferNature: (val: string) => void;
   visual_style_brief: string;
   setVisualStyleBrief: (val: string) => void;
   use_case: string;
@@ -306,6 +308,7 @@ const initialState = {
   offer_type: '',
   target_persona: '',
   marketing_angle: '',
+  offer_nature: '',
   visual_style_brief: '',
   use_case: '',
   voice_over_enabled: false,
@@ -389,6 +392,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setOfferType: (val) => set({ offer_type: val }),
   setTargetPersona: (val) => set({ target_persona: val }),
   setMarketingAngle: (val) => set({ marketing_angle: val }),
+  setOfferNature: (val) => set({ offer_nature: val }),
   setVisualStyleBrief: (val) => set({ visual_style_brief: val }),
   setUseCase: (val) => set({ use_case: val }),
   setVoiceOverEnabled: (val) => set({ voice_over_enabled: val }),

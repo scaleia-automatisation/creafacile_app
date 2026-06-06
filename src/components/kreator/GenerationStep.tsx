@@ -156,7 +156,7 @@ const GenerationStep = () => {
   const navigate = useNavigate();
   const {
     type, prompt_en, prompt_fr, setPromptFr, status, setStatus, result_url, setResultUrl,
-    ai_model, format, setCreditsUsed, objective, marketing_angle, input_text, idea_chosen,
+    ai_model, format, setCreditsUsed, objective, marketing_angle, offer_nature, input_text, idea_chosen,
     company_sector, company_activity, input_photos, resetProject,
     model_settings, sora_character_scenes,
     offer_type, product_service, product_description, target_persona, market, use_case,
@@ -242,7 +242,7 @@ const GenerationStep = () => {
     market,
     offerType: offer_type,
     targetPersona: target_persona,
-    marketingAngle: marketing_angle,
+    marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
     useCase: use_case,
     showText: options.show_text,
     textContent: options.text_content,
@@ -365,7 +365,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
         const slideTexts = options.slide_texts || [];
         const chosenIdeaHook = (idea_chosen || '').split(' — ')[0].trim();
         const baseCaptionParams = {
-          objective: marketing_angle || objective,
+          objective: (marketing_angle || objective) + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
           contentType: 'image' as const,
           sector: company_sector,
           activity: company_activity,
@@ -377,7 +377,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
           offerDescription: product_description,
           persona: target_persona,
           market,
-          marketingAngle: marketing_angle,
+          marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
           ton: options.ton,
           visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
           freeDescription: input_text,
@@ -472,7 +472,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
           ? generateVideo(generationPrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
           : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
         generateCaption({
-          objective: marketing_angle || objective,
+          objective: (marketing_angle || objective) + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
           idea: idea_chosen || input_text,
           ideaHook: (idea_chosen || '').split(' — ')[0].trim(),
           useCase: use_case,
@@ -487,7 +487,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
           offerDescription: product_description,
           persona: target_persona,
           market,
-          marketingAngle: marketing_angle,
+          marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
           ton: options.ton,
           visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
           freeDescription: input_text,
