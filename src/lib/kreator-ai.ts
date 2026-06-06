@@ -1086,6 +1086,26 @@ Format: ${params.format}
 ${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
 ${activeRenderStyle ? `Type de rendu${params.contentType === 'video' ? ' vidéo' : ''}: ${activeRenderStyle}` : 'Type de rendu: automatique'}
 
+=== DIRECTIVE OBJECTIF MARKETING (RÈGLE STRATÉGIQUE — PRIORITÉ MAXIMALE) ===
+${params.objective?.includes('Attirer') ? `🧲 OBJECTIF ATTIRER : Crée un contenu capable d'ARRÊTER IMMÉDIATEMENT LE SCROLL. Maximiser la curiosité, l'émotion et l'intérêt dès les premières secondes. Le contenu doit générer un fort taux d'engagement, de partage et de mémorisation.
+Résultat attendu : plus de portée • plus de vues • plus d'engagement • plus de trafic.` : ''}
+${params.objective?.includes('Éduquer') ? `📚 OBJECTIF ÉDUQUER : Crée un contenu pédagogique simple, clair et facile à comprendre même pour un débutant. Apporter une forte valeur perçue tout en démontrant l'expertise de la marque.
+Résultat attendu : plus de confiance • plus d'autorité • plus de temps de visionnage • plus d'abonnés.` : ''}
+${params.objective?.includes('Convaincre') ? `🤝 OBJECTIF CONVAINCRE : Crée un contenu basé sur la PREUVE, les RÉSULTATS et la CRÉDIBILITÉ. Lever les objections et renforcer la confiance afin d'augmenter l'intention d'achat.
+Résultat attendu : plus de confiance • plus de prospects • plus de demandes • plus de conversions.` : ''}
+${params.objective?.includes('Vendre') ? `💰 OBJECTIF VENDRE : Crée un contenu orienté CONVERSION mettant en avant la valeur, les bénéfices et les résultats obtenus. Générer un fort désir d'achat et inciter immédiatement au passage à l'action.
+Résultat attendu : plus de ventes • plus de rendez-vous • plus de leads • plus de chiffre d'affaires.` : ''}
+${params.objective?.includes('Fidéliser') ? `🔁 OBJECTIF FIDÉLISER : Crée un contenu qui renforce la relation avec les clients existants. Valoriser les utilisateurs, augmenter l'engagement et encourager l'utilisation continue de l'offre.
+Résultat attendu : plus de rétention • plus de fidélité • plus de recommandations • plus de valeur client.` : ''}
+
+=== DIRECTIVE TYPE DE CONTENU (EXIGENCE PREMIUM) ===
+${params.contentType === 'image' ? `📸 PROMPT IMAGE : Crée une image publicitaire PREMIUM digne des meilleures agences marketing internationales. Composition professionnelle, hiérarchie visuelle forte, typographie moderne, couleurs cohérentes avec la marque, texte parfaitement lisible, design capable d'arrêter le scroll et d'attirer immédiatement l'attention.
+Résultat attendu : image professionnelle • impact immédiat • arrêt du scroll • forte mémorisation.` : ''}
+${params.contentType === 'carousel' ? `🎠 PROMPT CARROUSEL : Crée un carrousel PREMIUM optimisé pour les réseaux sociaux. Chaque slide doit susciter l'envie de passer à la suivante. Utiliser une structure claire, un design cohérent, des titres percutants et une progression logique jusqu'à la dernière slide.
+Résultat attendu : plus de temps passé • plus de sauvegardes • plus de partages • plus d'engagement.` : ''}
+${params.contentType === 'video' ? `🎬 PROMPT VIDÉO : Crée une vidéo publicitaire PREMIUM digne d'une campagne de grande marque. Utiliser un HOOK puissant, un storytelling captivant, un rythme dynamique, des plans cinématographiques, des transitions fluides et une forte charge émotionnelle.
+Résultat attendu : plus de rétention • plus de vues complètes • plus d'engagement • plus de conversions.` : ''}
+
 === IDÉE (SOURCE DE VÉRITÉ — NE RIEN INVENTER AU-DELÀ) ===
 ${params.inputText ? `Idée décrite: "${params.inputText}"` : ''}
 ${params.ideaChosen ? `Idée choisie: "${params.ideaChosen}"` : ''}
