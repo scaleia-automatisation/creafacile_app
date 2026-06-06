@@ -359,10 +359,18 @@ const ProductOfferStep = () => {
           <Textarea
             value={product_description}
             onChange={(e) => {
-              // Une seule phrase simple : on bloque les retours à la ligne
-              const single = e.target.value.replace(/[\r\n]+/g, ' ');
-              setProductDescription(single);
-              if (!single.trim()) {
+              // Pour un produit, on autorise jusqu'à 3 lignes (retours à la ligne)
+              // afin de pouvoir décrire l'emplacement du texte. Pour un service,
+              // on garde une seule phrase simple.
+              let next = e.target.value;
+              if (!isProduct) {
+                next = next.replace(/[\r\n]+/g, ' ');
+              } else {
+                const lines = next.split(/\r?\n/).slice(0, 3);
+                next = lines.join('\n');
+              }
+              setProductDescription(next);
+              if (!next.trim()) {
                 setCompanyActivity('');
                 setCompanySector('');
                 setPersonas([]);
@@ -378,7 +386,7 @@ const ProductOfferStep = () => {
             className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[60px] resize-none"
           />
           <p className="text-[11px] text-muted-foreground mt-1">
-            Une seule phrase simple, exacte
+            {isProduct ? 'Jusqu\'à 3 lignes (retours à la ligne autorisés)' : 'Une seule phrase simple, exacte'}
             {isProduct
               ? ' — générée automatiquement à partir de l\'image'
               : ' — générée automatiquement à partir du nom du service'}
