@@ -308,6 +308,7 @@ const initialState = {
   offer_type: '',
   target_persona: '',
   marketing_angle: '',
+  offer_nature: '',
   visual_style_brief: '',
   use_case: '',
   voice_over_enabled: false,
