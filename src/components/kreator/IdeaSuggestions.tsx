@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2, PenLine } from 'lucide-react';
@@ -16,6 +16,7 @@ const IdeaSuggestions = () => {
   const [loading, setLoading] = useState(false);
   const [ideas, setIdeas] = useState<ContentIdea[]>([]);
   const [mode, setMode] = useState<'none' | 'generated'>('none');
+  const lastTypeRef = useRef<string>(type);
 
   const missing: string[] = [];
   if (!offer_type?.trim()) missing.push("type d'offre");
@@ -48,6 +49,7 @@ const IdeaSuggestions = () => {
       });
       setIdeas(res.ideas || []);
       setMode('generated');
+      lastTypeRef.current = type;
     } catch (e) {
       console.error(e);
       toast.error('Erreur lors de la génération des idées');
@@ -55,6 +57,17 @@ const IdeaSuggestions = () => {
       setLoading(false);
     }
   };
+
+  // Si l'utilisateur change le type de contenu (image / carousel / vidéo) après
+  // avoir déjà généré 3 idées, on relance automatiquement la génération pour
+  // que les idées soient adaptées au nouveau format choisi.
+  useEffect(() => {
+    if (mode !== 'generated') return;
+    if (lastTypeRef.current === type) return;
+    if (!canGenerate || loading) return;
+    handleGenerate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
 
   const updateIdea = (idx: number, field: 'hook' | 'concept', value: string) => {
     setIdeas((prev) => prev.map((it, i) => (i === idx ? { ...it, [field]: value } : it)));
