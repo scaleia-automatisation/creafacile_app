@@ -144,6 +144,7 @@ const CustomizationStep = () => {
   const [text2Generating, setText2Generating] = useState(false);
   const [slidesGenerating, setSlidesGenerating] = useState(false);
   const [logoColors, setLogoColors] = useState<string[]>([]);
+  const lastIdeaForSlidesRef = useRef<string>('');
 
   // Extract dominant colors from the logo whenever it changes; only used when
   // the colour palette is enabled and a logo is uploaded.
@@ -349,6 +350,23 @@ const CustomizationStep = () => {
     if (index === 0) patch.text_content = value;
     setOptions(patch);
   };
+
+  // Auto-génération des textes de slides UNIQUEMENT lorsque l'utilisateur a
+  // cliqué sur une des 3 idées proposées OU inséré son idée via le champ
+  // "Insérer mon idée". Déclenché uniquement pour le type carrousel.
+  useEffect(() => {
+    if (!isCarousel) return;
+    const idea = (idea_chosen || '').trim();
+    if (!idea) return;
+    // Clé unique : idée + nombre de slides + format → régénère si l'un change
+    const key = `${idea}::${slideCount}::${format}`;
+    if (lastIdeaForSlidesRef.current === key) return;
+    if (!canGenerateText) return;
+    if (slidesGenerating) return;
+    lastIdeaForSlidesRef.current = key;
+    handleGenerateSlideTexts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idea_chosen, isCarousel, slideCount, format, canGenerateText]);
 
   const isVisible = user_mode === 'expert' || showAdvanced;
 
