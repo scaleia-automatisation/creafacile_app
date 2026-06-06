@@ -391,6 +391,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setOfferType: (val) => set({ offer_type: val }),
   setTargetPersona: (val) => set({ target_persona: val }),
   setMarketingAngle: (val) => set({ marketing_angle: val }),
+  setOfferNature: (val) => set({ offer_nature: val }),
   setVisualStyleBrief: (val) => set({ visual_style_brief: val }),
   setUseCase: (val) => set({ use_case: val }),
   setVoiceOverEnabled: (val) => set({ voice_over_enabled: val }),
