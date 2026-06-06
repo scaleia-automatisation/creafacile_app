@@ -281,6 +281,42 @@ const ProductOfferStep = () => {
     })();
   }, [product_description, company_activity, company_sector, offer_type]);
 
+  // Mode débutant : déduit automatiquement le ton d'écriture le plus adapté
+  // (le plus convertissant / viral) à partir de l'objectif, du type d'offre,
+  // du nom et de la description. Ne s'exécute pas si l'utilisateur a déjà
+  // choisi un ton (mode expert).
+  useEffect(() => {
+    if (user_mode !== 'beginner') return;
+    const obj = (objective || '').trim();
+    const off = (offer_type || '').trim();
+    const name = (product_service || '').trim();
+    const desc = (product_description || '').trim();
+    if (!obj || !off || !name || !desc) return;
+    if (options.ton?.trim()) return;
+    const key = `${obj}|${off}|${name}|${desc}`;
+    if (autoToneKeyRef.current === key) return;
+    if (detectingTone) return;
+    autoToneKeyRef.current = key;
+    const TONS = [
+      'Direct / Cash', 'Provocateur', 'Authentique', 'Storytelling',
+      'Humoristique', 'Éducatif', 'Inspirant', 'Urgent', 'Amical',
+    ];
+    setDetectingTone(true);
+    detectBestTone({
+      tones: TONS,
+      objective: obj,
+      offerType: off,
+      productName: name,
+      productDescription: desc,
+      activity: company_activity,
+      sector: company_sector,
+    })
+      .then((tone) => { if (tone) setOptions({ ton: tone }); })
+      .catch((e) => console.error('Auto tone detection failed', e))
+      .finally(() => setDetectingTone(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user_mode, objective, offer_type, product_service, product_description, company_activity, company_sector, options.ton]);
+
   // Auto-détection activité + secteur dès qu'une description produit est renseignée (produit comme service)
   useEffect(() => {
     const desc = (product_description || '').trim();
