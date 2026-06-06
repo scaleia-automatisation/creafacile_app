@@ -1995,9 +1995,7 @@ ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
   for (let i = 0; i < count; i++) {
     let t = (slides[i] || '').toString().trim();
     t = t.replace(/^["«»"'`]+|["«»"'`]+$/g, '').trim().replace(/\s+/g, ' ');
-    const words = t.split(/\s+/).filter(Boolean);
-    if (words.length > maxWords) t = words.slice(0, maxWords).join(' ');
-    t = t.replace(/[.,;:!?]+$/g, '').trim();
+    t = t.replace(/\.\.\.$/, '').replace(/[,:;—-]+$/g, '').trim();
     out.push(t);
   }
   return out;
