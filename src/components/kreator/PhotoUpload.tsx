@@ -148,15 +148,16 @@ const PhotoUpload = () => {
             {/* Description field per photo */}
             {slot.url && (
               <div className="relative">
-                <Input
+                <Textarea
                   value={slot.description}
                   onChange={(e) => handleDescriptionChange(index, e.target.value)}
                   placeholder={describingIndex[index] ? 'Analyse en cours…' : `Décris la photo ${index + 1}…`}
                   disabled={describingIndex[index]}
-                  className="bg-card border-foreground/10 text-foreground text-xs placeholder:text-muted-foreground h-8 pr-7"
+                  rows={3}
+                  className="bg-card border-foreground/10 text-foreground text-xs placeholder:text-muted-foreground min-h-[72px] resize-none pr-7"
                 />
                 {describingIndex[index] && (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-primary absolute right-2 top-1/2 -translate-y-1/2" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-primary absolute right-2 top-3" />
                 )}
               </div>
             )}
