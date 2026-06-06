@@ -932,7 +932,7 @@ ${premiumDirectionBlock}
 ━━━━━━━━━━━━━━━━━━
 TEXTE ÉCRAN
 ━━━━━━━━━━━━━━━━━━
-Ultra lisibles mobile, parfaitement intégrés, jamais coupés, cohérents avec secteur/ton/style. VIDÉO : max 6 mots par texte. CARROUSEL : max 12 mots par slide.
+Ultra lisibles mobile, parfaitement intégrés, JAMAIS coupés ni tronqués, cohérents avec secteur/ton/style. VIDÉO : max 6 mots par texte. CARROUSEL : max 15 mots par slide — le texte de CHAQUE slide doit être affiché EN ENTIER, COMPLET, sans coupure, sans troncature, sans points de suspension, sans débordement hors cadre. Adapter la taille de police pour garantir que l'intégralité du texte tienne dans la slide à 100%.
 
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE IMAGE
@@ -1191,7 +1191,8 @@ Position du texte (IDENTIQUE sur TOUTES les slides): ${
     }.
 Police d'écriture (IDENTIQUE sur TOUTES les slides): "${params.textFont || 'Montserrat'}".
 ${params.textColor ? `🎨 Couleur du texte (IDENTIQUE sur TOUTES les slides — OBLIGATOIRE) : ${params.textColor} (code hexadécimal exact). Tous les textes affichés DOIVENT être rendus EXACTEMENT dans cette couleur, sans variation entre slides. Ajouter uniquement un léger contour/ombre subtil pour la lisibilité si nécessaire, sans altérer la teinte.` : ''}
-⚡ HARMONIE PARFAITE OBLIGATOIRE entre TOUTES les slides du carrousel : même typographie, même taille relative, même position, même hiérarchie visuelle, même palette, même traitement (ombre/contour si nécessaire), même rythme et même style éditorial — comme un seul système de design cohérent du début à la fin. Lisibilité maximale sur mobile, contraste fort, intégration native dans la composition (pas un simple sticker collé). Rendu digne d'un grand directeur artistique, optimisé pour la conversion. La slide 1 doit porter le hook le plus puissant ; les slides suivantes développent et culminent sur un call-to-action implicite ou explicite. Ne JAMAIS modifier le wording fourni.`
+⚡ HARMONIE PARFAITE OBLIGATOIRE entre TOUTES les slides du carrousel : même typographie, même taille relative, même position, même hiérarchie visuelle, même palette, même traitement (ombre/contour si nécessaire), même rythme et même style éditorial — comme un seul système de design cohérent du début à la fin. Lisibilité maximale sur mobile, contraste fort, intégration native dans la composition (pas un simple sticker collé). Rendu digne d'un grand directeur artistique, optimisé pour la conversion. La slide 1 doit porter le hook le plus puissant ; les slides suivantes développent et culminent sur un call-to-action implicite ou explicite. Ne JAMAIS modifier le wording fourni.
+🛑 INTÉGRITÉ DU TEXTE — RÈGLE ABSOLUE : sur CHAQUE slide, le texte fourni DOIT être rendu À 100% EN ENTIER, COMPLET, sans aucune coupure, sans troncature, sans points de suspension ajoutés, sans débordement hors cadre, sans mots manquants ni partiellement masqués. Si le texte est long (jusqu'à 15 mots), réduire automatiquement la taille de police, ajuster le retour à la ligne et les marges pour que l'INTÉGRALITÉ du texte tienne visiblement et lisiblement à l'intérieur de la slide. Une slide où le texte est coupé, tronqué ou incomplet est INVALIDE.`
     : `Texte overlay (À REPRODUIRE EXACTEMENT, MOT POUR MOT, AUCUNE MODIFICATION NI AJOUT): "${params.textContent}"
 Position du texte: ${
         params.textPosition === 'top-center' ? 'centré en haut'
@@ -1938,7 +1939,8 @@ Tu génères ${count} textes courts à afficher à l'écran, UN PAR SLIDE d'un c
 
 RÈGLES ABSOLUES :
 - Langue : français.
-- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords}). Compte chaque mot. Non négociable.
+- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords} — JAMAIS plus de 15 mots). Compte chaque mot. Non négociable.
+- Chaque texte doit être une PHRASE COMPLÈTE, AUTONOME, qui se suffit à elle-même — JAMAIS coupée, JAMAIS tronquée, JAMAIS suspendue (pas de "...", pas de phrase qui se prolonge sur la slide suivante). Chaque slide délivre son message intégralement.
 - Un seul texte par slide (pas de retour à la ligne).
 - HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé.
 - Progression narrative orientée conversion :
