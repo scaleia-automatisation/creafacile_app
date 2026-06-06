@@ -10,7 +10,7 @@ const IdeaSuggestions = () => {
     type, objective, offer_type, product_service, product_description, product_image_url, use_case, marketing_angle,
     company_activity, company_sector, target_persona, market, options,
     setInputText, setIdeaChosen,
-    manual_idea_mode, setManualIdeaMode,
+    setManualIdeaMode,
   } = useKreatorStore();
 
   const [loading, setLoading] = useState(false);
