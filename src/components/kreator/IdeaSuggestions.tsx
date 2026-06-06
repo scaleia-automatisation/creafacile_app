@@ -9,7 +9,7 @@ const IdeaSuggestions = () => {
   const {
     type, objective, offer_type, product_service, product_description, product_image_url, use_case, marketing_angle, offer_nature,
     company_activity, company_sector, target_persona, market, options,
-    setInputText, setIdeaChosen,
+    setInputText, setIdeaChosen, idea_chosen,
     setManualIdeaMode,
   } = useKreatorStore();
 
@@ -124,10 +124,23 @@ const IdeaSuggestions = () => {
 
       {mode === 'generated' && ideas.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full mt-2">
-          {ideas.map((idea, idx) => (
+          {ideas.map((idea, idx) => {
+            const ideaText = `${idea.hook} — ${idea.concept}`.slice(0, 500);
+            const isSelected = !!idea_chosen && idea_chosen === ideaText;
+            const hasSelection = !!idea_chosen && ideas.some(
+              (it) => `${it.hook} — ${it.concept}`.slice(0, 500) === idea_chosen
+            );
+            const dimmed = hasSelection && !isSelected;
+            return (
             <div
               key={idea.id ?? idx}
-              className="flex flex-col items-center text-center gap-3 p-4 rounded-card border-2 border-foreground/10 bg-card hover:border-primary/40 transition-colors"
+              className={`flex flex-col items-center text-center gap-3 p-4 rounded-card border-2 transition-all ${
+                isSelected
+                  ? 'border-primary bg-card ring-2 ring-primary/40'
+                  : dimmed
+                  ? 'border-foreground/10 bg-card opacity-50 grayscale hover:opacity-100 hover:grayscale-0 hover:border-primary/40'
+                  : 'border-foreground/10 bg-card hover:border-primary/40'
+              }`}
             >
               <div className="text-[10px] uppercase tracking-wider font-bold text-primary text-center">
                 Idée {idx + 1}
@@ -154,7 +167,8 @@ const IdeaSuggestions = () => {
                 Générer le contenu
               </Button>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
