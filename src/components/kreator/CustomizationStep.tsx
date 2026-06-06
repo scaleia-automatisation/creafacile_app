@@ -314,11 +314,11 @@ const CustomizationStep = () => {
         activity: company_activity,
         sector: company_sector,
         persona: target_persona,
-        maxWords: 9,
-        minWords: 4,
+        maxWords: 15,
+        minWords: 10,
       });
       const next = [...(options.slide_texts || ['', '', '', ''])];
-      for (let i = 0; i < 4; i++) next[i] = (texts[i] || '').trim();
+      for (let i = 0; i < 4; i++) next[i] = (texts[i] || '').slice(0, 50);
       setOptions({ slide_texts: next, text_content: next[0] || '' });
     } catch (e) {
       console.error('Generate slide texts failed', e);
@@ -446,9 +446,7 @@ const CustomizationStep = () => {
                       ) : (
                         <Sparkles className="w-3 h-3" />
                       )}
-                      {(options.slide_texts && options.slide_texts.some((t) => (t || '').trim().length > 0))
-                        ? 'Régénérer textes dans les slides'
-                        : 'Générer les textes des slides'}
+                      Générer les textes des slides
                     </Button>
                   )}
                 </div>
@@ -467,7 +465,7 @@ const CustomizationStep = () => {
                             <Input
                               value={(options.slide_texts && options.slide_texts[i]) || ''}
                               onChange={(e) => setSlideText(i, e.target.value)}
-                              placeholder={`Phrase complète slide ${i + 1} (- de 10 mots)`}
+                              placeholder={`Texte slide ${i + 1} (10 à 15 mots)`}
                               className="bg-card border-foreground/10 text-foreground text-sm"
                             />
                           </div>

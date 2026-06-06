@@ -932,7 +932,7 @@ ${premiumDirectionBlock}
 ━━━━━━━━━━━━━━━━━━
 TEXTE ÉCRAN
 ━━━━━━━━━━━━━━━━━━
-Ultra lisibles mobile, parfaitement intégrés, JAMAIS coupés ni tronqués, cohérents avec secteur/ton/style. VIDÉO : max 6 mots par texte. CARROUSEL : max 15 mots par slide — le texte de CHAQUE slide doit être affiché EN ENTIER, COMPLET, sans coupure, sans troncature, sans points de suspension, sans débordement hors cadre. Adapter la taille de police pour garantir que l'intégralité du texte tienne dans la slide à 100%.
+Ultra lisibles mobile, parfaitement intégrés, jamais coupés, cohérents avec secteur/ton/style. VIDÉO : max 6 mots par texte. CARROUSEL : max 12 mots par slide.
 
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE IMAGE
@@ -1191,8 +1191,7 @@ Position du texte (IDENTIQUE sur TOUTES les slides): ${
     }.
 Police d'écriture (IDENTIQUE sur TOUTES les slides): "${params.textFont || 'Montserrat'}".
 ${params.textColor ? `🎨 Couleur du texte (IDENTIQUE sur TOUTES les slides — OBLIGATOIRE) : ${params.textColor} (code hexadécimal exact). Tous les textes affichés DOIVENT être rendus EXACTEMENT dans cette couleur, sans variation entre slides. Ajouter uniquement un léger contour/ombre subtil pour la lisibilité si nécessaire, sans altérer la teinte.` : ''}
-⚡ HARMONIE PARFAITE OBLIGATOIRE entre TOUTES les slides du carrousel : même typographie, même taille relative, même position, même hiérarchie visuelle, même palette, même traitement (ombre/contour si nécessaire), même rythme et même style éditorial — comme un seul système de design cohérent du début à la fin. Lisibilité maximale sur mobile, contraste fort, intégration native dans la composition (pas un simple sticker collé). Rendu digne d'un grand directeur artistique, optimisé pour la conversion. La slide 1 doit porter le hook le plus puissant ; les slides suivantes développent et culminent sur un call-to-action implicite ou explicite. Ne JAMAIS modifier le wording fourni.
-🛑 INTÉGRITÉ DU TEXTE — RÈGLE ABSOLUE : sur CHAQUE slide, le texte fourni DOIT être rendu À 100% EN ENTIER, COMPLET, sans aucune coupure, sans troncature, sans points de suspension ajoutés, sans débordement hors cadre, sans mots manquants ni partiellement masqués. Si le texte est long (jusqu'à 15 mots), réduire automatiquement la taille de police, ajuster le retour à la ligne et les marges pour que l'INTÉGRALITÉ du texte tienne visiblement et lisiblement à l'intérieur de la slide. Une slide où le texte est coupé, tronqué ou incomplet est INVALIDE.`
+⚡ HARMONIE PARFAITE OBLIGATOIRE entre TOUTES les slides du carrousel : même typographie, même taille relative, même position, même hiérarchie visuelle, même palette, même traitement (ombre/contour si nécessaire), même rythme et même style éditorial — comme un seul système de design cohérent du début à la fin. Lisibilité maximale sur mobile, contraste fort, intégration native dans la composition (pas un simple sticker collé). Rendu digne d'un grand directeur artistique, optimisé pour la conversion. La slide 1 doit porter le hook le plus puissant ; les slides suivantes développent et culminent sur un call-to-action implicite ou explicite. Ne JAMAIS modifier le wording fourni.`
     : `Texte overlay (À REPRODUIRE EXACTEMENT, MOT POUR MOT, AUCUNE MODIFICATION NI AJOUT): "${params.textContent}"
 Position du texte: ${
         params.textPosition === 'top-center' ? 'centré en haut'
@@ -1932,17 +1931,14 @@ export async function generateSlideTexts(params: {
   minWords?: number;
 }): Promise<string[]> {
   const count = Math.max(1, Math.min(4, params.count || 2));
-  const maxWords = Math.max(1, Math.min(9, params.maxWords ?? 9));
-  const minWords = Math.max(1, Math.min(maxWords, params.minWords ?? 4));
+  const maxWords = Math.max(1, Math.min(20, params.maxWords ?? 15));
+  const minWords = Math.max(1, Math.min(maxWords, params.minWords ?? 10));
   const systemPrompt = `Tu es un expert en copywriting publicitaire pour carrousels Instagram/TikTok/LinkedIn.
 Tu génères ${count} textes courts à afficher à l'écran, UN PAR SLIDE d'un carrousel de ${count} slides, parfaitement HARMONIEUX entre eux, qui maximisent la conversion.
 
 RÈGLES ABSOLUES :
 - Langue : français.
-- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords} — JAMAIS 10 mots ou plus). Compte chaque mot. Non négociable.
-- Chaque texte doit être une PHRASE SIMPLE, CONCISE, COMPLÈTE et AUTONOME, avec sujet + verbe + idée terminée.
-- INTERDIT ABSOLU : phrase coupée, tronquée, suspendue, incomplète, fin ouverte, "...", mot manquant, ou phrase qui continue sur la slide suivante.
-- Si une idée dépasse ${maxWords} mots, RÉÉCRIS-LA en phrase plus courte complète au lieu de la couper.
+- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords}). Compte chaque mot. Non négociable.
 - Un seul texte par slide (pas de retour à la ligne).
 - HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé.
 - Progression narrative orientée conversion :
@@ -1995,7 +1991,9 @@ ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
   for (let i = 0; i < count; i++) {
     let t = (slides[i] || '').toString().trim();
     t = t.replace(/^["«»"'`]+|["«»"'`]+$/g, '').trim().replace(/\s+/g, ' ');
-    t = t.replace(/\.\.\.$/, '').replace(/[,:;—-]+$/g, '').trim();
+    const words = t.split(/\s+/).filter(Boolean);
+    if (words.length > maxWords) t = words.slice(0, maxWords).join(' ');
+    t = t.replace(/[.,;:!?]+$/g, '').trim();
     out.push(t);
   }
   return out;

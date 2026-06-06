@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Loader2, PenLine, Check } from 'lucide-react';
+import { Sparkles, Loader2, PenLine } from 'lucide-react';
 import { toast } from 'sonner';
 import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 
@@ -92,12 +92,13 @@ const IdeaSuggestions = () => {
     const text = `${idea.hook} — ${idea.concept}`.slice(0, 500);
     setInputText(text);
     setIdeaChosen(text);
-    setManualIdeaMode(false);
-    toast.success(
-      type === 'carousel'
-        ? 'Idée choisie. Vous pouvez maintenant générer les textes des slides.'
-        : 'Idée choisie. Vous pouvez maintenant générer le texte dans le visuel.'
-    );
+    toast.success('Idée sélectionnée. Lancement de la génération…');
+    // Scroll to generation block and trigger generation via custom event
+    setTimeout(() => {
+      const target = document.getElementById('generation-step-block');
+      target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window.dispatchEvent(new CustomEvent('kreator:generate'));
+    }, 200);
   };
 
   return (
@@ -148,8 +149,7 @@ const IdeaSuggestions = () => {
             return (
             <div
               key={idea.id ?? idx}
-              onClick={() => handleUseIdea(idea)}
-              className={`cursor-pointer flex flex-col items-center text-center gap-3 p-4 rounded-card border-2 transition-all ${
+              className={`flex flex-col items-center text-center gap-3 p-4 rounded-card border-2 transition-all ${
                 isSelected
                   ? 'border-primary bg-card ring-2 ring-primary/40'
                   : dimmed
@@ -163,28 +163,23 @@ const IdeaSuggestions = () => {
               <textarea
                 value={idea.hook}
                 onChange={(e) => updateIdea(idx, 'hook', e.target.value)}
-                onClick={(e) => e.stopPropagation()}
                 rows={2}
                 className="w-full font-bold text-foreground text-base leading-snug text-center bg-transparent border border-transparent hover:border-foreground/10 focus:border-primary/50 focus:outline-none rounded-md p-2 resize-none"
               />
               <textarea
                 value={idea.concept}
                 onChange={(e) => updateIdea(idx, 'concept', e.target.value)}
-                onClick={(e) => e.stopPropagation()}
                 rows={3}
                 className="w-full text-sm text-muted-foreground leading-relaxed text-center bg-transparent border border-transparent hover:border-foreground/10 focus:border-primary/50 focus:outline-none rounded-md p-2 resize-none"
               />
               <Button
                 type="button"
                 size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleUseIdea(idea);
-                }}
-                className="mt-auto gap-1.5 border-0 text-primary-foreground hover:opacity-90 text-xs font-bold gradient-bg"
+                onClick={() => handleUseIdea(idea)}
+                className="mt-auto gap-1.5 gradient-bg border-0 text-primary-foreground hover:opacity-90 text-xs font-bold"
               >
-                {isSelected && <Check className="w-3.5 h-3.5" />}
-                <span>générer mon contenu</span>
+                <Sparkles className="w-3.5 h-3.5" />
+                Générer le contenu
               </Button>
             </div>
             );
