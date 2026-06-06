@@ -1278,6 +1278,21 @@ Chaque caption doit :
 - augmenter engagement, commentaires, sauvegardes, partages, watch time, clics, conversion.
 
 ━━━━━━━━━━━━━━━━━━
+ACCESSIBILITÉ & CLARTÉ — RÈGLE ABSOLUE (NON NÉGOCIABLE)
+━━━━━━━━━━━━━━━━━━
+TOUTES les captions DOIVENT être instantanément compréhensibles par un novice/débutant total dans le secteur, sans aucun pré-requis. Objectif : entrer dans la psychologie de TOUTE cible (novice ou expert) en moins de 2 secondes, SANS friction, SANS effort de décodage, SANS aucune incompréhension possible.
+- Niveau de lecture obligatoire : ~CM2 / 11 ans. Phrases courtes, mots simples, idées concrètes.
+- INTERDIT FORMELLEMENT : jargon métier, anglicismes non expliqués, sigles/acronymes non développés, termes techniques, expressions idiomatiques rares, références culturelles de niche, mots savants, formulations ambiguës, doubles sens, abréviations obscures.
+- Si un mot technique est INDISPENSABLE (ex: nom du produit ou notion clé), l'expliquer immédiatement dans la même phrase avec des mots simples — jamais laissé brut.
+- Test de validation mental obligatoire avant d'écrire chaque caption : "Une personne qui découvre ce sujet pour la première fois comprend-elle CHAQUE mot et CHAQUE idée du premier coup ?" Si NON → reformuler plus simplement.
+- Zéro friction de lecture : pas de phrase à relire, pas de syntaxe complexe, pas de subordonnées empilées.
+
+━━━━━━━━━━━━━━━━━━
+TON D'ÉCRITURE — APPLICATION SYSTÉMATIQUE AUX CAPTIONS
+━━━━━━━━━━━━━━━━━━
+${params.ton ? `Le ton d'écriture imposé est : "${params.ton}". CHAQUE caption (Facebook, Instagram, TikTok, LinkedIn) ET chaque caption de slide DOIVENT être rédigées SYSTÉMATIQUEMENT et À 100% dans ce ton : vocabulaire, niveau de langue, énergie, rythme, registre, ponctuation. Aucune caption ne peut s'écarter de ce ton, même partiellement. Si une formulation entre en conflit avec le ton imposé → la réécrire dans le ton.` : `Aucun ton imposé : adopter un ton naturel, humain, accessible, cohérent avec le persona et le marché, et appliquer ce ton à TOUTES les captions de manière uniforme.`}
+
+━━━━━━━━━━━━━━━━━━
 ANTI-DÉTECTION IA OBLIGATOIRE
 ━━━━━━━━━━━━━━━━━━
 Toujours : variations naturelles, rythme irrégulier, phrases courtes + longues, vocabulaire simple, émotions naturelles, micro imperfections humaines, spontanéité crédible.
