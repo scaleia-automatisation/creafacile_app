@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Users, CheckCircle, Sparkles, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { generatePersonas, generateIdeas, detectOfferTypeFromDescription, generateServiceDescription, detectActivityFromDescription, detectSectorFromActivity } from '@/lib/kreator-ai';
+import { generatePersonas, generateIdeas, detectOfferTypeFromDescription, generateServiceDescription, detectActivityFromDescription, detectSectorFromActivity, detectBestTone } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
@@ -28,7 +28,7 @@ type Persona = {
 const ProductOfferStep = () => {
   const { user } = useAuth();
   const {
-    type,
+    type, objective,
     company_activity, setCompanyActivity,
     company_sector, setCompanySector,
     market,
@@ -42,6 +42,7 @@ const ProductOfferStep = () => {
     idea_chosen, setIdeaChosen,
     setInputText,
     user_mode,
+    options, setOptions,
   } = useKreatorStore();
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [loadingPersonas, setLoadingPersonas] = useState(false);
@@ -54,6 +55,8 @@ const ProductOfferStep = () => {
   const [detectingSector, setDetectingSector] = useState(false);
   const autoSectorKeyRef = useRef<string>('');
   const autoPersonasKeyRef = useRef<string>('');
+  const autoToneKeyRef = useRef<string>('');
+  const [detectingTone, setDetectingTone] = useState(false);
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
@@ -96,7 +99,12 @@ const ProductOfferStep = () => {
   };
 
   const handleDescriptionBlur = async () => {
-    const cleanedDesc = toOneSentence(product_description || '');
+    // Pour un produit, on autorise plusieurs lignes (le champ s'affiche sur 3 lignes
+    // pour permettre les retours à la ligne du texte). Pour un service, on garde
+    // une seule phrase courte.
+    const cleanedDesc = isProduct
+      ? (product_description || '').trim()
+      : toOneSentence(product_description || '');
     if (cleanedDesc !== product_description) setProductDescription(cleanedDesc);
     if (!cleanedDesc) return;
     const tasks: Promise<void>[] = [];
