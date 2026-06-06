@@ -181,12 +181,10 @@ const IdeaSuggestions = () => {
                   e.stopPropagation();
                   handleUseIdea(idea);
                 }}
-                className={`mt-auto gap-1.5 border-0 text-primary-foreground hover:opacity-90 text-xs font-bold ${
-                  isSelected ? 'bg-primary' : 'gradient-bg'
-                }`}
+                className="mt-auto gap-1.5 border-0 text-primary-foreground hover:opacity-90 text-xs font-bold gradient-bg"
               >
-                {isSelected ? <Check className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
-                {isSelected ? 'Idée choisie' : 'Choisir cette idée'}
+                {isSelected && <Check className="w-3.5 h-3.5" />}
+                <span>générer mon contenu</span>
               </Button>
             </div>
             );
