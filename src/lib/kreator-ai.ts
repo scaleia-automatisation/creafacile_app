@@ -1932,15 +1932,17 @@ export async function generateSlideTexts(params: {
   minWords?: number;
 }): Promise<string[]> {
   const count = Math.max(1, Math.min(4, params.count || 2));
-  const maxWords = Math.max(1, Math.min(20, params.maxWords ?? 15));
-  const minWords = Math.max(1, Math.min(maxWords, params.minWords ?? 10));
+  const maxWords = Math.max(1, Math.min(9, params.maxWords ?? 9));
+  const minWords = Math.max(1, Math.min(maxWords, params.minWords ?? 4));
   const systemPrompt = `Tu es un expert en copywriting publicitaire pour carrousels Instagram/TikTok/LinkedIn.
 Tu génères ${count} textes courts à afficher à l'écran, UN PAR SLIDE d'un carrousel de ${count} slides, parfaitement HARMONIEUX entre eux, qui maximisent la conversion.
 
 RÈGLES ABSOLUES :
 - Langue : français.
-- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords} — JAMAIS plus de 15 mots). Compte chaque mot. Non négociable.
-- Chaque texte doit être une PHRASE COMPLÈTE, AUTONOME, qui se suffit à elle-même — JAMAIS coupée, JAMAIS tronquée, JAMAIS suspendue (pas de "...", pas de phrase qui se prolonge sur la slide suivante). Chaque slide délivre son message intégralement.
+- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords} — JAMAIS 10 mots ou plus). Compte chaque mot. Non négociable.
+- Chaque texte doit être une PHRASE SIMPLE, CONCISE, COMPLÈTE et AUTONOME, avec sujet + verbe + idée terminée.
+- INTERDIT ABSOLU : phrase coupée, tronquée, suspendue, incomplète, fin ouverte, "...", mot manquant, ou phrase qui continue sur la slide suivante.
+- Si une idée dépasse ${maxWords} mots, RÉÉCRIS-LA en phrase plus courte complète au lieu de la couper.
 - Un seul texte par slide (pas de retour à la ligne).
 - HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé.
 - Progression narrative orientée conversion :
