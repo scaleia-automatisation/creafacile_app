@@ -59,6 +59,7 @@ export const MARKETING_ANGLES: Record<string, ByOffer> = {
         "Cas réel d'un client satisfait",
         'Problème résolu grâce à mon service',
         'Mise en avant premium de mon service',
+        'Offre spéciale sur mon service',
       ],
       carousel: [
         'Les erreurs à éviter dans mon domaine',
@@ -71,6 +72,7 @@ export const MARKETING_ANGLES: Record<string, ByOffer> = {
         'Questions fréquentes sur mon service',
         'Pourquoi mon service est différent',
         "Conseils d'expert",
+        'Offre spéciale sur mon service',
       ],
       video: [
         "Histoire d'un client avant et après mon service",
@@ -83,6 +85,7 @@ export const MARKETING_ANGLES: Record<string, ByOffer> = {
         'Découverte de mon service',
         'Une journée avec mon service',
         "Comparatif avec d'autres solutions",
+        'Offre spéciale sur mon service',
       ],
     },
   },
@@ -284,6 +287,7 @@ export const MARKETING_ANGLES: Record<string, ByOffer> = {
     service: {
       image: [
         'Présentation de mon offre de service',
+        'Offre spéciale sur mon service',
         'Résultat obtenu grâce à mon service',
         'Étude de cas client',
         'Témoignage client',
@@ -296,6 +300,7 @@ export const MARKETING_ANGLES: Record<string, ByOffer> = {
       ],
       carousel: [
         'Présentation de mon offre de service',
+        'Offre spéciale sur mon service',
         'Étude de cas client',
         'Résultat obtenu grâce à mon service',
         'Témoignage client',
@@ -308,6 +313,7 @@ export const MARKETING_ANGLES: Record<string, ByOffer> = {
       ],
       video: [
         'Problème résolu grâce à mon service',
+        'Offre spéciale sur mon service',
         'Présentation de mon offre de service',
         'Étude de cas client',
         'Témoignage client',
