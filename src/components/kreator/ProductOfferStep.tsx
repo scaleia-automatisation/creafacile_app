@@ -348,6 +348,14 @@ const ProductOfferStep = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product_description, company_activity, company_sector]);
 
+  // Auto-resize du champ description pour que tout le texte soit visible d'un coup
+  useEffect(() => {
+    const el = descTextareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  }, [product_description]);
+
 
   const handleSelectPersona = (p: Persona) => {
     setSelectedPersonaId(p.id);
