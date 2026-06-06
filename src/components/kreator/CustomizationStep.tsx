@@ -314,11 +314,11 @@ const CustomizationStep = () => {
         activity: company_activity,
         sector: company_sector,
         persona: target_persona,
-        maxWords: 15,
-        minWords: 10,
+        maxWords: 9,
+        minWords: 4,
       });
       const next = [...(options.slide_texts || ['', '', '', ''])];
-      for (let i = 0; i < 4; i++) next[i] = (texts[i] || '').slice(0, 50);
+      for (let i = 0; i < 4; i++) next[i] = (texts[i] || '').trim();
       setOptions({ slide_texts: next, text_content: next[0] || '' });
     } catch (e) {
       console.error('Generate slide texts failed', e);
