@@ -138,7 +138,7 @@ const IdeaSuggestions = () => {
                 isSelected
                   ? 'border-primary bg-card ring-2 ring-primary/40'
                   : dimmed
-                  ? 'border-foreground/10 bg-card opacity-40 grayscale pointer-events-none'
+                  ? 'border-foreground/10 bg-card opacity-50 grayscale hover:opacity-100 hover:grayscale-0 hover:border-primary/40'
                   : 'border-foreground/10 bg-card hover:border-primary/40'
               }`}
             >
