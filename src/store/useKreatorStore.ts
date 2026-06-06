@@ -231,6 +231,8 @@ interface KreatorState {
   setTargetPersona: (val: string) => void;
   marketing_angle: string;
   setMarketingAngle: (val: string) => void;
+  offer_nature: string;
+  setOfferNature: (val: string) => void;
   visual_style_brief: string;
   setVisualStyleBrief: (val: string) => void;
   use_case: string;
