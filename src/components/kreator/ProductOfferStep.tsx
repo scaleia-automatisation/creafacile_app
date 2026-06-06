@@ -402,6 +402,7 @@ const ProductOfferStep = () => {
             {descriptionLabel}
           </label>
           <Textarea
+            ref={descTextareaRef}
             value={product_description}
             onChange={(e) => {
               // Pour un produit, on autorise jusqu'à 3 lignes (retours à la ligne)
@@ -428,7 +429,7 @@ const ProductOfferStep = () => {
             onBlur={handleDescriptionBlur}
             placeholder={descPlaceholder}
             rows={isProduct ? 3 : 2}
-            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[60px] resize-none"
+            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm resize-none overflow-hidden"
           />
           <p className="text-[11px] text-muted-foreground mt-1">
             {isProduct ? 'Jusqu\'à 3 lignes (retours à la ligne autorisés)' : 'Une seule phrase simple, exacte'}
