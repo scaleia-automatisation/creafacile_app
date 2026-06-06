@@ -446,7 +446,9 @@ const CustomizationStep = () => {
                       ) : (
                         <Sparkles className="w-3 h-3" />
                       )}
-                      Générer les textes des slides
+                      {(options.slide_texts && options.slide_texts.some((t) => (t || '').trim().length > 0))
+                        ? 'Régénérer textes dans les slides'
+                        : 'Générer les textes des slides'}
                     </Button>
                   )}
                 </div>
