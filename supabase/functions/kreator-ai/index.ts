@@ -1190,6 +1190,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: selectedModel,
         messages: builtMessages,
+        max_tokens: 4096,
       }),
     });
 
