@@ -1290,7 +1290,7 @@ TOUTES les captions DOIVENT être instantanément compréhensibles par un novice
 ━━━━━━━━━━━━━━━━━━
 TON D'ÉCRITURE — APPLICATION SYSTÉMATIQUE AUX CAPTIONS
 ━━━━━━━━━━━━━━━━━━
-${params.ton ? `Le ton d'écriture imposé est : "${params.ton}". CHAQUE caption (Facebook, Instagram, TikTok, LinkedIn${'`'}${'`'}) ET chaque caption de slide DOIVENT être rédigées SYSTÉMATIQUEMENT et À 100% dans ce ton : vocabulaire, niveau de langue, énergie, rythme, registre, ponctuation. Aucune caption ne peut s'écarter de ce ton, même partiellement. Si une formulation entre en conflit avec le ton imposé → la réécrire dans le ton.` : `Aucun ton imposé : adopter un ton naturel, humain, accessible, cohérent avec le persona et le marché, et appliquer ce ton à TOUTES les captions de manière uniforme.`}
+${params.ton ? `Le ton d'écriture imposé est : "${params.ton}". CHAQUE caption (Facebook, Instagram, TikTok, LinkedIn) ET chaque caption de slide DOIVENT être rédigées SYSTÉMATIQUEMENT et À 100% dans ce ton : vocabulaire, niveau de langue, énergie, rythme, registre, ponctuation. Aucune caption ne peut s'écarter de ce ton, même partiellement. Si une formulation entre en conflit avec le ton imposé → la réécrire dans le ton.` : `Aucun ton imposé : adopter un ton naturel, humain, accessible, cohérent avec le persona et le marché, et appliquer ce ton à TOUTES les captions de manière uniforme.`}
 
 ━━━━━━━━━━━━━━━━━━
 ANTI-DÉTECTION IA OBLIGATOIRE
