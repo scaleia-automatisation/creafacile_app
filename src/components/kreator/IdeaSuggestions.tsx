@@ -7,7 +7,7 @@ import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 
 const IdeaSuggestions = () => {
   const {
-    type, objective, offer_type, product_service, product_description, product_image_url, use_case, marketing_angle, offer_nature,
+    type, slides_count, objective, offer_type, product_service, product_description, product_image_url, use_case, marketing_angle, offer_nature,
     company_activity, company_sector, target_persona, market, options,
     setInputText, setIdeaChosen, idea_chosen,
     setManualIdeaMode,
@@ -17,6 +17,7 @@ const IdeaSuggestions = () => {
   const [ideas, setIdeas] = useState<ContentIdea[]>([]);
   const [mode, setMode] = useState<'none' | 'generated'>('none');
   const lastTypeRef = useRef<string>(type);
+  const lastSlidesRef = useRef<number>(slides_count);
 
   const missing: string[] = [];
   if (!offer_type?.trim()) missing.push("type d'offre");
@@ -46,10 +47,12 @@ const IdeaSuggestions = () => {
         useCase: use_case,
         tone: options?.ton,
         marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
+        slidesCount: type === 'carousel' ? slides_count : undefined,
       });
       setIdeas(res.ideas || []);
       setMode('generated');
       lastTypeRef.current = type;
+      lastSlidesRef.current = slides_count;
     } catch (e) {
       console.error(e);
       toast.error('Erreur lors de la génération des idées');
@@ -68,6 +71,18 @@ const IdeaSuggestions = () => {
     handleGenerate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
+
+  // Si carrousel et que le nombre de slides change après génération, on
+  // régénère automatiquement pour que les idées restent cohérentes avec
+  // le nouveau nombre de slides.
+  useEffect(() => {
+    if (mode !== 'generated') return;
+    if (type !== 'carousel') return;
+    if (lastSlidesRef.current === slides_count) return;
+    if (!canGenerate || loading) return;
+    handleGenerate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slides_count]);
 
   const updateIdea = (idx: number, field: 'hook' | 'concept', value: string) => {
     setIdeas((prev) => prev.map((it, i) => (i === idx ? { ...it, [field]: value } : it)));
