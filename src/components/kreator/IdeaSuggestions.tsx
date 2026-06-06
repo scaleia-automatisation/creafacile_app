@@ -7,7 +7,7 @@ import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 
 const IdeaSuggestions = () => {
   const {
-    type, objective, offer_type, product_service, product_description, product_image_url, use_case, marketing_angle,
+    type, objective, offer_type, product_service, product_description, product_image_url, use_case, marketing_angle, offer_nature,
     company_activity, company_sector, target_persona, market, options,
     setInputText, setIdeaChosen,
     setManualIdeaMode,
@@ -44,7 +44,7 @@ const IdeaSuggestions = () => {
         market,
         useCase: use_case,
         tone: options?.ton,
-        marketingAngle: marketing_angle,
+        marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
       });
       setIdeas(res.ideas || []);
       setMode('generated');
