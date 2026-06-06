@@ -6,7 +6,6 @@ import PhotoUpload from './PhotoUpload';
 
 
 const imageModels: { value: AIModel; label: string }[] = [
-  { value: 'nano-banana-2', label: 'Nano Banana 2 ⚡' },
   { value: 'nano-banana-pro', label: 'Nano Banana Pro 🎨' },
   { value: 'gpt-5.4-image-2', label: 'GPT 5.4 Image 2' },
   { value: 'grok-image', label: 'Grok AI 🤖' },
@@ -51,11 +50,7 @@ const ContentTypeStep = () => {
     sora_character_scenes, setSoraCharacterScenes,
   } = useKreatorStore();
 
-  const models = type === 'video'
-    ? videoModels
-    : type === 'carousel'
-    ? imageModels.filter((m) => m.value !== 'nano-banana-2')
-    : imageModels;
+  const models = type === 'video' ? videoModels : imageModels;
   const isGptImage = ai_model === 'gpt-5.4-image-2';
 
   useEffect(() => {

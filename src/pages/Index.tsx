@@ -9,6 +9,7 @@ import StepContainer from '@/components/kreator/StepContainer';
 import CustomizationStep from '@/components/kreator/CustomizationStep';
 import GenerationStep from '@/components/kreator/GenerationStep';
 import IdeaSuggestions from '@/components/kreator/IdeaSuggestions';
+import ManualIdeaPanel from '@/components/kreator/ManualIdeaPanel';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Coins, LayoutDashboard, LogOut, Sun, Moon } from 'lucide-react';
@@ -102,6 +103,7 @@ const Index = () => {
           <IdeaSuggestions />
           <StartingPointBlock />
           <CustomizationStep />
+          <ManualIdeaPanel />
           <GenerationStep />
         </div>
       </main>
