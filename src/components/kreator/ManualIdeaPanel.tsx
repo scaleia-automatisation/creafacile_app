@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2, Wand2 } from 'lucide-react';
@@ -14,6 +14,8 @@ const ManualIdeaPanel = () => {
   } = useKreatorStore();
 
   const [improving, setImproving] = useState(false);
+  const improvedOnceRef = useRef(false);
+  const lastTypeRef = useRef<string>(type);
 
   if (!manual_idea_mode) return null;
 
@@ -70,6 +72,8 @@ ${manual_idea_text}`;
         improved = cleaned || manual_idea_text;
       }
       setManualIdeaText(improved);
+      improvedOnceRef.current = true;
+      lastTypeRef.current = type;
       toast.success('Idée améliorée');
     } catch (e) {
       console.error(e);
@@ -78,6 +82,18 @@ ${manual_idea_text}`;
       setImproving(false);
     }
   };
+
+  // Si l'utilisateur a déjà cliqué "Améliorer l'idée" puis change le type de
+  // contenu (image / carousel / vidéo), on relance automatiquement
+  // l'amélioration pour adapter l'idée au nouveau type.
+  useEffect(() => {
+    if (!manual_idea_mode) return;
+    if (!improvedOnceRef.current) return;
+    if (lastTypeRef.current === type) return;
+    if (improving || !manual_idea_text.trim() || !canGenerate) return;
+    handleImproveIdea();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
 
   const handleUseManualIdea = () => {
     if (!manual_idea_text.trim()) {
