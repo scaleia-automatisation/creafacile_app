@@ -143,6 +143,13 @@ STRUCTURE STRICTE de chaque idée :
 - concept : description SIMPLE, claire et concise de l'idée (ce qu'on voit / entend / lit), STRICTEMENT ENTRE 15 ET 20 MOTS (jamais moins de 15, jamais plus de 20), orientée conversion, STRICTEMENT en lien avec le nom de l'offre, la description, l'objectif du contenu et SURTOUT le cas d'utilisation choisi.
 - angle : nom court de l'angle marketing (1 à 3 mots), sans explication supplémentaire.
 
+RÈGLE TYPE DE CONTENU — ABSOLUE (NON NÉGOCIABLE, PRIORITÉ MAXIMALE) :
+Les 3 idées DOIVENT être pensées, formulées et exécutables NATIVEMENT dans le TYPE DE CONTENU sélectionné (image, carousel ou vidéo). Aucune idée ne peut être hors-format.
+- SI TYPE = image : chaque idée doit être une SCÈNE FIXE unique, lisible instantanément en une seule photo/visuel (un seul moment, un seul cadrage, un seul message visuel fort). Interdit : "scène 1 / scène 2", "puis", déroulé temporel, slides, narration multi-étapes, voix-off, mouvement.
+- SI TYPE = carousel : chaque idée doit être un PARCOURS multi-slides (2 à 6 slides) avec une progression logique slide après slide (slide 1 = hook, slides intermédiaires = développement, dernière slide = chute / CTA). Le concept doit clairement laisser entendre cette structure en slides. Interdit : narration vidéo (mouvement, voix-off, scènes filmées) ou simple image unique.
+- SI TYPE = vidéo : chaque idée doit être une SÉQUENCE filmée et animée avec hook 0-2s, déroulé en plans/scènes, rythme et chute. Le concept doit refléter le mouvement, la voix, l'action, le timing. Interdit : description d'image fixe ou de slides statiques.
+Le hook et le concept doivent rendre OBVIOUS le type de contenu visé sans qu'il soit nécessaire de le préciser. Une idée qui pourrait aussi bien être un autre type est INVALIDE.
+
 RÈGLE HOOK — ABSOLUE (NON NÉGOCIABLE) :
 Le hook DOIT être ULTRA PUISSANT, scroll-stop immédiat (0-2s), émotionnel/intrigant/choquant/provoquant une curiosité irrésistible, JAMAIS mou, descriptif ni générique. Il doit être directement dans le SENS de l'OBJECTIF DU CONTENU et respecter EXACTEMENT le TON D'ÉCRITURE demandé (vocabulaire, niveau de langue, énergie, rythme, registre). Un hook qui s'écarte de l'objectif, du ton ou du cas d'utilisation est INVALIDE.
 
@@ -181,7 +188,7 @@ ${input.useCase ? `Cas d'utilisation (format narratif OBLIGATOIRE) : ${input.use
 ${input.marketingAngle ? `Angle marketing (PRIORITAIRE — fil conducteur OBLIGATOIRE des 3 idées) : ${input.marketingAngle}` : ''}
 ${input.tone ? `Ton d'écriture : ${input.tone}` : ''}
 
-Génère 3 idées de contenu ULTIMES qui convertissent le plus, avec des angles marketing puissants et TRÈS différents, en cohérence parfaite avec TOUT ce contexte (notamment le cas d'utilisation et le type de contenu).`;
+Génère 3 idées de contenu ULTIMES qui convertissent le plus, avec des angles marketing puissants et TRÈS différents, en cohérence parfaite avec TOUT ce contexte. RAPPEL CRITIQUE : les 3 idées doivent être NATIVEMENT et EXCLUSIVEMENT pensées pour le TYPE DE CONTENU = "${input.contentType}" (${input.contentType === 'image' ? 'une seule scène fixe lisible en une image' : input.contentType === 'carousel' ? 'un parcours multi-slides avec progression' : 'une séquence filmée animée avec hook, plans et chute'}). Aucune idée hors-format n'est tolérée.`;
 
   const data = await callKreatorAI({
     action: 'generate_content_ideas',
