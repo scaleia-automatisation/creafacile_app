@@ -131,6 +131,7 @@ const CustomizationStep = () => {
     company_activity, company_sector, target_persona,
     render_style, video_render_style,
     slides_count, use_case,
+    manual_idea_text, manual_idea_mode,
   } = useKreatorStore();
   const isVideo = type === 'video';
   const isCarousel = type === 'carousel';
@@ -145,6 +146,7 @@ const CustomizationStep = () => {
   const [slidesGenerating, setSlidesGenerating] = useState(false);
   const [logoColors, setLogoColors] = useState<string[]>([]);
   const lastIdeaForSlidesRef = useRef<string>('');
+  const prevIdeaRef = useRef<string>(idea_chosen || '');
 
   // Extract dominant colors from the logo whenever it changes; only used when
   // the colour palette is enabled and a logo is uploaded.
@@ -232,10 +234,12 @@ const CustomizationStep = () => {
     if (norm) setOptions({ text_color_2: norm });
   };
 
+  const effectiveIdea = (idea_chosen || (manual_idea_mode ? manual_idea_text : '') || input_text || '').trim();
+
   const buildTextParams = (variant: 1 | 2) => ({
     contentType: type,
     format,
-    idea: idea_chosen || input_text,
+    idea: effectiveIdea,
     objective,
     productName: product_service,
     productDescription: product_description,
@@ -258,7 +262,18 @@ const CustomizationStep = () => {
     ? ''
     : `Renseignez ${missingForText.join(', ')} pour générer le texte.`;
 
+  const ensureIdeaChosen = (): boolean => {
+    if (effectiveIdea) return true;
+    toast.error(
+      manual_idea_mode
+        ? "Veuillez d'abord insérer votre idée dans le champ « Insérer mon idée »."
+        : "Veuillez d'abord choisir une idée parmi les 3 idées générées ou insérer la vôtre."
+    );
+    return false;
+  };
+
   const handleGenerateText = async (variant: 1 | 2) => {
+    if (!ensureIdeaChosen()) return;
     if (!canGenerateText) {
       toast.error(missingTextTooltip);
       return;
@@ -279,36 +294,8 @@ const CustomizationStep = () => {
     }
   };
 
-  // Auto-generate text 1 when "Texte dans le visuel" is enabled (image/video) and empty
-  useEffect(() => {
-    if (
-      options.show_text &&
-      !isCarousel &&
-      !options.text_content?.trim() &&
-      !text1Generating &&
-      canGenerateText
-    ) {
-      handleGenerateText(1);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options.show_text, isCarousel, canGenerateText]);
-
-  // Auto-generate text 2 when 2nd on-screen text is enabled and empty
-  useEffect(() => {
-    if (
-      options.show_text &&
-      options.text_2_enabled &&
-      !isCarousel &&
-      !options.text_content_2?.trim() &&
-      !text2Generating &&
-      canGenerateText
-    ) {
-      handleGenerateText(2);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options.text_2_enabled, options.show_text, isCarousel, canGenerateText]);
-
   const handleGenerateSlideTexts = async () => {
+    if (!ensureIdeaChosen()) return;
     if (!canGenerateText) {
       toast.error(missingTextTooltip);
       return;
@@ -318,7 +305,7 @@ const CustomizationStep = () => {
       const texts = await generateSlideTexts({
         count: slideCount,
         format,
-        idea: idea_chosen || input_text,
+        idea: effectiveIdea,
         objective,
         productName: product_service,
         productDescription: product_description,
@@ -351,22 +338,29 @@ const CustomizationStep = () => {
     setOptions(patch);
   };
 
-  // Auto-génération des textes de slides UNIQUEMENT lorsque l'utilisateur a
-  // cliqué sur une des 3 idées proposées OU inséré son idée via le champ
-  // "Insérer mon idée". Déclenché uniquement pour le type carrousel.
+  // Régénération automatique UNIQUEMENT quand l'utilisateur change d'idée
+  // (clique sur une autre idée parmi les 3 proposées). Pas d'auto-génération
+  // initiale : les textes ne se génèrent qu'au clic du bouton dédié.
   useEffect(() => {
-    if (!isCarousel) return;
-    const idea = (idea_chosen || '').trim();
-    if (!idea) return;
-    // Clé unique : idée + nombre de slides + format → régénère si l'un change
-    const key = `${idea}::${slideCount}::${format}`;
-    if (lastIdeaForSlidesRef.current === key) return;
+    const current = (idea_chosen || '').trim();
+    const prev = prevIdeaRef.current;
+    if (!current || current === prev) {
+      prevIdeaRef.current = current;
+      return;
+    }
+    // Une idée différente a été choisie : on régénère ce qui était déjà actif.
+    prevIdeaRef.current = current;
     if (!canGenerateText) return;
-    if (slidesGenerating) return;
-    lastIdeaForSlidesRef.current = key;
-    handleGenerateSlideTexts();
+    if (isCarousel) {
+      // Régénère les textes des slides s'ils étaient déjà générés
+      const hadSlides = (options.slide_texts || []).some((t) => !!t?.trim());
+      if (hadSlides && !slidesGenerating) handleGenerateSlideTexts();
+    } else if (options.show_text) {
+      if (options.text_content?.trim() && !text1Generating) handleGenerateText(1);
+      if (options.text_2_enabled && options.text_content_2?.trim() && !text2Generating) handleGenerateText(2);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idea_chosen, isCarousel, slideCount, format, canGenerateText]);
+  }, [idea_chosen]);
 
   const isVisible = user_mode === 'expert' || showAdvanced;
 
