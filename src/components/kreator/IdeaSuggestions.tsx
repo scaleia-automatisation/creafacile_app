@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Loader2, PenLine, Wand2 } from 'lucide-react';
+import { Sparkles, Loader2, PenLine } from 'lucide-react';
 import { toast } from 'sonner';
-import { generateContentIdeas, callKreatorAI, type ContentIdea } from '@/lib/kreator-ai';
+import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 
 const IdeaSuggestions = () => {
   const {
