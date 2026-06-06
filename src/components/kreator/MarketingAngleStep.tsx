@@ -4,7 +4,9 @@ import { MARKETING_ANGLES } from '@/data/marketingAngles';
 import type { OfferKind } from '@/data/useCases';
 
 const MarketingAngleStep = () => {
-  const { objective, offer_type, type, marketing_angle, setMarketingAngle } = useKreatorStore();
+  const { objective, offer_type, type, marketing_angle, setMarketingAngle, user_mode } = useKreatorStore();
+
+  if (user_mode === 'beginner') return null;
 
   const offerKind: OfferKind | null =
     offer_type === '📦 Produit' ? 'produit' : offer_type === '🛠️ Service' ? 'service' : null;

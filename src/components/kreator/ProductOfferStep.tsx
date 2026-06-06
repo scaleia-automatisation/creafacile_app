@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Users, CheckCircle, Sparkles, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { generatePersonas, generateIdeas, detectOfferTypeFromDescription, generateServiceDescription, detectActivityFromDescription, detectSectorFromActivity } from '@/lib/kreator-ai';
+import { generatePersonas, generateIdeas, detectOfferTypeFromDescription, generateServiceDescription, detectActivityFromDescription, detectSectorFromActivity, detectBestTone } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import StepContainer from './StepContainer';
 import ActivitySectorFields, { SECTORS } from './ActivitySectorFields';
@@ -28,7 +28,7 @@ type Persona = {
 const ProductOfferStep = () => {
   const { user } = useAuth();
   const {
-    type,
+    type, objective,
     company_activity, setCompanyActivity,
     company_sector, setCompanySector,
     market,
@@ -42,6 +42,7 @@ const ProductOfferStep = () => {
     idea_chosen, setIdeaChosen,
     setInputText,
     user_mode,
+    options, setOptions,
   } = useKreatorStore();
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [loadingPersonas, setLoadingPersonas] = useState(false);
@@ -54,6 +55,8 @@ const ProductOfferStep = () => {
   const [detectingSector, setDetectingSector] = useState(false);
   const autoSectorKeyRef = useRef<string>('');
   const autoPersonasKeyRef = useRef<string>('');
+  const autoToneKeyRef = useRef<string>('');
+  const [detectingTone, setDetectingTone] = useState(false);
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
@@ -96,7 +99,12 @@ const ProductOfferStep = () => {
   };
 
   const handleDescriptionBlur = async () => {
-    const cleanedDesc = toOneSentence(product_description || '');
+    // Pour un produit, on autorise plusieurs lignes (le champ s'affiche sur 3 lignes
+    // pour permettre les retours à la ligne du texte). Pour un service, on garde
+    // une seule phrase courte.
+    const cleanedDesc = isProduct
+      ? (product_description || '').trim()
+      : toOneSentence(product_description || '');
     if (cleanedDesc !== product_description) setProductDescription(cleanedDesc);
     if (!cleanedDesc) return;
     const tasks: Promise<void>[] = [];
@@ -273,6 +281,42 @@ const ProductOfferStep = () => {
     })();
   }, [product_description, company_activity, company_sector, offer_type]);
 
+  // Mode débutant : déduit automatiquement le ton d'écriture le plus adapté
+  // (le plus convertissant / viral) à partir de l'objectif, du type d'offre,
+  // du nom et de la description. Ne s'exécute pas si l'utilisateur a déjà
+  // choisi un ton (mode expert).
+  useEffect(() => {
+    if (user_mode !== 'beginner') return;
+    const obj = (objective || '').trim();
+    const off = (offer_type || '').trim();
+    const name = (product_service || '').trim();
+    const desc = (product_description || '').trim();
+    if (!obj || !off || !name || !desc) return;
+    if (options.ton?.trim()) return;
+    const key = `${obj}|${off}|${name}|${desc}`;
+    if (autoToneKeyRef.current === key) return;
+    if (detectingTone) return;
+    autoToneKeyRef.current = key;
+    const TONS = [
+      'Direct / Cash', 'Provocateur', 'Authentique', 'Storytelling',
+      'Humoristique', 'Éducatif', 'Inspirant', 'Urgent', 'Amical',
+    ];
+    setDetectingTone(true);
+    detectBestTone({
+      tones: TONS,
+      objective: obj,
+      offerType: off,
+      productName: name,
+      productDescription: desc,
+      activity: company_activity,
+      sector: company_sector,
+    })
+      .then((tone) => { if (tone) setOptions({ ton: tone }); })
+      .catch((e) => console.error('Auto tone detection failed', e))
+      .finally(() => setDetectingTone(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user_mode, objective, offer_type, product_service, product_description, company_activity, company_sector, options.ton]);
+
   // Auto-détection activité + secteur dès qu'une description produit est renseignée (produit comme service)
   useEffect(() => {
     const desc = (product_description || '').trim();
@@ -351,10 +395,18 @@ const ProductOfferStep = () => {
           <Textarea
             value={product_description}
             onChange={(e) => {
-              // Une seule phrase simple : on bloque les retours à la ligne
-              const single = e.target.value.replace(/[\r\n]+/g, ' ');
-              setProductDescription(single);
-              if (!single.trim()) {
+              // Pour un produit, on autorise jusqu'à 3 lignes (retours à la ligne)
+              // afin de pouvoir décrire l'emplacement du texte. Pour un service,
+              // on garde une seule phrase simple.
+              let next = e.target.value;
+              if (!isProduct) {
+                next = next.replace(/[\r\n]+/g, ' ');
+              } else {
+                const lines = next.split(/\r?\n/).slice(0, 3);
+                next = lines.join('\n');
+              }
+              setProductDescription(next);
+              if (!next.trim()) {
                 setCompanyActivity('');
                 setCompanySector('');
                 setPersonas([]);
@@ -370,7 +422,7 @@ const ProductOfferStep = () => {
             className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[60px] resize-none"
           />
           <p className="text-[11px] text-muted-foreground mt-1">
-            Une seule phrase simple, exacte
+            {isProduct ? 'Jusqu\'à 3 lignes (retours à la ligne autorisés)' : 'Une seule phrase simple, exacte'}
             {isProduct
               ? ' — générée automatiquement à partir de l\'image'
               : ' — générée automatiquement à partir du nom du service'}

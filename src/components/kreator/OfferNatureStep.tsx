@@ -5,7 +5,9 @@ import { OFFER_NATURES, isSpecialOfferAngle } from '@/data/offerNatures';
 import type { OfferKind } from '@/data/useCases';
 
 const OfferNatureStep = () => {
-  const { marketing_angle, offer_type, offer_nature, setOfferNature } = useKreatorStore();
+  const { marketing_angle, offer_type, offer_nature, setOfferNature, user_mode } = useKreatorStore();
+
+  if (user_mode === 'beginner') return null;
 
   const offerKind: OfferKind | null =
     offer_type === '📦 Produit' ? 'produit' : offer_type === '🛠️ Service' ? 'service' : null;

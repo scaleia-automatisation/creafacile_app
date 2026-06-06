@@ -442,6 +442,45 @@ RÈGLES STRICTES :
   return /[.!?]$/.test(oneLine) ? oneLine : oneLine + '.';
 }
 
+export async function detectBestTone(params: {
+  tones: string[];
+  objective?: string;
+  offerType?: string;
+  productName?: string;
+  productDescription?: string;
+  sector?: string;
+  activity?: string;
+}): Promise<string> {
+  const list = params.tones.map((t, i) => `${i + 1}. ${t}`).join('\n');
+  const systemPrompt = `Tu es un expert en copywriting et stratégie marketing. À partir des informations fournies (produit/service, description, secteur, activité, objectif de contenu), choisis LE TON D'ÉCRITURE le plus adapté pour CONVERTIR au maximum et générer le plus de viralité auprès de la cible la plus large et la plus rentable.
+RÈGLES :
+- Réponds UNIQUEMENT avec le libellé exact d'un ton de la liste ci-dessous (copie-colle exact).
+- Aucune autre phrase, aucun guillemet, aucune explication.
+
+Liste des tons autorisés :
+${list}`;
+  const userMsg = [
+    params.offerType && `Type d'offre : ${params.offerType}`,
+    params.productName && `Nom : ${params.productName}`,
+    params.productDescription && `Description : ${params.productDescription}`,
+    params.activity && `Activité : ${params.activity}`,
+    params.sector && `Secteur : ${params.sector}`,
+    params.objective && `Objectif du contenu : ${params.objective}`,
+  ].filter(Boolean).join('\n');
+  const data = await callKreatorAI({
+    action: 'detect_best_tone',
+    messages: [{ role: 'user', content: userMsg }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) return '';
+  const raw = content.trim().replace(/^["'`]+|["'`.]+$/g, '');
+  const match = params.tones.find((t) => t === raw)
+    || params.tones.find((t) => raw.includes(t))
+    || params.tones.find((t) => t.toLowerCase().includes(raw.toLowerCase()));
+  return match || raw;
+}
+
 export async function summarizePerformingPosts(descriptions: string[]) {
   const systemPrompt = `Tu es un expert en marketing digital et viralité sur les réseaux sociaux. À partir de la description du post fournie, explique pourquoi ce post est devenu viral.
 RÈGLES STRICTES :
