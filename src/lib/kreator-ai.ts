@@ -932,7 +932,7 @@ ${premiumDirectionBlock}
 ━━━━━━━━━━━━━━━━━━
 TEXTE ÉCRAN
 ━━━━━━━━━━━━━━━━━━
-Ultra lisibles mobile, parfaitement intégrés, jamais coupés, cohérents avec secteur/ton/style. VIDÉO : max 6 mots par texte. CARROUSEL : max 12 mots par slide.
+Ultra lisibles mobile, parfaitement intégrés, JAMAIS coupés ni tronqués, cohérents avec secteur/ton/style. VIDÉO : max 6 mots par texte. CARROUSEL : max 15 mots par slide — le texte de CHAQUE slide doit être affiché EN ENTIER, COMPLET, sans coupure, sans troncature, sans points de suspension, sans débordement hors cadre. Adapter la taille de police pour garantir que l'intégralité du texte tienne dans la slide à 100%.
 
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE IMAGE
