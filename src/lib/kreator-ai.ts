@@ -131,6 +131,7 @@ export async function generateContentIdeas(input: {
   useCase?: string;
   tone?: string;
   marketingAngle?: string;
+  slidesCount?: number;
 }): Promise<{ ideas: ContentIdea[] }> {
   const systemPrompt = `Tu es un expert en marketing digital viral et copywriting de conversion (Facebook, Instagram, TikTok, LinkedIn — recommandations algorithmes 2026).
 
@@ -146,7 +147,7 @@ STRUCTURE STRICTE de chaque idée :
 RÈGLE TYPE DE CONTENU — ABSOLUE (NON NÉGOCIABLE, PRIORITÉ MAXIMALE) :
 Les 3 idées DOIVENT être pensées, formulées et exécutables NATIVEMENT dans le TYPE DE CONTENU sélectionné (image, carousel ou vidéo). Aucune idée ne peut être hors-format.
 - SI TYPE = image : chaque idée doit être une SCÈNE FIXE unique, lisible instantanément en une seule photo/visuel (un seul moment, un seul cadrage, un seul message visuel fort). Interdit : "scène 1 / scène 2", "puis", déroulé temporel, slides, narration multi-étapes, voix-off, mouvement.
-- SI TYPE = carousel : chaque idée doit être un PARCOURS multi-slides (2 à 6 slides) avec une progression logique slide après slide (slide 1 = hook, slides intermédiaires = développement, dernière slide = chute / CTA). Le concept doit clairement laisser entendre cette structure en slides. Interdit : narration vidéo (mouvement, voix-off, scènes filmées) ou simple image unique.
+- SI TYPE = carousel : chaque idée doit être un PARCOURS multi-slides avec une progression logique slide après slide (slide 1 = hook, slides intermédiaires = développement, dernière slide = chute / CTA). Le concept doit clairement laisser entendre cette structure en slides ET être CONÇU EXACTEMENT pour le NOMBRE DE SLIDES indiqué dans le contexte (ni plus, ni moins). La structure narrative doit tenir précisément dans ce nombre de slides imposé. Interdit : narration vidéo (mouvement, voix-off, scènes filmées) ou simple image unique.
 - SI TYPE = vidéo : chaque idée doit être une SÉQUENCE filmée et animée avec hook 0-2s, déroulé en plans/scènes, rythme et chute. Le concept doit refléter le mouvement, la voix, l'action, le timing. Interdit : description d'image fixe ou de slides statiques.
 Le hook et le concept doivent rendre OBVIOUS le type de contenu visé sans qu'il soit nécessaire de le préciser. Une idée qui pourrait aussi bien être un autre type est INVALIDE.
 
@@ -185,6 +186,7 @@ ${input.sector ? `Secteur : ${input.sector}` : ''}
 ${input.persona ? `Client cible / Persona : ${input.persona}` : ''}
 ${input.market ? `Marché : ${input.market}` : ''}
 ${input.useCase ? `Cas d'utilisation (format narratif OBLIGATOIRE) : ${input.useCase}` : ''}
+${input.contentType === 'carousel' && input.slidesCount ? `Nombre de slides du carrousel (OBLIGATOIRE — chaque idée doit être structurée EXACTEMENT en ${input.slidesCount} slides) : ${input.slidesCount}` : ''}
 ${input.marketingAngle ? `Angle marketing (PRIORITAIRE — fil conducteur OBLIGATOIRE des 3 idées) : ${input.marketingAngle}` : ''}
 ${input.tone ? `Ton d'écriture : ${input.tone}` : ''}
 
