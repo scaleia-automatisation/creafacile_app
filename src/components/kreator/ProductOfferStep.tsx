@@ -60,6 +60,7 @@ const ProductOfferStep = () => {
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
+  const descTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   const isProduct = offer_type === '📦 Produit';
   const isService = offer_type === '🛠️ Service';
