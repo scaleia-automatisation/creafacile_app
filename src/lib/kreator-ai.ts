@@ -1791,14 +1791,16 @@ export async function generateVoiceOver(params: {
   persona?: string;
   useCase?: string;
   videoDurationSec: number;
+  language?: string;
 }): Promise<string> {
   const maxSec = Math.max(1, params.videoDurationSec - 2);
-  // Approx 2.5 mots/seconde en français parlé naturel
+  // Approx 2.5 mots/seconde en parlé naturel
   const maxWords = Math.max(3, Math.floor(maxSec * 2.5));
   const maxChars = Math.max(20, maxSec * 15);
+  const lang = (params.language || 'Français').trim();
 
   const systemPrompt = `Tu es un expert en copywriting pour voix off publicitaire courte (réseaux sociaux).
-Tu écris UNE voix off ULTRA percutante, naturelle, humaine, en français, qui :
+Tu écris UNE voix off ULTRA percutante, naturelle, humaine, RÉDIGÉE INTÉGRALEMENT EN ${lang.toUpperCase()} (langue cible imposée — aucun mot dans une autre langue, registre familier et parlé NATIF de cette langue, expressions idiomatiques locales du quotidien), qui :
 - accroche dans la première seconde (hook fort)
 - met en avant le bénéfice principal
 - se termine par un mini call-to-action ou une chute mémorable
@@ -1809,7 +1811,7 @@ Tu écris UNE voix off ULTRA percutante, naturelle, humaine, en français, qui :
 CONTRAINTE DURÉE ABSOLUE :
 La voix off DOIT pouvoir être dite en ${maxSec} secondes MAXIMUM (≈ ${maxWords} mots, ≈ ${maxChars} caractères max). C'est non-négociable : elle doit se terminer 2 secondes avant la fin de la vidéo.
 
-Réponds UNIQUEMENT avec le texte de la voix off, sans guillemets, sans introduction, sans mise en forme, sans préfixe.`;
+Réponds UNIQUEMENT avec le texte de la voix off (intégralement en ${lang}, registre familier/parlé natif), sans guillemets, sans introduction, sans mise en forme, sans préfixe, sans traduction parallèle.`;
 
   const userPrompt = `INPUTS PRIORITAIRES — à respecter STRICTEMENT pour rédiger la voix off :
 
