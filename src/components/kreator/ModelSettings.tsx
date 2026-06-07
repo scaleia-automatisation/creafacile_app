@@ -115,16 +115,23 @@ const VeoSettings = () => {
     ...(model_settings.veo_reference_image_urls || []),
   ].filter((u): u is string => !!u);
   const imgsKey = imgs.join('|');
-  const lastAutoKeyRef = useRef<string>('');
+  const lastAutoKeyRef = useRef<string | null>(null);
   const generatingRef = useRef(false);
   const [autoLoading, setAutoLoading] = useState(false);
+
+  // Initialize: if a description already exists at mount, consider current key as "already handled"
+  useEffect(() => {
+    if (lastAutoKeyRef.current === null) {
+      const existing = (model_settings.veo_reference_description || '').trim();
+      lastAutoKeyRef.current = existing ? imgsKey : '';
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (sub !== 'i2v' && sub !== 'reference') return;
     if (!imgsKey) return;
     if (lastAutoKeyRef.current === imgsKey) return;
-    const current = (model_settings.veo_reference_description || '').trim();
-    if (current && lastAutoKeyRef.current !== '') return; // user typed something, don't override
     if (generatingRef.current) return;
     generatingRef.current = true;
     setAutoLoading(true);
