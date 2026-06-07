@@ -412,6 +412,7 @@ serve(async (req) => {
         "sora-2-i2v": "sora-2",
         "sora-2-pro-t2v": "sora-2-pro",
         "sora-2-pro-i2v": "sora-2-pro",
+        "sora-2-pro-character": "sora-2-pro",
       };
       if (ai_model && OPENAI_SORA_MODELS[ai_model]) {
         const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
@@ -419,7 +420,8 @@ serve(async (req) => {
 
         const ms = (model_settings || {}) as Record<string, any>;
         const isPro = ai_model.includes("pro");
-        const isI2V = ai_model.includes("i2v");
+        const isCharacter = ai_model === "sora-2-pro-character";
+        const isI2V = ai_model.includes("i2v") || isCharacter;
         const oaiModel = OPENAI_SORA_MODELS[ai_model];
 
         // Orientation : sora_aspect_ratio (portrait/paysage) > size (9:16/16:9/1:1)
@@ -436,7 +438,21 @@ serve(async (req) => {
           : (highRes ? "1792x1024" : "1280x720");
 
         // Durée : n_frames (10/15) → seconds ("8"/"12"). Défaut "8".
-        const seconds = ms.sora_n_frames === 15 ? "12" : ms.sora_n_frames === 10 ? "8" : "8";
+        // Pour Sora 2 Pro Character, on utilise la durée totale demandée (10/15/25s) plafonnée à 12s par appel OpenAI.
+        let seconds = ms.sora_n_frames === 15 ? "12" : ms.sora_n_frames === 10 ? "8" : "8";
+        if (isCharacter) {
+          const total = Number((model_settings as any)?.sora_character_total_duration) || 10;
+          seconds = total >= 12 ? "12" : total >= 8 ? "8" : "4";
+        }
+
+        // Pour le mode Character, on enrichit le prompt avec la description des scènes
+        let effectivePrompt = prompt || "";
+        if (isCharacter && Array.isArray(sora_character_scenes) && sora_character_scenes.length > 0) {
+          const scenesDesc = sora_character_scenes
+            .map((s: any, i: number) => `Scène ${i + 1} (${Number(s.duration) || 0}s)`)
+            .join(" → ");
+          effectivePrompt = `${effectivePrompt}\n\nStructure narrative en plusieurs scènes : ${scenesDesc}. Maintenir la cohérence du personnage principal sur toutes les scènes.`;
+        }
 
         let body: BodyInit;
         const headers: Record<string, string> = { Authorization: `Bearer ${OPENAI_API_KEY}` };
@@ -471,14 +487,14 @@ serve(async (req) => {
           }
           const fd = new FormData();
           fd.append("model", oaiModel);
-          fd.append("prompt", prompt || "");
+          fd.append("prompt", effectivePrompt);
           fd.append("seconds", seconds);
           fd.append("size", oaiSize);
           fd.append("input_reference", new File([finalBytes], finalName, { type: finalMime }));
           body = fd;
         } else {
           headers["Content-Type"] = "application/json";
-          body = JSON.stringify({ model: oaiModel, prompt: prompt || "", seconds, size: oaiSize });
+          body = JSON.stringify({ model: oaiModel, prompt: effectivePrompt, seconds, size: oaiSize });
         }
 
         console.log(`[openai_sora_start] ai_model=${ai_model} model=${oaiModel} size=${oaiSize} seconds=${seconds} i2v=${isI2V}`);
