@@ -5,7 +5,7 @@ const ScratchMissingAlert = () => {
   const {
     starting_choice, offer_type, company_activity, company_sector,
     product_service, product_image_url, objective,
-    user_mode,
+    user_mode, type,
   } = useKreatorStore();
 
   if (starting_choice !== 'scratch') return null;
@@ -15,7 +15,7 @@ const ScratchMissingAlert = () => {
   const missing: string[] = [];
   if (!offer_type?.trim()) missing.push("Type d'offre");
   if (!product_service?.trim()) missing.push('Nom');
-  if (isProduct && !product_image_url?.trim()) missing.push("Image du produit");
+  if (isProduct && type !== 'video' && !product_image_url?.trim()) missing.push("Image du produit");
   if (!objective?.trim()) missing.push('Objectif du contenu');
   if (!isBeginner && !company_activity?.trim()) missing.push('Activité principale');
   if (!isBeginner && !company_sector?.trim()) missing.push("Secteur d'activité");
