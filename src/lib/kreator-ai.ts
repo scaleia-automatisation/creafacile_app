@@ -1139,6 +1139,7 @@ ${params.market ? `Marché / Localisation cible: ${params.market} (adapter casti
 === CONTENU ===
 Type de contenu: ${params.contentType}
 Format: ${params.format}
+${params.contentType === 'video' ? `Durée vidéo choisie par l'utilisateur (SOURCE DE VÉRITÉ ABSOLUE) : ${videoDuration}s. Le storyboard du prompt final doit contenir exactement ${videoPlanCount} plans minutés dont la somme fait EXACTEMENT ${videoDuration}s.` : ''}
 ${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
 ${activeRenderStyle ? `Type de rendu${params.contentType === 'video' ? ' vidéo' : ''}: ${activeRenderStyle}` : 'Type de rendu: automatique'}
 
@@ -1245,7 +1246,7 @@ UTILISATION STRATÉGIQUE DE LA PALETTE (RÈGLE INTELLIGENTE) :
 • Utiliser les couleurs dominantes pour renforcer l'objectif marketing recherché : attirer l'attention, inspirer confiance, transmettre de l'énergie, créer du désir, renforcer le caractère premium, favoriser la mémorisation.
 • La palette ne doit pas seulement être appliquée visuellement — elle doit aussi soutenir l'émotion et le message du contenu.` : 'Palette automatique'}
 
-⚠️ RAPPEL FINAL — Les RÉGLAGES AVANCÉS ci-dessus (palette, ton, style visuel, texte overlay, logo, position, police, couleur) renseignés par l'utilisateur sont STRICTEMENT PRIORITAIRES sur toute autre source (analyse d'images, suggestions automatiques). Appliquer EXACTEMENT comme demandé.
+⚠️ RAPPEL FINAL — Les RÉGLAGES AVANCÉS ci-dessus (palette, ton, style visuel, texte overlay, logo, position, police, couleur${params.contentType === 'video' ? `, durée vidéo EXACTE ${videoDuration}s et timecodes des plans` : ''}) renseignés par l'utilisateur sont STRICTEMENT PRIORITAIRES sur toute autre source (analyse d'images, suggestions automatiques). Appliquer EXACTEMENT comme demandé.
 
 ⚡ COHÉRENCE DU TEXTE AFFICHÉ DANS LE VISUEL (RÈGLE ABSOLUE — NON NÉGOCIABLE) :
 Tout texte visible dans le visuel généré (overlay, titre, sous-titre, textes de slides du carrousel, mentions, badges, accroches, punchlines, CTA) DOIT être 100% COHÉRENT avec, par ordre de priorité :
