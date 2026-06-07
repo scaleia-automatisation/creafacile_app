@@ -204,12 +204,21 @@ const VeoSettings = () => {
           required
           hint="\n"
         >
-          <Textarea
-            value={model_settings.veo_reference_description || ''}
-            onChange={(e) => setModelSetting('veo_reference_description', e.target.value)}
-            placeholder="Décrivez précisément l'image insérée afin qu'elle soit reproduite à l'identique dans la vidéo générée…"
-            className="min-h-[120px] bg-card border-foreground/10 text-foreground"
-          />
+          <div className="relative">
+            <Textarea
+              value={model_settings.veo_reference_description || ''}
+              onChange={(e) => setModelSetting('veo_reference_description', e.target.value)}
+              placeholder={autoLoading ? "Génération automatique de la description en cours…" : "La description sera générée automatiquement dès qu'une image est insérée. Vous pouvez ensuite la modifier."}
+              disabled={autoLoading}
+              className="min-h-[120px] bg-card border-foreground/10 text-foreground"
+            />
+            {autoLoading && (
+              <div className="absolute top-2 right-2 flex items-center gap-2 text-xs text-muted-foreground">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Analyse de l'image…
+              </div>
+            )}
+          </div>
         </Field>
       )}
 
