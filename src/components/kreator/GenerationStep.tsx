@@ -162,7 +162,7 @@ const GenerationStep = () => {
     offer_type, product_service, product_description, target_persona, market, use_case,
     options, slides_count, visual_style_brief, render_style, video_render_style,
     input_image_description, simple_images, starting_choice,
-    voice_over_enabled, voice_over_text, user_mode,
+    voice_over_enabled, voice_over_text, voice_over_language, user_mode,
   } = useKreatorStore();
   const [progress, setProgress] = useState(0);
   const [generating, setGenerating] = useState(false);
@@ -194,7 +194,7 @@ const GenerationStep = () => {
   const missingFields: string[] = [];
   if (!offer_type?.trim()) missingFields.push("Type d'offre");
   if (!product_service?.trim()) missingFields.push("Nom de l'offre");
-  if (isProduct) {
+  if (isProduct && type !== 'video') {
     const hasProductImg = !!useKreatorStore.getState().product_image_url?.trim();
     const hasInputPhoto = (input_photos || []).some((p) => p?.url);
     if (!hasProductImg && !hasInputPhoto) missingFields.push('Image du produit');
@@ -277,6 +277,10 @@ const GenerationStep = () => {
     voiceOverText:
       type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
         ? voice_over_text.trim()
+        : undefined,
+    voiceOverLanguage:
+      type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
+        ? (voice_over_language || 'Français')
         : undefined,
     videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
   });

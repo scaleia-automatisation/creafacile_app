@@ -657,6 +657,7 @@ export async function generatePrompt(params: {
   textStart2?: number;
   voiceOverText?: string;
   videoDurationSec?: number;
+  voiceOverLanguage?: string;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
   
@@ -685,7 +686,7 @@ CONSIGNES VIDÉO OBLIGATOIRES :
 🎯 SCRIPT VIDÉO VIRAL (PRIORITÉ ABSOLUE) :
 - Générer un script vidéo viral d'une durée STRICTEMENT calée sur la durée du modèle IA sélectionné${params.videoDurationSec ? ` (durée cible : ${params.videoDurationSec}s, plage tolérée 8–15s)` : ' (entre 8 et 15s)'} — JAMAIS plus court, JAMAIS plus long.
 - Le script doit être 100% optimisé pour la VIRALITÉ, la RÉTENTION et la conversion : retenir le lecteur dès la 1re frame, EMPÊCHER le scroll grâce à un hook parfait, maximiser le watch-time complet.
-${params.voiceOverText ? `- LANGUE DU SCRIPT & DE LA VOIX OFF : strictement IDENTIQUE à la langue du texte voix off fourni ci-dessus. Toute la narration, les overlays, les textes à l'écran et le ton doivent être dans CETTE MÊME LANGUE — aucune autre langue ni traduction.\n` : ''}- Structure narrative virale OBLIGATOIRE (à intégrer explicitement dans le prompt_fr) :
+${params.voiceOverText ? `- LANGUE DU SCRIPT & DE LA VOIX OFF : strictement ${(params.voiceOverLanguage || 'Français').toUpperCase()} (langue imposée par l'utilisateur). Toute la narration, les overlays, les textes à l'écran et le ton doivent être dans CETTE LANGUE — aucune autre langue, aucune traduction parallèle, registre familier/parlé natif de cette langue.\n` : ''}- Structure narrative virale OBLIGATOIRE (à intégrer explicitement dans le prompt_fr) :
   1) CHOC COGNITIF (0–1s) : image, phrase ou situation qui crée une rupture immédiate dans le scroll de la cible et capte l'attention sans détour.
   2) PSYCHOLOGIE DU HOOK (1–2s) : déclencheur émotionnel ou de curiosité parfaitement calibré pour le persona — empêche physiquement de scroller.
   3) CONTEXTE EXPRESS (2–4s) : répondre TRÈS vite à "de quoi ça parle ?" — clarté immédiate du sujet, aucune ambiguïté.
@@ -723,7 +724,7 @@ ${params.voiceOverText ? `- LANGUE DU SCRIPT & DE LA VOIX OFF : strictement IDEN
 - 1 message = + conversion
 
 ${params.videoRenderStyle ? `TYPE DE RENDU VIDÉO SÉLECTIONNÉ : "${params.videoRenderStyle}" — Adapter TOUTE la direction artistique, l'ambiance, le cadrage et le style de montage à ce rendu vidéo.` : ''}
-${params.voiceOverText ? `\n🎙️ VOIX OFF (OBLIGATOIRE — À INTÉGRER DANS LA VIDÉO) :\nLe texte de voix off à dire EXACTEMENT (mot pour mot, sans modification, sans traduction, sans reformulation, sans ajout, sans suppression) est : "${params.voiceOverText}".\n🌐 LANGUE DE LA VOIX OFF — RÈGLE ABSOLUE : la voix off DOIT être prononcée DANS LA MÊME LANGUE EXACTE que le texte de voix off ci-dessus (en l'occurrence : FRANÇAIS). INTERDICTION FORMELLE de traduire, doubler, sous-titrer dans une autre langue, mixer plusieurs langues, ou utiliser un accent étranger qui altère la langue. Accent : français naturel et neutre. Toute autre langue (anglais, espagnol, etc.) est STRICTEMENT INTERDITE.\nVoix naturelle, humaine, cohérente avec le ton et le marché.\nLa voix off doit IMPÉRATIVEMENT se terminer au moins 2 secondes AVANT la fin de la vidéo${params.videoDurationSec ? ` (durée totale ${params.videoDurationSec}s — voix off ≤ ${Math.max(1, params.videoDurationSec - 2)}s)` : ''}. Aucun mot ne doit être prononcé dans les 2 dernières secondes.` : ''}
+${params.voiceOverText ? `\n🎙️ VOIX OFF (OBLIGATOIRE — À INTÉGRER DANS LA VIDÉO) :\nLe texte de voix off à dire EXACTEMENT (mot pour mot, sans modification, sans reformulation, sans ajout, sans suppression) est : "${params.voiceOverText}".\n🌐 LANGUE DE LA VOIX OFF — RÈGLE ABSOLUE : la voix off DOIT être prononcée EN ${(params.voiceOverLanguage || 'Français').toUpperCase()} (langue imposée par l'utilisateur), avec un accent natif neutre et un registre FAMILIER / PARLÉ NATUREL de cette langue. INTERDICTION FORMELLE de traduire vers une autre langue, de mixer plusieurs langues, de doubler, de sous-titrer dans une autre langue, ou d'utiliser un accent étranger qui altère la langue. Toute autre langue est STRICTEMENT INTERDITE.\nVoix naturelle, humaine, cohérente avec le ton, le marché et la langue cible.\nLa voix off doit IMPÉRATIVEMENT se terminer au moins 2 secondes AVANT la fin de la vidéo${params.videoDurationSec ? ` (durée totale ${params.videoDurationSec}s — voix off ≤ ${Math.max(1, params.videoDurationSec - 2)}s)` : ''}. Aucun mot ne doit être prononcé dans les 2 dernières secondes.` : ''}
 ` : '';
 
   // Determine the active render style
@@ -1166,6 +1167,7 @@ ${params.referenceImageCount && params.referenceImageCount > 1 ? `IMPORTANT: ${p
 ${params.offerType === '📦 Produit' && params.referenceImageCount && params.referenceImageCount > 0 ? `
 === FIDÉLITÉ PRODUIT (RÈGLE ABSOLUE — NON NÉGOCIABLE) ===
 Le produit affiché dans le visuel généré DOIT être STRICTEMENT le MÊME que celui de l'image de référence fournie : forme exacte, proportions, couleurs, matière, texture, packaging, étiquette, logo, typographie de l'étiquette, motifs, finitions, accessoires visibles. Aucune variation de design, aucune réinterprétation, aucune substitution. Le client doit reconnaître INSTANTANÉMENT son produit au premier coup d'œil.
+${params.contentType === 'carousel' ? `⚡ SPÉCIFIQUE CARROUSEL : ce MÊME produit de référence DOIT apparaître et être REPRODUIT À L'IDENTIQUE sur CHAQUE slide du carrousel où un produit est montré (slide 1, 2, 3, 4 selon le cas). Aucune slide ne peut afficher un produit différent, modifié, redessiné ou substitué. La cohérence produit est ABSOLUE sur l'ensemble de la série de slides : même packaging, même étiquette, même couleurs, même proportions, sous des angles/cadrages/mises en scène variés si besoin, mais TOUJOURS le même produit fidèle à la photo de référence.\n` : ''}
 TRAITEMENT AUTORISÉ — UNIQUEMENT amélioration photographique légère (entre +10% et +40% selon la qualité initiale de la photo de référence) :
 • Nettoyer les imperfections (poussières, rayures parasites, reflets disgracieux, flou de mise au point, bruit numérique, balance des blancs).
 • Améliorer la netteté, la définition des micro-détails, le rendu des matières, la profondeur, le contraste local.
@@ -1791,14 +1793,16 @@ export async function generateVoiceOver(params: {
   persona?: string;
   useCase?: string;
   videoDurationSec: number;
+  language?: string;
 }): Promise<string> {
   const maxSec = Math.max(1, params.videoDurationSec - 2);
-  // Approx 2.5 mots/seconde en français parlé naturel
+  // Approx 2.5 mots/seconde en parlé naturel
   const maxWords = Math.max(3, Math.floor(maxSec * 2.5));
   const maxChars = Math.max(20, maxSec * 15);
+  const lang = (params.language || 'Français').trim();
 
   const systemPrompt = `Tu es un expert en copywriting pour voix off publicitaire courte (réseaux sociaux).
-Tu écris UNE voix off ULTRA percutante, naturelle, humaine, en français, qui :
+Tu écris UNE voix off ULTRA percutante, naturelle, humaine, RÉDIGÉE INTÉGRALEMENT EN ${lang.toUpperCase()} (langue cible imposée — aucun mot dans une autre langue, registre familier et parlé NATIF de cette langue, expressions idiomatiques locales du quotidien), qui :
 - accroche dans la première seconde (hook fort)
 - met en avant le bénéfice principal
 - se termine par un mini call-to-action ou une chute mémorable
@@ -1809,7 +1813,7 @@ Tu écris UNE voix off ULTRA percutante, naturelle, humaine, en français, qui :
 CONTRAINTE DURÉE ABSOLUE :
 La voix off DOIT pouvoir être dite en ${maxSec} secondes MAXIMUM (≈ ${maxWords} mots, ≈ ${maxChars} caractères max). C'est non-négociable : elle doit se terminer 2 secondes avant la fin de la vidéo.
 
-Réponds UNIQUEMENT avec le texte de la voix off, sans guillemets, sans introduction, sans mise en forme, sans préfixe.`;
+Réponds UNIQUEMENT avec le texte de la voix off (intégralement en ${lang}, registre familier/parlé natif), sans guillemets, sans introduction, sans mise en forme, sans préfixe, sans traduction parallèle.`;
 
   const userPrompt = `INPUTS PRIORITAIRES — à respecter STRICTEMENT pour rédiger la voix off :
 
@@ -1931,15 +1935,15 @@ export async function generateSlideTexts(params: {
   minWords?: number;
 }): Promise<string[]> {
   const count = Math.max(1, Math.min(4, params.count || 2));
-  const maxWords = Math.max(1, Math.min(20, params.maxWords ?? 15));
-  const minWords = Math.max(1, Math.min(maxWords, params.minWords ?? 10));
-  const systemPrompt = `Tu es un expert en copywriting publicitaire pour carrousels Instagram/TikTok/LinkedIn.
+  const systemPrompt = `Tu es un expert en copywriting publicitaire pour carrousels Instagram/TikTok/LinkedIn, niveau direction artistique d'agence de communication premium (Marbstudiio, Pentagram, BBH).
 Tu génères ${count} textes courts à afficher à l'écran, UN PAR SLIDE d'un carrousel de ${count} slides, parfaitement HARMONIEUX entre eux, qui maximisent la conversion.
 
 RÈGLES ABSOLUES :
 - Langue : français.
-- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords}). Compte chaque mot. Non négociable.
-- Un seul texte par slide (pas de retour à la ligne).
+- Chaque texte = UNE SEULE PHRASE COMPLÈTE, autonome, qui se suffit à elle-même. JAMAIS de phrase tronquée, coupée, incomplète, suspendue ou amputée. La phrase doit pouvoir être lue à voix haute sans qu'il manque un mot.
+- Phrase la PLUS CONCISE possible : le strict nécessaire, AUCUN mot superflu, aucun pavé de texte, aucune surcharge. Texte AÉRÉ digne d'une grande agence de communication et design produit/service.
+- Aucune limite stricte de mots imposée — mais reste systématiquement court, percutant, lisible d'un coup d'œil sur mobile. Pas de phrase à rallonge.
+- Un seul texte par slide (pas de retour à la ligne, pas de point-virgule pour relier deux idées).
 - HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé.
 - Progression narrative orientée conversion :
   • Slide 1 = HOOK 0-2s ultra puissant (scroll-stop, curiosité/émotion/promesse).
@@ -1969,7 +1973,7 @@ ${params.activity ? `Activité principale: ${params.activity}` : ''}
 ${params.sector ? `Secteur: ${params.sector}` : ''}
 ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
 
-Écris les ${count} textes à afficher dans chaque slide (${minWords} à ${maxWords} mots chacun), 100% cohérents entre eux et optimisés pour la conversion.`;
+Écris les ${count} textes à afficher dans chaque slide — chacun étant UNE PHRASE COMPLÈTE, concise, autonome, jamais tronquée, le strict nécessaire, 100% cohérents entre eux et optimisés pour la conversion.`;
 
   const data = await callKreatorAI({
     action: 'generate_slide_texts',
@@ -1991,9 +1995,10 @@ ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
   for (let i = 0; i < count; i++) {
     let t = (slides[i] || '').toString().trim();
     t = t.replace(/^["«»"'`]+|["«»"'`]+$/g, '').trim().replace(/\s+/g, ' ');
-    const words = t.split(/\s+/).filter(Boolean);
-    if (words.length > maxWords) t = words.slice(0, maxWords).join(' ');
-    t = t.replace(/[.,;:!?]+$/g, '').trim();
+    // Pas de troncature par nombre de mots : on conserve la phrase complète
+    // telle que le modèle l'a produite. On retire uniquement une ponctuation
+    // finale lourde si présente (le rendu visuel n'en a pas besoin).
+    t = t.replace(/[;:]+$/g, '').trim();
     out.push(t);
   }
   return out;

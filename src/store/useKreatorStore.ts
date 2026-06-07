@@ -241,6 +241,8 @@ interface KreatorState {
   setVoiceOverEnabled: (val: boolean) => void;
   voice_over_text: string;
   setVoiceOverText: (val: string) => void;
+  voice_over_language: string;
+  setVoiceOverLanguage: (val: string) => void;
 
   format: Format;
   setFormat: (format: Format) => void;
@@ -313,6 +315,7 @@ const initialState = {
   use_case: '',
   voice_over_enabled: false,
   voice_over_text: '',
+  voice_over_language: 'Français',
   video_render_style: '',
   video_resolution: '1080p' as VideoResolution,
   sora_character_total_duration: 10 as 10 | 15 | 25,
@@ -397,6 +400,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setUseCase: (val) => set({ use_case: val }),
   setVoiceOverEnabled: (val) => set({ voice_over_enabled: val }),
   setVoiceOverText: (val) => set({ voice_over_text: val }),
+  setVoiceOverLanguage: (val) => set({ voice_over_language: val }),
   setFormat: (format) => set({
     format,
     prompt_fr: '',
