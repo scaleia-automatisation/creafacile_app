@@ -737,6 +737,30 @@ ${params.voiceOverText ? `- LANGUE DU SCRIPT & DE LA VOIX OFF : strictement ${(p
 - Les états des objets doivent être cohérents d'un plan à l'autre : si un objet est fermé dans un plan, il doit rester fermé ou montrer explicitement son ouverture avant toute utilisation/consommation.
 - Aucune incohérence physique, mécanique ou logique n'est tolérée : pas de main qui traverse un objet, pas de liquide qui coule d'une bouteille fermée, pas de nourriture qui disparaît sans être consommée, pas d'objet qui change d'état sans cause visible.
 
+🎬 STRUCTURE IDÉALE OBLIGATOIRE D'UN PROMPT VIDÉO IA (à respecter intégralement dans [SECTION 3] — NON NÉGOCIABLE) :
+Le prompt_fr DOIT décrire EXPLICITEMENT et SÉPARÉMENT les 10 blocs suivants, dans cet ordre, sans en oublier un seul :
+1) SUJET PRINCIPAL — décrire précisément ce qu'on doit voir (qui, quoi, où, comment) en une phrase claire et visuelle.
+2) OBJECTIF MARKETING — définir le résultat recherché (ex : montrer la simplicité, la rapidité, la transformation, le bénéfice clé).
+3) STYLE VISUEL — direction artistique haut de gamme adaptée au secteur (ex : « publicité premium moderne, style Apple, esthétique minimaliste haut de gamme » ou « publicité Nike énergique et inspirante »).
+4) TYPE DE PLAN — préciser pour chaque plan (gros plan, plan serré, plan moyen, plan large, plan macro produit, insert, etc.).
+5) MOUVEMENT CAMÉRA — travelling fluide, dolly-in, slider, gimbal, légère rotation cinématographique, rack focus, mouvement naturel — JAMAIS saccadé, JAMAIS amateur.
+6) LUMIÈRE — naturelle douce, éclairage studio professionnel, ombres réalistes, key/fill/back light, golden hour si pertinent.
+7) ENVIRONNEMENT — décor cohérent avec le secteur et la cible (ex : bureau moderne haut de gamme avec décoration minimaliste, cuisine lumineuse, rue urbaine, studio premium).
+8) ÉMOTIONS — émotions précises à transmettre (satisfaction, confiance, soulagement, désir, surprise, fierté).
+9) ACTIONS — séquence d'actions précises et physiquement cohérentes du/des personnage(s) ou du produit, dans l'ordre logique.
+10) QUALITÉ — ultra-réaliste, qualité cinéma, détails élevés, rendu publicitaire premium, 4K, textures détaillées, color grading haut de gamme.
+
+📦 STRUCTURE IDÉALE POUR UN PRODUIT (à appliquer automatiquement si le sujet est un PRODUIT) :
+« Créer une publicité premium pour [NOM DU PRODUIT]. Montrer clairement le produit comme élément principal. Mettre en scène une utilisation naturelle du produit par la cible idéale. Utiliser une direction artistique haut de gamme adaptée au secteur d'activité. Plans cinématographiques professionnels. Travelling fluide. Profondeur de champ réaliste. Éclairage studio premium. Mise en valeur des bénéfices du produit. Ambiance inspirante. Ultra-réaliste. Qualité publicité internationale. 4K. Rendu commercial professionnel. »
+
+🛎️ STRUCTURE IDÉALE POUR UN SERVICE (à appliquer automatiquement si le sujet est un SERVICE) :
+« Créer une publicité premium pour [NOM DU SERVICE]. Montrer clairement le problème rencontré par le client. Présenter le service comme solution. Mettre en scène le résultat obtenu après utilisation du service. Direction artistique professionnelle adaptée au secteur. Personnages crédibles. Émotions authentiques. Plans cinématographiques. Caméra fluide. Éclairage haut de gamme. Storytelling clair. Ultra-réaliste. Qualité publicité internationale. 4K. Rendu commercial professionnel. »
+
+🌍 BLOC UNIVERSEL À AJOUTER À CHAQUE PROMPT VIDÉO (OBLIGATOIRE — à intégrer toujours, en fin de [SECTION 3] ou dans [SECTION 5]) :
+« Publicité premium digne des plus grandes agences créatives mondiales. Composition visuelle professionnelle. Storytelling puissant. Caméra fluide. Mouvements naturels. Transitions élégantes. Profondeur de champ cinématographique. Éclairage professionnel. Color grading haut de gamme. Rendu ultra réaliste. Qualité cinéma. 4K. Textures détaillées. Visages naturels. Mains réalistes. Physique réaliste. Aucune déformation. Aucun artefact. Aucun texte déformé. Aspect commercial premium. Optimisé pour les réseaux sociaux. Fort potentiel d'engagement. Fort potentiel de conversion. Capable d'arrêter le scroll dès les premières secondes. »
+
+🎯 OBJECTIF FINAL : produire des vidéos IA au rendu PARFAIT, exploitables et utilisables à 100% dès la 1re génération, sans retouche ni régénération nécessaire.
+
 ${params.videoRenderStyle ? `TYPE DE RENDU VIDÉO SÉLECTIONNÉ : "${params.videoRenderStyle}" — Adapter TOUTE la direction artistique, l'ambiance, le cadrage et le style de montage à ce rendu vidéo.` : ''}
 ${params.voiceOverText ? `\n🎙️ VOIX OFF (OBLIGATOIRE — À INTÉGRER DANS LA VIDÉO) :\nLe texte de voix off à dire EXACTEMENT (mot pour mot, sans modification, sans reformulation, sans ajout, sans suppression) est : "${params.voiceOverText}".\n🌐 LANGUE DE LA VOIX OFF — RÈGLE ABSOLUE : la voix off DOIT être prononcée EN ${(params.voiceOverLanguage || 'Français').toUpperCase()} (langue imposée par l'utilisateur), avec un accent natif neutre et un registre FAMILIER / PARLÉ NATUREL de cette langue. INTERDICTION FORMELLE de traduire vers une autre langue, de mixer plusieurs langues, de doubler, de sous-titrer dans une autre langue, ou d'utiliser un accent étranger qui altère la langue. Toute autre langue est STRICTEMENT INTERDITE.\nVoix naturelle, humaine, cohérente avec le ton, le marché et la langue cible.\nLa voix off doit IMPÉRATIVEMENT se terminer au moins 2 secondes AVANT la fin de la vidéo${params.videoDurationSec ? ` (durée totale ${params.videoDurationSec}s — voix off ≤ ${Math.max(1, params.videoDurationSec - 2)}s)` : ''}. Aucun mot ne doit être prononcé dans les 2 dernières secondes.` : ''}
 ` : '';
