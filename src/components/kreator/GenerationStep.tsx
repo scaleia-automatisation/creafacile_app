@@ -662,10 +662,12 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
   handleGenerateRef.current = handleGenerate;
   useEffect(() => {
     const onTrigger = () => {
-      // Si un contenu a déjà été généré, on reprend tous les champs à jour
-      // et on relance le prompt maître avant de régénérer le contenu.
-      const hasPrevious = Boolean(useKreatorStore.getState().result_url);
-      handleGenerateRef.current({ forcePromptRegen: hasPrevious });
+      // À chaque clic sur « Générer le contenu », on reprend TOUS les inputs
+      // à jour depuis le store et on relance le prompt maître avant de
+      // (re)générer le contenu — même si une génération a déjà eu lieu et
+      // que des champs (idée, modèle, format, description, image…) ont
+      // potentiellement changé.
+      handleGenerateRef.current({ forcePromptRegen: true });
     };
     window.addEventListener('kreator:generate', onTrigger);
     return () => window.removeEventListener('kreator:generate', onTrigger);
@@ -1285,7 +1287,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
           <div className="text-center py-6">
             <p className="text-destructive font-medium mb-3">Erreur lors de la génération</p>
             <p className="text-sm text-muted-foreground mb-4">Aucun crédit n'a été déduit.</p>
-            <Button onClick={() => handleGenerate()} className="gradient-bg border-0 text-primary-foreground">
+            <Button onClick={() => handleGenerate({ forcePromptRegen: true })} className="gradient-bg border-0 text-primary-foreground">
               <RefreshCw className="w-4 h-4 mr-2" /> Réessayer
             </Button>
           </div>
