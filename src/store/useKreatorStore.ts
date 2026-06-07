@@ -28,6 +28,7 @@ export type VeoSubMode = 't2v' | 'i2v' | 'reference';
 export type VeoSubModel = 'veo-3.1-lite' | 'veo-3.1-fast' | 'veo-3.1-quality';
 export type VeoAspect = '16:9' | '9:16';
 export type VeoResolution = '720p' | '1080p' | '4K';
+export type VeoDuration = 4 | 6 | 8;
 
 // Grok
 export type GrokAspect = '2:3' | '3:2' | '1:1' | '16:9' | '9:16';
