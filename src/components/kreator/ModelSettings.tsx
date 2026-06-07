@@ -209,7 +209,7 @@ const VeoSettings = () => {
         <Field
           label="Description fidèle de l'image de référence"
           required
-          hint="\n"
+          
         >
           <div className="relative">
             <Textarea
