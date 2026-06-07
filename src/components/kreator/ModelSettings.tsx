@@ -10,6 +10,10 @@ import { GrokT2V, GrokI2V } from './model-settings/GrokSettings';
 import { Seedance15Pro, Seedance2 } from './model-settings/SeedanceSettings';
 import { Kling21, Kling25, Kling26, Kling30 } from './model-settings/KlingSettings';
 import { KlingO1, Hailuo23, Wan27 } from './model-settings/OpenRouterSettings';
+import { useEffect, useRef, useState } from 'react';
+import { Loader2 } from 'lucide-react';
+import { describeProductImages } from '@/lib/kreator-ai';
+import { toast } from 'sonner';
 
 // ---------- SORA ----------
 const SoraT2V = ({ pro = false }: { pro?: boolean }) => {
@@ -105,6 +109,47 @@ const VeoSettings = () => {
   const sub: VeoSubMode = model_settings.veo_sub_mode || 't2v';
   const subModel: VeoSubModel = model_settings.veo_sub_model || 'veo-3.1-quality';
 
+  const imgs = [
+    model_settings.veo_start_image_url,
+    model_settings.veo_end_image_url,
+    ...(model_settings.veo_reference_image_urls || []),
+  ].filter((u): u is string => !!u);
+  const imgsKey = imgs.join('|');
+  const lastAutoKeyRef = useRef<string | null>(null);
+  const generatingRef = useRef(false);
+  const [autoLoading, setAutoLoading] = useState(false);
+
+  // Initialize: if a description already exists at mount, consider current key as "already handled"
+  useEffect(() => {
+    if (lastAutoKeyRef.current === null) {
+      const existing = (model_settings.veo_reference_description || '').trim();
+      lastAutoKeyRef.current = existing ? imgsKey : '';
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (sub !== 'i2v' && sub !== 'reference') return;
+    if (!imgsKey) return;
+    if (lastAutoKeyRef.current === imgsKey) return;
+    if (generatingRef.current) return;
+    generatingRef.current = true;
+    setAutoLoading(true);
+    (async () => {
+      try {
+        const desc = await describeProductImages(imgs);
+        setModelSetting('veo_reference_description', desc);
+        lastAutoKeyRef.current = imgsKey;
+      } catch (e) {
+        console.error('[VeoSettings] auto-describe failed', e);
+        toast.error("Impossible de générer la description automatiquement");
+      } finally {
+        generatingRef.current = false;
+        setAutoLoading(false);
+      }
+    })();
+  }, [imgsKey, sub]);
+
   return (
     <Section>
       <Field label="Type de génération" required>
@@ -166,12 +211,21 @@ const VeoSettings = () => {
           required
           hint="\n"
         >
-          <Textarea
-            value={model_settings.veo_reference_description || ''}
-            onChange={(e) => setModelSetting('veo_reference_description', e.target.value)}
-            placeholder="Décrivez précisément l'image insérée afin qu'elle soit reproduite à l'identique dans la vidéo générée…"
-            className="min-h-[120px] bg-card border-foreground/10 text-foreground"
-          />
+          <div className="relative">
+            <Textarea
+              value={model_settings.veo_reference_description || ''}
+              onChange={(e) => setModelSetting('veo_reference_description', e.target.value)}
+              placeholder={autoLoading ? "Génération automatique de la description en cours…" : "La description sera générée automatiquement dès qu'une image est insérée. Vous pouvez ensuite la modifier."}
+              disabled={autoLoading}
+              className="min-h-[120px] bg-card border-foreground/10 text-foreground"
+            />
+            {autoLoading && (
+              <div className="absolute top-2 right-2 flex items-center gap-2 text-xs text-muted-foreground">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Analyse de l'image…
+              </div>
+            )}
+          </div>
         </Field>
       )}
 
