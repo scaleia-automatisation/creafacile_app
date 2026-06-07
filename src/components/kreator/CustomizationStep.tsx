@@ -429,7 +429,7 @@ const CustomizationStep = () => {
                       ) : (
                         <Sparkles className="w-3 h-3" />
                       )}
-                      Régénérer le texte 1
+                      {options.text_content?.trim() ? 'Régénérer le texte 1' : 'Générer le texte 1'}
                     </Button>
                   )}
                   {options.show_text && isCarousel && (
@@ -446,7 +446,9 @@ const CustomizationStep = () => {
                       ) : (
                         <Sparkles className="w-3 h-3" />
                       )}
-                      Générer les textes des slides
+                      {(options.slide_texts || []).some((t) => !!t?.trim())
+                        ? 'Régénérer les textes des slides'
+                        : 'Générer les textes des slides'}
                     </Button>
                   )}
                 </div>
@@ -666,7 +668,7 @@ const CustomizationStep = () => {
                               ) : (
                                 <Sparkles className="w-3 h-3" />
                               )}
-                              Régénérer le texte 2
+                              {options.text_content_2?.trim() ? 'Régénérer le texte 2' : 'Générer le texte 2'}
                             </Button>
                           )}
                         </div>
@@ -957,7 +959,7 @@ const CustomizationStep = () => {
                               size="sm"
                               onClick={handleGenerateVoiceOver}
                               disabled={voGenerating}
-                              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 border-0 rounded-btn text-xs font-bold"
+                              className="gradient-bg text-primary-foreground hover:opacity-90 border-0 rounded-btn text-xs font-bold"
                             >
                               {voGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <Sparkles className="w-3.5 h-3.5 mr-1.5" />}
                               Générer le texte de la voix off
@@ -969,7 +971,7 @@ const CustomizationStep = () => {
                               size="sm"
                               onClick={handleGenerateVoiceOver}
                               disabled={voGenerating}
-                              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 border-0 rounded-btn text-xs font-bold"
+                              className="gradient-bg text-primary-foreground hover:opacity-90 border-0 rounded-btn text-xs font-bold"
                             >
                               {voGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <RefreshCw className="w-3.5 h-3.5 mr-1.5" />}
                               Régénérer le texte de la voix off
