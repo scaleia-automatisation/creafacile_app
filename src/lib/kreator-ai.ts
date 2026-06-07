@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { AIModel } from '@/store/useKreatorStore';
+import type { AIModel, ModelSettings } from '@/store/useKreatorStore';
 
 interface AICallOptions {
   action: string;
@@ -1739,7 +1739,7 @@ export async function generateVideo(
   format: string = '9:16',
   onProgress?: (pct: number) => void,
   abortSignal?: AbortSignal,
-  modelSettings?: Record<string, any>,
+  modelSettings?: ModelSettings,
   soraCharacterScenes?: { duration: number }[]
 ) {
   const isKieModel = [

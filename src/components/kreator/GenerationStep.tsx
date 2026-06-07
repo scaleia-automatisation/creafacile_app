@@ -653,7 +653,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
     };
     window.addEventListener('kreator:generate', onTrigger);
     return () => window.removeEventListener('kreator:generate', onTrigger);
-  }, []);
+  }, [setGeneratedCaptions, setGeneratedCarouselSlides, setResultUrl]);
 
   const handleCopyCaption = () => {
     if (!currentCaption) return;
