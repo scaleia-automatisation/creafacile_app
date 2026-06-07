@@ -10,6 +10,10 @@ import { GrokT2V, GrokI2V } from './model-settings/GrokSettings';
 import { Seedance15Pro, Seedance2 } from './model-settings/SeedanceSettings';
 import { Kling21, Kling25, Kling26, Kling30 } from './model-settings/KlingSettings';
 import { KlingO1, Hailuo23, Wan27 } from './model-settings/OpenRouterSettings';
+import { useEffect, useRef } from 'react';
+import { Loader2 } from 'lucide-react';
+import { describeProductImages } from '@/lib/kreator-ai';
+import { toast } from 'sonner';
 
 // ---------- SORA ----------
 const SoraT2V = ({ pro = false }: { pro?: boolean }) => {
@@ -104,6 +108,40 @@ const VeoSettings = () => {
   const { model_settings, setModelSetting } = useKreatorStore();
   const sub: VeoSubMode = model_settings.veo_sub_mode || 't2v';
   const subModel: VeoSubModel = model_settings.veo_sub_model || 'veo-3.1-quality';
+
+  const imgs = [
+    model_settings.veo_start_image_url,
+    model_settings.veo_end_image_url,
+    ...(model_settings.veo_reference_image_urls || []),
+  ].filter((u): u is string => !!u);
+  const imgsKey = imgs.join('|');
+  const lastAutoKeyRef = useRef<string>('');
+  const generatingRef = useRef(false);
+  const [autoLoading, setAutoLoading] = (require('react') as typeof import('react')).useState(false);
+
+  useEffect(() => {
+    if (sub !== 'i2v' && sub !== 'reference') return;
+    if (!imgsKey) return;
+    if (lastAutoKeyRef.current === imgsKey) return;
+    const current = (model_settings.veo_reference_description || '').trim();
+    if (current && lastAutoKeyRef.current !== '') return; // user typed something, don't override
+    if (generatingRef.current) return;
+    generatingRef.current = true;
+    setAutoLoading(true);
+    (async () => {
+      try {
+        const desc = await describeProductImages(imgs);
+        setModelSetting('veo_reference_description', desc);
+        lastAutoKeyRef.current = imgsKey;
+      } catch (e) {
+        console.error('[VeoSettings] auto-describe failed', e);
+        toast.error("Impossible de générer la description automatiquement");
+      } finally {
+        generatingRef.current = false;
+        setAutoLoading(false);
+      }
+    })();
+  }, [imgsKey, sub]);
 
   return (
     <Section>
