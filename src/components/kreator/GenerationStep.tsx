@@ -784,13 +784,15 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
 
   const updateCurrentCaption = (field: string, value: string) => {
     if (!captions) return;
-    setCaptions({
+    const nextCaptions = {
       ...captions,
       [selectedPlatform]: {
         ...captions[selectedPlatform],
         [field]: value,
       },
-    });
+    };
+    setCaptions(nextCaptions);
+    setGeneratedCaptions(nextCaptions);
   };
 
   const updateSlideCaption = (slideIndex: number, field: string, value: string) => {
@@ -809,8 +811,10 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       };
     });
     setCarouselSlides(next);
+    setGeneratedCarouselSlides(next);
     if (slideIndex === 0) {
       setCaptions(next[0].captions);
+      setGeneratedCaptions(next[0].captions);
     }
   };
 

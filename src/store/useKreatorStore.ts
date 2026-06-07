@@ -417,7 +417,6 @@ export const useKreatorStore = create<KreatorState>()(persist((set) => ({
     prompt_fr: '',
     prompt_en: '',
     prompt_en_final: '',
-    status: 'idle' as GenerationStatus,
   }),
   setInputImageUrl: (url) => set({ input_image_url: url }),
   setInputImageDescription: (desc) => set({ input_image_description: desc }),

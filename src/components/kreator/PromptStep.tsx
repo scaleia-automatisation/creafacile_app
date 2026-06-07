@@ -144,7 +144,7 @@ const PromptStep = () => {
       });
 
       setPromptFr(result.prompt_fr || '');
-      if (status === 'done' || status === 'error') {
+      if (status === 'error') {
         setStatus('idle');
         setResultUrl('');
       }
@@ -160,7 +160,7 @@ const PromptStep = () => {
 
   const handleFrChange = (newText: string) => {
     setPromptFr(newText);
-    if (status === 'done' || status === 'error') {
+    if (status === 'error') {
       setStatus('idle');
       setResultUrl('');
     }
