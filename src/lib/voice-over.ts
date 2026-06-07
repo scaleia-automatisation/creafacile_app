@@ -23,7 +23,7 @@ export const getVideoDurationSec = (
   s: ModelSettings = {}
 ): number => {
   if (model.startsWith('sora-2')) return s.sora_n_frames ?? 10;
-  if (model.startsWith('veo-3')) return 8;
+  if (model.startsWith('veo-3')) return s.veo_duration ?? 8;
   if (model === 'kling-2.1') return s.kling21_duration ?? 5;
   if (model === 'kling-2.5') return s.kling25_duration ?? 5;
   if (model === 'kling-2.6') return s.kling26_duration ?? 5;

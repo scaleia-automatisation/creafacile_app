@@ -591,6 +591,7 @@ serve(async (req) => {
             aspect_ratio: veoAspect,
           };
           if (ms.veo_resolution) orBody.resolution = ms.veo_resolution;
+          if (ms.veo_duration) orBody.duration = ms.veo_duration;
 
           if (veoSubMode === "i2v") {
             if (!ms.veo_start_image_url) return jsonError(400, "Veo I2V requiert une image de départ.");
