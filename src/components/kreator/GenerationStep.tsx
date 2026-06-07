@@ -163,11 +163,13 @@ const GenerationStep = () => {
     options, slides_count, visual_style_brief, render_style, video_render_style,
     input_image_description, simple_images, starting_choice,
     voice_over_enabled, voice_over_text, voice_over_language, user_mode,
+    generated_captions, setGeneratedCaptions,
+    generated_carousel_slides, setGeneratedCarouselSlides,
   } = useKreatorStore();
   const [progress, setProgress] = useState(0);
   const [generating, setGenerating] = useState(false);
-  const [captions, setCaptions] = useState<PlatformCaptions | null>(null);
-  const [carouselSlides, setCarouselSlides] = useState<Array<{ url: string; captions: PlatformCaptions }> | null>(null);
+  const [captions, setCaptions] = useState<PlatformCaptions | null>(generated_captions);
+  const [carouselSlides, setCarouselSlides] = useState<Array<{ url: string; captions: PlatformCaptions }> | null>(generated_carousel_slides);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('instagram');
   const [captionEditing, setCaptionEditing] = useState(false);
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
@@ -187,6 +189,12 @@ const GenerationStep = () => {
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
 
   const currentCaption = captions ? captions[selectedPlatform] : null;
+
+  useEffect(() => {
+    if (status !== 'done') return;
+    if (generated_captions) setCaptions(generated_captions);
+    if (generated_carousel_slides) setCarouselSlides(generated_carousel_slides);
+  }, [status, generated_captions, generated_carousel_slides]);
 
   // Validation des champs requis (identique à PromptStep)
   const isProduct = offer_type === '📦 Produit';
@@ -463,9 +471,11 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         );
 
         setCarouselSlides(slideResults);
+        setGeneratedCarouselSlides(slideResults);
         setResultUrl(slideResults[0].url);
         setCreditsUsed(creditsNeeded);
         setCaptions(slideResults[0].captions);
+        setGeneratedCaptions(slideResults[0].captions);
         setStatus('done');
         await refreshProfile();
         return;
@@ -592,6 +602,8 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       setResultUrl(finalContentUrl);
       setCreditsUsed(creditsNeeded);
       setCaptions(captionResult);
+      setGeneratedCaptions(captionResult);
+      setGeneratedCarouselSlides(null);
       setStatus('done');
       await refreshProfile();
     } catch (err: unknown) {
@@ -624,6 +636,8 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       if (hasPrevious) {
         setCaptions(null);
         setCarouselSlides(null);
+        setGeneratedCaptions(null);
+        setGeneratedCarouselSlides(null);
         setResultUrl('');
       }
       handleGenerateRef.current({ forcePromptRegen: hasPrevious });
@@ -657,6 +671,8 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
     // en forçant la régénération du prompt depuis les valeurs courantes du store.
     setCaptions(null);
     setCarouselSlides(null);
+    setGeneratedCaptions(null);
+    setGeneratedCarouselSlides(null);
     setResultUrl('');
     handleGenerate({ forcePromptRegen: true });
   };
