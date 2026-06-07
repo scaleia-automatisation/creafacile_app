@@ -429,7 +429,7 @@ const CustomizationStep = () => {
                       ) : (
                         <Sparkles className="w-3 h-3" />
                       )}
-                      Régénérer le texte 1
+                      {options.text_content?.trim() ? 'Régénérer le texte 1' : 'Générer le texte 1'}
                     </Button>
                   )}
                   {options.show_text && isCarousel && (
@@ -446,7 +446,9 @@ const CustomizationStep = () => {
                       ) : (
                         <Sparkles className="w-3 h-3" />
                       )}
-                      Générer les textes des slides
+                      {(options.slide_texts || []).some((t) => !!t?.trim())
+                        ? 'Régénérer les textes des slides'
+                        : 'Générer les textes des slides'}
                     </Button>
                   )}
                 </div>
@@ -666,7 +668,7 @@ const CustomizationStep = () => {
                               ) : (
                                 <Sparkles className="w-3 h-3" />
                               )}
-                              Régénérer le texte 2
+                              {options.text_content_2?.trim() ? 'Régénérer le texte 2' : 'Générer le texte 2'}
                             </Button>
                           )}
                         </div>
