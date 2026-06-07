@@ -316,11 +316,9 @@ const CustomizationStep = () => {
         activity: company_activity,
         sector: company_sector,
         persona: target_persona,
-        maxWords: 15,
-        minWords: 10,
       });
       const next = [...(options.slide_texts || ['', '', '', ''])];
-      for (let i = 0; i < 4; i++) next[i] = (texts[i] || '').slice(0, 50);
+      for (let i = 0; i < 4; i++) next[i] = (texts[i] || '');
       setOptions({ slide_texts: next, text_content: next[0] || '' });
     } catch (e) {
       console.error('Generate slide texts failed', e);
@@ -331,7 +329,7 @@ const CustomizationStep = () => {
   };
 
   const setSlideText = (index: number, value: string) => {
-    if (value.length > 50) return;
+    if (value.length > 200) return;
     const next = [...(options.slide_texts || ['', '', '', ''])];
     while (next.length < 4) next.push('');
     next[index] = value;
