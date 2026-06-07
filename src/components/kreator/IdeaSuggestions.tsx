@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Loader2, PenLine } from 'lucide-react';
+import { Sparkles, Loader2, PenLine, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 
@@ -101,6 +101,12 @@ const IdeaSuggestions = () => {
     }, 200);
   };
 
+  const handleSelectIdea = (idea: ContentIdea) => {
+    const text = `${idea.hook} — ${idea.concept}`.slice(0, 500);
+    setInputText(text);
+    setIdeaChosen(text);
+  };
+
   return (
     <div className="md:col-span-2 flex flex-col items-center gap-4 py-6 px-4">
       {!canGenerate && (
@@ -149,7 +155,16 @@ const IdeaSuggestions = () => {
             return (
             <div
               key={idea.id ?? idx}
-              className={`flex flex-col items-center text-center gap-3 p-4 rounded-card border-2 transition-all ${
+              onClick={() => handleSelectIdea(idea)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleSelectIdea(idea);
+                }
+              }}
+              className={`relative cursor-pointer flex flex-col items-center text-center gap-3 p-4 rounded-card border-2 transition-all ${
                 isSelected
                   ? 'border-primary bg-card ring-2 ring-primary/40'
                   : dimmed
@@ -157,25 +172,33 @@ const IdeaSuggestions = () => {
                   : 'border-foreground/10 bg-card hover:border-primary/40'
               }`}
             >
+              {isSelected && (
+                <CheckCircle2 className="absolute top-2 right-2 w-5 h-5 text-primary" />
+              )}
               <div className="text-[10px] uppercase tracking-wider font-bold text-primary text-center">
                 Idée {idx + 1}
               </div>
               <textarea
                 value={idea.hook}
                 onChange={(e) => updateIdea(idx, 'hook', e.target.value)}
+                onClick={(e) => e.stopPropagation()}
                 rows={2}
                 className="w-full font-bold text-foreground text-base leading-snug text-center bg-transparent border border-transparent hover:border-foreground/10 focus:border-primary/50 focus:outline-none rounded-md p-2 resize-none"
               />
               <textarea
                 value={idea.concept}
                 onChange={(e) => updateIdea(idx, 'concept', e.target.value)}
+                onClick={(e) => e.stopPropagation()}
                 rows={3}
                 className="w-full text-sm text-muted-foreground leading-relaxed text-center bg-transparent border border-transparent hover:border-foreground/10 focus:border-primary/50 focus:outline-none rounded-md p-2 resize-none"
               />
               <Button
                 type="button"
                 size="sm"
-                onClick={() => handleUseIdea(idea)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUseIdea(idea);
+                }}
                 className="mt-auto gap-1.5 gradient-bg border-0 text-primary-foreground hover:opacity-90 text-xs font-bold"
               >
                 <Sparkles className="w-3.5 h-3.5" />
