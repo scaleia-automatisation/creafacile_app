@@ -400,6 +400,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setUseCase: (val) => set({ use_case: val }),
   setVoiceOverEnabled: (val) => set({ voice_over_enabled: val }),
   setVoiceOverText: (val) => set({ voice_over_text: val }),
+  setVoiceOverLanguage: (val) => set({ voice_over_language: val }),
   setFormat: (format) => set({
     format,
     prompt_fr: '',
