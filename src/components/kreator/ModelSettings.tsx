@@ -10,7 +10,7 @@ import { GrokT2V, GrokI2V } from './model-settings/GrokSettings';
 import { Seedance15Pro, Seedance2 } from './model-settings/SeedanceSettings';
 import { Kling21, Kling25, Kling26, Kling30 } from './model-settings/KlingSettings';
 import { KlingO1, Hailuo23, Wan27 } from './model-settings/OpenRouterSettings';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { describeProductImages } from '@/lib/kreator-ai';
 import { toast } from 'sonner';
@@ -117,7 +117,7 @@ const VeoSettings = () => {
   const imgsKey = imgs.join('|');
   const lastAutoKeyRef = useRef<string>('');
   const generatingRef = useRef(false);
-  const [autoLoading, setAutoLoading] = (require('react') as typeof import('react')).useState(false);
+  const [autoLoading, setAutoLoading] = useState(false);
 
   useEffect(() => {
     if (sub !== 'i2v' && sub !== 'reference') return;
