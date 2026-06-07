@@ -885,6 +885,45 @@ serve(async (req) => {
         return jsonResp({ done: false });
       }
 
+      // ---- OpenRouter Veo polling ----
+      if (typeof task_id === "string" && task_id.startsWith("or:")) {
+        const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
+        if (!OPENROUTER_API_KEY) return jsonError(500, "OPENROUTER_API_KEY non configurée");
+        let pollingUrl: string;
+        try { pollingUrl = atob(task_id.slice(3)); } catch { return jsonError(400, "task_id OpenRouter invalide"); }
+
+        let orRes: Response;
+        try {
+          orRes = await fetch(pollingUrl, { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}` } });
+        } catch (e) {
+          console.warn("OpenRouter Veo poll transient error, retry:", (e as Error)?.message);
+          return jsonResp({ done: false });
+        }
+        const orText = await orRes.text();
+        if (!orRes.ok) {
+          console.warn("OpenRouter Veo poll non-OK:", orRes.status, orText.slice(0, 200));
+          if (orRes.status >= 500 || orRes.status === 408 || orRes.status === 429) return jsonResp({ done: false });
+          return jsonError(orRes.status, `Erreur polling OpenRouter: ${orText.slice(0, 200)}`);
+        }
+        let orJson: any;
+        try { orJson = JSON.parse(orText); } catch { return jsonError(500, "Réponse OpenRouter invalide"); }
+        const status = (orJson?.status || "").toString().toLowerCase();
+        if (status === "failed" || status === "error" || status === "cancelled") {
+          const msg = orJson?.error?.message || orJson?.error || "Échec génération OpenRouter Veo";
+          return jsonError(500, typeof msg === "string" ? msg : JSON.stringify(msg));
+        }
+        if (status === "completed" || status === "succeeded" || status === "success") {
+          const urls: string[] = orJson?.unsigned_urls || orJson?.urls || [];
+          const videoUrl = urls[0] || orJson?.video_url || orJson?.output?.[0]?.url;
+          if (!videoUrl) {
+            console.error("OpenRouter completed but no video URL:", orText.slice(0, 500));
+            return jsonError(500, "Génération terminée mais URL vidéo introuvable (OpenRouter)");
+          }
+          return jsonResp({ video_url: videoUrl, done: true });
+        }
+        return jsonResp({ done: false });
+      }
+
       const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
       if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
       if (!task_id) return jsonError(400, "Missing task_id");
