@@ -1,4 +1,4 @@
-import { useKreatorStore, type AIModel, type SoraAspect, type SoraDuration, type SoraProSize, type VeoSubMode, type VeoSubModel, type VeoAspect, type VeoResolution } from '@/store/useKreatorStore';
+import { useKreatorStore, type AIModel, type SoraAspect, type SoraDuration, type SoraProSize, type VeoSubMode, type VeoSubModel, type VeoAspect, type VeoResolution, type VeoDuration } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -176,6 +176,18 @@ const VeoSettings = () => {
           ]}
           value={model_settings.veo_resolution}
           onChange={(v) => setModelSetting('veo_resolution', v)}
+        />
+      </Field>
+
+      <Field label="Durée" required>
+        <PillGroup<VeoDuration>
+          options={[
+            { value: 4, label: '4s' },
+            { value: 6, label: '6s' },
+            { value: 8, label: '8s' },
+          ]}
+          value={model_settings.veo_duration}
+          onChange={(v) => setModelSetting('veo_duration', v)}
         />
       </Field>
     </Section>
