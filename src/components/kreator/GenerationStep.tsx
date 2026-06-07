@@ -325,6 +325,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
 
     // (no image-edit-only models currently require a reference image)
 
+    const hadResultBeforeGeneration = Boolean(useKreatorStore.getState().result_url);
     setGenerating(true);
     setStatus('generating');
     setProgress(0);
@@ -458,7 +459,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         checkAbort();
         if (!deducted) {
           toast.error('Crédits insuffisants');
-          setStatus('idle');
+          setStatus(hadResultBeforeGeneration ? 'done' : 'idle');
           setGenerating(false);
           return;
         }
@@ -590,7 +591,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
 
       if (!deducted) {
         toast.error('Crédits insuffisants');
-        setStatus('idle');
+        setStatus(hadResultBeforeGeneration ? 'done' : 'idle');
         setGenerating(false);
         return;
       }
@@ -619,14 +620,14 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       if (progressInterval) clearInterval(progressInterval);
       if (err instanceof DOMException && err.name === 'AbortError' || err instanceof Error && err.message === 'Generation cancelled') {
         toast.info('Génération annulée');
-        setStatus('idle');
+        setStatus(hadResultBeforeGeneration ? 'done' : 'idle');
       } else {
         console.error(err);
         const message = err instanceof Error && err.message
           ? err.message
           : 'Erreur lors de la génération. Aucun crédit déduit.';
         toast.error(message, { description: 'Aucun crédit déduit.' });
-        setStatus('error');
+        setStatus(hadResultBeforeGeneration ? 'done' : 'error');
       }
     } finally {
       setGenerating(false);
