@@ -1253,7 +1253,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
                 variant="outline"
                 className="w-full border-foreground/10 text-foreground hover:border-secondary rounded-btn py-5 text-sm font-bold"
               >
-                <FilePlus className="w-4 h-4 mr-2" /> Générer un nouveau contenu
+                <FilePlus className="w-4 h-4 mr-2" /> Créer un nouveau contenu
               </Button>
             </div>
           </div>
