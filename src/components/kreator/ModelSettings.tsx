@@ -164,7 +164,7 @@ const VeoSettings = () => {
         <Field
           label="Description fidèle de l'image de référence"
           required
-          hint="Décrivez votre produit / service exactement comme il apparaît sur l'image (matière, couleur, étiquette, mentions visibles, packaging, environnement…). Cette description sera injectée dans le prompt maître pour garantir un rendu 100% identique à votre image. Ex : « Jus de bissap à base de fleur d'hibiscus dans une bouteille en verre transparent de 33cl, étiquette blanche avec inscription "BISSAP" en lettres rouges majuscules, bouchon doré… »"
+          hint={`Décrivez votre produit / service exactement comme il apparaît sur l'image (matière, couleur, étiquette, mentions visibles, packaging, environnement…). Cette description sera injectée dans le prompt maître pour garantir un rendu 100% identique à votre image. Ex : « Jus de bissap à base de fleur d'hibiscus dans une bouteille en verre transparent de 33cl, étiquette blanche avec inscription "BISSAP" en lettres rouges majuscules, bouchon doré… »`}
         >
           <Textarea
             value={model_settings.veo_reference_description || ''}
