@@ -858,10 +858,18 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
                     src={result_url}
                     controls
                     autoPlay
+                    muted
                     loop
                     playsInline
                     className="w-full rounded-card"
                     style={{ maxHeight: '70vh' }}
+                    ref={(el) => {
+                      if (el) {
+                        el.muted = true;
+                        const p = el.play();
+                        if (p && typeof p.catch === 'function') p.catch(() => {});
+                      }
+                    }}
                   />
                 ) : (
                   <img src={result_url} alt="Résultat" className="w-full object-cover" />
