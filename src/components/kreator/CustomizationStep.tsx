@@ -923,6 +923,29 @@ const CustomizationStep = () => {
                         placeholder="Écrivez ou générez le texte de la voix off…"
                         className="bg-card border-foreground/10 text-foreground text-sm min-h-[90px] resize-none"
                       />
+                      <div>
+                        <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-1 block">
+                          Langue du texte de la voix off
+                        </label>
+                        <Select
+                          value={voice_over_language || 'Français'}
+                          onValueChange={(v) => setVoiceOverLanguage(v)}
+                        >
+                          <SelectTrigger className="bg-card border-foreground/10 text-foreground text-sm">
+                            <SelectValue placeholder="Choisir la langue" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-card border-foreground/10">
+                            {['Français', 'Anglais', 'Espagnol', 'Mandarin', 'Hindi', 'Arabe'].map((l) => (
+                              <SelectItem key={l} value={l} className="text-foreground focus:bg-secondary/20">
+                                {l}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-[11px] text-muted-foreground mt-1">
+                          Le texte de la voix off sera traduit automatiquement dans cette langue avec un registre familier/parlé natif, et appliqué tel quel dans la vidéo générée.
+                        </p>
+                      </div>
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         <span className="text-[11px] text-muted-foreground">
                           {voice_over_text.length}/{voMaxChars} car.
@@ -934,7 +957,7 @@ const CustomizationStep = () => {
                               size="sm"
                               onClick={handleGenerateVoiceOver}
                               disabled={voGenerating}
-                              className="gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs font-bold"
+                              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 border-0 rounded-btn text-xs font-bold"
                             >
                               {voGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <Sparkles className="w-3.5 h-3.5 mr-1.5" />}
                               Générer le texte de la voix off
@@ -944,13 +967,12 @@ const CustomizationStep = () => {
                             <Button
                               type="button"
                               size="sm"
-                              variant="outline"
                               onClick={handleGenerateVoiceOver}
                               disabled={voGenerating}
-                              className="rounded-btn text-xs font-bold"
+                              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 border-0 rounded-btn text-xs font-bold"
                             >
                               {voGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <RefreshCw className="w-3.5 h-3.5 mr-1.5" />}
-                              Régénérer voix off
+                              Régénérer le texte de la voix off
                             </Button>
                           )}
                         </div>
