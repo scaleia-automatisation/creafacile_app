@@ -565,25 +565,70 @@ serve(async (req) => {
           break;
         }
 
-        // ---------- VEO 3 / 3.1 ----------
+        // ---------- VEO 3 / 3.1 (via OpenRouter) ----------
         case "veo-3":
         case "veo-3.1": {
-          const veoSubModel = ms.veo_sub_model || "veo-3.1-quality";
-          kieModel = veoSubModel;
+          const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
+          if (!OPENROUTER_API_KEY) return jsonError(500, "OPENROUTER_API_KEY non configurée");
+
+          // Map app model IDs to OpenRouter model IDs
+          let orModel = "google/veo-3.1";
+          if (ai_model === "veo-3") {
+            orModel = "google/veo-3.1-fast";
+          } else {
+            const sub = (ms.veo_sub_model || "").toString();
+            if (sub.includes("fast")) orModel = "google/veo-3.1-fast";
+            else if (sub.includes("lite")) orModel = "google/veo-3.1-lite";
+            else orModel = "google/veo-3.1";
+          }
+
           const veoAspect = ms.veo_aspect || (size === "9:16" ? "9:16" : "16:9");
           const veoSubMode = ms.veo_sub_mode || "t2v";
-          input.aspect_ratio = veoAspect;
-          if (ms.veo_resolution) input.resolution = ms.veo_resolution;
+
+          const orBody: Record<string, any> = {
+            model: orModel,
+            prompt: prompt || "",
+            aspect_ratio: veoAspect,
+          };
+          if (ms.veo_resolution) orBody.resolution = ms.veo_resolution;
+
           if (veoSubMode === "i2v") {
             if (!ms.veo_start_image_url) return jsonError(400, "Veo I2V requiert une image de départ.");
-            input.image_url = ms.veo_start_image_url;
-            if (ms.veo_end_image_url) input.end_image_url = ms.veo_end_image_url;
+            orBody.image_url = ms.veo_start_image_url;
+            if (ms.veo_end_image_url) orBody.last_frame_image_url = ms.veo_end_image_url;
           } else if (veoSubMode === "reference") {
             const refs = Array.isArray(ms.veo_reference_image_urls) ? ms.veo_reference_image_urls.filter(Boolean) : [];
             if (refs.length === 0) return jsonError(400, "Veo Référence requiert au moins une image.");
-            input.reference_image_urls = refs;
+            orBody.reference_image_urls = refs;
           }
-          break;
+
+          console.log(`[openrouter_veo_start] ai_model=${ai_model} → ${orModel}`, JSON.stringify(orBody).substring(0, 400));
+
+          const orRes = await fetch("https://openrouter.ai/api/v1/videos", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(orBody),
+          });
+          const orText = await orRes.text();
+          if (!orRes.ok) {
+            console.error("OpenRouter Veo start error:", orRes.status, orText);
+            const fallbackable = orRes.status >= 500 || /unavailable|maintenance|temporarily|overloaded/i.test(orText);
+            if (fallbackable) {
+              return jsonFallback(`Veo (OpenRouter) est temporairement indisponible. Merci d'en choisir un autre (Sora 2 Pro, Kling, Seedance ou Grok Imagine).`, { provider_status: orRes.status, provider: "openrouter" });
+            }
+            return jsonError(orRes.status === 429 ? 429 : 400, `Erreur OpenRouter Veo: ${orText.slice(0, 300)}`);
+          }
+          let orJson: any;
+          try { orJson = JSON.parse(orText); } catch { return jsonError(500, "Réponse OpenRouter invalide"); }
+          const orId = orJson?.id;
+          const pollingUrl = orJson?.polling_url;
+          if (!pollingUrl) return jsonError(500, "OpenRouter n'a pas retourné de polling_url");
+          // Encode polling URL into task_id so the poll endpoint can use it without DB.
+          const tid = `or:${btoa(pollingUrl)}`;
+          return jsonResp({ task_id: tid, done: false, provider_id: orId });
         }
 
         // ---------- GROK IMAGINE ----------
@@ -836,6 +881,45 @@ serve(async (req) => {
           }
           const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/kreator-uploads/${objectPath}`;
           return jsonResp({ video_url: publicUrl, done: true });
+        }
+        return jsonResp({ done: false });
+      }
+
+      // ---- OpenRouter Veo polling ----
+      if (typeof task_id === "string" && task_id.startsWith("or:")) {
+        const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
+        if (!OPENROUTER_API_KEY) return jsonError(500, "OPENROUTER_API_KEY non configurée");
+        let pollingUrl: string;
+        try { pollingUrl = atob(task_id.slice(3)); } catch { return jsonError(400, "task_id OpenRouter invalide"); }
+
+        let orRes: Response;
+        try {
+          orRes = await fetch(pollingUrl, { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}` } });
+        } catch (e) {
+          console.warn("OpenRouter Veo poll transient error, retry:", (e as Error)?.message);
+          return jsonResp({ done: false });
+        }
+        const orText = await orRes.text();
+        if (!orRes.ok) {
+          console.warn("OpenRouter Veo poll non-OK:", orRes.status, orText.slice(0, 200));
+          if (orRes.status >= 500 || orRes.status === 408 || orRes.status === 429) return jsonResp({ done: false });
+          return jsonError(orRes.status, `Erreur polling OpenRouter: ${orText.slice(0, 200)}`);
+        }
+        let orJson: any;
+        try { orJson = JSON.parse(orText); } catch { return jsonError(500, "Réponse OpenRouter invalide"); }
+        const status = (orJson?.status || "").toString().toLowerCase();
+        if (status === "failed" || status === "error" || status === "cancelled") {
+          const msg = orJson?.error?.message || orJson?.error || "Échec génération OpenRouter Veo";
+          return jsonError(500, typeof msg === "string" ? msg : JSON.stringify(msg));
+        }
+        if (status === "completed" || status === "succeeded" || status === "success") {
+          const urls: string[] = orJson?.unsigned_urls || orJson?.urls || [];
+          const videoUrl = urls[0] || orJson?.video_url || orJson?.output?.[0]?.url;
+          if (!videoUrl) {
+            console.error("OpenRouter completed but no video URL:", orText.slice(0, 500));
+            return jsonError(500, "Génération terminée mais URL vidéo introuvable (OpenRouter)");
+          }
+          return jsonResp({ video_url: videoUrl, done: true });
         }
         return jsonResp({ done: false });
       }
