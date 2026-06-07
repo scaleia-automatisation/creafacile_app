@@ -679,12 +679,19 @@ export async function generatePrompt(params: {
       ? `Pour le carrousel : adapter la composition au ratio (centrage, marges, lisibilité), cohérence visuelle parfaite entre slides, optimiser pour affichage plateforme.`
       : `Pour l'image : adapter la composition au ratio (centrage, marges, lisibilité), optimiser pour affichage plateforme.`;
 
+  const videoDuration = params.videoDurationSec ?? 8;
+  const videoPlanCount = videoDuration <= 4 ? 2 : videoDuration <= 6 ? 3 : 4;
+  const videoPlanDurationRule = params.contentType === 'video'
+    ? `DURÉE VIDÉO ABSOLUE — NON NÉGOCIABLE : la vidéo dure EXACTEMENT ${videoDuration}s. Le prompt_fr DOIT contenir dans [SECTION 3] un découpage en EXACTEMENT ${videoPlanCount} plans avec timecodes précis au format « Plan 1 — 0.0s à X.Xs — durée Ys ». La somme mathématique des durées de TOUS les plans DOIT être EXACTEMENT ${videoDuration}s, sans dépassement, sans manque, sans plage approximative. Interdit d'écrire « environ », « 8–15s », « quelques secondes » ou une durée totale différente. Les transitions, textes écran, logo et voix off doivent tenir à l'intérieur de ces timecodes.`
+    : '';
+
   // Video-specific directives
   const videoDirectives = params.contentType === 'video' ? `
 
 CONSIGNES VIDÉO OBLIGATOIRES :
 🎯 SCRIPT VIDÉO VIRAL (PRIORITÉ ABSOLUE) :
-- Générer un script vidéo viral d'une durée STRICTEMENT calée sur la durée du modèle IA sélectionné${params.videoDurationSec ? ` (durée cible : ${params.videoDurationSec}s, plage tolérée 8–15s)` : ' (entre 8 et 15s)'} — JAMAIS plus court, JAMAIS plus long.
+- Générer un script vidéo viral d'une durée STRICTEMENT calée sur la durée du modèle IA sélectionné : EXACTEMENT ${videoDuration}s — JAMAIS plus court, JAMAIS plus long.
+- ${videoPlanDurationRule}
 - Le script doit être 100% optimisé pour la VIRALITÉ, la RÉTENTION et la conversion : retenir le lecteur dès la 1re frame, EMPÊCHER le scroll grâce à un hook parfait, maximiser le watch-time complet.
 ${params.voiceOverText ? `- LANGUE DU SCRIPT & DE LA VOIX OFF : strictement ${(params.voiceOverLanguage || 'Français').toUpperCase()} (langue imposée par l'utilisateur). Toute la narration, les overlays, les textes à l'écran et le ton doivent être dans CETTE LANGUE — aucune autre langue, aucune traduction parallèle, registre familier/parlé natif de cette langue.\n` : ''}- Structure narrative virale OBLIGATOIRE (à intégrer explicitement dans le prompt_fr) :
   1) CHOC COGNITIF (0–1s) : image, phrase ou situation qui crée une rupture immédiate dans le scroll de la cible et capte l'attention sans détour.
