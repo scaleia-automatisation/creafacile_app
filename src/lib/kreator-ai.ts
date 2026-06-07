@@ -730,6 +730,13 @@ ${params.voiceOverText ? `- LANGUE DU SCRIPT & DE LA VOIX OFF : strictement ${(p
 - Rythme rapide mais fluide = + rétention
 - 1 message = + conversion
 
+🧠 COHÉRENCE PHYSIQUE ET LOGIQUE (ABSOLUE — NON NÉGOCIABLE) :
+- Toute action, interaction ou état d'objet montré dans la vidéo DOIT être physiquement possible et logiquement cohérent.
+- Un produit fermé/scellé (bouteille avec bouchon, emballage fermé, canette non ouverte, etc.) NE PEUT PAS être consommé, bu, ouvert ou utilisé sans montrer EXPLICITEMENT l'ouverture ou le retrait du sceau/bouchon/couvercle AU PRÉALABLE dans un plan précédent.
+- Les actions humaines doivent respecter la physique réelle : on ne boit pas à travers un couvercle, on ne mange pas à travers un emballage, on ne verse pas un liquide sans ouvrir le récipient.
+- Les états des objets doivent être cohérents d'un plan à l'autre : si un objet est fermé dans un plan, il doit rester fermé ou montrer explicitement son ouverture avant toute utilisation/consommation.
+- Aucune incohérence physique, mécanique ou logique n'est tolérée : pas de main qui traverse un objet, pas de liquide qui coule d'une bouteille fermée, pas de nourriture qui disparaît sans être consommée, pas d'objet qui change d'état sans cause visible.
+
 ${params.videoRenderStyle ? `TYPE DE RENDU VIDÉO SÉLECTIONNÉ : "${params.videoRenderStyle}" — Adapter TOUTE la direction artistique, l'ambiance, le cadrage et le style de montage à ce rendu vidéo.` : ''}
 ${params.voiceOverText ? `\n🎙️ VOIX OFF (OBLIGATOIRE — À INTÉGRER DANS LA VIDÉO) :\nLe texte de voix off à dire EXACTEMENT (mot pour mot, sans modification, sans reformulation, sans ajout, sans suppression) est : "${params.voiceOverText}".\n🌐 LANGUE DE LA VOIX OFF — RÈGLE ABSOLUE : la voix off DOIT être prononcée EN ${(params.voiceOverLanguage || 'Français').toUpperCase()} (langue imposée par l'utilisateur), avec un accent natif neutre et un registre FAMILIER / PARLÉ NATUREL de cette langue. INTERDICTION FORMELLE de traduire vers une autre langue, de mixer plusieurs langues, de doubler, de sous-titrer dans une autre langue, ou d'utiliser un accent étranger qui altère la langue. Toute autre langue est STRICTEMENT INTERDITE.\nVoix naturelle, humaine, cohérente avec le ton, le marché et la langue cible.\nLa voix off doit IMPÉRATIVEMENT se terminer au moins 2 secondes AVANT la fin de la vidéo${params.videoDurationSec ? ` (durée totale ${params.videoDurationSec}s — voix off ≤ ${Math.max(1, params.videoDurationSec - 2)}s)` : ''}. Aucun mot ne doit être prononcé dans les 2 dernières secondes.` : ''}
 ` : '';
