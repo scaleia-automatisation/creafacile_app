@@ -77,6 +77,7 @@ export interface ModelSettings {
   veo_sub_model?: VeoSubModel;
   veo_aspect?: VeoAspect;
   veo_resolution?: VeoResolution;
+  veo_duration?: VeoDuration;
   veo_start_image_url?: string;
   veo_end_image_url?: string;
   veo_reference_image_urls?: string[];
