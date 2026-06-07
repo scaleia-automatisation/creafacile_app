@@ -920,7 +920,55 @@ serve(async (req) => {
             console.error("OpenRouter completed but no video URL:", orText.slice(0, 500));
             return jsonError(500, "Génération terminée mais URL vidéo introuvable (OpenRouter)");
           }
-          return jsonResp({ video_url: videoUrl, done: true });
+          // OpenRouter unsigned URLs require Authorization header → not playable directly in <video>.
+          // Download server-side and re-upload to Supabase Storage so the browser can play it.
+          const needsAuth = /openrouter\.ai\//i.test(videoUrl);
+          if (!needsAuth) {
+            return jsonResp({ video_url: videoUrl, done: true });
+          }
+          let contentRes: Response;
+          try {
+            contentRes = await fetch(videoUrl, { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}` } });
+          } catch (e) {
+            console.warn("OpenRouter video fetch transient error (retry):", (e as Error)?.message);
+            return jsonResp({ done: false });
+          }
+          if (!contentRes.ok) {
+            const t = await contentRes.text();
+            console.warn("OpenRouter video non-OK (retry):", contentRes.status, t.slice(0, 200));
+            if (contentRes.status >= 500 || contentRes.status === 408 || contentRes.status === 429) {
+              return jsonResp({ done: false });
+            }
+            return jsonError(contentRes.status, "Téléchargement vidéo OpenRouter échoué");
+          }
+          let videoBuf: Uint8Array;
+          try {
+            videoBuf = new Uint8Array(await contentRes.arrayBuffer());
+          } catch (e) {
+            console.warn("OpenRouter video read transient error (retry):", (e as Error)?.message);
+            return jsonResp({ done: false });
+          }
+          const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+          const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
+            || Deno.env.get("SUPABASE_SECRET_KEYS");
+          if (!SUPABASE_URL || !SERVICE_ROLE) return jsonError(500, "Storage non configuré");
+          const orRefId = (orJson?.id || orJson?.generation_id || crypto.randomUUID()).toString().replace(/[^a-zA-Z0-9_-]/g, "");
+          const objectPath = `openrouter-veo/${orRefId}.mp4`;
+          try {
+            const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE);
+            const { error: upErr } = await adminClient.storage
+              .from("kreator-uploads")
+              .upload(objectPath, videoBuf, { contentType: "video/mp4", upsert: true });
+            if (upErr) {
+              console.warn("OpenRouter upload storage error (retry):", upErr.message);
+              return jsonResp({ done: false });
+            }
+          } catch (e) {
+            console.warn("OpenRouter upload exception (retry):", (e as Error)?.message);
+            return jsonResp({ done: false });
+          }
+          const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/kreator-uploads/${objectPath}`;
+          return jsonResp({ video_url: publicUrl, done: true });
         }
         return jsonResp({ done: false });
       }
