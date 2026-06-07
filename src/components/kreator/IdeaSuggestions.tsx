@@ -182,6 +182,7 @@ const IdeaSuggestions = () => {
                 value={idea.hook}
                 onChange={(e) => updateIdea(idx, 'hook', e.target.value)}
                 onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
                 rows={2}
                 className="w-full font-bold text-foreground text-base leading-snug text-center bg-transparent border border-transparent hover:border-foreground/10 focus:border-primary/50 focus:outline-none rounded-md p-2 resize-none"
               />
@@ -189,6 +190,7 @@ const IdeaSuggestions = () => {
                 value={idea.concept}
                 onChange={(e) => updateIdea(idx, 'concept', e.target.value)}
                 onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
                 rows={3}
                 className="w-full text-sm text-muted-foreground leading-relaxed text-center bg-transparent border border-transparent hover:border-foreground/10 focus:border-primary/50 focus:outline-none rounded-md p-2 resize-none"
               />
