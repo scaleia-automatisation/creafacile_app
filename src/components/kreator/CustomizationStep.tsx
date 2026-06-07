@@ -125,6 +125,7 @@ const CustomizationStep = () => {
     ai_model, model_settings,
     voice_over_enabled, setVoiceOverEnabled,
     voice_over_text, setVoiceOverText,
+    voice_over_language, setVoiceOverLanguage,
     offer_type, product_service, product_description,
     marketing_angle, objective, visual_style_brief,
     idea_chosen, input_text, format,
@@ -187,6 +188,7 @@ const CustomizationStep = () => {
         persona: target_persona,
         useCase: use_case,
         videoDurationSec,
+        language: voice_over_language || 'Français',
       });
       setVoiceOverText(text.slice(0, voMaxChars));
       toast.success('Voix off générée');
