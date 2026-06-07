@@ -297,6 +297,15 @@ const GenerationStep = () => {
 
 CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le contenu final STRICTEMENT en ${format}. Ce ratio ${format} est prioritaire sur toute autre indication du prompt. Adapter cadrage, composition et marges de sécurité à ce format, sans couper les éléments essentiels.`;
 
+  const withExactVideoDurationInstruction = (prompt: string) => {
+    if (type !== 'video') return prompt;
+    const duration = getVideoDurationSec(ai_model, model_settings);
+    const planCount = duration <= 4 ? 2 : duration <= 6 ? 3 : 4;
+    return `${prompt.trim()}
+
+CONTRAINTE DURÉE VIDÉO ABSOLUE — produire une vidéo de ${duration}s EXACTEMENT. Le script/storyboard utilisé pour générer le contenu DOIT contenir EXACTEMENT ${planCount} plans minutés, avec début, fin et durée de chaque plan. La somme des durées des plans doit être mathématiquement ÉGALE à ${duration}s, sans dépassement, sans manque, sans durée approximative. Aucun plan ni texte/voix/logo ne doit sortir de cette durée totale.`;
+  };
+
   const withLogoOverlayInstruction = (prompt: string) => {
     if (!options.logo_enabled || !options.logo_url || type === 'video') return prompt;
     return `${prompt.trim()}
@@ -369,7 +378,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
       if (!activePrompt || activePrompt.trim().length === 0) {
         throw new Error('Prompt vide après génération');
       }
-      const generationPrompt = withLogoOverlayInstruction(withSelectedFormatInstruction(activePrompt));
+      const generationPrompt = withExactVideoDurationInstruction(withLogoOverlayInstruction(withSelectedFormatInstruction(activePrompt)));
 
       // === CAROUSEL: N images (one per slide) + N captions ===
       if (type === 'carousel') {
@@ -548,7 +557,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
             });
             const improved = verdict.improved_prompt_fr;
             setPromptFr(improved);
-            const improvedGenerationPrompt = withLogoOverlayInstruction(withSelectedFormatInstruction(improved));
+            const improvedGenerationPrompt = withExactVideoDurationInstruction(withLogoOverlayInstruction(withSelectedFormatInstruction(improved)));
             const retryUrl = await generateImage(
               improvedGenerationPrompt,
               ai_model,
