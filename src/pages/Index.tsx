@@ -100,8 +100,8 @@ const Index = () => {
           <StepContainer stepNumber={3} title="Que voulez-vous créer ?">
             <StartingChoiceButtons />
           </StepContainer>
-          <CustomizationStep />
           <IdeaSuggestions />
+          <CustomizationStep />
           <StartingPointBlock />
           <ManualIdeaPanel />
           <GenerationStep />
