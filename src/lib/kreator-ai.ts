@@ -1933,15 +1933,15 @@ export async function generateSlideTexts(params: {
   minWords?: number;
 }): Promise<string[]> {
   const count = Math.max(1, Math.min(4, params.count || 2));
-  const maxWords = Math.max(1, Math.min(20, params.maxWords ?? 15));
-  const minWords = Math.max(1, Math.min(maxWords, params.minWords ?? 10));
-  const systemPrompt = `Tu es un expert en copywriting publicitaire pour carrousels Instagram/TikTok/LinkedIn.
+  const systemPrompt = `Tu es un expert en copywriting publicitaire pour carrousels Instagram/TikTok/LinkedIn, niveau direction artistique d'agence de communication premium (Marbstudiio, Pentagram, BBH).
 Tu génères ${count} textes courts à afficher à l'écran, UN PAR SLIDE d'un carrousel de ${count} slides, parfaitement HARMONIEUX entre eux, qui maximisent la conversion.
 
 RÈGLES ABSOLUES :
 - Langue : français.
-- Chaque texte : ENTRE ${minWords} ET ${maxWords} MOTS (minimum ${minWords}, maximum ${maxWords}). Compte chaque mot. Non négociable.
-- Un seul texte par slide (pas de retour à la ligne).
+- Chaque texte = UNE SEULE PHRASE COMPLÈTE, autonome, qui se suffit à elle-même. JAMAIS de phrase tronquée, coupée, incomplète, suspendue ou amputée. La phrase doit pouvoir être lue à voix haute sans qu'il manque un mot.
+- Phrase la PLUS CONCISE possible : le strict nécessaire, AUCUN mot superflu, aucun pavé de texte, aucune surcharge. Texte AÉRÉ digne d'une grande agence de communication et design produit/service.
+- Aucune limite stricte de mots imposée — mais reste systématiquement court, percutant, lisible d'un coup d'œil sur mobile. Pas de phrase à rallonge.
+- Un seul texte par slide (pas de retour à la ligne, pas de point-virgule pour relier deux idées).
 - HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé.
 - Progression narrative orientée conversion :
   • Slide 1 = HOOK 0-2s ultra puissant (scroll-stop, curiosité/émotion/promesse).
@@ -1971,7 +1971,7 @@ ${params.activity ? `Activité principale: ${params.activity}` : ''}
 ${params.sector ? `Secteur: ${params.sector}` : ''}
 ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
 
-Écris les ${count} textes à afficher dans chaque slide (${minWords} à ${maxWords} mots chacun), 100% cohérents entre eux et optimisés pour la conversion.`;
+Écris les ${count} textes à afficher dans chaque slide — chacun étant UNE PHRASE COMPLÈTE, concise, autonome, jamais tronquée, le strict nécessaire, 100% cohérents entre eux et optimisés pour la conversion.`;
 
   const data = await callKreatorAI({
     action: 'generate_slide_texts',
@@ -1993,9 +1993,10 @@ ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
   for (let i = 0; i < count; i++) {
     let t = (slides[i] || '').toString().trim();
     t = t.replace(/^["«»"'`]+|["«»"'`]+$/g, '').trim().replace(/\s+/g, ' ');
-    const words = t.split(/\s+/).filter(Boolean);
-    if (words.length > maxWords) t = words.slice(0, maxWords).join(' ');
-    t = t.replace(/[.,;:!?]+$/g, '').trim();
+    // Pas de troncature par nombre de mots : on conserve la phrase complète
+    // telle que le modèle l'a produite. On retire uniquement une ponctuation
+    // finale lourde si présente (le rendu visuel n'en a pas besoin).
+    t = t.replace(/[;:]+$/g, '').trim();
     out.push(t);
   }
   return out;
