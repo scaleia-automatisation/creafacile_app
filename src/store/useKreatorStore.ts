@@ -84,6 +84,7 @@ export interface ModelSettings {
   veo_start_image_url?: string;
   veo_end_image_url?: string;
   veo_reference_image_urls?: string[];
+  veo_reference_description?: string;
   // Grok Imagine
   grok_aspect?: GrokAspect;
   grok_mode?: GrokMode;

@@ -267,11 +267,33 @@ const GenerationStep = () => {
     textStart2: options.text_start_2,
     paletteEnabled: options.palette_enabled,
     paletteHex: options.palette_hex,
-    imageDescription: getImageSynthesis(),
-    referenceImageCount:
-      starting_choice === 'simple'
-        ? (simple_images || []).filter(p => p?.url).length
-        : input_photos.filter(p => p.url).length,
+    imageDescription: (() => {
+      const base = getImageSynthesis();
+      const isVeo = ai_model === 'veo-3' || ai_model === 'veo-3.1';
+      const veoDesc = (model_settings?.veo_reference_description || '').trim();
+      const veoHasImg =
+        !!model_settings?.veo_start_image_url ||
+        !!model_settings?.veo_end_image_url ||
+        (Array.isArray(model_settings?.veo_reference_image_urls) && model_settings!.veo_reference_image_urls!.filter(Boolean).length > 0);
+      if (isVeo && veoHasImg && veoDesc) {
+        const veoBlock = `Description fidèle de l'image de référence fournie pour Veo (à reproduire À L'IDENTIQUE dans la vidéo, sans aucune variation ni substitution) : ${veoDesc}`;
+        return base ? `${base}\n${veoBlock}` : veoBlock;
+      }
+      return base;
+    })(),
+    referenceImageCount: (() => {
+      const base =
+        starting_choice === 'simple'
+          ? (simple_images || []).filter(p => p?.url).length
+          : input_photos.filter(p => p.url).length;
+      const isVeo = ai_model === 'veo-3' || ai_model === 'veo-3.1';
+      if (!isVeo) return base;
+      const veoImgs =
+        (model_settings?.veo_start_image_url ? 1 : 0) +
+        (model_settings?.veo_end_image_url ? 1 : 0) +
+        (Array.isArray(model_settings?.veo_reference_image_urls) ? model_settings!.veo_reference_image_urls!.filter(Boolean).length : 0);
+      return base + veoImgs;
+    })(),
     aiModel: ai_model,
     renderStyle: render_style,
     videoRenderStyle: video_render_style,

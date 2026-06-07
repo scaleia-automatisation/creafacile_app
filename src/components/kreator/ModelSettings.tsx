@@ -4,6 +4,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import FileDropUpload from './FileDropUpload';
 import MultiFileUpload from './MultiFileUpload';
+import { Textarea } from '@/components/ui/textarea';
 import { Section, Field, PillGroup, AspectCards, SubModelTabs, IMAGE_HINT } from './model-settings/shared';
 import { GrokT2V, GrokI2V } from './model-settings/GrokSettings';
 import { Seedance15Pro, Seedance2 } from './model-settings/SeedanceSettings';
@@ -157,6 +158,21 @@ const VeoSettings = () => {
           max={3}
           kind="image"
         />
+      )}
+
+      {(sub === 'i2v' || sub === 'reference') && (
+        <Field
+          label="Description fidèle de l'image de référence"
+          required
+          hint={`Décrivez votre produit / service exactement comme il apparaît sur l'image (matière, couleur, étiquette, mentions visibles, packaging, environnement…). Cette description sera injectée dans le prompt maître pour garantir un rendu 100% identique à votre image. Ex : « Jus de bissap à base de fleur d'hibiscus dans une bouteille en verre transparent de 33cl, étiquette blanche avec inscription "BISSAP" en lettres rouges majuscules, bouchon doré… »`}
+        >
+          <Textarea
+            value={model_settings.veo_reference_description || ''}
+            onChange={(e) => setModelSetting('veo_reference_description', e.target.value)}
+            placeholder="Décrivez précisément l'image insérée afin qu'elle soit reproduite à l'identique dans la vidéo générée…"
+            className="min-h-[120px] bg-card border-foreground/10 text-foreground"
+          />
+        </Field>
       )}
 
       <Field label="Format" required>
