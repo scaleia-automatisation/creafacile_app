@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import type { PlatformCaptions } from '@/lib/kreator-ai';
 
 export type ContentType = 'image' | 'carousel' | 'video';
 export type Format = '9:16' | '16:9' | '1:1' | '3:4' | '4:3';
@@ -19,6 +21,7 @@ export type VideoResolution = '720p' | '1080p';
 export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
 export type SoraCharacterScene = { duration: number };
+export type GeneratedCarouselSlide = { url: string; captions: PlatformCaptions };
 
 // Réglages spécifiques par modèle vidéo (flexible, par clé de modèle)
 export type SoraAspect = 'portrait' | 'paysage';
@@ -289,6 +292,10 @@ interface KreatorState {
   setResultUrl: (url: string) => void;
   result_urls: string[];
   setResultUrls: (urls: string[]) => void;
+  generated_captions: PlatformCaptions | null;
+  setGeneratedCaptions: (captions: PlatformCaptions | null) => void;
+  generated_carousel_slides: GeneratedCarouselSlide[] | null;
+  setGeneratedCarouselSlides: (slides: GeneratedCarouselSlide[] | null) => void;
   credits_used: number;
   setCreditsUsed: (c: number) => void;
 
