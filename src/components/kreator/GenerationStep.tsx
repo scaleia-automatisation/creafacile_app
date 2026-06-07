@@ -643,13 +643,6 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       // Si un contenu a déjà été généré, on reprend tous les champs à jour
       // et on relance le prompt maître avant de régénérer le contenu.
       const hasPrevious = Boolean(useKreatorStore.getState().result_url);
-      if (hasPrevious) {
-        setCaptions(null);
-        setCarouselSlides(null);
-        setGeneratedCaptions(null);
-        setGeneratedCarouselSlides(null);
-        setResultUrl('');
-      }
       handleGenerateRef.current({ forcePromptRegen: hasPrevious });
     };
     window.addEventListener('kreator:generate', onTrigger);
@@ -679,11 +672,6 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
   const handleRegenerate = () => {
     // Reprendre TOUS les nouveaux inputs (modèle IA, format, type de contenu, réglages, etc.)
     // en forçant la régénération du prompt depuis les valeurs courantes du store.
-    setCaptions(null);
-    setCarouselSlides(null);
-    setGeneratedCaptions(null);
-    setGeneratedCarouselSlides(null);
-    setResultUrl('');
     handleGenerate({ forcePromptRegen: true });
   };
 
