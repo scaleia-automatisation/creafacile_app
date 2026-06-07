@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import type { PlatformCaptions } from '@/lib/kreator-ai';
 
 export type ContentType = 'image' | 'carousel' | 'video';
 export type Format = '9:16' | '16:9' | '1:1' | '3:4' | '4:3';
@@ -19,6 +21,7 @@ export type VideoResolution = '720p' | '1080p';
 export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
 export type SoraCharacterScene = { duration: number };
+export type GeneratedCarouselSlide = { url: string; captions: PlatformCaptions };
 
 // Réglages spécifiques par modèle vidéo (flexible, par clé de modèle)
 export type SoraAspect = 'portrait' | 'paysage';
@@ -289,6 +292,10 @@ interface KreatorState {
   setResultUrl: (url: string) => void;
   result_urls: string[];
   setResultUrls: (urls: string[]) => void;
+  generated_captions: PlatformCaptions | null;
+  setGeneratedCaptions: (captions: PlatformCaptions | null) => void;
+  generated_carousel_slides: GeneratedCarouselSlide[] | null;
+  setGeneratedCarouselSlides: (slides: GeneratedCarouselSlide[] | null) => void;
   credits_used: number;
   setCreditsUsed: (c: number) => void;
 
@@ -366,10 +373,12 @@ const initialState = {
   status: 'idle' as GenerationStatus,
   result_url: '',
   result_urls: [],
+  generated_captions: null as PlatformCaptions | null,
+  generated_carousel_slides: null as GeneratedCarouselSlide[] | null,
   credits_used: 0,
 };
 
-export const useKreatorStore = create<KreatorState>((set) => ({
+export const useKreatorStore = create<KreatorState>()(persist((set) => ({
   ...initialState,
   setUserMode: (mode) => set({ user_mode: mode }),
   setType: (type) => {
@@ -408,7 +417,6 @@ export const useKreatorStore = create<KreatorState>((set) => ({
     prompt_fr: '',
     prompt_en: '',
     prompt_en_final: '',
-    status: 'idle' as GenerationStatus,
   }),
   setInputImageUrl: (url) => set({ input_image_url: url }),
   setInputImageDescription: (desc) => set({ input_image_description: desc }),
@@ -427,6 +435,61 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setStatus: (s) => set({ status: s }),
   setResultUrl: (url) => set({ result_url: url }),
   setResultUrls: (urls) => set({ result_urls: urls }),
+  setGeneratedCaptions: (captions) => set({ generated_captions: captions }),
+  setGeneratedCarouselSlides: (slides) => set({ generated_carousel_slides: slides }),
   setCreditsUsed: (c) => set({ credits_used: c }),
   resetProject: () => set({ ...initialState }),
+}), {
+  name: 'kreator-current-workflow',
+  storage: createJSONStorage(() => localStorage),
+  partialize: (state) => ({
+    user_mode: state.user_mode,
+    type: state.type,
+    slides_count: state.slides_count,
+    ai_model: state.ai_model,
+    objective: state.objective,
+    render_style: state.render_style,
+    video_render_style: state.video_render_style,
+    video_resolution: state.video_resolution,
+    sora_character_total_duration: state.sora_character_total_duration,
+    sora_character_scenes: state.sora_character_scenes,
+    model_settings: state.model_settings,
+    company_activity: state.company_activity,
+    company_sector: state.company_sector,
+    product_service: state.product_service,
+    product_description: state.product_description,
+    product_image_url: state.product_image_url,
+    product_image_urls_extra: state.product_image_urls_extra,
+    market: state.market,
+    offer_type: state.offer_type,
+    target_persona: state.target_persona,
+    marketing_angle: state.marketing_angle,
+    offer_nature: state.offer_nature,
+    visual_style_brief: state.visual_style_brief,
+    use_case: state.use_case,
+    voice_over_enabled: state.voice_over_enabled,
+    voice_over_text: state.voice_over_text,
+    voice_over_language: state.voice_over_language,
+    format: state.format,
+    input_image_url: state.input_image_url,
+    input_image_description: state.input_image_description,
+    input_photos: state.input_photos,
+    input_text: state.input_text,
+    idea_chosen: state.idea_chosen,
+    starting_choice: state.starting_choice,
+    simple_images: state.simple_images,
+    manual_idea_mode: state.manual_idea_mode,
+    manual_idea_text: state.manual_idea_text,
+    options: state.options,
+    showAdvanced: state.showAdvanced,
+    prompt_fr: state.prompt_fr,
+    prompt_en: state.prompt_en,
+    prompt_en_final: state.prompt_en_final,
+    status: state.status === 'generating' ? 'idle' : state.status,
+    result_url: state.result_url,
+    result_urls: state.result_urls,
+    generated_captions: state.generated_captions,
+    generated_carousel_slides: state.generated_carousel_slides,
+    credits_used: state.credits_used,
+  }),
 }));

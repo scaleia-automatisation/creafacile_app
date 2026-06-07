@@ -163,11 +163,13 @@ const GenerationStep = () => {
     options, slides_count, visual_style_brief, render_style, video_render_style,
     input_image_description, simple_images, starting_choice,
     voice_over_enabled, voice_over_text, voice_over_language, user_mode,
+    generated_captions, setGeneratedCaptions,
+    generated_carousel_slides, setGeneratedCarouselSlides,
   } = useKreatorStore();
   const [progress, setProgress] = useState(0);
   const [generating, setGenerating] = useState(false);
-  const [captions, setCaptions] = useState<PlatformCaptions | null>(null);
-  const [carouselSlides, setCarouselSlides] = useState<Array<{ url: string; captions: PlatformCaptions }> | null>(null);
+  const [captions, setCaptions] = useState<PlatformCaptions | null>(generated_captions);
+  const [carouselSlides, setCarouselSlides] = useState<Array<{ url: string; captions: PlatformCaptions }> | null>(generated_carousel_slides);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('instagram');
   const [captionEditing, setCaptionEditing] = useState(false);
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
@@ -187,6 +189,12 @@ const GenerationStep = () => {
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
 
   const currentCaption = captions ? captions[selectedPlatform] : null;
+
+  useEffect(() => {
+    if (status !== 'done') return;
+    if (generated_captions) setCaptions(generated_captions);
+    if (generated_carousel_slides) setCarouselSlides(generated_carousel_slides);
+  }, [status, generated_captions, generated_carousel_slides]);
 
   // Validation des champs requis (identique à PromptStep)
   const isProduct = offer_type === '📦 Produit';
@@ -289,6 +297,15 @@ const GenerationStep = () => {
 
 CONTRAINTE FORMAT ABSOLUE — issue du champ Format utilisateur : produire le contenu final STRICTEMENT en ${format}. Ce ratio ${format} est prioritaire sur toute autre indication du prompt. Adapter cadrage, composition et marges de sécurité à ce format, sans couper les éléments essentiels.`;
 
+  const withExactVideoDurationInstruction = (prompt: string) => {
+    if (type !== 'video') return prompt;
+    const duration = getVideoDurationSec(ai_model, model_settings);
+    const planCount = duration <= 4 ? 2 : duration <= 6 ? 3 : 4;
+    return `${prompt.trim()}
+
+CONTRAINTE DURÉE VIDÉO ABSOLUE — produire une vidéo de ${duration}s EXACTEMENT. Le script/storyboard utilisé pour générer le contenu DOIT contenir EXACTEMENT ${planCount} plans minutés, avec début, fin et durée de chaque plan. La somme des durées des plans doit être mathématiquement ÉGALE à ${duration}s, sans dépassement, sans manque, sans durée approximative. Aucun plan ni texte/voix/logo ne doit sortir de cette durée totale.`;
+  };
+
   const withLogoOverlayInstruction = (prompt: string) => {
     if (!options.logo_enabled || !options.logo_url || type === 'video') return prompt;
     return `${prompt.trim()}
@@ -308,6 +325,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
 
     // (no image-edit-only models currently require a reference image)
 
+    const hadResultBeforeGeneration = Boolean(useKreatorStore.getState().result_url);
     setGenerating(true);
     setStatus('generating');
     setProgress(0);
@@ -361,7 +379,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
       if (!activePrompt || activePrompt.trim().length === 0) {
         throw new Error('Prompt vide après génération');
       }
-      const generationPrompt = withLogoOverlayInstruction(withSelectedFormatInstruction(activePrompt));
+      const generationPrompt = withExactVideoDurationInstruction(withLogoOverlayInstruction(withSelectedFormatInstruction(activePrompt)));
 
       // === CAROUSEL: N images (one per slide) + N captions ===
       if (type === 'carousel') {
@@ -441,7 +459,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         checkAbort();
         if (!deducted) {
           toast.error('Crédits insuffisants');
-          setStatus('idle');
+          setStatus(hadResultBeforeGeneration ? 'done' : 'idle');
           setGenerating(false);
           return;
         }
@@ -463,9 +481,11 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         );
 
         setCarouselSlides(slideResults);
+        setGeneratedCarouselSlides(slideResults);
         setResultUrl(slideResults[0].url);
         setCreditsUsed(creditsNeeded);
         setCaptions(slideResults[0].captions);
+        setGeneratedCaptions(slideResults[0].captions);
         setStatus('done');
         await refreshProfile();
         return;
@@ -538,7 +558,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
             });
             const improved = verdict.improved_prompt_fr;
             setPromptFr(improved);
-            const improvedGenerationPrompt = withLogoOverlayInstruction(withSelectedFormatInstruction(improved));
+            const improvedGenerationPrompt = withExactVideoDurationInstruction(withLogoOverlayInstruction(withSelectedFormatInstruction(improved)));
             const retryUrl = await generateImage(
               improvedGenerationPrompt,
               ai_model,
@@ -571,7 +591,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
 
       if (!deducted) {
         toast.error('Crédits insuffisants');
-        setStatus('idle');
+        setStatus(hadResultBeforeGeneration ? 'done' : 'idle');
         setGenerating(false);
         return;
       }
@@ -592,20 +612,22 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       setResultUrl(finalContentUrl);
       setCreditsUsed(creditsNeeded);
       setCaptions(captionResult);
+      setGeneratedCaptions(captionResult);
+      setGeneratedCarouselSlides(null);
       setStatus('done');
       await refreshProfile();
     } catch (err: unknown) {
       if (progressInterval) clearInterval(progressInterval);
       if (err instanceof DOMException && err.name === 'AbortError' || err instanceof Error && err.message === 'Generation cancelled') {
         toast.info('Génération annulée');
-        setStatus('idle');
+        setStatus(hadResultBeforeGeneration ? 'done' : 'idle');
       } else {
         console.error(err);
         const message = err instanceof Error && err.message
           ? err.message
           : 'Erreur lors de la génération. Aucun crédit déduit.';
         toast.error(message, { description: 'Aucun crédit déduit.' });
-        setStatus('error');
+        setStatus(hadResultBeforeGeneration ? 'done' : 'error');
       }
     } finally {
       setGenerating(false);
@@ -621,16 +643,11 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       // Si un contenu a déjà été généré, on reprend tous les champs à jour
       // et on relance le prompt maître avant de régénérer le contenu.
       const hasPrevious = Boolean(useKreatorStore.getState().result_url);
-      if (hasPrevious) {
-        setCaptions(null);
-        setCarouselSlides(null);
-        setResultUrl('');
-      }
       handleGenerateRef.current({ forcePromptRegen: hasPrevious });
     };
     window.addEventListener('kreator:generate', onTrigger);
     return () => window.removeEventListener('kreator:generate', onTrigger);
-  }, []);
+  }, [setGeneratedCaptions, setGeneratedCarouselSlides, setResultUrl]);
 
   const handleCopyCaption = () => {
     if (!currentCaption) return;
@@ -655,9 +672,6 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
   const handleRegenerate = () => {
     // Reprendre TOUS les nouveaux inputs (modèle IA, format, type de contenu, réglages, etc.)
     // en forçant la régénération du prompt depuis les valeurs courantes du store.
-    setCaptions(null);
-    setCarouselSlides(null);
-    setResultUrl('');
     handleGenerate({ forcePromptRegen: true });
   };
 
@@ -768,13 +782,15 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
 
   const updateCurrentCaption = (field: string, value: string) => {
     if (!captions) return;
-    setCaptions({
+    const nextCaptions = {
       ...captions,
       [selectedPlatform]: {
         ...captions[selectedPlatform],
         [field]: value,
       },
-    });
+    };
+    setCaptions(nextCaptions);
+    setGeneratedCaptions(nextCaptions);
   };
 
   const updateSlideCaption = (slideIndex: number, field: string, value: string) => {
@@ -793,8 +809,10 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       };
     });
     setCarouselSlides(next);
+    setGeneratedCarouselSlides(next);
     if (slideIndex === 0) {
       setCaptions(next[0].captions);
+      setGeneratedCaptions(next[0].captions);
     }
   };
 
@@ -1235,7 +1253,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
                 variant="outline"
                 className="w-full border-foreground/10 text-foreground hover:border-secondary rounded-btn py-5 text-sm font-bold"
               >
-                <FilePlus className="w-4 h-4 mr-2" /> Générer un nouveau contenu
+                <FilePlus className="w-4 h-4 mr-2" /> Créer un nouveau contenu
               </Button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { AIModel } from '@/store/useKreatorStore';
+import type { AIModel, ModelSettings } from '@/store/useKreatorStore';
 
 interface AICallOptions {
   action: string;
@@ -679,12 +679,19 @@ export async function generatePrompt(params: {
       ? `Pour le carrousel : adapter la composition au ratio (centrage, marges, lisibilité), cohérence visuelle parfaite entre slides, optimiser pour affichage plateforme.`
       : `Pour l'image : adapter la composition au ratio (centrage, marges, lisibilité), optimiser pour affichage plateforme.`;
 
+  const videoDuration = params.videoDurationSec ?? 8;
+  const videoPlanCount = videoDuration <= 4 ? 2 : videoDuration <= 6 ? 3 : 4;
+  const videoPlanDurationRule = params.contentType === 'video'
+    ? `DURÉE VIDÉO ABSOLUE — NON NÉGOCIABLE : la vidéo dure EXACTEMENT ${videoDuration}s. Le prompt_fr DOIT contenir dans [SECTION 3] un découpage en EXACTEMENT ${videoPlanCount} plans avec timecodes précis au format « Plan 1 — 0.0s à X.Xs — durée Ys ». La somme mathématique des durées de TOUS les plans DOIT être EXACTEMENT ${videoDuration}s, sans dépassement, sans manque, sans plage approximative. Interdit d'écrire « environ », « 8–15s », « quelques secondes » ou une durée totale différente. Les transitions, textes écran, logo et voix off doivent tenir à l'intérieur de ces timecodes.`
+    : '';
+
   // Video-specific directives
   const videoDirectives = params.contentType === 'video' ? `
 
 CONSIGNES VIDÉO OBLIGATOIRES :
 🎯 SCRIPT VIDÉO VIRAL (PRIORITÉ ABSOLUE) :
-- Générer un script vidéo viral d'une durée STRICTEMENT calée sur la durée du modèle IA sélectionné${params.videoDurationSec ? ` (durée cible : ${params.videoDurationSec}s, plage tolérée 8–15s)` : ' (entre 8 et 15s)'} — JAMAIS plus court, JAMAIS plus long.
+- Générer un script vidéo viral d'une durée STRICTEMENT calée sur la durée du modèle IA sélectionné : EXACTEMENT ${videoDuration}s — JAMAIS plus court, JAMAIS plus long.
+- ${videoPlanDurationRule}
 - Le script doit être 100% optimisé pour la VIRALITÉ, la RÉTENTION et la conversion : retenir le lecteur dès la 1re frame, EMPÊCHER le scroll grâce à un hook parfait, maximiser le watch-time complet.
 ${params.voiceOverText ? `- LANGUE DU SCRIPT & DE LA VOIX OFF : strictement ${(params.voiceOverLanguage || 'Français').toUpperCase()} (langue imposée par l'utilisateur). Toute la narration, les overlays, les textes à l'écran et le ton doivent être dans CETTE LANGUE — aucune autre langue, aucune traduction parallèle, registre familier/parlé natif de cette langue.\n` : ''}- Structure narrative virale OBLIGATOIRE (à intégrer explicitement dans le prompt_fr) :
   1) CHOC COGNITIF (0–1s) : image, phrase ou situation qui crée une rupture immédiate dans le scroll de la cible et capte l'attention sans détour.
@@ -1057,7 +1064,7 @@ RÈGLES DE COHÉRENCE DE SÉRIE (NON NÉGOCIABLE) :
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE VIDÉO
 ━━━━━━━━━━━━━━━━━━
-Prompt vidéo : max 300 mots, 3 à 5 scènes, hook ultra fort dans les 2 premières secondes, changement de plan max toutes les 3s, transitions naturelles, mouvements réalistes, forte rétention. Toujours intégrer mouvements caméra, lumière cohérente, micro expressions, overlays dynamiques, sound design léger, rythme mobile-first, voix off humaine naturelle.
+Prompt vidéo : max 300 mots, durée totale EXACTE ${videoDuration}s, EXACTEMENT ${videoPlanCount} plans minutés, hook ultra fort dans les 2 premières secondes, changement de plan max toutes les 3s, transitions naturelles, mouvements réalistes, forte rétention. Chaque plan doit afficher son timecode de début, son timecode de fin et sa durée; la somme des plans doit être EXACTEMENT ${videoDuration}s. Toujours intégrer mouvements caméra, lumière cohérente, micro expressions, overlays dynamiques, sound design léger, rythme mobile-first, voix off humaine naturelle.
 
 ━━━━━━━━━━━━━━━━━━
 VOIX OFF
@@ -1088,7 +1095,7 @@ ${params.contentType !== 'video' ? `[SECTION 2bis] BACKGROUND PUISSANT & ANGLE M
 [Décrire EXPLICITEMENT et de façon visible : (a) un ARRIÈRE-PLAN fort, travaillé, contextuel, cinématographique (jamais plat / uni vide / générique), cohérent avec le produit/service "${params.productService || 'le produit/service'}" et le secteur "${params.companySector || 'n/c'}" — préciser décor réel, ambiance lumineuse, textures, profondeur, éléments secondaires choisis pour magnifier le produit sans le concurrencer ; (b) un ANGLE MARKETING FORT nommé clairement (ex : transformation, désir immédiat, statut/aspiration, urgence, preuve sociale, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) ; (c) la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (contraste produit/fond, direction du regard, hiérarchie, codes émotionnels). Pour le carousel : décliner ce background et cet angle de manière cohérente sur toutes les slides.]
 
 ` : ''}${params.contentType === 'video' ? `[SECTION 3] Déroulé / scènes :
-[plan 1 hook, plan 2 valeur, plan 3 impact + CTA — mouvements caméra, transitions, rythme]
+[OBLIGATOIRE : storyboard en EXACTEMENT ${videoPlanCount} plans minutés pour une durée totale EXACTE de ${videoDuration}s. Chaque ligne doit respecter ce format : « Plan N — début X.Xs → fin Y.Ys — durée Z.Zs : action précise, mouvement caméra, texte/voix/logo si présent ». La somme des durées Z.Zs doit être EXACTEMENT ${videoDuration}s. Aucun plan ne peut dépasser la durée totale, aucun temps mort non attribué.]
 
 ` : params.contentType === 'carousel' ? `[SECTION 3] Déroulé des slides :
 [slide 1 hook, slide 2 émotion/problème, slide 3 preuve/résultat, slide 4 CTA — cohérence visuelle entre slides]
@@ -1132,6 +1139,7 @@ ${params.market ? `Marché / Localisation cible: ${params.market} (adapter casti
 === CONTENU ===
 Type de contenu: ${params.contentType}
 Format: ${params.format}
+${params.contentType === 'video' ? `Durée vidéo choisie par l'utilisateur (SOURCE DE VÉRITÉ ABSOLUE) : ${videoDuration}s. Le storyboard du prompt final doit contenir exactement ${videoPlanCount} plans minutés dont la somme fait EXACTEMENT ${videoDuration}s.` : ''}
 ${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
 ${activeRenderStyle ? `Type de rendu${params.contentType === 'video' ? ' vidéo' : ''}: ${activeRenderStyle}` : 'Type de rendu: automatique'}
 
@@ -1238,7 +1246,7 @@ UTILISATION STRATÉGIQUE DE LA PALETTE (RÈGLE INTELLIGENTE) :
 • Utiliser les couleurs dominantes pour renforcer l'objectif marketing recherché : attirer l'attention, inspirer confiance, transmettre de l'énergie, créer du désir, renforcer le caractère premium, favoriser la mémorisation.
 • La palette ne doit pas seulement être appliquée visuellement — elle doit aussi soutenir l'émotion et le message du contenu.` : 'Palette automatique'}
 
-⚠️ RAPPEL FINAL — Les RÉGLAGES AVANCÉS ci-dessus (palette, ton, style visuel, texte overlay, logo, position, police, couleur) renseignés par l'utilisateur sont STRICTEMENT PRIORITAIRES sur toute autre source (analyse d'images, suggestions automatiques). Appliquer EXACTEMENT comme demandé.
+⚠️ RAPPEL FINAL — Les RÉGLAGES AVANCÉS ci-dessus (palette, ton, style visuel, texte overlay, logo, position, police, couleur${params.contentType === 'video' ? `, durée vidéo EXACTE ${videoDuration}s et timecodes des plans` : ''}) renseignés par l'utilisateur sont STRICTEMENT PRIORITAIRES sur toute autre source (analyse d'images, suggestions automatiques). Appliquer EXACTEMENT comme demandé.
 
 ⚡ COHÉRENCE DU TEXTE AFFICHÉ DANS LE VISUEL (RÈGLE ABSOLUE — NON NÉGOCIABLE) :
 Tout texte visible dans le visuel généré (overlay, titre, sous-titre, textes de slides du carrousel, mentions, badges, accroches, punchlines, CTA) DOIT être 100% COHÉRENT avec, par ordre de priorité :
@@ -1731,7 +1739,7 @@ export async function generateVideo(
   format: string = '9:16',
   onProgress?: (pct: number) => void,
   abortSignal?: AbortSignal,
-  modelSettings?: Record<string, any>,
+  modelSettings?: ModelSettings,
   soraCharacterScenes?: { duration: number }[]
 ) {
   const isKieModel = [
