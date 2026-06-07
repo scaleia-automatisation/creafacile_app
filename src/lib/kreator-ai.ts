@@ -1064,7 +1064,7 @@ RÈGLES DE COHÉRENCE DE SÉRIE (NON NÉGOCIABLE) :
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE VIDÉO
 ━━━━━━━━━━━━━━━━━━
-Prompt vidéo : max 300 mots, 3 à 5 scènes, hook ultra fort dans les 2 premières secondes, changement de plan max toutes les 3s, transitions naturelles, mouvements réalistes, forte rétention. Toujours intégrer mouvements caméra, lumière cohérente, micro expressions, overlays dynamiques, sound design léger, rythme mobile-first, voix off humaine naturelle.
+Prompt vidéo : max 300 mots, durée totale EXACTE ${videoDuration}s, EXACTEMENT ${videoPlanCount} plans minutés, hook ultra fort dans les 2 premières secondes, changement de plan max toutes les 3s, transitions naturelles, mouvements réalistes, forte rétention. Chaque plan doit afficher son timecode de début, son timecode de fin et sa durée; la somme des plans doit être EXACTEMENT ${videoDuration}s. Toujours intégrer mouvements caméra, lumière cohérente, micro expressions, overlays dynamiques, sound design léger, rythme mobile-first, voix off humaine naturelle.
 
 ━━━━━━━━━━━━━━━━━━
 VOIX OFF
@@ -1095,7 +1095,7 @@ ${params.contentType !== 'video' ? `[SECTION 2bis] BACKGROUND PUISSANT & ANGLE M
 [Décrire EXPLICITEMENT et de façon visible : (a) un ARRIÈRE-PLAN fort, travaillé, contextuel, cinématographique (jamais plat / uni vide / générique), cohérent avec le produit/service "${params.productService || 'le produit/service'}" et le secteur "${params.companySector || 'n/c'}" — préciser décor réel, ambiance lumineuse, textures, profondeur, éléments secondaires choisis pour magnifier le produit sans le concurrencer ; (b) un ANGLE MARKETING FORT nommé clairement (ex : transformation, désir immédiat, statut/aspiration, urgence, preuve sociale, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) ; (c) la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (contraste produit/fond, direction du regard, hiérarchie, codes émotionnels). Pour le carousel : décliner ce background et cet angle de manière cohérente sur toutes les slides.]
 
 ` : ''}${params.contentType === 'video' ? `[SECTION 3] Déroulé / scènes :
-[plan 1 hook, plan 2 valeur, plan 3 impact + CTA — mouvements caméra, transitions, rythme]
+[OBLIGATOIRE : storyboard en EXACTEMENT ${videoPlanCount} plans minutés pour une durée totale EXACTE de ${videoDuration}s. Chaque ligne doit respecter ce format : « Plan N — début X.Xs → fin Y.Ys — durée Z.Zs : action précise, mouvement caméra, texte/voix/logo si présent ». La somme des durées Z.Zs doit être EXACTEMENT ${videoDuration}s. Aucun plan ne peut dépasser la durée totale, aucun temps mort non attribué.]
 
 ` : params.contentType === 'carousel' ? `[SECTION 3] Déroulé des slides :
 [slide 1 hook, slide 2 émotion/problème, slide 3 preuve/résultat, slide 4 CTA — cohérence visuelle entre slides]
