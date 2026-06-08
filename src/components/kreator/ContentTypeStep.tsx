@@ -21,6 +21,7 @@ const videoModels: { value: AIModel; label: string }[] = [
   { value: 'veo-3.1', label: 'Veo 3.1' },
   { value: 'grok-imagine-i2v', label: 'Grok Imagine — Image to Video' },
   { value: 'grok-imagine-t2v', label: 'Grok Imagine — Text to Video' },
+  { value: 'grok-imagine-1.5-preview', label: 'Grok Imagine Video 1.5 Preview' },
   { value: 'bytedance/seedance-1.5-pro', label: 'Seedance 1.5 Pro' },
   { value: 'bytedance/seedance-2', label: 'Seedance 2.0' },
   { value: 'kling-2.1', label: 'Kling 2.1' },

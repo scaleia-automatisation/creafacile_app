@@ -668,6 +668,18 @@ serve(async (req) => {
           break;
         }
 
+        // ---------- GROK IMAGINE VIDEO 1.5 PREVIEW ----------
+        case "grok-imagine-1.5-preview": {
+          kieModel = "grok-imagine-video-1-5-preview";
+          if (ms.grok15_image_url) {
+            input.image_urls = [ms.grok15_image_url];
+          }
+          input.aspect_ratio = ms.grok15_aspect || aspectFromFormat;
+          input.resolution = ms.grok15_resolution || "720p";
+          input.duration = ms.grok15_duration ?? 8;
+          break;
+        }
+
         // ---------- SEEDANCE ----------
         case "bytedance/seedance-1.5-pro": {
           kieModel = "bytedance/seedance-1.5-pro";
