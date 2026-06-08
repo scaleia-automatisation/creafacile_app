@@ -1807,6 +1807,7 @@ export async function generateVideo(
   const isKieModel = [
     'veo-3', 'veo-3.1', 'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
     'grok-imagine-i2v', 'grok-imagine-t2v',
+    'grok-imagine-1.5-preview',
     'bytedance/seedance-1.5-pro', 'bytedance/seedance-2',
     'sora-2-t2v', 'sora-2-i2v', 'sora-2-pro-t2v', 'sora-2-pro-i2v', 'sora-2-pro-character',
   ].includes(aiModel);
