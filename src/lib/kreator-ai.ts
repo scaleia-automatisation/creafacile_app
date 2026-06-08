@@ -739,6 +739,7 @@ ${hasVoiceOver
 - Texte EXACT à prononcer mot pour mot, sans modification, sans reformulation, sans ajout, sans suppression : "${params.voiceOverText}".
 - LANGUE : strictement ${voLang}, accent natif neutre, registre familier/parlé naturel de cette langue. Interdiction absolue de traduire, mixer, doubler ou sous-titrer dans une autre langue.
 - Maximum ${voiceOverMaxWords} mots (calibré pour ${videoDuration}s : 18 mots/8s, 25 mots/10s, 35 mots/15s).
+- MOTS FACILES À PRONONCER : privilégier des mots courts, courants, fluides, sans liaisons piégeuses, sans mots techniques ou rares, sans sigles, sans anglicismes complexes, sans nombres écrits en chiffres (écrire "trois" plutôt que "3"). Éviter tout mot qui pourrait faire buguer la synthèse vocale (mots étrangers non assimilés, noms propres difficiles, suites de consonnes dures, apostrophes multiples). Phrasé naturel, rythme régulier.
 - Doit être un hook puissant, mémorable, émotionnel, fluide, donnant envie d'acheter, naturel.
 - Doit se terminer au moins 2s AVANT la fin de la vidéo (≤ ${Math.max(1, videoDuration - 2)}s). Aucun mot dans les 2 dernières secondes.`
   : `- Voix off DÉSACTIVÉE par l'utilisateur. NE PAS générer de voix off. NE PAS inclure de bloc "VOIX OFF UNIQUE" dans la sortie. La vidéo s'appuie uniquement sur le visuel, le sound design et les éventuels textes à l'écran.`}
