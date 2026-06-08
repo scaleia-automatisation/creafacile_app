@@ -1189,18 +1189,22 @@ Background :
  [Éclairage précis : type, intensité, ambiance (chaud/froid, publicitaire, reflets, ombres).]
  [Profondeur, textures, ambiance globale.]
 
-CONTRAINTES SCRIPT : somme des durées = ${videoDuration}s exactement ; continuité visuelle naturelle scène à scène ; chaque scène sert une intention marketing claire (attention → intérêt → désir → conversion).
+CONTRAINTES SCRIPT : somme des durées = ${videoDuration}s exactement ; continuité visuelle naturelle scène à scène ; chaque scène sert une intention marketing claire (attention → intérêt → désir → conversion) ; qualité motion design / montage type GRANDE AGENCE DE PUB (McDonald's, Quick, Ikea, Go Sport, Nike, Apple) — transitions léchées, micro-animations premium, rythme cinématographique, sound design implicite, finitions haut de gamme, aucun rendu amateur.
 
-${hasVoiceOver ? `Voix off unique (${Math.max(1, videoDuration - 1)} secondes)
+Voix off unique (${Math.max(1, videoDuration - 2)} secondes maximum — doit se terminer AU MOINS 2 secondes AVANT la fin de la vidéo de ${videoDuration}s)
 
-"${params.voiceOverText}"
+${hasVoiceOver
+  ? `"${params.voiceOverText}"`
+  : `[Générer ICI le texte EXACT de la voix off en FRANÇAIS — une seule phrase continue, 100% cohérente avec l'objectif (${params.objective || 'n/c'}), l'idée (${params.ideaChosen || params.inputText || 'n/c'}), l'angle marketing (${params.marketingAngle || 'n/c'}) et le produit/service "${params.productService || 'n/c'}" (${params.productDescription || 'n/c'}). Écrire la phrase complète, prête à être lue par une voix off humaine naturelle.]`}
 
-(Langue : ${voLang}. UNE SEULE phrase continue couvrant toute la vidéo — jamais découpée scène par scène. Maximum ${voiceOverMaxWords} mots. Mots FACILES À PRONONCER : courts, courants, fluides, sans mots techniques/rares, sans sigles, sans anglicismes complexes, sans nombres en chiffres, sans suites de consonnes dures, sans noms propres difficiles, rien qui puisse faire buguer la synthèse vocale. Hook puissant, mémorable, émotionnel, naturel. Se termine ≥ 2s avant la fin, soit ≤ ${Math.max(1, videoDuration - 2)}s.)
+(Langue : FRANÇAIS. Voix toujours naturelle, humaine, chaleureuse, jamais robotique. UNE SEULE phrase continue couvrant toute la vidéo — jamais découpée scène par scène. Maximum ${voiceOverMaxWords} mots. Durée parlée ≤ ${Math.max(1, videoDuration - 2)}s (obligatoirement ≥ 2 secondes de silence/respiration avant la fin de la vidéo de ${videoDuration}s). Mots clairs, nets, concis, FACILES À RÉPÉTER sans bug, sans blocage, sans troncage de lettres ni de chiffres : mots courts et courants, sans sigles, sans anglicismes complexes, sans suites de consonnes dures, sans noms propres difficiles. Les montants en euros (€) ou en francs CFA doivent être écrits EN TOUTES LETTRES de façon parfaitement lisible et prononçable (ex : « dix-neuf euros quatre-vingt-dix », « deux mille cinq cents francs »), jamais en chiffres bruts. Hook puissant, mémorable, émotionnel, fluide, qui donne envie d'acheter.)
 
-` : ''}Texte écran final
+Texte écran final
 
 🌺 [NOM DU PRODUIT OU SERVICE EN MAJUSCULES — reprendre exactement ${params.productService || '[Nom de l\'offre]'}]
 [Slogan court ≤ 6 mots, cohérent avec l'offre et l'angle marketing.]
+
+(Design du texte écran OBLIGATOIRE : typographie premium impactante, lettrage soigné, contour/outline coloré et artistique qui attire immédiatement l'attention (couleurs vives cohérentes avec la palette du produit, ombre portée subtile, effet glow ou stroke épais multi-couches si pertinent), animation d'apparition fluide type kinetic typography agence de pub, lisibilité parfaite sur mobile, jamais plat ni générique.)
 
 ` : params.contentType === 'carousel' ? `[SECTION 3] Déroulé des slides :
 [slide 1 hook, slide 2 émotion/problème, slide 3 preuve/résultat, slide 4 CTA — cohérence visuelle entre slides]
