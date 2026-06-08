@@ -670,14 +670,14 @@ serve(async (req) => {
 
         // ---------- GROK IMAGINE VIDEO 1.5 PREVIEW ----------
         case "grok-imagine-1.5-preview": {
-          kieModel = "grok-imagine/image-to-video";
-          if (ms.grok15_image_url) {
-            input.image_urls = [ms.grok15_image_url];
+          kieModel = "grok-imagine-video-1-5-preview";
+          if (!ms.grok15_image_url) {
+            return jsonError(400, "Grok Imagine 1.5 Preview requiert une image d'entrée.");
           }
-          input.aspect_ratio = ms.grok15_aspect || aspectFromFormat;
+          input.image_urls = [ms.grok15_image_url];
+          input.aspect_ratio = ms.grok15_aspect || aspectFromFormat || "auto";
           input.resolution = ms.grok15_resolution || "720p";
           input.duration = ms.grok15_duration ?? 8;
-          input.mode = "normal";
           break;
         }
 
