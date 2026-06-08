@@ -1157,7 +1157,40 @@ ${params.contentType !== 'video' ? `[SECTION 2bis] BACKGROUND PUISSANT & ANGLE M
 [Décrire EXPLICITEMENT et de façon visible : (a) un ARRIÈRE-PLAN fort, travaillé, contextuel, cinématographique (jamais plat / uni vide / générique), cohérent avec le produit/service "${params.productService || 'le produit/service'}" et le secteur "${params.companySector || 'n/c'}" — préciser décor réel, ambiance lumineuse, textures, profondeur, éléments secondaires choisis pour magnifier le produit sans le concurrencer ; (b) un ANGLE MARKETING FORT nommé clairement (ex : transformation, désir immédiat, statut/aspiration, urgence, preuve sociale, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) ; (c) la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (contraste produit/fond, direction du regard, hiérarchie, codes émotionnels). Pour le carousel : décliner ce background et cet angle de manière cohérente sur toutes les slides.]
 
 ` : ''}${params.contentType === 'video' ? `[SECTION 3] Script vidéo publicitaire (structure obligatoire) :
-[Appliquer INTÉGRALEMENT le « PROMPT MAÎTRE — GÉNÉRATION DE SCRIPT VIDÉO PUBLICITAIRE PREMIUM » défini plus haut : ANALYSE STRATÉGIQUE, puis EXACTEMENT ${videoSceneCount} scènes (SCÈNE 1, 2${videoSceneCount >= 3 ? ', 3' : ''}${videoSceneCount >= 4 ? ', 4' : ''}) avec pour chacune : Durée, Objectif de la scène, Type de plan, Mouvement caméra, Action, Éclairage, Background, Intention marketing. ${hasVoiceOver ? `Puis bloc "VOIX OFF UNIQUE" reprenant EXACTEMENT le texte fourni en ${voLang}, une seule phrase continue ≤ ${voiceOverMaxWords} mots se terminant ≥ 2s avant la fin.` : `NE PAS générer de bloc voix off (désactivée par l'utilisateur).`} Puis bloc "TEXTE ÉCRAN FINAL" (Nom / Slogan / CTA). Total script : 150 à 200 mots MAX. Somme des durées = ${videoDuration}s exactement.]
+ANALYSE STRATÉGIQUE
+- Angle marketing retenu : ${params.marketingAngle ? `« ${params.marketingAngle} »` : 'déduire automatiquement le plus performant selon l\'objectif (Transformation, Désir, Preuve sociale, Résolution de problème, Émotion, Premium, Gain de temps, Gain d\'argent, Confort, Urgence…)'}
+- Émotion principale recherchée : déduire automatiquement (1 à 2 mots).
+
+SCRIPT VIDÉO (${videoSceneCount} scènes — total ${videoDuration}s — 150 à 200 mots MAX)
+
+Titres de scènes IMPOSÉS dans cet ordre exact :
+${videoSceneCount === 2
+  ? `• SCÈNE 1 — HOOK VISUEL\n• SCÈNE 2 — HERO SHOT / CTA`
+  : videoSceneCount === 3
+  ? `• SCÈNE 1 — HOOK VISUEL\n• SCÈNE 2 — DÉMONSTRATION / VALEUR\n• SCÈNE 3 — HERO SHOT / CTA`
+  : `• SCÈNE 1 — HOOK VISUEL\n• SCÈNE 2 — DÉMONSTRATION / VALEUR\n• SCÈNE 3 — RÉSULTAT / DÉSIR\n• SCÈNE 4 — HERO SHOT / CTA`}
+
+Pour CHAQUE scène, écrire EXACTEMENT dans cet ordre (un champ par ligne) :
+SCÈNE N — [TITRE IMPOSÉ]
+Durée : [Xs]
+Objectif de la scène : [phrase courte]
+Type de plan : [gros plan / très gros plan / plan moyen / hero shot / plan produit / plan immersif…]
+Mouvement caméra : [push in / zoom avant lent / dolly in / orbit / travelling latéral / tilt / panoramique…]
+Action : [description détaillée, physiquement réaliste, ordre exact des actions, animation du sujet : ce qui bouge, comment, dans quel ordre, à quelle vitesse, avec quelle intention ; cohérence cause→effet ; aucune action impossible]
+Éclairage : [type, intensité, ambiance]
+Background : [décor, profondeur, textures, environnement, cohérence avec l'offre]
+Intention marketing : [pourquoi cette scène existe]
+
+CONTRAINTES : somme des durées = ${videoDuration}s exactement ; chaque scène compatible avec la précédente ; continuité visuelle naturelle.
+
+${hasVoiceOver ? `VOIX OFF UNIQUE
+"${params.voiceOverText}"
+(Langue : ${voLang}, UNE SEULE phrase continue couvrant toute la vidéo — jamais découpée scène par scène —, ≤ ${voiceOverMaxWords} mots, se termine ≥ 2s avant la fin soit ≤ ${Math.max(1, videoDuration - 2)}s. Hook puissant, mémorable, émotionnel, fluide, naturel.)
+
+` : ''}TEXTE ÉCRAN FINAL
+Ligne 1 : [Nom du produit ou service]
+Ligne 2 : [Slogan court]
+Ligne 3 : [CTA court : Découvrez maintenant / Essayez aujourd'hui / Commandez dès maintenant / Réservez votre démo / Commencez gratuitement…]]
 
 ` : params.contentType === 'carousel' ? `[SECTION 3] Déroulé des slides :
 [slide 1 hook, slide 2 émotion/problème, slide 3 preuve/résultat, slide 4 CTA — cohérence visuelle entre slides]
@@ -1168,8 +1201,8 @@ ${params.contentType !== 'video' ? `[SECTION 2bis] BACKGROUND PUISSANT & ANGLE M
 [SECTION ${params.contentType === 'video' || params.contentType === 'carousel' ? '5' : '4'}] Format & rendu technique :
 [aspect ratio ${params.format}, modèle IA ${aiModelName}, qualité photoréaliste premium, contraintes techniques spécifiques]
 
-[SECTION ${params.contentType === 'video' || params.contentType === 'carousel' ? '6' : '5'}] Positions exactes des éléments (OBLIGATOIRE — adapté au ratio ${params.format}) :
-[Lister EXPLICITEMENT la position de CHAQUE élément visible avec la grille 9 zones (top-left, top-center, top-right, mid-left, center, mid-right, bottom-left, bottom-center, bottom-right) + coordonnées en pourcentage (x%, y%, w%, h%) + taille relative. Inclure systématiquement : sujet/image hero, texte titre, sous-texte (si présent), emoji (s'il y en a — toujours intégré au texte), badge/pastille (si activé), logo (si activé). Format attendu pour chaque ligne : « élément → zone, x ≈ A-B%, y ≈ C-D%, taille ≈ E% de [hauteur|largeur|plus petit côté], marges ≥ F% ». Respecter STRICTEMENT les safe-zones du format ${params.format} décrites plus haut. Aucun chevauchement, aucune collision, aucun élément sur le sujet.]
+${params.contentType !== 'video' ? `[SECTION ${params.contentType === 'carousel' ? '6' : '5'}] Positions exactes des éléments (OBLIGATOIRE — adapté au ratio ${params.format}) :
+[Lister EXPLICITEMENT la position de CHAQUE élément visible avec la grille 9 zones (top-left, top-center, top-right, mid-left, center, mid-right, bottom-left, bottom-center, bottom-right) + coordonnées en pourcentage (x%, y%, w%, h%) + taille relative. Inclure systématiquement : sujet/image hero, texte titre, sous-texte (si présent), emoji (s'il y en a — toujours intégré au texte), badge/pastille (si activé), logo (si activé). Format attendu pour chaque ligne : « élément → zone, x ≈ A-B%, y ≈ C-D%, taille ≈ E% de [hauteur|largeur|plus petit côté], marges ≥ F% ». Respecter STRICTEMENT les safe-zones du format ${params.format} décrites plus haut. Aucun chevauchement, aucune collision, aucun élément sur le sujet.]` : ''}
 
 ${params.contentType === 'image' || params.contentType === 'carousel' ? `[SECTION ${params.contentType === 'carousel' ? '7' : '6'}] Direction artistique premium (OBLIGATOIRE — RÉDIGER SUR-MESURE, JAMAIS COPIER-COLLER UN GÉNÉRIQUE) :
 [Rédige ICI un paragraphe de direction artistique 100% SUR-MESURE, dérivé STRICTEMENT des inputs utilisateur (type d'offre = ${params.offerType || 'n/c'}, produit/service = ${params.productService || 'n/c'}, description = ${params.productDescription || 'n/c'}, secteur = ${params.companySector || 'n/c'}, activité = ${params.companyActivity || 'n/c'}, objectif = ${params.objective || 'n/c'}, persona = ${params.targetPersona || 'n/c'}, marché = ${params.market || 'n/c'}, réglages avancés activés). RÈGLES DE PRIORITÉ ABSOLUE :
