@@ -678,6 +678,10 @@ serve(async (req) => {
           input.aspect_ratio = ms.grok15_aspect || aspectFromFormat || "auto";
           input.resolution = ms.grok15_resolution || "720p";
           input.duration = ms.grok15_duration ?? 8;
+          // Grok Imagine 1.5 prompt limit: 4096 chars
+          if (typeof input.prompt === "string" && input.prompt.length > 4000) {
+            input.prompt = input.prompt.slice(0, 4000);
+          }
           break;
         }
 
