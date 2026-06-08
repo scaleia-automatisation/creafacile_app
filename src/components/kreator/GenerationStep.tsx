@@ -674,6 +674,38 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
     return () => window.removeEventListener('kreator:generate', onTrigger);
   }, [setGeneratedCaptions, setGeneratedCarouselSlides, setResultUrl]);
 
+  // Génération du PROMPT uniquement (sans lancer la création du contenu).
+  // Déclenché par les boutons « Générer le prompt » dans IdeaSuggestions et
+  // ManualIdeaPanel. Une fois le prompt généré, il s'affiche en édition
+  // dans le bloc « Génération » et l'utilisateur peut le modifier avant de
+  // cliquer sur « Générer le contenu » qui enverra le prompt à jour au modèle.
+  useEffect(() => {
+    const onGeneratePromptOnly = async () => {
+      try {
+        setPromptOnlyLoading(true);
+        const res = await generatePrompt(buildPromptParams());
+        const p = res?.prompt_fr || '';
+        if (p) {
+          setPromptFr(p);
+          setShowPrompt(true);
+          toast.success('Prompt généré — vous pouvez le modifier avant de générer le contenu.');
+          setTimeout(() => {
+            document.getElementById('generation-step-block')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 150);
+        } else {
+          toast.error('Prompt vide après génération');
+        }
+      } catch (e) {
+        console.error(e);
+        toast.error('Erreur lors de la génération du prompt');
+      } finally {
+        setPromptOnlyLoading(false);
+      }
+    };
+    window.addEventListener('kreator:generate-prompt', onGeneratePromptOnly);
+    return () => window.removeEventListener('kreator:generate-prompt', onGeneratePromptOnly);
+  });
+
   const handleCopyCaption = () => {
     if (!currentCaption) return;
     const text = `${currentCaption.hook}\n${currentCaption.description}\n${currentCaption.cta}\n\n${currentCaption.hashtags}`;
