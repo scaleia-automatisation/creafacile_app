@@ -680,89 +680,114 @@ export async function generatePrompt(params: {
       : `Pour l'image : adapter la composition au ratio (centrage, marges, lisibilité), optimiser pour affichage plateforme.`;
 
   const videoDuration = params.videoDurationSec ?? 8;
-  const videoPlanCount = videoDuration <= 4 ? 2 : videoDuration <= 6 ? 3 : 4;
-  const videoPlanDurationRule = params.contentType === 'video'
-    ? `DURÉE VIDÉO ABSOLUE — NON NÉGOCIABLE : la vidéo dure EXACTEMENT ${videoDuration}s. Le prompt_fr DOIT contenir dans [SECTION 3] un découpage en EXACTEMENT ${videoPlanCount} plans avec timecodes précis au format « Plan 1 — 0.0s à X.Xs — durée Ys ». La somme mathématique des durées de TOUS les plans DOIT être EXACTEMENT ${videoDuration}s, sans dépassement, sans manque, sans plage approximative. Interdit d'écrire « environ », « 8–15s », « quelques secondes » ou une durée totale différente. Les transitions, textes écran, logo et voix off doivent tenir à l'intérieur de ces timecodes.`
-    : '';
+  // Nombre de scènes adapté à la durée : 6–10s → 2–3 scènes, 10–15s → 3–4 scènes
+  const videoSceneCount =
+    videoDuration <= 6 ? 2 :
+    videoDuration <= 10 ? 3 :
+    4;
+  // Limites de mots voix off : 18 mots / 8s, 25 mots / 10s, 35 mots / 15s
+  const voiceOverMaxWords =
+    videoDuration <= 8 ? 18 :
+    videoDuration <= 10 ? 25 :
+    35;
+  const hasVoiceOver = !!params.voiceOverText;
+  const voLang = (params.voiceOverLanguage || 'Français').toUpperCase();
 
-  // Video-specific directives
+  // Video-specific directives — nouveau prompt maître (script publicitaire premium)
   const videoDirectives = params.contentType === 'video' ? `
 
-CONSIGNES VIDÉO OBLIGATOIRES :
-🎯 SCRIPT VIDÉO VIRAL (PRIORITÉ ABSOLUE) :
-- Générer un script vidéo viral d'une durée STRICTEMENT calée sur la durée du modèle IA sélectionné : EXACTEMENT ${videoDuration}s — JAMAIS plus court, JAMAIS plus long.
-- ${videoPlanDurationRule}
-- Le script doit être 100% optimisé pour la VIRALITÉ, la RÉTENTION et la conversion : retenir le lecteur dès la 1re frame, EMPÊCHER le scroll grâce à un hook parfait, maximiser le watch-time complet.
-${params.voiceOverText ? `- LANGUE DU SCRIPT & DE LA VOIX OFF : strictement ${(params.voiceOverLanguage || 'Français').toUpperCase()} (langue imposée par l'utilisateur). Toute la narration, les overlays, les textes à l'écran et le ton doivent être dans CETTE LANGUE — aucune autre langue, aucune traduction parallèle, registre familier/parlé natif de cette langue.\n` : ''}- Structure narrative virale OBLIGATOIRE (à intégrer explicitement dans le prompt_fr) :
-  1) CHOC COGNITIF (0–1s) : image, phrase ou situation qui crée une rupture immédiate dans le scroll de la cible et capte l'attention sans détour.
-  2) PSYCHOLOGIE DU HOOK (1–2s) : déclencheur émotionnel ou de curiosité parfaitement calibré pour le persona — empêche physiquement de scroller.
-  3) CONTEXTE EXPRESS (2–4s) : répondre TRÈS vite à "de quoi ça parle ?" — clarté immédiate du sujet, aucune ambiguïté.
-  4) LEAN-IN (4–6s) : créer un lien direct, intime et personnel avec la cible (adresse directe, problème vécu, situation miroir).
-  5) CONTRADICTION / FAUSSE CROYANCE (6–10s) : casser une idée reçue ou révéler un angle fort opposé à ce que la cible croit — créer le déclic.
-  6) PAYOFF + CTA (fin) : résolution, preuve, bénéfice clair, call-to-action court et puissant.
-- Qualité de production EXIGÉE : court-métrage publicitaire premium, niveau agences de communication internationales (Apple, Nike, Mercedes, Chanel). Mouvements de caméra fluides et professionnels (travelling, dolly-in, crane, slider, gimbal, rack focus), cadrages cinématographiques, étalonnage couleur cinéma, éclairage maîtrisé, son design soigné.
-- Aucun rendu amateur, aucun mouvement caméra saccadé, aucun hook faible, aucune scène inutile : chaque seconde sert la rétention et la conversion.
+============================================================
+PROMPT MAÎTRE — GÉNÉRATION DE SCRIPT VIDÉO PUBLICITAIRE PREMIUM
+============================================================
 
-🎬 Logique de création (niveau production) :
-- Micro-vidéo ultra impactante${params.videoDurationSec ? ` (${params.videoDurationSec}s exactement)` : ' (8–15 secondes selon le modèle IA)'}
-- Émotion naturelle, réalisme élevé, rythme rapide, message clair + CTA
-- 2 à 4 plans MAX, chaque plan calibré pour servir la structure virale ci-dessus
-- 1 idée forte par vidéo
-- Continuité visuelle parfaite (lumière, sujet, couleurs)
-- Mouvements de caméra fluides, professionnels, cinématographiques (jamais amateurs)
+MISSION
+Tu es un réalisateur publicitaire, directeur artistique, motion designer et scénariste publicitaire de classe mondiale, spécialisé dans les vidéos publicitaires courtes à forte conversion. Ta mission : générer un script vidéo publicitaire premium, cohérent, réaliste, cinématographique et directement exploitable dans un générateur vidéo IA. Résultat professionnel dès la 1re génération, sans incohérence visuelle, physique ou logique. Rendu naturel, humain, ultra-réaliste, moderne — IMPOSSIBLE à reconnaître comme contenu généré par IA.
 
-🎧 Direction sonore :
-- Bruitages réalistes (pas exagérés)
-- Musique cohérente avec l'émotion (douce → lifestyle, épique → premium, rythmée → pub)
-- Voix off optionnelle : naturelle, humaine, courte, max 1 phrase
+CONTRAINTES GLOBALES — NON NÉGOCIABLES
+- Durée vidéo : EXACTEMENT ${videoDuration}s (jamais plus court, jamais plus long).
+- Nombre de scènes : EXACTEMENT ${videoSceneCount} (calé sur la durée : 6–10s → 2–3 scènes, 10–15s → 3–4 scènes).
+- Longueur totale du script : entre 150 et 200 mots MAXIMUM. Jamais plus.
+- Style d'écriture : naturel, humain, sans tournures IA, sans clichés génériques, sans superlatifs vides. Ton premium agence de pub.
+- Somme des durées de scènes = ${videoDuration}s exactement. Indiquer la durée précise de chaque scène (ex : "Scène 1 (3s)").
 
-🎥 Mouvements caméra pro :
-- Travelling lent (cinéma), zoom léger (focus émotion), handheld subtil (UGC réaliste)
-- Slow motion léger (premium), rack focus (focus dynamique)
+RÈGLES CRITIQUES DE COHÉRENCE
+Avant de générer le script :
+- Analyser le produit ou service.
+- Vérifier que chaque action est physiquement réalisable et logique.
+- Vérifier que chaque interaction est cohérente, chaque objet utilisé correctement.
+- Ne jamais générer d'action impossible.
+Exemples interdits : verser depuis une bouteille fermée, boire à travers un bouchon, objets qui apparaissent/disparaissent sans transition, aliments déjà coupés puis recoupés, objets flottant sans raison, changement brutal de forme du produit, scène qui ne représente pas réellement le bénéfice d'un service.
+Exemples obligatoires : ouvrir avant de verser, montrer le liquide couler depuis le goulot ouvert, respecter cause→effet, proportions et physique réelle. Continuité visuelle naturelle entre chaque scène.
 
-✨ Effets visuels (réalisme avant tout) :
-- Lumière naturelle cohérente, profondeur de champ, motion blur léger
-- Reflets réalistes, aucun effet "fake IA"
+RÈGLES DE QUALITÉ CINÉMATOGRAPHIQUE (par scène)
+Chaque scène DOIT préciser :
+1. Type de plan (gros plan, très gros plan, plan moyen, hero shot, plan produit, plan immersif…)
+2. Mouvement caméra (push in, zoom avant lent, dolly in, orbit, travelling latéral, tilt, panoramique…)
+3. Animation du sujet — ce qui bouge, comment, dans quel ordre, à quelle vitesse, avec quelle intention.
+4. Éclairage — chaud/froid, publicitaire, reflets, ombres, ambiance.
+5. Background — décor, profondeur, textures, ambiance, cohérence avec le produit/service.
 
-🧠 Niveau expert :
-- Micro-expressions humaines = + engagement
-- Imperfections réalistes = + crédibilité
-- Rythme rapide mais fluide = + rétention
-- 1 message = + conversion
+RÈGLES DE MARKETING
+Chaque scène doit : attirer l'attention, maintenir l'intérêt, augmenter le désir, valoriser le produit, préparer la conversion. Chaque scène a une intention marketing claire et explicite.
 
-🧠 COHÉRENCE PHYSIQUE ET LOGIQUE (ABSOLUE — NON NÉGOCIABLE) :
-- Toute action, interaction ou état d'objet montré dans la vidéo DOIT être physiquement possible et logiquement cohérent.
-- Un produit fermé/scellé (bouteille avec bouchon, emballage fermé, canette non ouverte, etc.) NE PEUT PAS être consommé, bu, ouvert ou utilisé sans montrer EXPLICITEMENT l'ouverture ou le retrait du sceau/bouchon/couvercle AU PRÉALABLE dans un plan précédent.
-- Les actions humaines doivent respecter la physique réelle : on ne boit pas à travers un couvercle, on ne mange pas à travers un emballage, on ne verse pas un liquide sans ouvrir le récipient.
-- Les états des objets doivent être cohérents d'un plan à l'autre : si un objet est fermé dans un plan, il doit rester fermé ou montrer explicitement son ouverture avant toute utilisation/consommation.
-- Aucune incohérence physique, mécanique ou logique n'est tolérée : pas de main qui traverse un objet, pas de liquide qui coule d'une bouteille fermée, pas de nourriture qui disparaît sans être consommée, pas d'objet qui change d'état sans cause visible.
+VOIX OFF
+${hasVoiceOver
+  ? `- Voix off ACTIVÉE. UNE SEULE phrase continue couvrant toute la vidéo (jamais découpée scène par scène).
+- Texte EXACT à prononcer mot pour mot, sans modification, sans reformulation, sans ajout, sans suppression : "${params.voiceOverText}".
+- LANGUE : strictement ${voLang}, accent natif neutre, registre familier/parlé naturel de cette langue. Interdiction absolue de traduire, mixer, doubler ou sous-titrer dans une autre langue.
+- Maximum ${voiceOverMaxWords} mots (calibré pour ${videoDuration}s : 18 mots/8s, 25 mots/10s, 35 mots/15s).
+- Doit être un hook puissant, mémorable, émotionnel, fluide, donnant envie d'acheter, naturel.
+- Doit se terminer au moins 2s AVANT la fin de la vidéo (≤ ${Math.max(1, videoDuration - 2)}s). Aucun mot dans les 2 dernières secondes.`
+  : `- Voix off DÉSACTIVÉE par l'utilisateur. NE PAS générer de voix off. NE PAS inclure de bloc "VOIX OFF UNIQUE" dans la sortie. La vidéo s'appuie uniquement sur le visuel, le sound design et les éventuels textes à l'écran.`}
 
-🎬 STRUCTURE IDÉALE OBLIGATOIRE D'UN PROMPT VIDÉO IA (à respecter intégralement dans [SECTION 3] — NON NÉGOCIABLE) :
-Le prompt_fr DOIT décrire EXPLICITEMENT et SÉPARÉMENT les 10 blocs suivants, dans cet ordre, sans en oublier un seul :
-1) SUJET PRINCIPAL — décrire précisément ce qu'on doit voir (qui, quoi, où, comment) en une phrase claire et visuelle.
-2) OBJECTIF MARKETING — définir le résultat recherché (ex : montrer la simplicité, la rapidité, la transformation, le bénéfice clé).
-3) STYLE VISUEL — direction artistique haut de gamme adaptée au secteur (ex : « publicité premium moderne, style Apple, esthétique minimaliste haut de gamme » ou « publicité Nike énergique et inspirante »).
-4) TYPE DE PLAN — préciser pour chaque plan (gros plan, plan serré, plan moyen, plan large, plan macro produit, insert, etc.).
-5) MOUVEMENT CAMÉRA — travelling fluide, dolly-in, slider, gimbal, légère rotation cinématographique, rack focus, mouvement naturel — JAMAIS saccadé, JAMAIS amateur.
-6) LUMIÈRE — naturelle douce, éclairage studio professionnel, ombres réalistes, key/fill/back light, golden hour si pertinent.
-7) ENVIRONNEMENT — décor cohérent avec le secteur et la cible (ex : bureau moderne haut de gamme avec décoration minimaliste, cuisine lumineuse, rue urbaine, studio premium).
-8) ÉMOTIONS — émotions précises à transmettre (satisfaction, confiance, soulagement, désir, surprise, fierté).
-9) ACTIONS — séquence d'actions précises et physiquement cohérentes du/des personnage(s) ou du produit, dans l'ordre logique.
-10) QUALITÉ — ultra-réaliste, qualité cinéma, détails élevés, rendu publicitaire premium, 4K, textures détaillées, color grading haut de gamme.
+TEXTE ÉCRAN
+Seulement si nécessaire et seulement si l'utilisateur a renseigné un texte à l'écran. Court, impactant, lisible. Respecter à la lettre : contenu, moment d'apparition, durée d'affichage, position, police, couleur (et idem pour le texte 2 s'il est activé).
 
-📦 STRUCTURE IDÉALE POUR UN PRODUIT (à appliquer automatiquement si le sujet est un PRODUIT) :
-« Créer une publicité premium pour [NOM DU PRODUIT]. Montrer clairement le produit comme élément principal. Mettre en scène une utilisation naturelle du produit par la cible idéale. Utiliser une direction artistique haut de gamme adaptée au secteur d'activité. Plans cinématographiques professionnels. Travelling fluide. Profondeur de champ réaliste. Éclairage studio premium. Mise en valeur des bénéfices du produit. Ambiance inspirante. Ultra-réaliste. Qualité publicité internationale. 4K. Rendu commercial professionnel. »
+============================================================
+STRUCTURE DE SORTIE OBLIGATOIRE (à placer DANS [SECTION 3] du prompt_fr, EXACTEMENT comme suit)
+============================================================
 
-🛎️ STRUCTURE IDÉALE POUR UN SERVICE (à appliquer automatiquement si le sujet est un SERVICE) :
-« Créer une publicité premium pour [NOM DU SERVICE]. Montrer clairement le problème rencontré par le client. Présenter le service comme solution. Mettre en scène le résultat obtenu après utilisation du service. Direction artistique professionnelle adaptée au secteur. Personnages crédibles. Émotions authentiques. Plans cinématographiques. Caméra fluide. Éclairage haut de gamme. Storytelling clair. Ultra-réaliste. Qualité publicité internationale. 4K. Rendu commercial professionnel. »
+ANALYSE STRATÉGIQUE
+- Angle marketing retenu (déduit automatiquement si non fourni : Transformation, Désir, Preuve sociale, Résolution de problème, Émotion, Premium, Gain de temps, Gain d'argent, Confort, Urgence…)
+- Émotion principale recherchée (déduite automatiquement)
 
-🌍 BLOC UNIVERSEL À AJOUTER À CHAQUE PROMPT VIDÉO (OBLIGATOIRE — à intégrer toujours, en fin de [SECTION 3] ou dans [SECTION 5]) :
-« Publicité premium digne des plus grandes agences créatives mondiales. Composition visuelle professionnelle. Storytelling puissant. Caméra fluide. Mouvements naturels. Transitions élégantes. Profondeur de champ cinématographique. Éclairage professionnel. Color grading haut de gamme. Rendu ultra réaliste. Qualité cinéma. 4K. Textures détaillées. Visages naturels. Mains réalistes. Physique réaliste. Aucune déformation. Aucun artefact. Aucun texte déformé. Aspect commercial premium. Optimisé pour les réseaux sociaux. Fort potentiel d'engagement. Fort potentiel de conversion. Capable d'arrêter le scroll dès les premières secondes. »
+SCRIPT VIDÉO (${videoSceneCount} scènes, total ${videoDuration}s, 150–200 mots max)
 
-🎯 OBJECTIF FINAL : produire des vidéos IA au rendu PARFAIT, exploitables et utilisables à 100% dès la 1re génération, sans retouche ni régénération nécessaire.
+Pour CHAQUE scène, écrire dans cet ordre exact :
+SCÈNE N — [TITRE COURT : HOOK VISUEL / DÉMONSTRATION / RÉSULTAT / HERO SHOT-CTA]
+Durée : [Xs]
+Objectif de la scène : [phrase courte]
+Type de plan : […]
+Mouvement caméra : […]
+Action : [description détaillée, réaliste, physiquement cohérente, ordre exact des actions]
+Éclairage : [type, intensité, ambiance]
+Background : [décor, profondeur, environnement, cohérence avec l'offre]
+Intention marketing : [pourquoi cette scène existe]
+
+${hasVoiceOver ? `VOIX OFF UNIQUE
+"${params.voiceOverText}"
+(${voLang}, une seule phrase continue, ≤ ${voiceOverMaxWords} mots, se termine ≥ 2s avant la fin)
+
+` : ''}TEXTE ÉCRAN FINAL
+Ligne 1 : [Nom du produit ou service]
+Ligne 2 : [Slogan court]
+Ligne 3 : [CTA court : Découvrez maintenant / Essayez aujourd'hui / Commandez dès maintenant / Réservez votre démo / Commencez gratuitement…]
+
+============================================================
+CONTRÔLE QUALITÉ OBLIGATOIRE (avant de finaliser)
+============================================================
+- Cohérence physique : aucune action impossible, aucun objet mal utilisé, aucune incohérence temporelle.
+- Cohérence marketing : chaque scène sert l'objectif.
+- Cohérence visuelle : continuité scène à scène, décor cohérent, éclairage cohérent.
+- Cohérence produit : produit fidèle à sa nature, packaging réel, aucune marque inventée.
+- Cohérence service : représentation réaliste du bénéfice.
+- Vérifier durée totale = ${videoDuration}s et nombre de scènes = ${videoSceneCount}.
+- Vérifier que le script tient en 150–200 mots maximum.
+${hasVoiceOver ? `- Vérifier que la voix off est UNE SEULE phrase, en ${voLang}, ≤ ${voiceOverMaxWords} mots, et se termine ≥ 2s avant la fin.` : '- Vérifier qu\'AUCUNE voix off n\'est générée (désactivée par l\'utilisateur).'}
+
+OBJECTIF FINAL : une vidéo publicitaire premium, cinématographique, fluide, logique, sans erreur, exploitable dès la 1re génération, optimisée pour la conversion, indiscernable d'une production agence humaine.
 
 ${params.videoRenderStyle ? `TYPE DE RENDU VIDÉO SÉLECTIONNÉ : "${params.videoRenderStyle}" — Adapter TOUTE la direction artistique, l'ambiance, le cadrage et le style de montage à ce rendu vidéo.` : ''}
-${params.voiceOverText ? `\n🎙️ VOIX OFF (OBLIGATOIRE — À INTÉGRER DANS LA VIDÉO) :\nLe texte de voix off à dire EXACTEMENT (mot pour mot, sans modification, sans reformulation, sans ajout, sans suppression) est : "${params.voiceOverText}".\n🌐 LANGUE DE LA VOIX OFF — RÈGLE ABSOLUE : la voix off DOIT être prononcée EN ${(params.voiceOverLanguage || 'Français').toUpperCase()} (langue imposée par l'utilisateur), avec un accent natif neutre et un registre FAMILIER / PARLÉ NATUREL de cette langue. INTERDICTION FORMELLE de traduire vers une autre langue, de mixer plusieurs langues, de doubler, de sous-titrer dans une autre langue, ou d'utiliser un accent étranger qui altère la langue. Toute autre langue est STRICTEMENT INTERDITE.\nVoix naturelle, humaine, cohérente avec le ton, le marché et la langue cible.\nLa voix off doit IMPÉRATIVEMENT se terminer au moins 2 secondes AVANT la fin de la vidéo${params.videoDurationSec ? ` (durée totale ${params.videoDurationSec}s — voix off ≤ ${Math.max(1, params.videoDurationSec - 2)}s)` : ''}. Aucun mot ne doit être prononcé dans les 2 dernières secondes.` : ''}
 ` : '';
 
   // Determine the active render style
