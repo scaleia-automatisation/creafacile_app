@@ -104,11 +104,11 @@ ${manual_idea_text}`;
     setUseCase('');
     setInputText(text);
     setIdeaChosen(text);
-    toast.success('Idée insérée. Lancement de la génération…');
+    toast.success('Idée insérée. Génération du prompt…');
     setTimeout(() => {
       const target = document.getElementById('generation-step-block');
       target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      window.dispatchEvent(new CustomEvent('kreator:generate'));
+      window.dispatchEvent(new CustomEvent('kreator:generate-prompt'));
     }, 200);
   };
 
@@ -140,7 +140,7 @@ ${manual_idea_text}`;
           className="flex-1 gap-2 gradient-bg border-0 text-primary-foreground hover:opacity-90 font-bold"
         >
           <Sparkles className="w-4 h-4" />
-          Générer le contenu
+          Générer le prompt
         </Button>
       </div>
     </div>

@@ -7,7 +7,7 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock, Eye, EyeOff } from 'lucide-react';
+import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock, Eye, EyeOff, Sparkles } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { generateImage, generateVideo, generateCaption, generatePrompt, verifyGeneratedImage, type PlatformCaptions } from '@/lib/kreator-ai';
 import type { Json } from '@/integrations/supabase/types';
@@ -184,6 +184,7 @@ const GenerationStep = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [promptOnlyLoading, setPromptOnlyLoading] = useState(false);
 
   const buttonLabel = type === 'image' ? 'Générer le contenu' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
@@ -673,6 +674,38 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
     return () => window.removeEventListener('kreator:generate', onTrigger);
   }, [setGeneratedCaptions, setGeneratedCarouselSlides, setResultUrl]);
 
+  // Génération du PROMPT uniquement (sans lancer la création du contenu).
+  // Déclenché par les boutons « Générer le prompt » dans IdeaSuggestions et
+  // ManualIdeaPanel. Une fois le prompt généré, il s'affiche en édition
+  // dans le bloc « Génération » et l'utilisateur peut le modifier avant de
+  // cliquer sur « Générer le contenu » qui enverra le prompt à jour au modèle.
+  useEffect(() => {
+    const onGeneratePromptOnly = async () => {
+      try {
+        setPromptOnlyLoading(true);
+        const res = await generatePrompt(buildPromptParams());
+        const p = res?.prompt_fr || '';
+        if (p) {
+          setPromptFr(p);
+          setShowPrompt(true);
+          toast.success('Prompt généré — vous pouvez le modifier avant de générer le contenu.');
+          setTimeout(() => {
+            document.getElementById('generation-step-block')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 150);
+        } else {
+          toast.error('Prompt vide après génération');
+        }
+      } catch (e) {
+        console.error(e);
+        toast.error('Erreur lors de la génération du prompt');
+      } finally {
+        setPromptOnlyLoading(false);
+      }
+    };
+    window.addEventListener('kreator:generate-prompt', onGeneratePromptOnly);
+    return () => window.removeEventListener('kreator:generate-prompt', onGeneratePromptOnly);
+  });
+
   const handleCopyCaption = () => {
     if (!currentCaption) return;
     const text = `${currentCaption.hook}\n${currentCaption.description}\n${currentCaption.cta}\n\n${currentCaption.hashtags}`;
@@ -845,9 +878,49 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       <StepContainer stepNumber={5} title="Génération">
         <div id="generation-step-block" />
         {status === 'idle' && (
-          <p className="text-sm text-muted-foreground text-center py-4">
-            Choisissez une idée ci-dessus et cliquez sur « Générer le contenu » pour lancer la génération.
-          </p>
+          <div className="space-y-4">
+            {promptOnlyLoading && (
+              <p className="text-sm text-muted-foreground text-center py-2">
+                Génération du prompt en cours…
+              </p>
+            )}
+            {!prompt_fr && !promptOnlyLoading && (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Choisissez une idée ci-dessus et cliquez sur « Générer le prompt » pour préparer le contenu.
+              </p>
+            )}
+            {prompt_fr && (
+              <div className="bg-card rounded-card p-4 md:p-5 border border-foreground/10">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-semibold text-foreground">Prompt (modifiable)</label>
+                  <span className="text-xs text-muted-foreground">{prompt_fr.length} car.</span>
+                </div>
+                <Textarea
+                  value={prompt_fr}
+                  onChange={(e) => setPromptFr(e.target.value)}
+                  className="bg-background border-foreground/10 text-foreground text-sm resize-none whitespace-pre-wrap leading-6 font-mono"
+                  style={{
+                    minHeight: `${Math.max(
+                      200,
+                      (Math.ceil(prompt_fr.length / 70) + (prompt_fr.match(/\n/g)?.length || 0) + 1) * 24
+                    )}px`,
+                  }}
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Vos modifications seront utilisées telles quelles lors de la génération du contenu.
+                </p>
+                <div className="flex justify-center mt-4">
+                  <Button
+                    onClick={() => handleGenerate({ forcePromptRegen: false })}
+                    className="py-6 px-8 text-base font-extrabold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
+                  >
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    {buttonLabel}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         )}
 
         {status === 'generating' && (
