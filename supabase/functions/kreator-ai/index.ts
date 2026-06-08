@@ -790,6 +790,11 @@ serve(async (req) => {
 
       console.log(`[kie_start_video] ai_model=${ai_model} → kieModel=${kieModel}`, JSON.stringify(input).substring(0, 500));
 
+      // Safety: kie.ai (notably Grok Imagine 1.5) rejects prompts > 4096 chars.
+      if (typeof input.prompt === "string" && input.prompt.length > 3900) {
+        input.prompt = input.prompt.slice(0, 3900);
+      }
+
       const startRes = await fetch("https://api.kie.ai/api/v1/jobs/createTask", {
         method: "POST",
         headers: {
