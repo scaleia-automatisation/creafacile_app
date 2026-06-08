@@ -1120,7 +1120,7 @@ RÈGLES DE COHÉRENCE DE SÉRIE (NON NÉGOCIABLE) :
 ━━━━━━━━━━━━━━━━━━
 SPÉCIFIQUE VIDÉO
 ━━━━━━━━━━━━━━━━━━
-Prompt vidéo : max 300 mots, durée totale EXACTE ${videoDuration}s, EXACTEMENT ${videoPlanCount} plans minutés, hook ultra fort dans les 2 premières secondes, changement de plan max toutes les 3s, transitions naturelles, mouvements réalistes, forte rétention. Chaque plan doit afficher son timecode de début, son timecode de fin et sa durée; la somme des plans doit être EXACTEMENT ${videoDuration}s. Toujours intégrer mouvements caméra, lumière cohérente, micro expressions, overlays dynamiques, sound design léger, rythme mobile-first, voix off humaine naturelle.
+Prompt vidéo : 150 à 200 mots maximum, durée totale EXACTE ${videoDuration}s, EXACTEMENT ${videoSceneCount} scènes (6–10s → 2–3 scènes, 10–15s → 3–4 scènes), hook ultra fort dans les 2 premières secondes, transitions naturelles, mouvements réalistes, forte rétention. Chaque scène indique sa durée précise; la somme des durées doit être EXACTEMENT ${videoDuration}s. Toujours intégrer mouvements caméra, lumière cohérente, micro expressions, overlays dynamiques, sound design léger, rythme mobile-first, voix off humaine naturelle uniquement si activée par l'utilisateur.
 
 ━━━━━━━━━━━━━━━━━━
 VOIX OFF
@@ -1153,8 +1153,8 @@ Puis présenter le produit/service de façon 100% FIDÈLE à ce nom et cette des
 ${params.contentType !== 'video' ? `[SECTION 2bis] BACKGROUND PUISSANT & ANGLE MARKETING (OBLIGATOIRE pour image et carousel — NON NÉGOCIABLE) :
 [Décrire EXPLICITEMENT et de façon visible : (a) un ARRIÈRE-PLAN fort, travaillé, contextuel, cinématographique (jamais plat / uni vide / générique), cohérent avec le produit/service "${params.productService || 'le produit/service'}" et le secteur "${params.companySector || 'n/c'}" — préciser décor réel, ambiance lumineuse, textures, profondeur, éléments secondaires choisis pour magnifier le produit sans le concurrencer ; (b) un ANGLE MARKETING FORT nommé clairement (ex : transformation, désir immédiat, statut/aspiration, urgence, preuve sociale, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) ; (c) la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (contraste produit/fond, direction du regard, hiérarchie, codes émotionnels). Pour le carousel : décliner ce background et cet angle de manière cohérente sur toutes les slides.]
 
-` : ''}${params.contentType === 'video' ? `[SECTION 3] Déroulé / scènes :
-[OBLIGATOIRE : storyboard en EXACTEMENT ${videoPlanCount} plans minutés pour une durée totale EXACTE de ${videoDuration}s. Chaque ligne doit respecter ce format : « Plan N — début X.Xs → fin Y.Ys — durée Z.Zs : action précise, mouvement caméra, texte/voix/logo si présent ». La somme des durées Z.Zs doit être EXACTEMENT ${videoDuration}s. Aucun plan ne peut dépasser la durée totale, aucun temps mort non attribué.]
+` : ''}${params.contentType === 'video' ? `[SECTION 3] Script vidéo publicitaire (structure obligatoire) :
+[Appliquer INTÉGRALEMENT le « PROMPT MAÎTRE — GÉNÉRATION DE SCRIPT VIDÉO PUBLICITAIRE PREMIUM » défini plus haut : ANALYSE STRATÉGIQUE, puis EXACTEMENT ${videoSceneCount} scènes (SCÈNE 1, 2${videoSceneCount >= 3 ? ', 3' : ''}${videoSceneCount >= 4 ? ', 4' : ''}) avec pour chacune : Durée, Objectif de la scène, Type de plan, Mouvement caméra, Action, Éclairage, Background, Intention marketing. ${hasVoiceOver ? `Puis bloc "VOIX OFF UNIQUE" reprenant EXACTEMENT le texte fourni en ${voLang}, une seule phrase continue ≤ ${voiceOverMaxWords} mots se terminant ≥ 2s avant la fin.` : `NE PAS générer de bloc voix off (désactivée par l'utilisateur).`} Puis bloc "TEXTE ÉCRAN FINAL" (Nom / Slogan / CTA). Total script : 150 à 200 mots MAX. Somme des durées = ${videoDuration}s exactement.]
 
 ` : params.contentType === 'carousel' ? `[SECTION 3] Déroulé des slides :
 [slide 1 hook, slide 2 émotion/problème, slide 3 preuve/résultat, slide 4 CTA — cohérence visuelle entre slides]
@@ -1198,7 +1198,7 @@ ${params.market ? `Marché / Localisation cible: ${params.market} (adapter casti
 === CONTENU ===
 Type de contenu: ${params.contentType}
 Format: ${params.format}
-${params.contentType === 'video' ? `Durée vidéo choisie par l'utilisateur (SOURCE DE VÉRITÉ ABSOLUE) : ${videoDuration}s. Le storyboard du prompt final doit contenir exactement ${videoPlanCount} plans minutés dont la somme fait EXACTEMENT ${videoDuration}s.` : ''}
+${params.contentType === 'video' ? `Durée vidéo choisie par l'utilisateur (SOURCE DE VÉRITÉ ABSOLUE) : ${videoDuration}s. Le script du prompt final doit contenir exactement ${videoSceneCount} scènes dont la somme fait EXACTEMENT ${videoDuration}s, et faire 150 à 200 mots MAX.` : ''}
 ${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
 ${activeRenderStyle ? `Type de rendu${params.contentType === 'video' ? ' vidéo' : ''}: ${activeRenderStyle}` : 'Type de rendu: automatique'}
 
