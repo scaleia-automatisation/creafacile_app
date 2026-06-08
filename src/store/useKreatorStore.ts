@@ -11,6 +11,7 @@ export type AIModel =
   // legacy/alt
   | 'veo-3' | 'veo-3.1'
   | 'grok-imagine-i2v' | 'grok-imagine-t2v'
+  | 'grok-imagine-1.5-preview'
   | 'bytedance/seedance-1.5-pro' | 'bytedance/seedance-2'
   | 'kling-2.1' | 'kling-2.5' | 'kling-2.6' | 'kling-3.0'
   // OpenRouter additions
@@ -37,6 +38,10 @@ export type VeoDuration = 4 | 6 | 8;
 export type GrokAspect = '2:3' | '3:2' | '1:1' | '16:9' | '9:16';
 export type GrokMode = 'amusant' | 'normale' | 'epice';
 export type GrokResolution = '480p' | '720p';
+
+// Grok Imagine Video 1.5 Preview
+export type Grok15Aspect = '1:1' | '16:9' | '9:16';
+export type Grok15Resolution = '480p' | '720p';
 
 // Seedance
 export type SeedanceAspect = '1:1' | '21:9' | '4:3' | '3:4' | '16:9' | '9:16';
@@ -91,6 +96,11 @@ export interface ModelSettings {
   grok_duration?: number; // 6..30
   grok_resolution?: GrokResolution;
   grok_image_urls?: string[]; // i2v max 7
+  // Grok Imagine Video 1.5 Preview
+  grok15_image_url?: string;
+  grok15_aspect?: Grok15Aspect;
+  grok15_resolution?: Grok15Resolution;
+  grok15_duration?: number; // 4..15, default 8
   // Seedance 1.5 Pro
   seedance_image_urls?: string[]; // max 2
   seedance_aspect?: SeedanceAspect;
