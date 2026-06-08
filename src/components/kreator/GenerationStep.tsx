@@ -878,9 +878,49 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       <StepContainer stepNumber={5} title="Génération">
         <div id="generation-step-block" />
         {status === 'idle' && (
-          <p className="text-sm text-muted-foreground text-center py-4">
-            Choisissez une idée ci-dessus et cliquez sur « Générer le contenu » pour lancer la génération.
-          </p>
+          <div className="space-y-4">
+            {promptOnlyLoading && (
+              <p className="text-sm text-muted-foreground text-center py-2">
+                Génération du prompt en cours…
+              </p>
+            )}
+            {!prompt_fr && !promptOnlyLoading && (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Choisissez une idée ci-dessus et cliquez sur « Générer le prompt » pour préparer le contenu.
+              </p>
+            )}
+            {prompt_fr && (
+              <div className="bg-card rounded-card p-4 md:p-5 border border-foreground/10">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-semibold text-foreground">Prompt (modifiable)</label>
+                  <span className="text-xs text-muted-foreground">{prompt_fr.length} car.</span>
+                </div>
+                <Textarea
+                  value={prompt_fr}
+                  onChange={(e) => setPromptFr(e.target.value)}
+                  className="bg-background border-foreground/10 text-foreground text-sm resize-none whitespace-pre-wrap leading-6 font-mono"
+                  style={{
+                    minHeight: `${Math.max(
+                      200,
+                      (Math.ceil(prompt_fr.length / 70) + (prompt_fr.match(/\n/g)?.length || 0) + 1) * 24
+                    )}px`,
+                  }}
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Vos modifications seront utilisées telles quelles lors de la génération du contenu.
+                </p>
+                <div className="flex justify-center mt-4">
+                  <Button
+                    onClick={() => handleGenerate({ forcePromptRegen: false })}
+                    className="py-6 px-8 text-base font-extrabold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
+                  >
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    {buttonLabel}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         )}
 
         {status === 'generating' && (
