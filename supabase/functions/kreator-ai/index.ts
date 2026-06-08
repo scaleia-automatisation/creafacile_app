@@ -648,41 +648,89 @@ serve(async (req) => {
           return jsonResp({ task_id: tid, done: false, provider_id: orId });
         }
 
-        // ---------- GROK IMAGINE ----------
+        // ---------- GROK IMAGINE VIDEO (via OpenRouter) ----------
         case "grok-imagine-t2v":
-          kieModel = "grok/imagine";
-          input.aspect_ratio = ms.grok_aspect || aspectFromFormat;
-          if (ms.grok_mode) input.mode = ms.grok_mode;
-          if (ms.grok_duration) input.n_frames = ms.grok_duration;
-          if (ms.grok_resolution) input.resolution = ms.grok_resolution;
-          break;
-        case "grok-imagine-i2v": {
-          kieModel = "grok/imagine";
-          const refs = Array.isArray(ms.grok_image_urls) ? ms.grok_image_urls.filter(Boolean) : [];
-          if (refs.length === 0) return jsonError(400, "Grok Imagine I2V requiert au moins une image.");
-          input.image_urls = refs;
-          input.aspect_ratio = ms.grok_aspect || aspectFromFormat;
-          if (ms.grok_mode) input.mode = ms.grok_mode;
-          if (ms.grok_duration) input.n_frames = ms.grok_duration;
-          if (ms.grok_resolution) input.resolution = ms.grok_resolution;
-          break;
-        }
-
-        // ---------- GROK IMAGINE VIDEO 1.5 PREVIEW ----------
+        case "grok-imagine-i2v":
         case "grok-imagine-1.5-preview": {
-          kieModel = "grok-imagine-video-1-5-preview";
-          if (!ms.grok15_image_url) {
-            return jsonError(400, "Grok Imagine 1.5 Preview requiert une image d'entrée.");
+          const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
+          if (!OPENROUTER_API_KEY) return jsonError(500, "OPENROUTER_API_KEY non configurée");
+
+          const orModel = "x-ai/grok-imagine-video";
+
+          // Determine aspect / resolution / duration / images based on sub-model
+          let grokAspect: string | undefined;
+          let grokResolution: string | undefined;
+          let grokDuration: number | undefined;
+          let primaryImage: string | undefined;
+          let referenceImages: string[] = [];
+
+          if (ai_model === "grok-imagine-t2v") {
+            grokAspect = ms.grok_aspect || aspectFromFormat;
+            grokResolution = ms.grok_resolution || "720p";
+            grokDuration = ms.grok_duration;
+          } else if (ai_model === "grok-imagine-i2v") {
+            const refs = Array.isArray(ms.grok_image_urls) ? ms.grok_image_urls.filter(Boolean) : [];
+            if (refs.length === 0) return jsonError(400, "Grok Imagine I2V requiert au moins une image.");
+            if (refs.length === 1) primaryImage = refs[0];
+            else referenceImages = refs.slice(0, 7);
+            grokAspect = ms.grok_aspect || aspectFromFormat;
+            grokResolution = ms.grok_resolution || "720p";
+            grokDuration = ms.grok_duration;
+          } else {
+            // grok-imagine-1.5-preview → maps to same OpenRouter video model
+            if (!ms.grok15_image_url) {
+              return jsonError(400, "Grok Imagine 1.5 Preview requiert une image d'entrée.");
+            }
+            primaryImage = ms.grok15_image_url;
+            grokAspect = ms.grok15_aspect || aspectFromFormat || "16:9";
+            grokResolution = ms.grok15_resolution || "720p";
+            grokDuration = ms.grok15_duration ?? 8;
           }
-          input.image_urls = [ms.grok15_image_url];
-          input.aspect_ratio = ms.grok15_aspect || aspectFromFormat || "auto";
-          input.resolution = ms.grok15_resolution || "720p";
-          input.duration = ms.grok15_duration ?? 8;
-          // Grok Imagine 1.5 prompt limit: 4096 chars
-          if (typeof input.prompt === "string" && input.prompt.length > 4000) {
-            input.prompt = input.prompt.slice(0, 4000);
+
+          // OpenRouter Grok Imagine Video supports aspects: 1:1,16:9,9:16,4:3,3:4,3:2,2:3
+          const allowedAspects = new Set(["1:1","16:9","9:16","4:3","3:4","3:2","2:3"]);
+          if (!grokAspect || !allowedAspects.has(grokAspect)) grokAspect = "16:9";
+
+          let grokPrompt = typeof prompt === "string" ? prompt : "";
+          // OpenRouter / Grok Imagine prompt safety: cap well under 4096
+          if (grokPrompt.length > 3900) grokPrompt = grokPrompt.slice(0, 3900);
+
+          const orBody: Record<string, any> = {
+            model: orModel,
+            prompt: grokPrompt,
+            aspect_ratio: grokAspect,
+            resolution: grokResolution,
+          };
+          if (grokDuration) orBody.duration = grokDuration;
+          if (primaryImage) orBody.image_url = primaryImage;
+          if (referenceImages.length > 0) orBody.reference_image_urls = referenceImages;
+
+          console.log(`[openrouter_grok_start] ai_model=${ai_model} → ${orModel}`, JSON.stringify(orBody).substring(0, 400));
+
+          const orRes = await fetch("https://openrouter.ai/api/v1/videos", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(orBody),
+          });
+          const orText = await orRes.text();
+          if (!orRes.ok) {
+            console.error("OpenRouter Grok Imagine start error:", orRes.status, orText);
+            const fallbackable = orRes.status >= 500 || /unavailable|maintenance|temporarily|overloaded/i.test(orText);
+            if (fallbackable) {
+              return jsonFallback(`Grok Imagine (OpenRouter) est temporairement indisponible. Merci d'en choisir un autre (Sora 2 Pro, Veo 3.1, Kling, Seedance).`, { provider_status: orRes.status, provider: "openrouter" });
+            }
+            return jsonError(orRes.status === 429 ? 429 : 400, `Erreur OpenRouter Grok Imagine: ${orText.slice(0, 300)}`);
           }
-          break;
+          let orJson: any;
+          try { orJson = JSON.parse(orText); } catch { return jsonError(500, "Réponse OpenRouter invalide"); }
+          const orId = orJson?.id;
+          const pollingUrl = orJson?.polling_url;
+          if (!pollingUrl) return jsonError(500, "OpenRouter n'a pas retourné de polling_url");
+          const tid = `or:${btoa(pollingUrl)}`;
+          return jsonResp({ task_id: tid, done: false, provider_id: orId });
         }
 
         // ---------- SEEDANCE ----------
