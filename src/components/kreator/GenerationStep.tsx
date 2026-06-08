@@ -184,6 +184,7 @@ const GenerationStep = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [promptOnlyLoading, setPromptOnlyLoading] = useState(false);
 
   const buttonLabel = type === 'image' ? 'Générer le contenu' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
