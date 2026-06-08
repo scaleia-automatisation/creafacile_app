@@ -739,6 +739,7 @@ ${hasVoiceOver
 - Texte EXACT à prononcer mot pour mot, sans modification, sans reformulation, sans ajout, sans suppression : "${params.voiceOverText}".
 - LANGUE : strictement ${voLang}, accent natif neutre, registre familier/parlé naturel de cette langue. Interdiction absolue de traduire, mixer, doubler ou sous-titrer dans une autre langue.
 - Maximum ${voiceOverMaxWords} mots (calibré pour ${videoDuration}s : 18 mots/8s, 25 mots/10s, 35 mots/15s).
+- MOTS FACILES À PRONONCER : privilégier des mots courts, courants, fluides, sans liaisons piégeuses, sans mots techniques ou rares, sans sigles, sans anglicismes complexes, sans nombres écrits en chiffres (écrire "trois" plutôt que "3"). Éviter tout mot qui pourrait faire buguer la synthèse vocale (mots étrangers non assimilés, noms propres difficiles, suites de consonnes dures, apostrophes multiples). Phrasé naturel, rythme régulier.
 - Doit être un hook puissant, mémorable, émotionnel, fluide, donnant envie d'acheter, naturel.
 - Doit se terminer au moins 2s AVANT la fin de la vidéo (≤ ${Math.max(1, videoDuration - 2)}s). Aucun mot dans les 2 dernières secondes.`
   : `- Voix off DÉSACTIVÉE par l'utilisateur. NE PAS générer de voix off. NE PAS inclure de bloc "VOIX OFF UNIQUE" dans la sortie. La vidéo s'appuie uniquement sur le visuel, le sound design et les éventuels textes à l'écran.`}
@@ -1156,41 +1157,50 @@ Puis présenter le produit/service de façon 100% FIDÈLE à ce nom et cette des
 ${params.contentType !== 'video' ? `[SECTION 2bis] BACKGROUND PUISSANT & ANGLE MARKETING (OBLIGATOIRE pour image et carousel — NON NÉGOCIABLE) :
 [Décrire EXPLICITEMENT et de façon visible : (a) un ARRIÈRE-PLAN fort, travaillé, contextuel, cinématographique (jamais plat / uni vide / générique), cohérent avec le produit/service "${params.productService || 'le produit/service'}" et le secteur "${params.companySector || 'n/c'}" — préciser décor réel, ambiance lumineuse, textures, profondeur, éléments secondaires choisis pour magnifier le produit sans le concurrencer ; (b) un ANGLE MARKETING FORT nommé clairement (ex : transformation, désir immédiat, statut/aspiration, urgence, preuve sociale, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) ; (c) la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (contraste produit/fond, direction du regard, hiérarchie, codes émotionnels). Pour le carousel : décliner ce background et cet angle de manière cohérente sur toutes les slides.]
 
-` : ''}${params.contentType === 'video' ? `[SECTION 3] Script vidéo publicitaire (structure obligatoire) :
+` : ''}${params.contentType === 'video' ? `[SECTION 3] Script vidéo publicitaire (structure OBLIGATOIRE — modèle à reproduire À L'IDENTIQUE) :
+
+Titre : Vidéo publicitaire ${params.productService || '[Nom de l\'offre]'} — ${videoDuration} secondes (${videoSceneCount} scènes)
+
 ANALYSE STRATÉGIQUE
 - Angle marketing retenu : ${params.marketingAngle ? `« ${params.marketingAngle} »` : 'déduire automatiquement le plus performant selon l\'objectif (Transformation, Désir, Preuve sociale, Résolution de problème, Émotion, Premium, Gain de temps, Gain d\'argent, Confort, Urgence…)'}
-- Émotion principale recherchée : déduire automatiquement (1 à 2 mots).
+- Émotion principale recherchée : déduire automatiquement (1 à 2 mots), 100% cohérente avec l'offre (${params.productService || 'n/c'}), la description (${params.productDescription || 'n/c'}), le secteur (${params.companySector || 'n/c'}), le persona (${params.targetPersona || 'n/c'}) et l'objectif (${params.objective || 'n/c'}).
 
-SCRIPT VIDÉO (${videoSceneCount} scènes — total ${videoDuration}s — 150 à 200 mots MAX)
+SCRIPT VIDÉO (${videoSceneCount} scènes — total ${videoDuration}s — 150 à 200 mots MAX, jamais moins de 150, jamais plus de 200)
+
+RÈGLE DE DÉCOUPAGE TEMPOREL : répartir les ${videoDuration}s en ${videoSceneCount} scènes contiguës et calculer le timecode de chaque scène sous la forme "(Xs - Ys)" (ex : (0s - 2,5s)). La fin de la dernière scène doit être exactement ${videoDuration}s.
 
 Titres de scènes IMPOSÉS dans cet ordre exact :
 ${videoSceneCount === 2
-  ? `• SCÈNE 1 — HOOK VISUEL\n• SCÈNE 2 — HERO SHOT / CTA`
+  ? `• Scène 1 — HOOK VISUEL\n• Scène 2 — HERO SHOT / CTA`
   : videoSceneCount === 3
-  ? `• SCÈNE 1 — HOOK VISUEL\n• SCÈNE 2 — DÉMONSTRATION / VALEUR\n• SCÈNE 3 — HERO SHOT / CTA`
-  : `• SCÈNE 1 — HOOK VISUEL\n• SCÈNE 2 — DÉMONSTRATION / VALEUR\n• SCÈNE 3 — RÉSULTAT / DÉSIR\n• SCÈNE 4 — HERO SHOT / CTA`}
+  ? `• Scène 1 — HOOK VISUEL\n• Scène 2 — DÉMONSTRATION / VALEUR\n• Scène 3 — HERO SHOT / CTA`
+  : `• Scène 1 — HOOK VISUEL\n• Scène 2 — DÉMONSTRATION / VALEUR\n• Scène 3 — RÉSULTAT / DÉSIR\n• Scène 4 — HERO SHOT / CTA`}
 
-Pour CHAQUE scène, écrire EXACTEMENT dans cet ordre (un champ par ligne) :
-SCÈNE N — [TITRE IMPOSÉ]
-Durée : [Xs]
-Objectif de la scène : [phrase courte]
-Type de plan : [gros plan / très gros plan / plan moyen / hero shot / plan produit / plan immersif…]
-Mouvement caméra : [push in / zoom avant lent / dolly in / orbit / travelling latéral / tilt / panoramique…]
-Action : [description détaillée, physiquement réaliste, ordre exact des actions, animation du sujet : ce qui bouge, comment, dans quel ordre, à quelle vitesse, avec quelle intention ; cohérence cause→effet ; aucune action impossible]
-Éclairage : [type, intensité, ambiance]
-Background : [décor, profondeur, textures, environnement, cohérence avec l'offre]
-Intention marketing : [pourquoi cette scène existe]
+Pour CHAQUE scène, écrire EXACTEMENT ce gabarit (reproduire à l'identique, en remplissant les crochets, avec sauts de ligne) :
 
-CONTRAINTES : somme des durées = ${videoDuration}s exactement ; chaque scène compatible avec la précédente ; continuité visuelle naturelle.
+Scène N (Xs - Ys)
 
-${hasVoiceOver ? `VOIX OFF UNIQUE
+Plan animation :
+ [Type de plan + mouvement caméra + animation détaillée du sujet : ce qui bouge, comment, dans quel ordre, à quelle vitesse, avec quelle intention. Physiquement réaliste, cohérence cause→effet, aucune action impossible.]
+ [2 à 4 puces courtes décrivant chaque mouvement clé, chacune commençant par un espace puis un tiret long ou une action verbale concrète.]
+
+Background :
+ [Décor cohérent avec l'offre et le secteur ${params.companySector || ''}.]
+ [Éclairage précis : type, intensité, ambiance (chaud/froid, publicitaire, reflets, ombres).]
+ [Profondeur, textures, ambiance globale.]
+
+CONTRAINTES SCRIPT : somme des durées = ${videoDuration}s exactement ; continuité visuelle naturelle scène à scène ; chaque scène sert une intention marketing claire (attention → intérêt → désir → conversion).
+
+${hasVoiceOver ? `Voix off unique (${Math.max(1, videoDuration - 1)} secondes)
+
 "${params.voiceOverText}"
-(Langue : ${voLang}, UNE SEULE phrase continue couvrant toute la vidéo — jamais découpée scène par scène —, ≤ ${voiceOverMaxWords} mots, se termine ≥ 2s avant la fin soit ≤ ${Math.max(1, videoDuration - 2)}s. Hook puissant, mémorable, émotionnel, fluide, naturel.)
 
-` : ''}TEXTE ÉCRAN FINAL
-Ligne 1 : [Nom du produit ou service]
-Ligne 2 : [Slogan court]
-Ligne 3 : [CTA court : Découvrez maintenant / Essayez aujourd'hui / Commandez dès maintenant / Réservez votre démo / Commencez gratuitement…]]
+(Langue : ${voLang}. UNE SEULE phrase continue couvrant toute la vidéo — jamais découpée scène par scène. Maximum ${voiceOverMaxWords} mots. Mots FACILES À PRONONCER : courts, courants, fluides, sans mots techniques/rares, sans sigles, sans anglicismes complexes, sans nombres en chiffres, sans suites de consonnes dures, sans noms propres difficiles, rien qui puisse faire buguer la synthèse vocale. Hook puissant, mémorable, émotionnel, naturel. Se termine ≥ 2s avant la fin, soit ≤ ${Math.max(1, videoDuration - 2)}s.)
+
+` : ''}Texte écran final
+
+🌺 [NOM DU PRODUIT OU SERVICE EN MAJUSCULES — reprendre exactement ${params.productService || '[Nom de l\'offre]'}]
+[Slogan court ≤ 6 mots, cohérent avec l'offre et l'angle marketing.]
 
 ` : params.contentType === 'carousel' ? `[SECTION 3] Déroulé des slides :
 [slide 1 hook, slide 2 émotion/problème, slide 3 preuve/résultat, slide 4 CTA — cohérence visuelle entre slides]
