@@ -16,9 +16,6 @@ const ManualIdeaPanel = () => {
   const [improving, setImproving] = useState(false);
   const improvedOnceRef = useRef(false);
   const lastTypeRef = useRef<string>(type);
-
-  if (!manual_idea_mode) return null;
-
   const missing: string[] = [];
   if (!offer_type?.trim()) missing.push("type d'offre");
   if (!product_service?.trim()) missing.push('Nom');
@@ -94,6 +91,8 @@ ${manual_idea_text}`;
     handleImproveIdea();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
+
+  if (!manual_idea_mode) return null;
 
   const handleUseManualIdea = () => {
     if (!manual_idea_text.trim()) {
