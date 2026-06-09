@@ -159,7 +159,7 @@ ${manual_idea_text}`;
           className="flex-1 gap-2 font-bold"
         >
           <FileText className="w-4 h-4" />
-          Générer le prompt
+          Voir le prompt
         </Button>
         <Button
           type="button"
