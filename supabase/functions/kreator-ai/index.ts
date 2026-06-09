@@ -1321,7 +1321,9 @@ serve(async (req) => {
       const framingInstruction = ` IMPORTANT: strictly respect the ${aspectRatioParam} aspect ratio coming from the user's "format" field. Frame the scene so that ALL essential elements (the plate/dish, product, subject, logo, text) are FULLY VISIBLE within the frame — never crop, cut off, or hide any essential element. Leave safe margins around the subject. Compose the shot specifically for a ${aspectLabel} canvas.`;
       const enhancedPrompt = `Generate an image with aspect ratio ${aspectRatioParam} (${aspectLabel}).${framingInstruction} ${prompt || ""}${logoInstruction}`;
 
-      const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      let orRes: Response;
+      try {
+        orRes = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
@@ -1345,7 +1347,13 @@ serve(async (req) => {
             })(),
           ],
         }),
-      });
+        }, 120_000);
+      } catch (err) {
+        if ((err as any)?.name === "AbortError") {
+          return jsonError(504, "OpenRouter a mis trop de temps à générer l'image. Réessayez ou changez de modèle.");
+        }
+        throw err;
+      }
 
       const orText = await orRes.text();
       if (!orRes.ok) {
