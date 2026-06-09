@@ -1629,7 +1629,8 @@ export async function generateVideo(
   onProgress?: (pct: number) => void,
   abortSignal?: AbortSignal,
   modelSettings?: ModelSettings,
-  soraCharacterScenes?: { duration: number }[]
+  soraCharacterScenes?: { duration: number }[],
+  voiceOver?: { text: string; language: string }
 ) {
   const isKieModel = [
     'veo-3', 'veo-3.1', 'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
@@ -1638,6 +1639,57 @@ export async function generateVideo(
     'bytedance/seedance-1.5-pro', 'bytedance/seedance-2',
     'sora-2-t2v', 'sora-2-i2v', 'sora-2-pro-t2v', 'sora-2-pro-i2v', 'sora-2-pro-character',
   ].includes(aiModel);
+
+  // Helper local : applique le mux voix off post-génération si nécessaire.
+  const maybeMux = async (videoUrl: string): Promise<string> => {
+    if (!voiceOver?.text?.trim()) return videoUrl;
+    try {
+      const { requiresMuxVoiceOver, getVideoDurationSec } = await import('./voice-over');
+      if (!requiresMuxVoiceOver(aiModel)) return videoUrl;
+      const durationSec = getVideoDurationSec(aiModel, modelSettings || {});
+      if (onProgress) onProgress(92);
+
+      // 1) TTS server-side
+      const { data: ttsData, error: ttsErr } = await supabase.functions.invoke('tts-voiceover', {
+        body: { text: voiceOver.text.trim(), language: voiceOver.language || 'Français' },
+      });
+      if (ttsErr || !ttsData?.audio_base64) {
+        console.warn('[generateVideo] TTS failed, returning video without VO', ttsErr || ttsData);
+        return videoUrl;
+      }
+      if (onProgress) onProgress(95);
+
+      // 2) Mux client-side via ffmpeg.wasm
+      const { muxVideoWithVoiceOver } = await import('./video-mux');
+      const muxedBlob = await muxVideoWithVoiceOver({
+        videoUrl,
+        voiceOverMp3Base64: ttsData.audio_base64,
+        videoDurationSec: durationSec,
+      });
+      if (onProgress) onProgress(98);
+
+      // 3) Upload dans le bucket public
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return videoUrl;
+      const file = new File([muxedBlob], `${crypto.randomUUID()}.mp4`, { type: 'video/mp4' });
+      const path = `${user.id}/muxed/${crypto.randomUUID()}.mp4`;
+      const { error: upErr } = await supabase.storage.from('kreator-uploads').upload(path, file, {
+        cacheControl: '3600',
+        upsert: false,
+        contentType: 'video/mp4',
+      });
+      if (upErr) {
+        console.warn('[generateVideo] mux upload failed', upErr);
+        return videoUrl;
+      }
+      const { data: pub } = supabase.storage.from('kreator-uploads').getPublicUrl(path);
+      if (onProgress) onProgress(100);
+      return pub.publicUrl || videoUrl;
+    } catch (e) {
+      console.error('[generateVideo] mux pipeline error', e);
+      return videoUrl;
+    }
+  };
 
   // === kie.ai models — start + polling ===
   if (isKieModel) {
@@ -1653,7 +1705,7 @@ export async function generateVideo(
     });
     if (startError) throw startError;
     if (startData?.error) throw new Error(startData.error);
-    if (startData?.done && startData?.video_url) return startData.video_url;
+    if (startData?.done && startData?.video_url) return await maybeMux(startData.video_url);
 
     const taskId = startData?.task_id;
     if (!taskId) throw new Error('No task_id returned from kie.ai');
@@ -1671,8 +1723,7 @@ export async function generateVideo(
       if (pollError) { console.warn('kie.ai poll error', pollError); continue; }
       if (pollData?.error) throw new Error(pollData.error);
       if (pollData?.done && pollData?.video_url) {
-        if (onProgress) onProgress(100);
-        return pollData.video_url;
+        return await maybeMux(pollData.video_url);
       }
     }
     throw new Error('La génération vidéo kie.ai a pris trop de temps. Réessayez.');
