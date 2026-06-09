@@ -11,7 +11,7 @@ import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, 
 import StepContainer from './StepContainer';
 import { generateImage, generateVideo, generateCaption, generatePrompt, verifyGeneratedImage, type PlatformCaptions } from '@/lib/kreator-ai';
 import type { Json } from '@/integrations/supabase/types';
-import { getVideoDurationSec, supportsVoiceOver } from '@/lib/voice-over';
+import { getVideoDurationSec, supportsVoiceOver, supportsNativeVoiceOver } from '@/lib/voice-over';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -307,11 +307,11 @@ const GenerationStep = () => {
     textFont: options.text_font,
     textColor: options.text_color,
     voiceOverText:
-      type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
+      type === 'video' && voice_over_enabled && supportsNativeVoiceOver(ai_model) && voice_over_text.trim()
         ? voice_over_text.trim()
         : undefined,
     voiceOverLanguage:
-      type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
+      type === 'video' && voice_over_enabled && supportsNativeVoiceOver(ai_model) && voice_over_text.trim()
         ? (voice_over_language || 'Français')
         : undefined,
     videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
@@ -517,7 +517,18 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
 
       const [contentUrl, captionResult] = await raceAbort(Promise.all([
         isVideo
-          ? generateVideo(generationPrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
+          ? generateVideo(
+              generationPrompt,
+              ai_model,
+              format,
+              (pct) => setProgress(pct),
+              abortController.signal,
+              model_settings,
+              sora_character_scenes,
+              voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
+                ? { text: voice_over_text.trim(), language: voice_over_language || 'Français' }
+                : undefined,
+            )
           : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
         generateCaption({
           objective: (marketing_angle || objective) + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
