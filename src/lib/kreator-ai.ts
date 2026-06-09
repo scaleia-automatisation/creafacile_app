@@ -1678,6 +1678,9 @@ export async function generateVideo(
     throw new Error('La génération vidéo kie.ai a pris trop de temps. Réessayez.');
   }
 
+  if (!aiModel || !String(aiModel).trim()) {
+    throw new Error("Aucun modèle vidéo sélectionné. Choisissez un modèle vidéo dans 'Que voulez-vous créer ?' avant de générer.");
+  }
   throw new Error(`Modèle vidéo non supporté: ${aiModel}`);
 }
 
