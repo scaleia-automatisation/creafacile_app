@@ -773,7 +773,7 @@ serve(async (req) => {
           if (refs.length > 0) input.image_urls = refs;
           input.aspect_ratio = ms.seedance_aspect || aspectFromFormat;
           if (ms.seedance_resolution) input.resolution = ms.seedance_resolution;
-          if (ms.seedance_duration) input.duration = ms.seedance_duration;
+          if (ms.seedance_duration) input.duration = String(ms.seedance_duration);
           input.audio = !!ms.seedance_audio_enabled;
           break;
         }
@@ -790,7 +790,7 @@ serve(async (req) => {
           input.generate_audio = !!ms.seedance2_generate_audio;
           if (ms.seedance2_resolution) input.resolution = ms.seedance2_resolution;
           input.aspect_ratio = ms.seedance2_aspect || aspectFromFormat;
-          if (ms.seedance2_duration) input.duration = ms.seedance2_duration;
+          if (ms.seedance2_duration) input.duration = String(ms.seedance2_duration);
           break;
         }
 
@@ -808,7 +808,7 @@ serve(async (req) => {
             if (!ms.kling21_image_url) return jsonError(400, "Ce modèle Kling 2.1 requiert une image source.");
             input.image_url = ms.kling21_image_url;
           }
-          if (ms.kling21_duration) input.duration = ms.kling21_duration;
+          if (ms.kling21_duration) input.duration = String(ms.kling21_duration);
           if ((sub === "master-t2v" || sub === "image-to-video") && ms.kling21_aspect) {
             input.aspect_ratio = ms.kling21_aspect;
           }
@@ -826,7 +826,7 @@ serve(async (req) => {
           } else if (ms.kling25_aspect) {
             input.aspect_ratio = ms.kling25_aspect;
           }
-          if (ms.kling25_duration) input.duration = ms.kling25_duration;
+          if (ms.kling25_duration) input.duration = String(ms.kling25_duration);
           break;
         }
         case "kling-2.6": {
@@ -839,7 +839,7 @@ serve(async (req) => {
             input.aspect_ratio = ms.kling26_aspect;
           }
           input.audio = !!ms.kling26_audio_enabled;
-          if (ms.kling26_duration) input.duration = ms.kling26_duration;
+          if (ms.kling26_duration) input.duration = String(ms.kling26_duration);
           break;
         }
         case "kling-3.0": {
@@ -847,7 +847,7 @@ serve(async (req) => {
           if (ms.kling30_start_image_url) input.start_image_url = ms.kling30_start_image_url;
           if (ms.kling30_end_image_url) input.end_image_url = ms.kling30_end_image_url;
           input.audio = !!ms.kling30_audio_enabled;
-          if (ms.kling30_duration) input.duration = ms.kling30_duration;
+          if (ms.kling30_duration) input.duration = String(ms.kling30_duration);
           if (ms.kling30_mode) input.mode = ms.kling30_mode;
           break;
         }
