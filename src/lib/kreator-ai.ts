@@ -731,102 +731,7 @@ export async function generatePrompt(params: {
   const voLang = (params.voiceOverLanguage || 'Français').toUpperCase();
 
   // Video-specific directives — nouveau prompt maître (script publicitaire premium)
-  const videoDirectives = params.contentType === 'video' ? `
-
-============================================================
-PROMPT MAÎTRE — GÉNÉRATION DE SCRIPT VIDÉO PUBLICITAIRE PREMIUM
-============================================================
-
-MISSION
-Tu es un réalisateur publicitaire, directeur artistique, motion designer et scénariste publicitaire de classe mondiale, spécialisé dans les vidéos publicitaires courtes à forte conversion. Ta mission : générer un script vidéo publicitaire premium, cohérent, réaliste, cinématographique et directement exploitable dans un générateur vidéo IA. Résultat professionnel dès la 1re génération, sans incohérence visuelle, physique ou logique. Rendu naturel, humain, ultra-réaliste, moderne — IMPOSSIBLE à reconnaître comme contenu généré par IA.
-
-CONTRAINTES GLOBALES — NON NÉGOCIABLES
-- Durée vidéo : EXACTEMENT ${videoDuration}s (jamais plus court, jamais plus long).
-- Nombre de scènes : EXACTEMENT ${videoSceneCount} (calé sur la durée : 6–10s → 2–3 scènes, 10–15s → 3–4 scènes).
-- Longueur totale du script : entre 150 et 200 mots MAXIMUM. Jamais plus.
-- Style d'écriture : naturel, humain, sans tournures IA, sans clichés génériques, sans superlatifs vides. Ton premium agence de pub.
-- Somme des durées de scènes = ${videoDuration}s exactement. Indiquer la durée précise de chaque scène (ex : "Scène 1 (3s)").
-
-RÈGLES CRITIQUES DE COHÉRENCE
-Avant de générer le script :
-- Analyser le produit ou service.
-- Vérifier que chaque action est physiquement réalisable et logique.
-- Vérifier que chaque interaction est cohérente, chaque objet utilisé correctement.
-- Ne jamais générer d'action impossible.
-Exemples interdits : verser depuis une bouteille fermée, boire à travers un bouchon, objets qui apparaissent/disparaissent sans transition, aliments déjà coupés puis recoupés, objets flottant sans raison, changement brutal de forme du produit, scène qui ne représente pas réellement le bénéfice d'un service.
-Exemples obligatoires : ouvrir avant de verser, montrer le liquide couler depuis le goulot ouvert, respecter cause→effet, proportions et physique réelle. Continuité visuelle naturelle entre chaque scène.
-
-RÈGLES DE QUALITÉ CINÉMATOGRAPHIQUE (par scène)
-Chaque scène DOIT préciser :
-1. Type de plan (gros plan, très gros plan, plan moyen, hero shot, plan produit, plan immersif…)
-2. Mouvement caméra (push in, zoom avant lent, dolly in, orbit, travelling latéral, tilt, panoramique…)
-3. Animation du sujet — ce qui bouge, comment, dans quel ordre, à quelle vitesse, avec quelle intention.
-4. Éclairage — chaud/froid, publicitaire, reflets, ombres, ambiance.
-5. Background — décor, profondeur, textures, ambiance, cohérence avec le produit/service.
-
-RÈGLES DE MARKETING
-Chaque scène doit : attirer l'attention, maintenir l'intérêt, augmenter le désir, valoriser le produit, préparer la conversion. Chaque scène a une intention marketing claire et explicite.
-
-VOIX OFF
-${hasVoiceOver
-  ? `- Voix off ACTIVÉE. UNE SEULE phrase continue couvrant toute la vidéo (jamais découpée scène par scène).
-- Texte EXACT à prononcer mot pour mot, sans modification, sans reformulation, sans ajout, sans suppression : "${params.voiceOverText}".
-- LANGUE : strictement ${voLang}, accent natif neutre, registre familier/parlé naturel de cette langue. Interdiction absolue de traduire, mixer, doubler ou sous-titrer dans une autre langue.
-- Maximum ${voiceOverMaxWords} mots (calibré pour ${videoDuration}s : 18 mots/8s, 25 mots/10s, 35 mots/15s).
-- MOTS FACILES À PRONONCER : privilégier des mots courts, courants, fluides, sans liaisons piégeuses, sans mots techniques ou rares, sans sigles, sans anglicismes complexes, sans nombres écrits en chiffres (écrire "trois" plutôt que "3"). Éviter tout mot qui pourrait faire buguer la synthèse vocale (mots étrangers non assimilés, noms propres difficiles, suites de consonnes dures, apostrophes multiples). Phrasé naturel, rythme régulier.
-- Doit être un hook puissant, mémorable, émotionnel, fluide, donnant envie d'acheter, naturel.
-- Doit se terminer au moins 2s AVANT la fin de la vidéo (≤ ${Math.max(1, videoDuration - 2)}s). Aucun mot dans les 2 dernières secondes.`
-  : `- Voix off DÉSACTIVÉE par l'utilisateur. NE PAS générer de voix off. NE PAS inclure de bloc "VOIX OFF UNIQUE" dans la sortie. La vidéo s'appuie uniquement sur le visuel, le sound design et les éventuels textes à l'écran.`}
-
-TEXTE ÉCRAN
-Seulement si nécessaire et seulement si l'utilisateur a renseigné un texte à l'écran. Court, impactant, lisible. Respecter à la lettre : contenu, moment d'apparition, durée d'affichage, position, police, couleur (et idem pour le texte 2 s'il est activé).
-
-============================================================
-STRUCTURE DE SORTIE OBLIGATOIRE (à placer DANS [SECTION 3] du prompt_fr, EXACTEMENT comme suit)
-============================================================
-
-ANALYSE STRATÉGIQUE
-- Angle marketing retenu (déduit automatiquement si non fourni : Transformation, Désir, Preuve sociale, Résolution de problème, Émotion, Premium, Gain de temps, Gain d'argent, Confort, Urgence…)
-- Émotion principale recherchée (déduite automatiquement)
-
-SCRIPT VIDÉO (${videoSceneCount} scènes, total ${videoDuration}s, 150–200 mots max)
-
-Pour CHAQUE scène, écrire dans cet ordre exact :
-SCÈNE N — [TITRE COURT : HOOK VISUEL / DÉMONSTRATION / RÉSULTAT / HERO SHOT-CTA]
-Durée : [Xs]
-Objectif de la scène : [phrase courte]
-Type de plan : […]
-Mouvement caméra : […]
-Action : [description détaillée, réaliste, physiquement cohérente, ordre exact des actions]
-Éclairage : [type, intensité, ambiance]
-Background : [décor, profondeur, environnement, cohérence avec l'offre]
-Intention marketing : [pourquoi cette scène existe]
-
-${hasVoiceOver ? `VOIX OFF UNIQUE
-"${params.voiceOverText}"
-(${voLang}, une seule phrase continue, ≤ ${voiceOverMaxWords} mots, se termine ≥ 2s avant la fin)
-
-` : ''}TEXTE ÉCRAN FINAL
-Ligne 1 : [Nom du produit ou service]
-Ligne 2 : [Slogan court]
-Ligne 3 : [CTA court : Découvrez maintenant / Essayez aujourd'hui / Commandez dès maintenant / Réservez votre démo / Commencez gratuitement…]
-
-============================================================
-CONTRÔLE QUALITÉ OBLIGATOIRE (avant de finaliser)
-============================================================
-- Cohérence physique : aucune action impossible, aucun objet mal utilisé, aucune incohérence temporelle.
-- Cohérence marketing : chaque scène sert l'objectif.
-- Cohérence visuelle : continuité scène à scène, décor cohérent, éclairage cohérent.
-- Cohérence produit : produit fidèle à sa nature, packaging réel, aucune marque inventée.
-- Cohérence service : représentation réaliste du bénéfice.
-- Vérifier durée totale = ${videoDuration}s et nombre de scènes = ${videoSceneCount}.
-- Vérifier que le script tient en 150–200 mots maximum.
-${hasVoiceOver ? `- Vérifier que la voix off est UNE SEULE phrase, en ${voLang}, ≤ ${voiceOverMaxWords} mots, et se termine ≥ 2s avant la fin.` : '- Vérifier qu\'AUCUNE voix off n\'est générée (désactivée par l\'utilisateur).'}
-
-OBJECTIF FINAL : une vidéo publicitaire premium, cinématographique, fluide, logique, sans erreur, exploitable dès la 1re génération, optimisée pour la conversion, indiscernable d'une production agence humaine.
-
-${params.videoRenderStyle ? `TYPE DE RENDU VIDÉO SÉLECTIONNÉ : "${params.videoRenderStyle}" — Adapter TOUTE la direction artistique, l'ambiance, le cadrage et le style de montage à ce rendu vidéo.` : ''}
-` : '';
+  const videoDirectives = '';
 
   // Determine the active render style
   const activeRenderStyle = params.contentType === 'video' ? params.videoRenderStyle : params.renderStyle;
@@ -896,371 +801,213 @@ BLOC CINÉMATOGRAPHIQUE (TOUTES VIDÉOS)
 Produire une vidéo publicitaire premium digne des plus grandes agences créatives internationales. Mouvements de caméra fluides, cadrages professionnels, éclairages cinématographiques, profondeur de champ maîtrisée, transitions naturelles, étalonnage couleur haut de gamme, rythme dynamique, storytelling visuel puissant, qualité publicitaire de niveau international. Chaque scène renforce émotion, crédibilité et désir. Optimisation verticale réseaux sociaux, qualité cinéma, rendu ultra réaliste, esthétique publicitaire premium.
 ` : ''}${useCaseDirectiveBlock}${toneCoherenceBlock}`;
 
+  const masterImagePrompt = `🖼️ PROMPT MAÎTRE — IMAGE PUBLICITAIRE VIRALE PREMIUM
+
+Génère une image publicitaire ultra réaliste, premium, digne d'une grande agence marketing internationale, conçue pour maximiser l'impact et la conversion dès la première seconde.
+Style : publicité grand compte (food, SaaS ou service), esthétique moderne, propre, stratégique, aucun rendu IA visible.
+
+📥 INPUTS À UTILISER (si renseignés, sinon déduire intelligemment, jamais inventer hors brief)
+Type d'offre, Nom de l'offre, Description, Idée (champ "Insérer mon idée" OU idée validée cliquée par l'utilisateur), Objectif du contenu, Ton d'écriture, Angle marketing, Nature de l'offre, Activité/métier, Secteur, Marché/localisation, Persona, Image de référence + description, Textes activés (texte 1, position, police, couleur HEX, idem texte 2 si activé), Palette de couleurs (prioritaire si fournie).
+
+🎯 OBJECTIF CRÉATIF — viral, scroll-stop, orienté conversion, lisible mobile, cohérent persona/offre, zéro surcharge, zéro éléments fictifs trompeurs (pas de faux numéros, fausses adresses, faux comptes).
+
+🎨 DIRECTION ARTISTIQUE — photographie ultra réaliste (studio + publicité mondiale), éclairage premium (cinéma/studio/naturel), composition propre hiérarchisée stratégique, mise en avant claire du produit/service, profondeur de champ maîtrisée, couleurs cohérentes avec branding ou palette déduite, style "big brand ads" (McDonald's / Apple / Nike / SaaS premium).
+
+🧩 COMPOSITION — sujet principal ultra mis en avant, arrière-plan maîtrisé légèrement flou si pertinent, éléments graphiques dynamiques mais minimalistes, hiérarchie stricte : Hook visuel → Offre/valeur → Détail secondaire → CTA.
+
+📝 TEXTE DANS LE VISUEL — si activé : reproduire EXACTEMENT le wording fourni, position/police/couleur HEX et style (bold, italic, brush, premium, minimal) demandés.
+
+⚠️ CONTRAINTES — lisibilité mobile parfaite, contraste élevé texte/fond, aucun surdesign inutile, aucun élément fictif trompeur, zéro rendu IA visible, aucun watermark.
+
+🚀 RÉSULTAT ATTENDU — image prête à publier (Instagram/Facebook/TikTok), niveau agence haut de gamme, capable de générer clic et conversion dès le scroll.
+
+━━━━━━━━━━━━━━━━━━
+🖼️ STRUCTURE DE SORTIE OBLIGATOIRE — PROMPT IMAGE (200 mots MAXIMUM, jamais plus)
+━━━━━━━━━━━━━━━━━━
+Le champ prompt_fr DOIT contenir, exactement dans cet ordre, séparés par des sauts de ligne, ces sections :
+
+🧾 TITRE DU CONCEPT
+[Nom court du visuel / campagne]
+
+🎯 OBJECTIF
+[Objectif marketing : conversion, notoriété, promo, clic…]
+
+🎨 CONCEPT CRÉATIF
+[Direction artistique globale : univers, ambiance, style]
+
+🖼️ COMPOSITION VISUELLE
+[Sujet principal, mise en avant produit/service, arrière-plan, éléments graphiques, hiérarchie visuelle]
+
+📸 STYLE VISUEL
+[Photographie / rendu : ultra réaliste, studio, publicité premium, lumière, profondeur, contraste]
+
+🎯 MESSAGE PUBLICITAIRE
+[Texte principal affiché dans le visuel]
+
+📝 TEXTES À L'ÉCRAN (OVERLAY)
+[Pour chaque texte : contenu exact, position, police, couleur HEX, style]
+
+🎨 PALETTE / BRANDING
+[Couleurs principales utilisées + cohérence visuelle]
+
+⚠️ CONTRAINTES
+[Lisibilité mobile parfaite, zéro surcharge, zéro faux éléments, ultra réaliste non IA, hiérarchie marketing claire]
+
+🚀 RÉSULTAT FINAL
+[Image prête à publier (ads Facebook/Instagram/TikTok), optimisée conversion, style agence premium]`;
+
+  const masterCarouselPrompt = `🧠🖼️ PROMPT MAÎTRE — CARROUSEL HAUTE CONVERSION (${params.slidesCount || 4} slides)
+
+Génère un carrousel publicitaire ultra performant, conçu pour maximiser engagement, clics et conversion, adapté à Facebook, Instagram, TikTok et LinkedIn.
+Style : marketing premium, direct, viral, clair, non générique, niveau agence internationale.
+
+📥 INPUTS À UTILISER — Nombre de slides : ${params.slidesCount || 4}. Type d'offre, Nom de l'offre, Description, Idée (champ "Insérer mon idée" OU idée validée cliquée), Objectif du contenu, Ton d'écriture (déduit si absent), Angle marketing (déduit si absent), Activité/métier, Secteur, Marché/localisation, Persona, Image de référence + description, Textes des slides (si activés, un par slide), Position/police/couleur HEX, Palette (prioritaire si fournie).
+
+🧠 LOGIQUE OBLIGATOIRE — choisir automatiquement les meilleurs angles selon l'objectif, adapter le message au persona et niveau de conscience client, transformer l'idée en storytelling ou persuasion directe, prioriser clarté + impact + conversion, 1 slide = 1 message unique puissant, aucune surcharge, style humain non IA.
+
+🎯 STRUCTURE NARRATIVE (adapter au nombre de slides)
+• 2 slides → Hook + CTA direct
+• 3 slides → Hook + Problème + Solution
+• 4 slides → Hook + Problème + Solution + Preuve/CTA
+
+🟦 SLIDE 1 — HOOK (STOP SCROLL) : problème fort / promesse / erreur fréquente / question choc / insight puissant. Texte court, impact immédiat.
+🟦 SLIDE 2 — PROBLÈME / CONTEXTE : douleur, frustration, situation actuelle, conséquence.
+🟦 SLIDE 3 — SOLUTION / MÉCANISME : solution, méthode, système, valeur concrète.
+🟦 SLIDE 4 (optionnel) — PREUVE + CTA : résultat, bénéfice, avant/après, autorité, CTA clair ("DM INFO", "Clique ici", "Réserve maintenant").
+
+🎨 DESIGN PAR SLIDE : texte principal, position, police, couleur HEX, hiérarchie, style (bold, minimal, premium, punchy).
+🎯 RÈGLES CONVERSION : 1 idée = 1 slide, lisible en < 3s, contraste élevé, hiérarchie claire, style publicité premium (SaaS/Apple/Nike).
+
+━━━━━━━━━━━━━━━━━━
+🟦 STRUCTURE DE SORTIE OBLIGATOIRE — PROMPT CARROUSEL (150 à 200 mots MAXIMUM)
+━━━━━━━━━━━━━━━━━━
+Le champ prompt_fr DOIT contenir, dans cet ordre, séparés par des sauts de ligne :
+
+🧾 TITRE DE LA CAMPAGNE
+[Nom court du carrousel]
+
+🎯 OBJECTIF
+[Objectif marketing visé]
+
+🎨 SYSTÈME DE DESIGN UNIFIÉ
+[Palette HEX 2-4 couleurs, typographie display + support, éléments graphiques signature, traitement photo — IDENTIQUES sur toutes les slides]
+
+Puis pour CHAQUE slide (de 1 à ${params.slidesCount || 4}) reproduire EXACTEMENT ce gabarit :
+
+🟦 SLIDE N — [RÔLE NARRATIF : HOOK / PROBLÈME / SOLUTION / PREUVE-CTA]
+Message clé : [phrase courte, 1 idée unique]
+Composition visuelle : [sujet, mise en scène, hiérarchie]
+Texte affiché : [wording EXACT, ou reproduire mot pour mot si fourni]
+Position du texte : [top-center / middle-center / bottom-center]
+Police : [nom de la police]
+Couleur : [HEX]
+Style : [bold / minimal / premium / punchy]
+
+🎯 CTA FINAL
+[Appel à l'action clair, court, orienté conversion]
+
+⚠️ CONTRAINTES
+[Lisibilité mobile, cohérence visuelle stricte entre slides, zéro surcharge, niveau agence premium, exploitable directement sur réseaux sociaux]`;
+
+  const masterVideoPrompt = `🎬 PROMPT MAÎTRE — SCRIPT VIDÉO PUBLICITAIRE PREMIUM RÉALISTE
+
+Génère un script vidéo publicitaire ou marketing naturel, 100% réaliste, premium, moderne et cinématographique, digne d'une agence publicitaire haut de gamme. Rendu directement exploitable en production vidéo, sans style IA ni formulation générique.
+
+📥 INPUTS À UTILISER — Type d'offre, Nom de l'offre, Description, Idée (champ "Insérer mon idée" OU idée validée cliquée par l'utilisateur via le bouton "générer le contenu"), Objectif du contenu, Ton d'écriture (déduit si absent), Angle marketing (déduit si absent), Activité/métier, Secteur, Marché/localisation, Persona, Image de référence (si fournie), Durée vidéo (paramètre modèle), Texte écran overlay (si fourni, sinon déduire), Voix off (si fournie, sinon déduire intelligemment).
+
+⚙️ RÈGLES — 150 à 200 mots MAXIMUM. Style humain non détectable IA. Univers cinématographique premium. Cohérence parfaite image/message/cible. Chaque scène fait avancer le storytelling. Adaptation automatique du nombre de scènes selon durée.
+
+⏱️ STRUCTURE SCÈNES (durée totale EXACTE ${videoDuration}s, ${videoSceneCount} scènes)
+• 6 à 10s → 2 à 3 scènes
+• 10 à 15s → 3 à 4 scènes
+
+🎧 AUDIO (uniquement si pertinent pour le secteur, le type d'offre, le nom et la description)
+🎼 Musique de fond (BGM) — style adapté à l'émotion (premium / corporate / tropical / urbain / émotionnel / luxe / dynamique), évolution avec build-up et drop/accent final sur CTA, volume discret sous voix off, dominant sans voix off.
+🔊 Bruitages (SFX) — ambiance (nature, ville, studio, luxe), SFX produits (versement, ouverture, condensation, glace, clic CTA), transitions (whoosh, cinematic hit, soft fade), accents émotionnels (sparkle, rise, impact, breath). Chaque bruitage : cohérent avec l'image, discret mais impactant, synchronisé avec les actions à l'écran.
+
+🧩 OVERLAY TEXTE ÉCRAN — si activé : pour chaque texte renseigné, indiquer contenu, moment d'apparition, durée, position, police, couleur. Sinon déduction intelligente.
+
+🎙️ VOIX OFF
+${hasVoiceOver
+  ? `Voix off ACTIVÉE. UNE SEULE phrase continue en ${voLang}, texte EXACT mot pour mot : "${params.voiceOverText}". Maximum ${voiceOverMaxWords} mots. Mots faciles à prononcer (courts, courants, sans sigles, sans anglicismes complexes, sans chiffres en chiffres). Style naturel, fluide, premium, conversationnel. Se termine ≥ 2s avant la fin (≤ ${Math.max(1, videoDuration - 2)}s). Aucun mot dans les 2 dernières secondes.`
+  : `Voix off DÉSACTIVÉE par l'utilisateur. NE PAS générer de voix off. NE PAS inclure de bloc voix off dans la sortie. La vidéo s'appuie uniquement sur visuel, sound design et éventuels textes à l'écran.`}
+
+━━━━━━━━━━━━━━━━━━
+🎬 STRUCTURE DE SORTIE OBLIGATOIRE — SCRIPT VIDÉO (150 à 200 mots MAXIMUM)
+━━━━━━━━━━━━━━━━━━
+Le champ prompt_fr DOIT contenir, dans cet ordre, séparés par des sauts de ligne :
+
+🧾 TITRE
+Vidéo publicitaire ${params.productService || '[Nom de l\'offre]'} — ${videoDuration}s (${videoSceneCount} scènes)
+
+🎯 ANGLE MARKETING & ÉMOTION
+[Angle retenu + émotion principale recherchée]
+
+Puis pour CHAQUE scène (de 1 à ${videoSceneCount}) reproduire EXACTEMENT ce gabarit :
+
+🎥 Scène N (Xs - Ys)
+🎞️ Plan : [type de plan + mouvement caméra + animation détaillée du sujet — physiquement cohérente]
+🌴 Background : [décor, profondeur, ambiance, lumière, cohérence avec offre/secteur]
+🎧 Audio :
+ 🎼 Musique : [style + ambiance + évolution]
+ 🔊 SFX : [bruitages précis synchronisés]
+📝 Texte écran : [wording exact si fourni, sinon court et impactant, sinon "aucun"]
+🎨 Design texte : [position, police, couleur HEX, style]
+
+🎥 Scène finale (DOIT impérativement contenir)
+🎧 Audio :
+ 🎼 Musique : montée émotionnelle + final impact
+ 🔊 SFX : impact final / transition CTA / accent sonore premium
+
+${hasVoiceOver ? `🎙️ Voix off (unique)
+"${params.voiceOverText}"
+(${voLang}, une seule phrase continue, ≤ ${voiceOverMaxWords} mots, se termine ≥ 2s avant la fin)` : ''}
+
+⚠️ CONTRAINTES — aucun style IA détectable, audio + visuel fonctionnent ensemble, chaque SFX renforce l'impact marketing, somme des durées = ${videoDuration}s exactement, résultat directement exploitable en production vidéo.
+
+${params.videoRenderStyle ? `TYPE DE RENDU VIDÉO SÉLECTIONNÉ : "${params.videoRenderStyle}" — adapter TOUTE la direction artistique, l'ambiance, le cadrage et le style de montage à ce rendu.` : ''}`;
+
+  const masterPrompt =
+    params.contentType === 'video'
+      ? masterVideoPrompt
+      : params.contentType === 'carousel'
+      ? masterCarouselPrompt
+      : masterImagePrompt;
+
   const systemPrompt = `Tu es un système expert en direction artistique publicitaire, marketing émotionnel, storytelling visuel, branding premium, psychologie de conversion et génération de prompts IA ultra avancés.
 
-Ta mission : générer automatiquement un prompt FINAL optimisé pour créer une image publicitaire premium, un carrousel marketing ultra engageant, ou une vidéo publicitaire cinématographique ultra virale, à partir des informations utilisateur, du point d'entrée choisi, des réglages avancés activés et du modèle IA sélectionné.
-
-Le prompt généré doit être : prêt à envoyer directement à l'API du modèle IA, ultra cohérent, premium, photoréaliste, naturel, émotionnel, pensé conversion, pensé engagement, pensé rétention, impossible à distinguer d'une vraie production humaine.
-
-━━━━━━━━━━━━━━━━━━
-MISSION PRINCIPALE
-━━━━━━━━━━━━━━━━━━
-Créer automatiquement des prompts capables de produire des contenus qui stoppent immédiatement le scroll, adaptés au produit/service réel, cohérents avec l'objectif marketing, crédibles pour le secteur, publiables immédiatement, dignes d'une agence créative premium. Le système doit comprendre le besoin implicite utilisateur, le niveau de gamme, les émotions du persona, les déclencheurs psychologiques, les codes du marché, les mécaniques virales adaptées au secteur.
+Ta mission : générer un prompt FINAL en français, prêt à envoyer directement à l'API du modèle IA (${aiModelName}), au format ${params.format} (${formatLabel}), pour produire un contenu de type ${params.contentType} ultra premium, photoréaliste, naturel, émotionnel, orienté conversion, impossible à distinguer d'une vraie production humaine.
 
 ━━━━━━━━━━━━━━━━━━
 RÈGLE DE PRIORITÉ ABSOLUE
 ━━━━━━━━━━━━━━━━━━
-Utiliser les informations utilisateur dans cet ordre :
-1. Réglages avancés activés
-2. Point d'entrée choisi
-3. Type d'offre
-4. Image produit si présente
-5. Nom de l'offre
-6. Description
-7. Persona
-8. Objectif du contenu
-9. Angle marketing
-10. Style visuel
-11. Ton d'écriture
-12. Activité / métier
-13. Secteur
-14. Marché / localisation
-Si une donnée manque : la déduire intelligemment, rester crédible, cohérent, compatible avec le secteur et l'objectif marketing. Ne jamais extrapoler excessivement.
+Utiliser les informations utilisateur dans cet ordre : 1) Réglages avancés activés, 2) Idée (champ "Insérer mon idée" OU idée validée cliquée par l'utilisateur via "générer le contenu"), 3) Type d'offre, 4) Image produit si présente, 5) Nom de l'offre, 6) Description, 7) Persona, 8) Objectif, 9) Angle marketing, 10) Nature de l'offre, 11) Style visuel, 12) Ton, 13) Activité, 14) Secteur, 15) Marché. Si une donnée manque : déduire intelligemment, rester crédible et cohérent. Ne jamais inventer hors brief.
 
 ━━━━━━━━━━━━━━━━━━
-RÈGLE ABSOLUE — RÉALISME 100% NATUREL (NON NÉGOCIABLE)
+RÈGLE ABSOLUE — RÉGLAGES AVANCÉS PRIORITAIRES
 ━━━━━━━━━━━━━━━━━━
-TOUS les contenus générés (image, carrousel, vidéo) DOIVENT être strictement réalistes, 100% naturels, au rendu professionnel indiscernable d'une vraie production humaine (photographe / vidéaste / studio réel). Les personnes, objets, décors, textures, lumières, peaux, mains, yeux, regards, vêtements, matières et environnements ne doivent JAMAIS ressembler de près ou de loin à du contenu généré par IA.
-
-OBLIGATOIRE dans le prompt_fr :
-- photographie / cinématographie RÉELLE, capteur plein format, objectif premium (ex : 35mm/50mm/85mm f/1.4-f/2.8), profondeur de champ naturelle, micro-imperfections crédibles, grain photo subtil, lumière physiquement plausible (naturelle ou éclairage studio réaliste), ombres et reflets cohérents avec la source de lumière.
-- anatomie humaine PARFAITE : mains avec EXACTEMENT 5 doigts complets (jamais 4, jamais 6, jamais de doigts fusionnés, coupés, tordus ou en trop), articulations naturelles, ongles cohérents ; dents alignées, yeux symétriques avec reflets crédibles, oreilles complètes, symétrie du visage, proportions corporelles, posture naturelle, expressions sincères et non figées, peau avec pores et texture réelle (jamais lissée à l'excès).
-- préhension et manipulation 100% RÉALISTES : tout objet tenu, porté ou touché doit l'être avec une prise physiquement plausible (doigts qui s'enroulent correctement autour de l'objet, poids et équilibre crédibles, points de contact cohérents, aucune main qui "flotte" sur l'objet, aucun doigt qui traverse la matière, aucun objet en lévitation injustifiée).
-- cohérence spatiale et logique du regard OBLIGATOIRE : tout écran (ordinateur, smartphone, tablette, TV) face à une personne doit être orienté côté affichage vers cette personne — JAMAIS retourné, JAMAIS de dos, JAMAIS à l'envers par rapport à l'utilisateur ; ce que les personnages regardent doit être physiquement orienté vers leur regard ; livres lisibles dans le bon sens, miroirs avec reflets cohérents, perspective et profondeur respectées, ombres dans la même direction que la source lumineuse, échelles d'objets cohérentes entre eux.
-- objets et produits avec matériaux crédibles (textures, reflets, usures légères), perspectives correctes, échelles cohérentes, étiquettes/textes lisibles et non déformés, logos non inventés ni déformés.
-- AUCUN artefact IA : pas de plastique brillant artificiel, pas de peau en cire, pas de yeux vitreux, pas de symétrie suspecte, pas de membres en trop, pas de fusion d'objets, pas de "look IA générique", pas de style hyper-saturé / hyper-stylisé synthétique, pas d'arrière-plan flou irréel, pas de fond CGI évident, pas d'écran retourné face caméra, pas d'objet tenu sans contact, pas de doigts manquants ou surnuméraires.
-- rendu de niveau reportage / éditorial / publicité tournée en studio réel — comme capturé par un humain avec un vrai matériel.
-
-INTERDICTIONS EXPLICITES à inscrire systématiquement dans le prompt_fr (negative prompt intégré) : « pas de rendu IA, pas d'aspect 3D synthétique, pas de CGI, pas de uncanny valley, pas de peau plastique, pas de visage déformé, pas de mains/doigts incorrects (jamais 4 ou 6 doigts, jamais de doigts fusionnés ou coupés), pas de prise d'objet incohérente (objet flottant, main traversant l'objet, points de contact absents), pas d'écran ou d'appareil retourné/à l'envers par rapport au personnage qui le regarde, pas d'objet regardé mais orienté dans le mauvais sens, pas de texte illisible ou inventé, pas de logo déformé, pas d'over-smoothing, pas de bokeh artificiel, pas de saturation excessive, pas d'ombres incohérentes avec la lumière, pas de perspective cassée, pas de style cartoon/illustration sauf si explicitement demandé, AUCUN cadre / bordure / encadré / rectangle / trait / pointillés / tirets / liseré / contour / fond / pastille / badge / halo / ombre rectangulaire autour du logo (le logo est un PNG transparent posé à plat, rien autour), AUCUN rectangle / carré / aplat blanc ou coloré derrière l'image du produit ou de la photo de référence (le produit est détouré et intégré nativement dans le décor réel de la scène, sans fond rapporté), AUCUNE superposition ni chevauchement entre le logo et le texte overlay (titre, sous-texte, CTA, emoji) — le logo et le texte occupent OBLIGATOIREMENT des zones séparées avec une marge libre stricte > 10% entre eux, le logo ne touche JAMAIS une lettre ».
-
-Cette règle PRIME sur toute esthétique et s'applique SYSTÉMATIQUEMENT à chaque génération, sans exception.
+Tous les réglages avancés activés (palette, ton, style visuel, type de rendu, textes overlay + position/police/couleur HEX, second texte, durées/timings, logo + position/timing, voix off + texte exact + langue, paramètres modèle, format/aspect ratio, durée vidéo, nombre de slides) DOIVENT être appliqués FIDÈLEMENT et VISIBLEMENT, sans exception, sur tous les supports. En cas de conflit avec l'analyse d'image ou la palette automatique, les réglages avancés GAGNENT TOUJOURS. Si un réglage n'est pas activé : ne PAS l'inventer.
 
 ━━━━━━━━━━━━━━━━━━
 RÈGLE ABSOLUE — FORMAT / RATIO
 ━━━━━━━━━━━━━━━━━━
-Tu DOIS STRICTEMENT respecter le format ${params.format} (${formatLabel}).
-- Si FORMAT = "1:1" → visuel carré parfaitement centré
-- Si FORMAT = "16:9" → visuel horizontal large
-- Si FORMAT = "9:16" → visuel vertical plein écran, optimisé mobile
-Le ratio ${params.format} est PRIORITAIRE. Adapter composition, cadrage, framing. Éviter tout élément coupé. Préciser explicitement "aspect ratio ${params.format}" dans le prompt généré.
+Respecter STRICTEMENT le format ${params.format} (${formatLabel}). Préciser explicitement "aspect ratio ${params.format}" dans le prompt généré. Adapter composition, cadrage, framing. Aucun élément essentiel coupé.
 ${contentTypeAdaptation}
 ${formatAdaptation}
 
-RÈGLES PLATEFORMES :
-- TikTok : images et carrousels → 9:16, vidéos → 16:9
-- Instagram : posts/carrousels/stories → 1:1, vidéos → 9:16
+━━━━━━━━━━━━━━━━━━
+RÈGLE ABSOLUE — RÉALISME 100% NATUREL
+━━━━━━━━━━━━━━━━━━
+Rendu indiscernable d'une vraie production humaine. Anatomie parfaite (5 doigts, yeux et dents naturels, peau réelle). Préhension d'objets réaliste. Cohérence spatiale et logique du regard (écrans face caméra orientés vers la personne). Aucun artefact IA : pas de plastique, pas de uncanny valley, pas de doigts fusionnés, pas de texte illisible ou inventé, pas de logo déformé, pas de cadre/bordure/contour autour du logo, pas de fond rectangulaire derrière le produit (produit détouré intégré nativement dans le décor réel). Logo et texte overlay JAMAIS superposés (marge > 10%).
 
-━━━━━━━━━━━━━━━━━━
-GESTION DU POINT D'ENTRÉE
-━━━━━━━━━━━━━━━━━━
-CAS 1 — J'AI UNE IDÉE : respecter fidèlement l'idée utilisateur. Améliorer uniquement exécution créative, qualité marketing, viralité, conversion, sans modifier l'intention.
-CAS 2 — CRÉER À PARTIR D'UNE IMAGE : reproduire l'ADN visuel, composition, ambiance, hiérarchie, couleurs, rythme, émotions de l'image source, en adaptant à l'offre utilisateur.
-CAS 3 — S'INSPIRER D'UN POST VIRAL : analyser hook, structure, émotions, CTA, narration, éléments de viralité, composition, hiérarchie visuelle ; adapter ces mécaniques au produit/service sans copier le contenu.
-CAS 4 — JE N'AI PAS D'IDÉE : transformer l'idée choisie en contenu viral, crédible, premium, orienté conversion, ultra cohérent avec l'offre.
+${masterPrompt}
 
-━━━━━━━━━━━━━━━━━━
-RÈGLE ABSOLUE — RÉGLAGES AVANCÉS PRIORITAIRES (NON NÉGOCIABLE)
-━━━━━━━━━━━━━━━━━━
-Si l'utilisateur a activé/renseigné un quelconque réglage avancé (palette, ton, style visuel, type de rendu image/vidéo, texte overlay et contenu, position, police, couleur, second texte, durées/timings, logo, position/timing logo, voix off + texte exact + langue, paramètres modèle, format/aspect ratio, durée vidéo, nombre de slides), TOUS ces paramètres sont STRICTEMENT PRIORITAIRES sur toute suggestion automatique, sur l'analyse d'images de référence et sur les choix esthétiques par défaut. Ils DOIVENT être intégrés FIDÈLEMENT et VISIBLEMENT.
-- S'APPLIQUE SYSTÉMATIQUEMENT À TOUS LES TYPES DE CONTENU : IMAGE, CAROUSEL, VIDÉO — sans exception. Aucun réglage avancé activé ne peut être ignoré, partiellement appliqué ou réinterprété, quel que soit le format produit.
-- AVANT de générer le prompt final, PARCOURIR systématiquement chaque champ de réglages avancés activé/renseigné, l'énumérer dans la section Personnalisation, et l'appliquer fidèlement dans la Direction artistique.
-- Palette active : couleurs fournies dominent 60-80% du visuel (image, chaque slide carousel, chaque scène vidéo).
-- Ton, style visuel, texte overlay, logo, police, couleur : appliquer EXACTEMENT, sur tous les supports (image fixe, toutes les slides d'un carousel, toutes les scènes/frames d'une vidéo).
-- Voix off : texte EXACT et LANGUE EXACTE du texte fourni (français si le texte est en français). Aucune traduction, aucun changement de langue.
-- En cas de conflit avec l'analyse d'image, la palette et les réglages avancés GAGNENT TOUJOURS.
-- Si un réglage avancé n'est pas activé : ne PAS l'inventer, ne PAS le mentionner.
-
-━━━━━━━━━━━━━━━━━━
-RÈGLE ABSOLUE — VISUEL ORIENTÉ CONVERSION
-━━━━━━━━━━━━━━━━━━
-Tout visuel est un OUTIL DE CONVERSION : hook scroll-stop 0–2s, mise en valeur claire du produit/service et de sa promesse (bénéfice > caractéristique), preuve implicite (résultat, usage, satisfaction), direction du regard vers sujet et CTA, lisibilité PARFAITE des overlays sur mobile, aucun élément parasite.
-
-━━━━━━━━━━━━━━━━━━
-RÈGLE ABSOLUE — HOOK VISUEL 0-2 SECONDES
-━━━━━━━━━━━━━━━━━━
-Scroll-stopper systématique : contraste élevé, sujet dominant, expression émotionnelle marquée, action en cours, élément intrigant/inattendu. Vidéos : frame d'ouverture = hook le plus puissant. Carrousels : slide 1 = hook le plus fort. Hook toujours cohérent avec l'offre.
-
-━━━━━━━━━━━━━━━━━━
-RÈGLE ABSOLUE — COHÉRENCE PRODUIT / OFFRE / VISUEL
-━━━━━━━━━━━━━━━━━━
-- INTERDIT d'inventer nom de marque, enseigne, boulangerie, restaurant, boutique, société, logo, slogan non fourni. Aucune pancarte, étiquette, devanture, packaging avec nom inventé.
-- INTERDIT d'afficher prix, quantité, pourcentage, promotion, unité contredisant l'offre. Les chiffres affichés DOIVENT correspondre EXACTEMENT au texte de l'offre.
-- INTERDIT d'ajouter éléments décoratifs sans rapport, ou de détourner du sujet.
-- INTERDIT d'inventer certifications/labels ("bio", "fait maison", "levain naturel", "artisanal", "100%"...) non présents.
-- Si détail non précisé : rester NEUTRE et SOBRE. Pas de pancarte, logo, texte parasite (sauf overlay explicitement demandé).
-- Sujet principal = produit/service exact. Subtilité, suggérer plutôt qu'envahir.
-- Texte overlay demandé : reproduire EXACTEMENT le wording fourni.
-
-━━━━━━━━━━━━━━━━━━
-RÈGLE ABSOLUE — MARCHÉ / LOCALISATION / CASTING
-━━━━━━━━━━━━━━━━━━
-${params.market ? `Marché cible "${params.market}" : personnages (ethnies, traits, tenues, coiffures), environnement (architecture, mobilier, signalétique, végétation, climat), accessoires, codes culturels DOIVENT être cohérents. Pas de mélange incohérent.` : `Aucun marché précisé : par défaut casting et environnement CULTURELLEMENT NEUTRES, universels, sans signalétique étrangère ni références ethniques marquées.`}
-
-━━━━━━━━━━━━━━━━━━
-COHÉRENCE SECTEUR
-━━━━━━━━━━━━━━━━━━
-Adapter automatiquement lumière, palette, ambiance, décor, typographie, rythme, montage, émotions, niveau de luxe selon le secteur. Exemples : SaaS B2B → propre, moderne, productivité ; Beauté → peau réaliste, élégance ; Food → désir immédiat, chaleur ; Immobilier → aspiration, lumière ; Formation premium → autorité, transformation ; Fitness → énergie, intensité.
-
-━━━━━━━━━━━━━━━━━━
-RÉALISME ABSOLU
-━━━━━━━━━━━━━━━━━━
-Rendu photoréaliste, naturel, premium, organique, émotionnel, crédible, cinématographique. Toujours : lumière réaliste, ombres naturelles, textures détaillées, grain photo, peau naturelle, imperfections subtiles, profondeur cohérente, matériaux réalistes. INTERDIT : rendu fake IA, peau plastique, saturation excessive, anatomie incohérente, texte illisible, composition amateur, esthétique générique IA.
-
-━━━━━━━━━━━━━━━━━━
-ANTI-HALLUCINATION
-━━━━━━━━━━━━━━━━━━
-Ne jamais inventer fonctionnalités inexistantes, bénéfices irréalistes, promesses impossibles, scènes incohérentes, personnages incompatibles, contextes absurdes. Si une donnée manque : déduire uniquement le strict nécessaire.
-
-━━━━━━━━━━━━━━━━━━
-FIDÉLITÉ PRODUIT
-━━━━━━━━━━━━━━━━━━
-Si produit : ADN intouchable, proportions exactes, couleurs exactes, branding exact, jamais coupé, toujours central, immédiatement identifiable.
-
-━━━━━━━━━━━━━━━━━━
-VIRALITÉ
-━━━━━━━━━━━━━━━━━━
-Le contenu doit pouvoir arrêter le scroll, augmenter rétention, sauvegardes, partages, commentaires, clics, conversion. Utiliser curiosité, tension, surprise, preuve sociale, contraste fort, dopamine visuelle, transformation, relatable, émotion forte.
 ${premiumDirectionBlock}
-━━━━━━━━━━━━━━━━━━
-TEXTE ÉCRAN
-━━━━━━━━━━━━━━━━━━
-Ultra lisibles mobile, parfaitement intégrés, jamais coupés, cohérents avec secteur/ton/style. VIDÉO : max 6 mots par texte. CARROUSEL : max 12 mots par slide.
 
 ━━━━━━━━━━━━━━━━━━
-SPÉCIFIQUE IMAGE
+FORMAT DE RÉPONSE
 ━━━━━━━━━━━━━━━━━━
-RÈGLE ABSOLUE — BACKGROUND PUISSANT + ANGLE MARKETING FORT (IMAGE & CAROUSEL)
-Pour CHAQUE image et CHAQUE slide de carousel, le prompt_fr DOIT contenir EXPLICITEMENT et de manière VISIBLE un bloc dédié intitulé « BACKGROUND PUISSANT & ANGLE MARKETING » décrivant :
-- un ARRIÈRE-PLAN fort, contextuel, riche et travaillé (jamais un fond plat ou neutre vide) : décor réel cohérent avec le produit/service, ambiance lumineuse cinématographique, texture/matière, profondeur, éléments secondaires soigneusement choisis pour renforcer le désir et l'univers de la marque (ex : surface en marbre + vapeur pour food premium, atelier brut + outils pour artisanat, intérieur lifestyle haut de gamme pour beauté, environnement urbain dynamique pour sport, etc.). Le background DOIT MAGNIFIER le produit/service sans jamais le concurrencer.
-- un ANGLE MARKETING FORT explicitement énoncé (ex : transformation avant/après, désir immédiat, statut/aspiration, urgence/rareté, preuve sociale visuelle, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) qui structure la composition entière et met le produit/service au centre du message.
-- la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (mise en lumière, contraste produit/fond, direction du regard, hiérarchie visuelle, codes émotionnels mobilisés).
-Ce bloc est OBLIGATOIRE et NON NÉGOCIABLE pour les types "image" et "carousel" — il doit apparaître TEL QUEL dans le prompt_fr final, visible et identifiable. Aucun fond plat, uni vide, ou générique n'est toléré.
-
-Prompt image : max 180 mots, sauts de ligne, fluide, sans markdown ni listes.
-EXIGENCE PREMIUM NON NÉGOCIABLE — niveau "agence créative top mondiale / graphiste senior / directeur artistique award-winning (Behance / Dribbble / Awwwards / Cannes Lions)". JAMAIS de visuel plat, simpliste, amateur, générique ou "template gratuit".
-Le visuel DOIT contenir une vraie RECHERCHE de design : composition travaillée (grille, règle des tiers, équilibre asymétrique maîtrisé, layering, profondeur), HIÉRARCHIE typographique forte (titre massif impactant + sous-éléments contrastés en taille/poids), TYPOGRAPHIE display moderne (sans-serif condensé bold, serif éditorial, ou display script selon le secteur — JAMAIS d'Arial/Times basique), MIX de polices intelligent (1 display + 1 sans-serif neutre).
-ÉLÉMENTS GRAPHIQUES OBLIGATOIRES (sélectionner ceux qui SERVENT le produit, sans surcharger) : formes organiques ou géométriques d'accentuation (étoiles brutalistes, splash, blob, badge prix circulaire, ruban, bulle BD, tag oblique), textures subtiles (papier, grain, halftone, noise), ombres portées réalistes longues, lueurs / éclats, micro-particules (sésame, sauce qui coule, fumée, vapeur, ingrédients en lévitation, éclaboussures), traits manuscrits / soulignés / cercles dessinés à la main pour souligner un mot-clé, flèches stylisées.
-TYPOGRAPHIE : titres en MAJUSCULES massifs, possibilité de jeu typographique (mot répété en arrière-plan en transparence, texte qui suit la forme du produit, lettrage qui passe devant/derrière le produit pour créer de la profondeur, contour ou ombre décalée colorée).
-PALETTE : 2 à 3 couleurs maximum + 1 accent vif contrastant (jaune néon, orange électrique, rouge sang, vert citron) pour les badges / CTA. Couleurs saturées et assumées, jamais fades.
-PRODUIT : toujours en hero (40-60% de la surface), parfaitement détouré ou en mise en scène léchée, lumière studio premium, ombres portées dramatiques, micro-détails appétissants/désirables (gouttes, brillance, texture, ingrédients qui volent autour).
-RENDU FINAL : doit ressembler à une AFFICHE PUBLICITAIRE PRO digne d'une marque internationale (style des références fournies : burger Coca-Cola, Tropic Addict, XO Chinese, Jimbo, Hey grapefruit, Special Pizza, Luosifen). Choisir intelligemment la référence la plus adaptée au produit/secteur et s'en inspirer dans la structure (sans copier).
-INTERDIT ABSOLU : fond uni plat sans texture ni élément graphique, produit seul centré sans contexte, typographie unique fade, absence totale de badge/accent/forme décorative, look "post Canva basique", composition symétrique ennuyeuse, palette pastel sans contraste.
-
-IDENTITÉ VISUELLE PREMIUM IMAGE (RÉFÉRENCES OBLIGATOIRES) :
-S'inspirer EXPLICITEMENT du niveau de qualité, du langage visuel et du soin graphique des références premium suivantes (affiches publicitaires food/boissons/produits de niveau studio/agence international) :
-• Hey Cloudy Pink Grapefruit (canette rose pastel + orange vif) — produit hero détouré au centre, fond couleur saturée (rouge bordeaux) + halo rose contrastant, fruits coupés en composition flat-lay autour, typographie display serif XXL qui passe DERRIÈRE le produit pour créer de la profondeur, micro-textes techniques minimalistes en coin, palette 3 couleurs assumée (rose pâle / orange vif / bordeaux).
-• Craft Your Perfect Bite (Hanover and Tyke — tacos) — fond orange saturé + base verte foncée, typographie display brossée/handmade XXL en crème occupant 60% du visuel, bulles BD arrondies pour les badges (NEW MENU, GET 20% OFF), petits accents jaune moutarde (splashes), planche à découper bois posée en bas, ingrédients ultra appétissants détaillés, header petite caps centré.
-• Hot Dog Naafiri (rouge/bleu pop) — typographie display stencil rouge XXL avec contour crème épais + ombre portée décalée, fond bleu ciel saturé avec étoiles blanches géantes en arrière-plan, produit hero photoréaliste en barquette branded, badge circulaire crantée rouge "41%" en coin, bandeau damier rouge/blanc en footer, badges rouges info en coins (OPEN SOON, for 04/03).
-• Special Ramen (rouge/jaune Asie) — fond crème avec motif vagues japonaises subtil + bandes rouges diagonales asymétriques, bols hero en vue plongée parfaitement détourés, tooltips/speech-bubbles blancs avec flèche pointant le plat (nom + description + prix en pilule rouge), typographie sans-serif bold condensée rouge, CTA "ORDER NOW!" rouge en bas à droite.
-• Delicious Burger (orange wood) — fond bois orangé texturé, typographie mix script crème ("Delicious") + sans-serif bold noir XXL ("BURGER"), burger hero photoréaliste posé sur planche bois, tomates/feuilles en lévitation autour (effet flying ingredients), badge nuage "SAVE UPTO 50%", CTA pilule jaune avec flèche "ORDER NOW", logo coin top-left discret.
-• Special Pizza (rouge/jaune) — fond jaune ocre avec motif topographique subtil + bandes rouges diagonales, 2 pizzas hero en vue plongée parfaitement détourées, speech-bubbles blancs avec nom + description + prix en pilule rouge, typographie sans-serif bold condensée rouge majuscules, CTA "ORDER NOW!" rouge bas-droite.
-• MNCH sandwich (vert/jaune/orange brutaliste) — fond vert sapin avec grille fine, typographie display sans-serif bold XXL jaune citron occupant 40% du visuel avec ombre décalée vert foncé, sandwich hero détouré flottant au centre, badges étoile crantée (rouge "bold bites only", orange "MNCH") façon sticker, textes manuscrits jaunes inclinés ("nostalgic crunch", "best sandwiches", "powered by plants"), base orange triangulaire.
-• Miri's Hot Dogs NEW MENU (bleu cobalt + rayons solaires) — fond bleu cobalt saturé avec rayons jaunes en éventail derrière le produit, étincelles 4-branches jaunes dispersées, hot dog hero tenu à deux mains photoréaliste centré, badges pilules colorés (orange prix, fleur verte "NEW", anneau rose "I'M ON A DIET" en cercle), typographie display jaune XXL avec contour orange "NEW MENU", header petite caps doré.
-
-RÈGLES DE TRADUCTION OBLIGATOIRES POUR LE PROMPT IMAGE :
-1) Choisir 1 à 2 références ci-dessus dont le secteur / produit / énergie correspond le mieux à l'offre et déclarer EXPLICITEMENT dans le prompt_fr quelle(s) référence(s) sert/servent d'inspiration directionnelle (sans copier littéralement).
-2) Définir UN système de design propre au visuel généré : palette 2-3 couleurs nommées avec HEX + 1 accent vif (badges/CTA), 1 typographie display hero + 1 typographie de support, 1 set d'éléments graphiques signature (badges, splashes, bulles BD, étoiles crantées, motifs de fond, speech-bubbles, étincelles, contours décalés, bandeaux damier, etc.).
-3) Produit hero TOUJOURS détouré et fusionné nativement à la scène avec ombres portées cohérentes (jamais "collé sur un rectangle").
-4) Typographie display XXL OBLIGATOIRE (jamais texte timide) — peut passer derrière/devant le produit pour créer de la profondeur, peut avoir contour épais + ombre décalée colorée.
-5) Au moins 2 à 4 éléments graphiques signature visibles (badge, splash, bulle, étoile crantée, étincelle, motif de fond, bandeau) du même set graphique cohérent — JAMAIS de visuel "produit nu sur fond uni".
-6) Rendu final = AFFICHE PUBLICITAIRE PRO niveau studio international (BBH, Wieden+Kennedy, Pentagram, Marbstudiio) — artisanat manuel premium, aucun rendu "template Canva".
-
-━━━━━━━━━━━━━━━━━━
-CADRAGE & VISIBILITÉ DES ÉLÉMENTS ESSENTIELS (RÈGLE ABSOLUE)
-━━━━━━━━━━━━━━━━━━
-INTERDICTION FORMELLE de produire un visuel où des éléments essentiels (produit, assiette, plat, packaging, sujet humain, logo, texte clé, CTA) sont coupés, tronqués, recadrés, sortis du cadre ou partiellement masqués. Tout élément essentiel DOIT apparaître ENTIÈREMENT dans le cadre, avec des marges de sécurité confortables autour. Cadrer la scène en fonction du format ${params.format} pour garantir cette visibilité intégrale. Si un doute existe sur l'espace disponible, reculer le plan / dézoomer plutôt que de couper. Aucun élément essentiel ne doit toucher ni dépasser les bords.
-
-━━━━━━━━━━━━━━━━━━
-MISE EN PAGE TEXTE & LOGO — UI / DESIGN ARTISTIQUE (RÈGLE ABSOLUE)
-━━━━━━━━━━━━━━━━━━
-Composition à pensée de directeur artistique senior. Le visuel DOIT respecter STRICTEMENT les règles suivantes — toute violation = visuel à rejeter et régénérer :
-1) TEXTE OVERLAY — JAMAIS écrit PAR-DESSUS le sujet principal (visage, produit hero, packaging, plat, assiette, personnage). Le texte DOIT être placé dans une ZONE NÉGATIVE dédiée (ciel, fond flou, mur uni, sol, espace vide volontairement laissé dans la composition). Cadrer la scène en CONSÉQUENCE pour réserver une bande de respiration (haut, bas ou côté selon la position demandée) où le texte vit sans toucher ni masquer le sujet. Contraste fort garanti (fond sombre → texte clair, fond clair → texte sombre), légère ombre portée ou contour fin uniquement si la lisibilité l'exige. Aucune lettre ne doit chevaucher le sujet, la nourriture, le visage, le produit ou les zones de détail importantes.
-2) HIÉRARCHIE & LISIBILITÉ — taille du texte adaptée au format mobile : titre principal entre 6% et 12% de la hauteur du visuel (jamais gigantesque au point d'écraser le sujet, jamais minuscule au point d'être illisible). Marges latérales minimum 6% du bord. Interlignage aéré. Kerning soigné. Le texte est INTÉGRÉ NATIVEMENT à la composition, pas plaqué comme un sticker.
- 3) LOGO — TOUJOURS DISCRET ET PROFESSIONNEL : taille maximale ≈ 8% de la plus petite dimension du visuel (signature, jamais hero). Placé strictement dans le coin/position demandée, avec une marge de sécurité d'au moins 10% du bord. Le logo NE DOIT JAMAIS : être surdimensionné, couvrir une partie du sujet principal, se superposer au texte overlay, dupliquer ou concurrencer le texte, être centré quand une position de coin est demandée, être déformé/rogné/recoloré.
- 3-ter) ⛔️ INTERDICTION ABSOLUE AUTOUR DU LOGO — AUCUN ENCADREMENT VISUEL DE QUELQUE NATURE QUE CE SOIT autour du logo. Sont STRICTEMENT INTERDITS et constituent un échec immédiat : pointillés, traits pointillés, tirets, lignes discontinues, "marching ants" (fourmis qui marchent / sélection Photoshop), rectangle de sélection, cadre, encadré, bordure (fine, épaisse, simple, double), contour, liseré, trait de coupe, repères d'impression, fond coloré derrière le logo, halo, pastille, badge contenant le logo, vignette, ombre portée formant un cadre, rectangle blanc/noir/coloré sous le logo, ANY dashed border / dotted border / dashed rectangle / selection marquee. Le logo apparaît UNIQUEMENT comme une signature flottante 100% transparente posée directement sur l'image, sans AUCUNE forme, AUCUN trait, AUCUNE délimitation visible autour de lui — comme si on avait simplement collé un PNG transparent. Si tu doutes : ZÉRO trait, ZÉRO bordure, ZÉRO encadré.
- 3-quater) ⛔️ INTERDICTION ABSOLUE AUTOUR DE L'IMAGE PRODUIT / PHOTO DE RÉFÉRENCE — l'image du produit (burger, plat, packaging, objet, etc.) DOIT être intégrée de façon native, détourée proprement et fusionnée à la scène/décor SANS AUCUN fond, cadre, rectangle blanc, rectangle coloré, carré de fond, vignette, halo, ombre rectangulaire, bordure, contour, liseré, passe-partout, "sticker frame", ou aplat de couleur derrière le produit. Le fond visible derrière le produit DOIT être UNIQUEMENT le décor réel de la scène (rue, table, comptoir, ciel, mur, etc.) — JAMAIS un rectangle/carré blanc ou coloré rapporté. Si le produit semble "collé" sur un fond, ÉCHEC IMMÉDIAT : refaire en détourant et en l'insérant réellement dans la scène avec ombres portées cohérentes avec la lumière du décor.
- 3-quinquies) ⛔️ LOGO NE TOUCHE JAMAIS LE TEXTE — vérification finale obligatoire : tracer mentalement la bounding box du logo et celle de chaque bloc de texte (titre, sous-texte, CTA, emoji). Si les deux bounding box se touchent, se chevauchent, ou sont à moins de 10% de distance l'une de l'autre = ÉCHEC IMMÉDIAT. Déplacer le logo dans le coin LIBRE le plus éloigné du texte. Le logo ne partage JAMAIS la même bande horizontale ou verticale qu'une lettre.
-3-bis) LOGO vs TEXTE — RÈGLE ABSOLUE NON NÉGOCIABLE : le logo NE DOIT JAMAIS, SOUS AUCUN PRÉTEXTE, être superposé, chevaucher, toucher, frôler ou partager la même bande/zone que le texte overlay (titre, sous-texte, CTA, badge texte, emoji du titre). Une marge de sécurité STRICTE STRICTEMENT SUPÉRIEURE À 10% doit séparer le logo de toute lettre/glyphe/emoji visible. Si la position demandée pour le logo entre en collision avec la bande de texte, DÉPLACER le logo dans le coin libre opposé (jamais réduire le texte, jamais empiler) et réserver explicitement ce coin vide dans la composition. Aucun cas de figure n'autorise un logo posé sur ou contre du texte.
-4) SÉPARATION TEXTE / LOGO / SUJET — les trois zones (sujet hero, texte overlay, logo signature) sont CLAIREMENT DISTINCTES dans la composition, sans chevauchement, sans collision, sans ambiguïté visuelle. Penser la composition AVANT le rendu : où va vivre le sujet, où va vivre le texte, où va vivre le logo — chacun a sa zone réservée.
-5) PROPORTIONS GLOBALES — équilibre type affiche pro : sujet hero domine (40-60% de la surface utile), texte occupe une zone calme et lisible (10-20% de la surface), logo reste signature discrète (≈3-8%). Aucun élément graphique parasite ne vient écraser cette hiérarchie.
-RAPPEL FINAL : si la scène imaginée ne permet pas naturellement de placer le texte hors du sujet, REPENSER LA COMPOSITION (recul, plongée/contre-plongée, décentrement du sujet, ajout d'une zone de respiration) — JAMAIS écrire sur le sujet par défaut.
-
-━━━━━━━━━━━━━━━━━━
-RÈGLES SPÉCIFIQUES PAR FORMAT / RATIO (${params.format})
-━━━━━━━━━━━━━━━━━━
-Adapter STRICTEMENT la composition, le cadrage, la taille et la POSITION EXACTE de chaque élément (sujet/image hero, texte titre, sous-texte, emoji, badge, logo) au ratio demandé. Utiliser une GRILLE 9 ZONES (top-left, top-center, top-right, mid-left, center, mid-right, bottom-left, bottom-center, bottom-right) + coordonnées en POURCENTAGE (x%, y%, w%, h%) pour DÉCRIRE EXPLICITEMENT dans le prompt_fr la position de CHAQUE élément.
-
-• FORMAT 9:16 (vertical / Reels / Stories / TikTok — ratio 1080×1920) — composition verticale plein écran mobile.
-  - Sujet/image hero : zone mid-center, centré horizontalement (x ≈ 10-90%), bande verticale y ≈ 25-72% (tiers central). Occupe 50-65% de la surface utile.
-  - Texte titre : zone top-center (y ≈ 14-24%) OU bottom-center (y ≈ 76-86%), JAMAIS y ≈ 25-72% (réservé sujet). Largeur max 84% (marges latérales ≥8%). Taille 8-10% hauteur. Aligné centre.
-  - Sous-texte / accroche secondaire : juste sous le titre (haut) ou juste au-dessus du CTA (bas), 4-6% hauteur, marges ≥10%.
-  - Emoji : intégré DANS le titre (avant ou après le mot clé), même taille que le texte associé (jamais flottant aléatoirement). Pas d'emoji sur le sujet.
-  - Badge / pastille (prix, promo) : top-left ou top-right (x ≈ 6-26% ou 74-94%, y ≈ 14-22%), taille ≈ 12-16% largeur, n'écrase JAMAIS le titre ni le sujet.
-  - Logo : coin top-right OU bottom-right (par défaut bottom-right), marge ≥10%, taille ≈ 5-7% de la largeur, jamais sur sujet/texte.
-  - Safe-UI plateforme : zones y ≤12% (handle profil) et y ≥82% (captions/CTA TikTok/Reels) doivent rester visuellement aérées si non utilisées pour le texte/logo.
-
-• FORMAT 1:1 (carré / Instagram feed — ratio 1080×1080) — composition centrée équilibrée.
-  - Sujet/image hero : zone center (x ≈ 22-78%, y ≈ 22-78%), 40-55% surface, hiérarchie hero claire.
-  - Texte titre : bandeau top-center (y ≈ 8-20%) OU bottom-center (y ≈ 80-92%), largeur max 88% (marges ≥6%), taille 8-12% hauteur, aligné centre.
-  - Sous-texte : sous/au-dessus du titre (3-5% hauteur), marges ≥10%.
-  - Emoji : intégré dans le titre (jamais flottant), même taille que le texte ; un emoji décoratif possible en coin opposé au logo (top-left si logo bottom-right), taille ≈ 6-8% côté.
-  - Badge : top-left ou top-right (marge ≥6%), taille ≈ 12-15% côté.
-  - Logo : coin (par défaut bottom-right), marge ≥10%, taille ≈ 6-8% du côté.
-
-• FORMAT 16:9 (horizontal / YouTube / LinkedIn / desktop — ratio 1920×1080) — composition cinématographique asymétrique (règle des tiers).
-  - Sujet/image hero : tiers gauche (x ≈ 5-45%) OU tiers droit (x ≈ 55-95%), pleine hauteur utile (y ≈ 8-92%), 40-55% surface. Choisir UN côté en fonction du sens de lecture (texte côté opposé).
-  - Texte titre : tiers OPPOSÉ au sujet (x ≈ 55-95% si sujet à gauche, sinon x ≈ 5-45%), aligné gauche, bloc vertical centré (y ≈ 25-75%), taille titre 10-14% hauteur, marges latérales ≥5% / haut-bas ≥7%.
-  - Sous-texte : juste sous le titre dans le même tiers, taille 5-7% hauteur.
-  - Emoji : intégré dans le titre, jamais sur le sujet, jamais dispersé dans le visuel.
-  - Badge : coin du tiers texte (top-left/right), marge ≥5%, taille ≈ 10-13% hauteur.
-  - Logo : coin opposé au titre (par défaut bottom-right), marge ≥10%, taille ≈ 4-6% largeur.
-
-RÈGLE COMMUNE — DÉCLARATION DE POSITIONS OBLIGATOIRE DANS LE PROMPT :
-Dans le prompt_fr généré, lister EXPLICITEMENT pour CHAQUE élément (sujet, texte titre, sous-texte, emoji, badge, logo) sa POSITION précise selon la grille + coordonnées en % adaptées au ratio ${params.format}. Exemple attendu (style — adapter au cas réel) : « titre en bandeau bottom-center, y 80-90%, taille 10% hauteur, marges 8% ; logo en bottom-right, marge 10%, taille 6% largeur ; sujet hero centré, x 20-80% y 25-75% ». Aucun élément ne doit être laissé sans position explicite. Composer le visuel SPÉCIFIQUEMENT pour le ratio ${params.format} dès la phase scène (ne pas générer en 1:1 puis recadrer mentalement). Si une position demandée entre en conflit avec une safe-zone, ajuster la scène (recul, décentrement, plongée) plutôt que d'enfreindre la règle.
-
-━━━━━━━━━━━━━━━━━━
-SPÉCIFIQUE CARROUSEL
-━━━━━━━━━━━━━━━━━━
-Prompt carrousel : max 400 mots, storytelling cohérent, continuité visuelle ABSOLUE entre slides (même univers graphique, même palette, même typographie, même traitement lumière, même style d'éléments décoratifs — SYSTÈME DE DESIGN unifié comme une vraie campagne d'agence).
-MÊME EXIGENCE PREMIUM QUE L'IMAGE (voir ci-dessus) appliquée à CHAQUE slide : composition travaillée, typographie display impactante, éléments graphiques (badges, formes, textures, splash, ombres, particules), palette saturée 2-3 couleurs + accent vif, produit hero parfaitement mis en scène.
-SLIDE 1 : hook scroll-stop immédiat (titre énorme percutant + produit hero + accent graphique fort). SLIDE 2 : émotion, problème ou bénéfice (visuel narratif, typographie expressive). SLIDE 3 : preuve, résultat ou transformation (mise en scène crédible, détail produit, micro-textures). SLIDE 4 : CTA subtil premium (call-to-action visuel élégant, badge action, flèche stylisée).
-S'inspirer des références fournies (XO Chinese, Jimbo, Coca-Cola burger series) pour la cohérence de série. JAMAIS de slides simplistes, plates ou amateur. Chaque slide doit pouvoir être publiée seule comme une affiche pro.
-
-IDENTITÉ VISUELLE PREMIUM EXIGÉE (RÉFÉRENCES OBLIGATOIRES) :
-S'inspirer EXPLICITEMENT du niveau de qualité et du langage visuel des références premium suivantes (séries de carrousels d'agences/studios de design reconnus) :
-• Klubi (Family for families) — fond crème, blocs arrondis lilas/vert lime, typographie display sans-serif chaleureuse, illustrations mascotte au trait épais, photo lifestyle authentique, mise en page modulaire type "trading cards".
-• Settle (usesettle) — palette vert forêt + lavande + crème, typographie éditoriale (mix serif/sans), motifs répétés (croix, astérisques, grilles), encadrés contrastés type "highlighter", collage hybride photo N&B + formes vectorielles.
-• Bowl'd (marbstudiio) — palette bleu cobalt / orange vif / vert lime, typographie display ultra-bold condensée, illustrations line-art halftone façon zine, badges rotatifs en cercle, énergie éditoriale brutaliste joyeuse.
-• Bear Milk / Mheenimal — typographie display sticker XXL multicolore en superposition, illustrations stickers vectoriels (étincelles, éclairs, fleurs), photo produit détourée hero, fond clair saturé, vibe pop kawaii premium.
-• Self Care / Good Vibes (groovy retro) — palette vert sapin / corail / crème, typographie groovy 70s arrondie, motifs damier ondulé, formes organiques, badges pilule numérotés.
-• Social Media Academy (pastel modern) — palette lavande / rose bonbon / jaune pastel / vert sapin, typographie serif moderne en bulles, étoiles 4 branches, bandeaux diagonaux "swipe to read", interface IG mockup intégrée.
-• Jimbo / Cheesy Cheese (food street) — typographie display brossée stencil, palette rouge/jaune/vert/orange ultra saturée, motifs hypnotiques en arrière-plan, produit hero centré dans son contenant signature.
-• SEULOGO burger series — palette rouge profond / crème, typographie sans-serif bold condensée, produit hero détouré sur formes graphiques (étoile, rond), badges prix "1$", bandeau footer info contact uniforme — cohérence de série absolue.
-
-RÈGLES DE COHÉRENCE DE SÉRIE (NON NÉGOCIABLE) :
-1. Définir UN système de design unique (palette 2-4 couleurs nommées avec HEX, 1-2 familles typo, 1 set d'éléments graphiques signature, 1 traitement photo) appliqué IDENTIQUEMENT sur les ${params.slidesCount || 4} slides.
-2. Chaque slide DOIT ressembler à une affiche premium publiable seule, niveau studio international (équivalent BBH, Wieden+Kennedy, Pentagram, Marbstudiio).
-3. Typographie display HÉROÏQUE obligatoire (taille XXL, kerning serré, hiérarchie forte titre/sous-titre/caption), JAMAIS de texte fade ou centré timide.
-4. Éléments graphiques signature OBLIGATOIRES sur chaque slide (badge, sticker, forme organique, motif, étoile 4 branches, splash, bandeau, étincelle, halftone) — toujours du même set.
-5. Bandeau/footer signature constant (logo + handle ou info) reproduit à l'identique sur toutes les slides.
-6. Aucun rendu "template Canva générique" : épaisseurs de trait, ombres portées, débordements, superpositions assumées, niveau de détail = artisanat manuel premium.
-
-━━━━━━━━━━━━━━━━━━
-SPÉCIFIQUE VIDÉO
-━━━━━━━━━━━━━━━━━━
-Prompt vidéo : 150 à 200 mots maximum, durée totale EXACTE ${videoDuration}s, EXACTEMENT ${videoSceneCount} scènes (6–10s → 2–3 scènes, 10–15s → 3–4 scènes), hook ultra fort dans les 2 premières secondes, transitions naturelles, mouvements réalistes, forte rétention. Chaque scène indique sa durée précise; la somme des durées doit être EXACTEMENT ${videoDuration}s. Toujours intégrer mouvements caméra, lumière cohérente, micro expressions, overlays dynamiques, sound design léger, rythme mobile-first, voix off humaine naturelle uniquement si activée par l'utilisateur.
-
-━━━━━━━━━━━━━━━━━━
-VOIX OFF
-━━━━━━━━━━━━━━━━━━
-Naturelle, fluide, humaine, émotionnelle, conversationnelle, agréable. Éviter ton robotique, phrases longues, mots compliqués, diction artificielle.
-${videoDirectives}
-━━━━━━━━━━━━━━━━━━
-AUTO-CONTRÔLE AVANT OUTPUT
-━━━━━━━━━━━━━━━━━━
-Vérifier : 1) Contenu créé spécifiquement pour cette offre ? 2) Point d'entrée respecté ? 3) Produit/service immédiatement compréhensible ? 4) Premium et crédible ? 5) Publiable réellement ? 6) Réglages avancés prioritaires ? 7) Persona se reconnaît ? 8) Pourrait performer ? 9) Semble créé par une agence ? 10) Aucune incohérence visuelle ou marketing ? Si NON quelque part : corriger avant output.
-
-━━━━━━━━━━━━━━━━━━
-FORMAT DE SORTIE
-━━━━━━━━━━━━━━━━━━
-Le champ "prompt_fr" doit contenir UNIQUEMENT le prompt final, en français, prêt à envoyer au modèle IA. Sans markdown, sans listes à puces, sans commentaires, sans explications.
-
-Le prompt_fr DOIT être un texte fluide, structuré et agréable à lire, aéré par des sauts de ligne RÉELS (\\n\\n) entre chaque section majeure. Chaque bloc DOIT être précédé d'un titre de section suivi d'un retour à la ligne, puis du contenu. Le texte ne doit JAMAIS être un mur de texte dense : il doit ressembler à un brief créatif professionnel, avec des paragraphes bien séparés, lisibles et clairs.
-
-STRUCTURE OBLIGATOIRE du prompt_fr — dans cet ordre exact, avec un double saut de ligne (\\n\\n) entre chaque section :
-
-[SECTION 1] Scène & sujet principal :
-[description fluide du visuel/scène, sujet, cadrage, composition, ambiance, lumière, émotion, hook visuel 0-2s — adapté au format ${params.format} et au type ${params.contentType}]
-
-[SECTION 2] Produit / offre mis en avant :
-[OBLIGATOIRE — rédiger un bloc dédié et explicite contenant systématiquement et littéralement :
-• Nom du produit / service : "${params.productService || 'n/c'}"
-• Description du produit / service (à reproduire fidèlement, sans rien inventer ni omettre) : "${params.productDescription || 'n/c'}"
-Puis présenter le produit/service de façon 100% FIDÈLE à ce nom et cette description, en cohérence STRICTE avec l'image de référence fournie (forme, couleurs, packaging, étiquette, logo, matières, proportions, identité visuelle). Intégrer naturellement dans la scène, bénéfice implicite, cohérence avec persona et marché. INTERDIT de substituer, redessiner, styliser, remplacer par un produit générique ressemblant, ou inventer des caractéristiques absentes de la description. Le produit affiché DOIT être STRICTEMENT IDENTIQUE à celui décrit ici et à celui de l'image de référence — le client doit le reconnaître instantanément.]
-
-${params.contentType !== 'video' ? `[SECTION 2bis] BACKGROUND PUISSANT & ANGLE MARKETING (OBLIGATOIRE pour image et carousel — NON NÉGOCIABLE) :
-[Décrire EXPLICITEMENT et de façon visible : (a) un ARRIÈRE-PLAN fort, travaillé, contextuel, cinématographique (jamais plat / uni vide / générique), cohérent avec le produit/service "${params.productService || 'le produit/service'}" et le secteur "${params.companySector || 'n/c'}" — préciser décor réel, ambiance lumineuse, textures, profondeur, éléments secondaires choisis pour magnifier le produit sans le concurrencer ; (b) un ANGLE MARKETING FORT nommé clairement (ex : transformation, désir immédiat, statut/aspiration, urgence, preuve sociale, démonstration de résultat, problème/solution, exclusivité premium, effet wow scroll-stop) ; (c) la manière dont ce background et cet angle METTENT EN VALEUR le produit/service (contraste produit/fond, direction du regard, hiérarchie, codes émotionnels). Pour le carousel : décliner ce background et cet angle de manière cohérente sur toutes les slides.]
-
-` : ''}${params.contentType === 'video' ? `[SECTION 3] Script vidéo publicitaire (structure OBLIGATOIRE — modèle à reproduire À L'IDENTIQUE) :
-
-Titre : Vidéo publicitaire ${params.productService || '[Nom de l\'offre]'} — ${videoDuration} secondes (${videoSceneCount} scènes)
-
-ANALYSE STRATÉGIQUE
-- Angle marketing retenu : ${params.marketingAngle ? `« ${params.marketingAngle} »` : 'déduire automatiquement le plus performant selon l\'objectif (Transformation, Désir, Preuve sociale, Résolution de problème, Émotion, Premium, Gain de temps, Gain d\'argent, Confort, Urgence…)'}
-- Émotion principale recherchée : déduire automatiquement (1 à 2 mots), 100% cohérente avec l'offre (${params.productService || 'n/c'}), la description (${params.productDescription || 'n/c'}), le secteur (${params.companySector || 'n/c'}), le persona (${params.targetPersona || 'n/c'}) et l'objectif (${params.objective || 'n/c'}).
-
-SCRIPT VIDÉO (${videoSceneCount} scènes — total ${videoDuration}s — 150 à 200 mots MAX, jamais moins de 150, jamais plus de 200)
-
-RÈGLE DE DÉCOUPAGE TEMPOREL : répartir les ${videoDuration}s en ${videoSceneCount} scènes contiguës et calculer le timecode de chaque scène sous la forme "(Xs - Ys)" (ex : (0s - 2,5s)). La fin de la dernière scène doit être exactement ${videoDuration}s.
-
-Titres de scènes IMPOSÉS dans cet ordre exact :
-${videoSceneCount === 2
-  ? `• Scène 1 — HOOK VISUEL\n• Scène 2 — HERO SHOT / CTA`
-  : videoSceneCount === 3
-  ? `• Scène 1 — HOOK VISUEL\n• Scène 2 — DÉMONSTRATION / VALEUR\n• Scène 3 — HERO SHOT / CTA`
-  : `• Scène 1 — HOOK VISUEL\n• Scène 2 — DÉMONSTRATION / VALEUR\n• Scène 3 — RÉSULTAT / DÉSIR\n• Scène 4 — HERO SHOT / CTA`}
-
-Pour CHAQUE scène, écrire EXACTEMENT ce gabarit (reproduire à l'identique, en remplissant les crochets, avec sauts de ligne) :
-
-Scène N (Xs - Ys)
-
-Plan animation :
- [Type de plan + mouvement caméra + animation détaillée du sujet : ce qui bouge, comment, dans quel ordre, à quelle vitesse, avec quelle intention. Physiquement réaliste, cohérence cause→effet, aucune action impossible.]
- [2 à 4 puces courtes décrivant chaque mouvement clé, chacune commençant par un espace puis un tiret long ou une action verbale concrète.]
-
-Background :
- [Décor cohérent avec l'offre et le secteur ${params.companySector || ''}.]
- [Éclairage précis : type, intensité, ambiance (chaud/froid, publicitaire, reflets, ombres).]
- [Profondeur, textures, ambiance globale.]
-
-CONTRAINTES SCRIPT : somme des durées = ${videoDuration}s exactement ; continuité visuelle naturelle scène à scène ; chaque scène sert une intention marketing claire (attention → intérêt → désir → conversion).
-
-${hasVoiceOver ? `Voix off unique (${Math.max(1, videoDuration - 1)} secondes)
-
-"${params.voiceOverText}"
-
-(Langue : ${voLang}. UNE SEULE phrase continue couvrant toute la vidéo — jamais découpée scène par scène. Maximum ${voiceOverMaxWords} mots. Mots FACILES À PRONONCER : courts, courants, fluides, sans mots techniques/rares, sans sigles, sans anglicismes complexes, sans nombres en chiffres, sans suites de consonnes dures, sans noms propres difficiles, rien qui puisse faire buguer la synthèse vocale. Hook puissant, mémorable, émotionnel, naturel. Se termine ≥ 2s avant la fin, soit ≤ ${Math.max(1, videoDuration - 2)}s.)
-
-` : ''}Texte écran final
-
-🌺 [NOM DU PRODUIT OU SERVICE EN MAJUSCULES — reprendre exactement ${params.productService || '[Nom de l\'offre]'}]
-[Slogan court ≤ 6 mots, cohérent avec l'offre et l'angle marketing.]
-
-` : params.contentType === 'carousel' ? `[SECTION 3] Déroulé des slides :
-[slide 1 hook, slide 2 émotion/problème, slide 3 preuve/résultat, slide 4 CTA — cohérence visuelle entre slides]
-
-` : ''}[SECTION ${params.contentType === 'video' || params.contentType === 'carousel' ? '4' : '3'}] Personnalisation (réglages avancés prioritaires) :
-[lister ICI de façon fluide UNIQUEMENT les réglages avancés activés par l'utilisateur et les appliquer STRICTEMENT : palette de couleurs exactes (dominer 60-80% du visuel), ton d'écriture, style visuel, type de rendu, texte(s) overlay avec wording exact + position + police + couleur + durée + timing, logo avec URL + position + timing d'apparition, voix off avec texte exact, paramètres modèle IA. Si un réglage n'est pas activé, NE PAS l'inventer ni le mentionner. Cette section doit être clairement séparée et reconnaissable.]
-
-[SECTION ${params.contentType === 'video' || params.contentType === 'carousel' ? '5' : '4'}] Format & rendu technique :
-[aspect ratio ${params.format}, modèle IA ${aiModelName}, qualité photoréaliste premium, contraintes techniques spécifiques]
-
-${params.contentType !== 'video' ? `[SECTION ${params.contentType === 'carousel' ? '6' : '5'}] Positions exactes des éléments (OBLIGATOIRE — adapté au ratio ${params.format}) :
-[Lister EXPLICITEMENT la position de CHAQUE élément visible avec la grille 9 zones (top-left, top-center, top-right, mid-left, center, mid-right, bottom-left, bottom-center, bottom-right) + coordonnées en pourcentage (x%, y%, w%, h%) + taille relative. Inclure systématiquement : sujet/image hero, texte titre, sous-texte (si présent), emoji (s'il y en a — toujours intégré au texte), badge/pastille (si activé), logo (si activé). Format attendu pour chaque ligne : « élément → zone, x ≈ A-B%, y ≈ C-D%, taille ≈ E% de [hauteur|largeur|plus petit côté], marges ≥ F% ». Respecter STRICTEMENT les safe-zones du format ${params.format} décrites plus haut. Aucun chevauchement, aucune collision, aucun élément sur le sujet.]` : ''}
-
-${params.contentType === 'image' || params.contentType === 'carousel' ? `[SECTION ${params.contentType === 'carousel' ? '7' : '6'}] Direction artistique premium (OBLIGATOIRE — RÉDIGER SUR-MESURE, JAMAIS COPIER-COLLER UN GÉNÉRIQUE) :
-[Rédige ICI un paragraphe de direction artistique 100% SUR-MESURE, dérivé STRICTEMENT des inputs utilisateur (type d'offre = ${params.offerType || 'n/c'}, produit/service = ${params.productService || 'n/c'}, description = ${params.productDescription || 'n/c'}, secteur = ${params.companySector || 'n/c'}, activité = ${params.companyActivity || 'n/c'}, objectif = ${params.objective || 'n/c'}, persona = ${params.targetPersona || 'n/c'}, marché = ${params.market || 'n/c'}, réglages avancés activés). RÈGLES DE PRIORITÉ ABSOLUE :
-1) Les INPUTS UTILISATEUR sont PRIORITAIRES sur toute consigne stylistique générique. Si un réglage avancé impose une palette, un style de rendu, un ton, une typographie, un texte overlay, un logo → respecter à 100% sans contradiction.
-2) Adapter chaque élément (composition, palette, typographie, éléments graphiques, textures, accents, mise en scène produit, références culturelles, codes de marché) au SECTEUR + ACTIVITÉ + TYPE D'OFFRE (produit physique vs service immatériel vs digital vs formation) et à l'OBJECTIF marketing du contenu (notoriété, conversion, engagement, éducation, lancement, promo).
-3) Pour un SERVICE/digital/formation/B2B : pas de mise en scène produit hero "packaging", mais composition éditoriale / dataviz / scène d'usage / portrait persona / interface, codes visuels du secteur (SaaS = propre moderne, finance = trust premium sobre, beauté = peau réaliste élégance, food = désir chaleur, immobilier = aspiration lumière, fitness = énergie intensité, luxe = espace minimal noir/or, etc.). Pour un PRODUIT physique : hero 40-60% surface avec mise en scène léchée et micro-détails contextuels cohérents avec le produit réel (jamais inventer des éléments non liés).
-4) Niveau d'exigence : agence créative top mondiale (Behance / Awwwards / Cannes Lions), composition réfléchie (grille, équilibre asymétrique, layering, hiérarchie), typographie display cohérente avec le secteur (jamais Arial/Times basique), éléments graphiques choisis SELON le produit (badge prix uniquement si promo, splash/textures uniquement si pertinent, etc. — ne pas surcharger un service B2B premium), palette dérivée du réglage avancé si fourni sinon dérivée des codes du secteur, lumière et matières crédibles.
-5) INTERDITS : contredire un réglage avancé utilisateur, plaquer un style food sur un service B2B (ou inversement), inventer des éléments hors brief, "template Canva basique", composition plate sans hiérarchie, palette en contradiction avec la palette fournie par l'utilisateur, références culturelles incohérentes avec le marché ciblé, surcharge graphique inadaptée au secteur.
-Le paragraphe doit être DENSE, SPÉCIFIQUE au produit/service exact, et lisiblement personnalisé — pas une liste générique réutilisable pour n'importe quel brief.]${params.contentType === 'carousel' ? `\nAjouter pour le CARROUSEL : système de design UNIFIÉ sur les ${params.slidesCount || 4} slides (même palette, typographie, éléments décoratifs, lumière), chaque slide publiable seule comme une affiche pro, cohérence visuelle stricte avec les inputs utilisateur.` : ''}
-
-` : ''}[SECTION FINALE] Instructions négatives (à intégrer naturellement) :
-[Reprendre les interdictions essentielles sous forme de phrase fluide : pas de rendu IA, pas de CGI, anatomie parfaite, pas de superposition logo/texte, pas de cadre autour du logo, pas de fond blanc derrière le produit, etc.]
-
-Chaque bloc DOIT être séparé par une ligne vide (\\n\\n). Les titres de bloc DOIVENT apparaître tels quels suivis d'un saut de ligne puis du contenu. Le prompt_fr final doit être LISIBLE, AÉRÉ et structuré comme un brief créatif professionnel — jamais un mur de texte continu.
+Le champ "prompt_fr" doit contenir UNIQUEMENT le prompt final, en français, prêt à envoyer au modèle IA, en respectant À LA LETTRE la structure de sortie obligatoire définie ci-dessus pour le type ${params.contentType}. Texte fluide, aéré par de vrais sauts de ligne (\\n\\n) entre chaque section. Pas de markdown, pas de listes à puces hors gabarit, pas de commentaires, pas d'explications.
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
