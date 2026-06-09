@@ -517,7 +517,18 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
 
       const [contentUrl, captionResult] = await raceAbort(Promise.all([
         isVideo
-          ? generateVideo(generationPrompt, ai_model, format, (pct) => setProgress(pct), abortController.signal, model_settings, sora_character_scenes)
+          ? generateVideo(
+              generationPrompt,
+              ai_model,
+              format,
+              (pct) => setProgress(pct),
+              abortController.signal,
+              model_settings,
+              sora_character_scenes,
+              voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
+                ? { text: voice_over_text.trim(), language: voice_over_language || 'Français' }
+                : undefined,
+            )
           : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
         generateCaption({
           objective: (marketing_angle || objective) + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
