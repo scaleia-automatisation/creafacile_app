@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Loader2, Wand2 } from 'lucide-react';
+import { Sparkles, Loader2, Wand2, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { callKreatorAI } from '@/lib/kreator-ai';
 
@@ -108,8 +108,26 @@ ${manual_idea_text}`;
     setTimeout(() => {
       const target = document.getElementById('generation-step-block');
       target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      window.dispatchEvent(new CustomEvent('kreator:generate'));
+      const hasPrompt = !!useKreatorStore.getState().prompt_fr?.trim();
+      window.dispatchEvent(new CustomEvent('kreator:generate', {
+        detail: { forcePromptRegen: !hasPrompt },
+      }));
     }, 200);
+  };
+
+  const handleGenerateManualPrompt = () => {
+    if (!manual_idea_text.trim()) {
+      toast.error('Veuillez saisir votre idée');
+      return;
+    }
+    const text = manual_idea_text.trim().slice(0, 500);
+    setUseCase('');
+    setInputText(text);
+    setIdeaChosen(text);
+    toast.info('Génération du prompt en cours…');
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('kreator:generate-prompt'));
+    }, 100);
   };
 
   return (
@@ -132,6 +150,16 @@ ${manual_idea_text}`;
         >
           {improving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
           Améliorer l'idée
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleGenerateManualPrompt}
+          disabled={!manual_idea_text.trim()}
+          className="flex-1 gap-2 font-bold"
+        >
+          <FileText className="w-4 h-4" />
+          Générer le prompt
         </Button>
         <Button
           type="button"

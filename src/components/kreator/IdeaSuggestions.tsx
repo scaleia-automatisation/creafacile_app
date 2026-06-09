@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Loader2, PenLine, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Loader2, PenLine, CheckCircle2, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 
@@ -97,8 +97,23 @@ const IdeaSuggestions = () => {
     setTimeout(() => {
       const target = document.getElementById('generation-step-block');
       target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      window.dispatchEvent(new CustomEvent('kreator:generate'));
+      // Si un prompt a déjà été généré/édité pour cette idée, on l'envoie tel
+      // quel au modèle. Sinon on laisse GenerationStep le générer.
+      const hasPrompt = !!useKreatorStore.getState().prompt_fr?.trim();
+      window.dispatchEvent(new CustomEvent('kreator:generate', {
+        detail: { forcePromptRegen: !hasPrompt },
+      }));
     }, 200);
+  };
+
+  const handleGenerateIdeaPrompt = (idea: ContentIdea) => {
+    const text = `${idea.hook} — ${idea.concept}`.slice(0, 500);
+    setInputText(text);
+    setIdeaChosen(text);
+    toast.info('Génération du prompt en cours…');
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('kreator:generate-prompt'));
+    }, 100);
   };
 
   const handleSelectIdea = (idea: ContentIdea) => {
@@ -194,18 +209,33 @@ const IdeaSuggestions = () => {
                 rows={3}
                 className="w-full text-sm text-muted-foreground leading-relaxed text-center bg-transparent border border-transparent hover:border-foreground/10 focus:border-primary/50 focus:outline-none rounded-md p-2 resize-none"
               />
-              <Button
-                type="button"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleUseIdea(idea);
-                }}
-                className="mt-auto gap-1.5 gradient-bg border-0 text-primary-foreground hover:opacity-90 text-xs font-bold"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                Générer le contenu
-              </Button>
+              <div className="mt-auto flex flex-col gap-2 w-full">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleGenerateIdeaPrompt(idea);
+                  }}
+                  className="gap-1.5 text-xs font-bold"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  Générer le prompt
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleUseIdea(idea);
+                  }}
+                  className="gap-1.5 gradient-bg border-0 text-primary-foreground hover:opacity-90 text-xs font-bold"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Générer le contenu
+                </Button>
+              </div>
             </div>
             );
           })}

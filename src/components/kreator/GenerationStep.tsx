@@ -660,17 +660,38 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
 
   const handleGenerateRef = useRef(handleGenerate);
   handleGenerateRef.current = handleGenerate;
+  const buildPromptParamsRef = useRef(buildPromptParams);
+  buildPromptParamsRef.current = buildPromptParams;
   useEffect(() => {
-    const onTrigger = () => {
-      // À chaque clic sur « Générer le contenu », on reprend TOUS les inputs
-      // à jour depuis le store et on relance le prompt maître avant de
-      // (re)générer le contenu — même si une génération a déjà eu lieu et
-      // que des champs (idée, modèle, format, description, image…) ont
-      // potentiellement changé.
-      handleGenerateRef.current({ forcePromptRegen: true });
+    const onTrigger = (e: Event) => {
+      // Par défaut on régénère le prompt maître pour reprendre tous les
+      // inputs à jour. Mais si l'utilisateur a explicitement généré (et
+      // potentiellement édité) le prompt via le bouton « Générer le prompt »,
+      // on respecte ce prompt et on l'envoie tel quel au modèle.
+      const detail = (e as CustomEvent).detail || {};
+      const force = detail.forcePromptRegen !== false;
+      handleGenerateRef.current({ forcePromptRegen: force });
+    };
+    const onGeneratePromptOnly = async () => {
+      try {
+        setPromptFr('');
+        const target = document.getElementById('generation-step-block');
+        target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const res = await generatePrompt(buildPromptParamsRef.current());
+        const p = res?.prompt_fr || '';
+        setPromptFr(p);
+        if (p) toast.success('Prompt généré — modifiable ci-dessous');
+      } catch (err) {
+        console.error(err);
+        toast.error('Erreur lors de la génération du prompt');
+      }
     };
     window.addEventListener('kreator:generate', onTrigger);
-    return () => window.removeEventListener('kreator:generate', onTrigger);
+    window.addEventListener('kreator:generate-prompt', onGeneratePromptOnly);
+    return () => {
+      window.removeEventListener('kreator:generate', onTrigger);
+      window.removeEventListener('kreator:generate-prompt', onGeneratePromptOnly);
+    };
   }, [setGeneratedCaptions, setGeneratedCarouselSlides, setResultUrl]);
 
   const handleCopyCaption = () => {
