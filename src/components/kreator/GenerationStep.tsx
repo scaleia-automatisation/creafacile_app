@@ -211,6 +211,8 @@ const GenerationStep = () => {
   if (!isBeginner && !objective?.trim()) missingFields.push('Objectif du contenu');
   if (!isBeginner && !company_activity?.trim()) missingFields.push('Activité principale');
   if (!isBeginner && !company_sector?.trim()) missingFields.push("Secteur d'activité");
+  if (type === 'video' && !ai_model?.trim()) missingFields.push('Modèle vidéo');
+  if (type !== 'video' && !ai_model?.trim()) missingFields.push("Modèle d'IA");
 
   const getImageSynthesis = (): string => {
     const source =
