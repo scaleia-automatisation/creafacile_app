@@ -16,6 +16,9 @@ const ManualIdeaPanel = () => {
   const [improving, setImproving] = useState(false);
   const improvedOnceRef = useRef(false);
   const lastTypeRef = useRef<string>(type);
+
+  if (!manual_idea_mode) return null;
+
   const missing: string[] = [];
   if (!offer_type?.trim()) missing.push("type d'offre");
   if (!product_service?.trim()) missing.push('Nom');
@@ -92,8 +95,6 @@ ${manual_idea_text}`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
-  if (!manual_idea_mode) return null;
-
   const handleUseManualIdea = () => {
     if (!manual_idea_text.trim()) {
       toast.error('Veuillez saisir votre idée');
@@ -103,11 +104,11 @@ ${manual_idea_text}`;
     setUseCase('');
     setInputText(text);
     setIdeaChosen(text);
-    toast.success('Idée insérée. Génération du prompt…');
+    toast.success('Idée insérée. Lancement de la génération…');
     setTimeout(() => {
       const target = document.getElementById('generation-step-block');
       target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      window.dispatchEvent(new CustomEvent('kreator:generate-prompt'));
+      window.dispatchEvent(new CustomEvent('kreator:generate'));
     }, 200);
   };
 
@@ -139,7 +140,7 @@ ${manual_idea_text}`;
           className="flex-1 gap-2 gradient-bg border-0 text-primary-foreground hover:opacity-90 font-bold"
         >
           <Sparkles className="w-4 h-4" />
-          Générer le prompt
+          Générer le contenu
         </Button>
       </div>
     </div>

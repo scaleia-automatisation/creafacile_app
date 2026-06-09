@@ -92,13 +92,12 @@ const IdeaSuggestions = () => {
     const text = `${idea.hook} — ${idea.concept}`.slice(0, 500);
     setInputText(text);
     setIdeaChosen(text);
-    toast.success('Idée sélectionnée. Génération du prompt…');
-    // Scroll to generation block and trigger PROMPT-only generation via custom event.
-    // L'utilisateur pourra modifier le prompt avant de lancer la génération du contenu.
+    toast.success('Idée sélectionnée. Lancement de la génération…');
+    // Scroll to generation block and trigger generation via custom event
     setTimeout(() => {
       const target = document.getElementById('generation-step-block');
       target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      window.dispatchEvent(new CustomEvent('kreator:generate-prompt'));
+      window.dispatchEvent(new CustomEvent('kreator:generate'));
     }, 200);
   };
 
@@ -205,7 +204,7 @@ const IdeaSuggestions = () => {
                 className="mt-auto gap-1.5 gradient-bg border-0 text-primary-foreground hover:opacity-90 text-xs font-bold"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                Générer le prompt
+                Générer le contenu
               </Button>
             </div>
             );
