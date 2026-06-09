@@ -221,7 +221,7 @@ const IdeaSuggestions = () => {
                   className="gap-1.5 text-xs font-bold"
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  Générer le prompt
+                  Voir le prompt
                 </Button>
                 <Button
                   type="button"
