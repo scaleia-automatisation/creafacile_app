@@ -11,7 +11,7 @@ import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, 
 import StepContainer from './StepContainer';
 import { generateImage, generateVideo, generateCaption, generatePrompt, verifyGeneratedImage, type PlatformCaptions } from '@/lib/kreator-ai';
 import type { Json } from '@/integrations/supabase/types';
-import { getVideoDurationSec, supportsVoiceOver, supportsNativeVoiceOver, requiresMuxVoiceOver } from '@/lib/voice-over';
+import { getVideoDurationSec, supportsVoiceOver, supportsNativeVoiceOver } from '@/lib/voice-over';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
