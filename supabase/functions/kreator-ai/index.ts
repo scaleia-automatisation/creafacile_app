@@ -711,6 +711,15 @@ serve(async (req) => {
           // OpenRouter / Grok Imagine prompt safety: cap well under 4096
           if (grokPrompt.length > 3900) grokPrompt = grokPrompt.slice(0, 3900);
 
+          // I2V fidelity: Grok Imagine génère un plan continu et a tendance à
+          // inventer un produit si le prompt ne l'ancre pas explicitement sur
+          // l'image de référence. On force la fidélité visuelle au produit fourni.
+          if (primaryImage || referenceImages.length > 0) {
+            const fidelityPrefix =
+              "RÉFÉRENCE VISUELLE OBLIGATOIRE : Le produit, l'emballage, la forme, les couleurs, le logo, l'étiquette et tous les détails visibles dans l'image de référence fournie doivent être reproduits À L'IDENTIQUE dans la vidéo. Ne remplace JAMAIS le produit par un autre. La vidéo doit montrer EXACTEMENT ce produit, sous le même angle de départ que l'image, sans inventer un produit différent.\n\n";
+            grokPrompt = (fidelityPrefix + grokPrompt).slice(0, 3900);
+          }
+
           const orBody: Record<string, any> = {
             model: orModel,
             prompt: grokPrompt,
