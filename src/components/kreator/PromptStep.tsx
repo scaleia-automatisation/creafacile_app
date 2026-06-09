@@ -198,13 +198,10 @@ const PromptStep = () => {
             <Textarea
               value={prompt_fr}
               onChange={(e) => handleFrChange(e.target.value)}
-              className="bg-card border-foreground/10 text-foreground text-sm resize-none whitespace-pre-wrap leading-6"
+              className="bg-card border-foreground/10 text-foreground text-sm resize-none whitespace-pre-wrap leading-6 overflow-y-auto"
               style={{
-                minHeight: `${Math.max(
-                  160,
-                  // account for both wrapped characters and explicit line breaks
-                  (Math.ceil(prompt_fr.length / 70) + (prompt_fr.match(/\n/g)?.length || 0) + 1) * 24
-                )}px`,
+                minHeight: '80px',
+                maxHeight: '15cm',
               }}
             />
             <div className="flex gap-2 mt-2">
