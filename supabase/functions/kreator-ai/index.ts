@@ -1416,17 +1416,26 @@ serve(async (req) => {
       builtMessages.push(...messages);
     }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: selectedModel,
-        messages: builtMessages,
-      }),
-    });
+    let response: Response;
+    try {
+      response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: selectedModel,
+          messages: builtMessages,
+          max_tokens: 2000,
+        }),
+      }, 110_000);
+    } catch (err) {
+      if ((err as any)?.name === "AbortError") {
+        return jsonError(504, "Le service OpenAI a mis trop de temps à répondre. Réessayez.");
+      }
+      throw err;
+    }
 
     if (!response.ok) {
       const text = await response.text();
