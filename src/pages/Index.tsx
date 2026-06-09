@@ -79,7 +79,7 @@ const Index = () => {
       </header>
 
       {/* Main */}
-      <main className="max-w-4xl mx-auto px-4 py-6 md:py-10">
+      <main className="max-w-6xl mx-auto px-4 py-6 md:py-10">
         <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-center mb-4 md:mb-6 leading-[1.05]">
           <span className="text-foreground">Crée et publie du contenu</span>
           <br />
