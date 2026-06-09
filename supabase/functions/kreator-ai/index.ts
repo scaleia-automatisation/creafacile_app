@@ -1375,10 +1375,26 @@ serve(async (req) => {
       return jsonError(400, "Missing messages");
     }
 
+    // Route chat completions through Lovable AI Gateway to avoid OpenAI TPM rate limits.
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
+    const useLovableGateway = !!LOVABLE_API_KEY;
 
-    const selectedModel = model || "gpt-4o";
+    // Map legacy OpenAI model names to Lovable AI Gateway equivalents.
+    const modelMap: Record<string, string> = {
+      "gpt-4o": "google/gemini-2.5-pro",
+      "gpt-4o-mini": "google/gemini-2.5-flash",
+      "gpt-4.1": "google/gemini-2.5-pro",
+      "gpt-4.1-mini": "google/gemini-2.5-flash",
+    };
+    const rawModel = model || "gpt-4o";
+    const selectedModel = useLovableGateway
+      ? (modelMap[rawModel] || "google/gemini-3-flash-preview")
+      : rawModel;
+
+    if (!useLovableGateway && !OPENAI_API_KEY) {
+      throw new Error("Aucune clé IA configurée (LOVABLE_API_KEY ou OPENAI_API_KEY)");
+    }
 
     const builtMessages: any[] = [];
     if (system_prompt) {
@@ -1400,10 +1416,17 @@ serve(async (req) => {
       builtMessages.push(...messages);
     }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const endpoint = useLovableGateway
+      ? "https://ai.gateway.lovable.dev/v1/chat/completions"
+      : "https://api.openai.com/v1/chat/completions";
+    const authHeaders: Record<string, string> = useLovableGateway
+      ? { Authorization: `Bearer ${LOVABLE_API_KEY}` }
+      : { Authorization: `Bearer ${OPENAI_API_KEY}` };
+
+    const response = await fetch(endpoint, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        ...authHeaders,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -1414,8 +1437,21 @@ serve(async (req) => {
 
     if (!response.ok) {
       const text = await response.text();
-      console.error("OpenAI error:", response.status, text);
-      return jsonError(response.status === 429 ? 429 : 500, response.status === 429 ? "Limite de requêtes OpenAI atteinte." : "Erreur du service OpenAI");
+      console.error("AI chat error:", response.status, text);
+      // Try OpenAI as fallback if Lovable gateway failed with a server-side error
+      if (useLovableGateway && OPENAI_API_KEY && response.status >= 500) {
+        const fb = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ model: rawModel, messages: builtMessages }),
+        });
+        if (fb.ok) {
+          return jsonResp(await fb.json());
+        }
+      }
+      if (response.status === 429) return jsonError(429, "Limite de requêtes atteinte. Réessayez dans quelques instants.");
+      if (response.status === 402) return jsonError(402, "Crédits IA épuisés. Ajoutez des crédits pour continuer.");
+      return jsonError(500, "Erreur du service IA");
     }
 
     const data = await response.json();
