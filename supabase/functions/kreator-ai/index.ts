@@ -723,14 +723,22 @@ serve(async (req) => {
 
           console.log(`[openrouter_grok_start] ai_model=${ai_model} → ${orModel}`, JSON.stringify(orBody).substring(0, 400));
 
-          const orRes = await fetch("https://openrouter.ai/api/v1/videos", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(orBody),
-          });
+          let orRes: Response;
+          try {
+            orRes = await fetchWithTimeout("https://openrouter.ai/api/v1/videos", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(orBody),
+            }, 60_000);
+          } catch (err) {
+            if ((err as any)?.name === "AbortError") {
+              return jsonFallback("Grok Imagine (OpenRouter) ne répond pas. Merci de réessayer ou de choisir un autre modèle.", { provider: "openrouter", timeout: true });
+            }
+            throw err;
+          }
           const orText = await orRes.text();
           if (!orRes.ok) {
             console.error("OpenRouter Grok Imagine start error:", orRes.status, orText);
