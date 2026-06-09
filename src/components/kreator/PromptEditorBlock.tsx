@@ -51,12 +51,13 @@ const PromptEditorBlock = () => {
       <Textarea
         value={prompt_fr}
         onChange={(e) => setPromptFr(e.target.value)}
-        className="bg-background border-foreground/10 text-foreground text-sm resize-none whitespace-pre-wrap leading-6 font-mono"
+        className="bg-background border-foreground/10 text-foreground text-sm resize-none whitespace-pre-wrap leading-6 font-mono overflow-hidden"
         style={{
           minHeight: `${Math.max(
-            220,
-            (Math.ceil(prompt_fr.length / 70) + (prompt_fr.match(/\n/g)?.length || 0) + 1) * 24
+            80,
+            (Math.ceil(prompt_fr.length / 85) + (prompt_fr.match(/\n/g)?.length || 0) + 1) * 22
           )}px`,
+          maxHeight: '420px',
         }}
       />
       <div className="flex gap-2 mt-2 items-center flex-wrap">
