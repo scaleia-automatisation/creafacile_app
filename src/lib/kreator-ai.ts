@@ -663,15 +663,49 @@ export async function generatePrompt(params: {
   voiceOverLanguage?: string;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
-  
+
   const aiModelName = params.aiModel || 'nano-banana-2';
   let formatAdaptation = '';
-  if (['veo-2', 'veo-3', 'veo-3-fast'].includes(aiModelName)) {
-    const veoFormat = params.format === '9:16' ? 'vidéo verticale 9:16' : params.format === '16:9' ? 'vidéo horizontale 16:9' : 'vidéo carrée 1:1';
-    formatAdaptation = `Modèle IA: ${aiModelName} — Préciser "${veoFormat}" et optimiser le cadrage pour ce ratio.`;
-  } else if (aiModelName === 'sora-2') {
-    formatAdaptation = `Modèle IA: Sora 2 — Préciser "aspect ratio ${params.format}" et adapter le type de framing.`;
-  } else if (['nano-banana-2', 'nano-banana-pro'].includes(aiModelName)) {
+
+  const videoModels = [
+    'veo-2', 'veo-3', 'veo-3-fast', 'veo-3.1',
+    'sora-2', 'sora-2-t2v', 'sora-2-i2v', 'sora-2-pro-i2v', 'sora-2-pro-t2v', 'sora-2-pro-character',
+    'grok-imagine-i2v', 'grok-imagine-t2v', 'grok-imagine-1.5-preview',
+    'bytedance/seedance-1.5-pro', 'bytedance/seedance-2',
+    'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
+    'kwaivgi/kling-video-o1',
+    'minimax/hailuo-2.3',
+    'alibaba/wan-2.7',
+  ];
+
+  const isVideoModel = videoModels.includes(aiModelName);
+
+  if (params.contentType === 'video' || isVideoModel) {
+    const videoFormat = params.format === '9:16' ? 'vidéo verticale 9:16 (1080×1920)'
+      : params.format === '16:9' ? 'vidéo horizontale 16:9 (1920×1080)'
+      : params.format === '1:1' ? 'vidéo carrée 1:1 (1080×1080)'
+      : `vidéo au format ${params.format}`;
+
+    if (aiModelName.startsWith('veo-')) {
+      formatAdaptation = `Modèle IA: ${aiModelName} — OBLIGATION ABSOLUE : générer une ${videoFormat}. Préciser explicitement "${videoFormat}" dans le prompt. Adapter le cadrage, la composition et le framing pour ce ratio.`;
+    } else if (aiModelName.startsWith('sora-')) {
+      formatAdaptation = `Modèle IA: ${aiModelName} — OBLIGATION ABSOLUE : générer une ${videoFormat}. Préciser explicitement "aspect ratio ${params.format}" dans le prompt. Adapter le type de framing, la composition et les mouvements de caméra pour ce ratio.`;
+    } else if (aiModelName.startsWith('grok-imagine')) {
+      formatAdaptation = `Modèle IA: ${aiModelName} — OBLIGATION ABSOLUE : générer une ${videoFormat}. Préciser explicitement "aspect ratio ${params.format}" dans le prompt. Adapter le cadrage, la composition verticale/horizontale et les mouvements de caméra pour ce ratio.`;
+    } else if (aiModelName.includes('seedance')) {
+      formatAdaptation = `Modèle IA: ${aiModelName} — OBLIGATION ABSOLUE : générer une ${videoFormat}. Préciser explicitement "aspect ratio ${params.format}" dans le prompt. Adapter la composition, le framing et la direction artistique pour ce ratio.`;
+    } else if (aiModelName.includes('kling') || aiModelName === 'kwaivgi/kling-video-o1') {
+      formatAdaptation = `Modèle IA: ${aiModelName} — OBLIGATION ABSOLUE : générer une ${videoFormat}. Préciser explicitement "aspect ratio ${params.format}" dans le prompt. Adapter le cadrage, la composition et les mouvements de caméra pour ce ratio.`;
+    } else if (aiModelName.includes('hailuo')) {
+      formatAdaptation = `Modèle IA: ${aiModelName} — OBLIGATION ABSOLUE : générer une ${videoFormat}. Préciser explicitement "aspect ratio ${params.format}" dans le prompt. Adapter la composition et le framing pour ce ratio.`;
+    } else if (aiModelName.includes('wan')) {
+      formatAdaptation = `Modèle IA: ${aiModelName} — OBLIGATION ABSOLUE : générer une ${videoFormat}. Préciser explicitement "aspect ratio ${params.format}" dans le prompt. Adapter la composition et le framing pour ce ratio.`;
+    } else if (params.contentType === 'video') {
+      formatAdaptation = `Modèle IA: ${aiModelName} — OBLIGATION ABSOLUE : générer une ${videoFormat}. Préciser explicitement "aspect ratio ${params.format}" dans le prompt. Adapter le cadrage, la composition et le framing pour ce ratio.`;
+    }
+  }
+
+  if (['nano-banana-2', 'nano-banana-pro'].includes(aiModelName)) {
     const nanoFormat = params.format === '1:1' ? 'image carrée parfaite (1:1)' : params.format === '16:9' ? 'image horizontale large (16:9)' : 'image verticale plein écran mobile (9:16)';
     formatAdaptation = `Modèle IA: ${aiModelName === 'nano-banana-pro' ? 'Nano Banana Pro' : 'Nano Banana 2'} — OBLIGATION ABSOLUE : le visuel généré DOIT être au format ${params.format} (${nanoFormat}). Inclure IMPÉRATIVEMENT l'instruction "Generate this image in ${params.format} aspect ratio" dans le prompt anglais ET "Générer cette image au format ${params.format}" dans le prompt français. Le ratio ${params.format} doit être mentionné au DÉBUT et à la FIN du prompt pour forcer le modèle à le respecter.`;
   }
