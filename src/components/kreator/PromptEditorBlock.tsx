@@ -45,7 +45,7 @@ const PromptEditorBlock = () => {
         className="bg-background border-foreground/10 text-foreground text-sm resize-none whitespace-pre-wrap leading-6 overflow-y-auto font-bold"
         style={{
           fontFamily: 'Arial, sans-serif',
-          minHeight: '80px',
+          minHeight: '350px',
           maxHeight: '15cm',
         }}
       />
