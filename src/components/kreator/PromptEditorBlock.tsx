@@ -29,7 +29,7 @@ const PromptEditorBlock = () => {
     <div
       id="prompt-editor-block"
       ref={blockRef}
-      className="w-full max-w-4xl mx-auto bg-card rounded-card p-3 md:p-4 border-2 border-primary/30"
+      className="w-full max-w-6xl mx-auto bg-card rounded-card p-3 md:p-4 border-2 border-primary/30"
     >
       <div className="flex items-center justify-end mb-1">
         <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
