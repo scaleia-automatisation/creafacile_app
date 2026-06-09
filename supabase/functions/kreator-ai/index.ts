@@ -40,6 +40,22 @@ const gatewaySizeFromAspect = (aspect: string) => aspect === "9:16" || aspect ==
   ? "1536x1024"
   : "1024x1024";
 
+// Wrap fetch with an AbortController so a slow upstream cannot hold the
+// edge function open until the 150s platform IDLE_TIMEOUT (504).
+const fetchWithTimeout = async (
+  input: string,
+  init: RequestInit = {},
+  timeoutMs = 120_000,
+): Promise<Response> => {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    return await fetch(input, { ...init, signal: ctrl.signal });
+  } finally {
+    clearTimeout(t);
+  }
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -707,14 +723,22 @@ serve(async (req) => {
 
           console.log(`[openrouter_grok_start] ai_model=${ai_model} → ${orModel}`, JSON.stringify(orBody).substring(0, 400));
 
-          const orRes = await fetch("https://openrouter.ai/api/v1/videos", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(orBody),
-          });
+          let orRes: Response;
+          try {
+            orRes = await fetchWithTimeout("https://openrouter.ai/api/v1/videos", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(orBody),
+            }, 60_000);
+          } catch (err) {
+            if ((err as any)?.name === "AbortError") {
+              return jsonFallback("Grok Imagine (OpenRouter) ne répond pas. Merci de réessayer ou de choisir un autre modèle.", { provider: "openrouter", timeout: true });
+            }
+            throw err;
+          }
           const orText = await orRes.text();
           if (!orRes.ok) {
             console.error("OpenRouter Grok Imagine start error:", orRes.status, orText);
@@ -1297,7 +1321,9 @@ serve(async (req) => {
       const framingInstruction = ` IMPORTANT: strictly respect the ${aspectRatioParam} aspect ratio coming from the user's "format" field. Frame the scene so that ALL essential elements (the plate/dish, product, subject, logo, text) are FULLY VISIBLE within the frame — never crop, cut off, or hide any essential element. Leave safe margins around the subject. Compose the shot specifically for a ${aspectLabel} canvas.`;
       const enhancedPrompt = `Generate an image with aspect ratio ${aspectRatioParam} (${aspectLabel}).${framingInstruction} ${prompt || ""}${logoInstruction}`;
 
-      const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      let orRes: Response;
+      try {
+        orRes = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
@@ -1321,7 +1347,13 @@ serve(async (req) => {
             })(),
           ],
         }),
-      });
+        }, 120_000);
+      } catch (err) {
+        if ((err as any)?.name === "AbortError") {
+          return jsonError(504, "OpenRouter a mis trop de temps à générer l'image. Réessayez ou changez de modèle.");
+        }
+        throw err;
+      }
 
       const orText = await orRes.text();
       if (!orRes.ok) {
@@ -1400,17 +1432,26 @@ serve(async (req) => {
       builtMessages.push(...messages);
     }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: selectedModel,
-        messages: builtMessages,
-      }),
-    });
+    let response: Response;
+    try {
+      response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: selectedModel,
+          messages: builtMessages,
+          max_tokens: 2000,
+        }),
+      }, 110_000);
+    } catch (err) {
+      if ((err as any)?.name === "AbortError") {
+        return jsonError(504, "Le service OpenAI a mis trop de temps à répondre. Réessayez.");
+      }
+      throw err;
+    }
 
     if (!response.ok) {
       const text = await response.text();
