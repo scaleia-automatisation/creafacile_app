@@ -660,6 +660,8 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
 
   const handleGenerateRef = useRef(handleGenerate);
   handleGenerateRef.current = handleGenerate;
+  const buildPromptParamsRef = useRef(buildPromptParams);
+  buildPromptParamsRef.current = buildPromptParams;
   useEffect(() => {
     const onTrigger = (e: Event) => {
       // Par défaut on régénère le prompt maître pour reprendre tous les
@@ -675,7 +677,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         setPromptFr('');
         const target = document.getElementById('generation-step-block');
         target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        const res = await generatePrompt(buildPromptParams());
+        const res = await generatePrompt(buildPromptParamsRef.current());
         const p = res?.prompt_fr || '';
         setPromptFr(p);
         if (p) toast.success('Prompt généré — modifiable ci-dessous');
