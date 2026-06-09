@@ -929,7 +929,7 @@ Génère un script vidéo publicitaire ou marketing naturel, 100% réaliste, pre
 
 🎙️ VOIX OFF
 ${hasVoiceOver
-  ? `Voix off ACTIVÉE. UNE SEULE phrase continue en ${voLang}, texte EXACT mot pour mot : "${params.voiceOverText}". Maximum ${voiceOverMaxWords} mots. Mots faciles à prononcer (courts, courants, sans sigles, sans anglicismes complexes, sans chiffres en chiffres). Style naturel, fluide, premium, conversationnel. Se termine ≥ 2s avant la fin (≤ ${Math.max(1, videoDuration - 2)}s). Aucun mot dans les 2 dernières secondes.`
+  ? `Voix off ACTIVÉE. UNE SEULE phrase continue en ${voLang}, texte EXACT mot pour mot : "${params.voiceOverText}". Maximum ${voiceOverMaxWords} mots. Mots faciles à prononcer (courts, courants, sans sigles, sans anglicismes complexes, sans chiffres en chiffres). Style naturel, fluide, premium, conversationnel. TIMING STRICT : démarre à t = 1.0s exactement (premier mot à ≥ 1s, aucun mot avant 1s). Se termine à t ≤ ${Math.max(1, videoDuration - 1)}s (1s avant la fin). Aucun mot dans la première seconde ni dans la dernière seconde de la vidéo. Débit ajusté pour tenir EXACTEMENT dans cette fenêtre de ${Math.max(1, videoDuration - 2)}s.`
   : `Voix off DÉSACTIVÉE par l'utilisateur. NE PAS générer de voix off. NE PAS inclure de bloc voix off dans la sortie. La vidéo s'appuie uniquement sur visuel, sound design et éventuels textes à l'écran.`}
 
 ━━━━━━━━━━━━━━━━━━
@@ -961,7 +961,7 @@ Puis pour CHAQUE scène (de 1 à ${videoSceneCount}) reproduire EXACTEMENT ce ga
 
 ${hasVoiceOver ? `🎙️ Voix off (unique)
 "${params.voiceOverText}"
-(${voLang}, une seule phrase continue, ≤ ${voiceOverMaxWords} mots, se termine ≥ 2s avant la fin)` : ''}
+(${voLang}, une seule phrase continue, ≤ ${voiceOverMaxWords} mots, démarre à t = 1s, se termine à t ≤ ${Math.max(1, videoDuration - 1)}s — donc 1s de silence au début ET 1s de silence à la fin)` : ''}
 
 ⚠️ CONTRAINTES — aucun style IA détectable, audio + visuel fonctionnent ensemble, chaque SFX renforce l'impact marketing, somme des durées = ${videoDuration}s exactement, résultat directement exploitable en production vidéo.
 
