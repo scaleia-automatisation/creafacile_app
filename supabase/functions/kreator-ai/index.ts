@@ -40,6 +40,22 @@ const gatewaySizeFromAspect = (aspect: string) => aspect === "9:16" || aspect ==
   ? "1536x1024"
   : "1024x1024";
 
+// Wrap fetch with an AbortController so a slow upstream cannot hold the
+// edge function open until the 150s platform IDLE_TIMEOUT (504).
+const fetchWithTimeout = async (
+  input: string,
+  init: RequestInit = {},
+  timeoutMs = 120_000,
+): Promise<Response> => {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    return await fetch(input, { ...init, signal: ctrl.signal });
+  } finally {
+    clearTimeout(t);
+  }
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
