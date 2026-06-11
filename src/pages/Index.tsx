@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { toast } from 'sonner';
+import { useEffect, useRef } from 'react';
 
 const Index = () => {
   const { user, profile, signOut } = useAuth();
@@ -105,13 +106,14 @@ const Index = () => {
           </StepContainer>
           <IdeaSuggestions />
           <ManualIdeaPanel />
-          <PromptEditorBlock />
           <CustomizationGate />
+          <PromptEditorBlock />
           <StartingPointBlock />
           <PreGenerationActions />
           <GenerationStep />
         </div>
       </main>
+      <InputChangeWatcher />
 
       <footer className="border-t border-foreground/5 py-8 mt-20">
         <div className="max-w-4xl mx-auto px-4">
