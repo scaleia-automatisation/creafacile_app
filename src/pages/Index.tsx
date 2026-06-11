@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { toast } from 'sonner';
+import { useEffect, useRef } from 'react';
 
 const Index = () => {
   const { user, profile, signOut } = useAuth();
@@ -105,13 +106,14 @@ const Index = () => {
           </StepContainer>
           <IdeaSuggestions />
           <ManualIdeaPanel />
-          <PromptEditorBlock />
           <CustomizationGate />
+          <PromptEditorBlock />
           <StartingPointBlock />
           <PreGenerationActions />
           <GenerationStep />
         </div>
       </main>
+      <InputChangeWatcher />
 
       <footer className="border-t border-foreground/5 py-8 mt-20">
         <div className="max-w-4xl mx-auto px-4">
@@ -201,6 +203,50 @@ const CustomizationGate = () => {
     : !!idea_chosen.trim();
   if (!shouldShow) return null;
   return <CustomizationStep />;
+};
+
+// Watches the first 3 input blocks (offer/product, objective, content type)
+// and clears any previously generated prompt + chosen idea when those inputs
+// change, so the user has to regenerate ideas or insert their own.
+const InputChangeWatcher = () => {
+  const offer_type = useKreatorStore((s) => s.offer_type);
+  const product_service = useKreatorStore((s) => s.product_service);
+  const product_description = useKreatorStore((s) => s.product_description);
+  const company_activity = useKreatorStore((s) => s.company_activity);
+  const company_sector = useKreatorStore((s) => s.company_sector);
+  const market = useKreatorStore((s) => s.market);
+  const target_persona = useKreatorStore((s) => s.target_persona);
+  const product_image_url = useKreatorStore((s) => s.product_image_url);
+  const product_image_urls_extra = useKreatorStore((s) => s.product_image_urls_extra);
+  const objective = useKreatorStore((s) => s.objective);
+  const type = useKreatorStore((s) => s.type);
+  const starting_choice = useKreatorStore((s) => s.starting_choice);
+
+  const isFirstRun = useRef(true);
+  const signature = JSON.stringify({
+    offer_type, product_service, product_description,
+    company_activity, company_sector, market, target_persona,
+    product_image_url, product_image_urls_extra,
+    objective, type, starting_choice,
+  });
+
+  useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+    const s = useKreatorStore.getState();
+    if (s.prompt_fr || s.prompt_en || s.prompt_en_final) {
+      s.setPromptFr('');
+      s.setPromptEn('');
+      s.setPromptEnFinal('');
+    }
+    if (s.idea_chosen) s.setIdeaChosen('');
+    if (s.manual_idea_text) s.setManualIdeaText('');
+    if (s.input_text) s.setInputText('');
+  }, [signature]);
+
+  return null;
 };
 
 const ResetButton = () => {
