@@ -794,12 +794,22 @@ GESTION DES TEXTES : intégration élégante et professionnelle, typographie pre
 ADAPTATION AUTOMATIQUE À L'OFFRE : style graphique adapté au nom de l'offre, à la description, au secteur, au métier, au produit/service et à la cible. Le contenu doit sembler avoir été conçu spécifiquement pour cette activité.
 
 QUALITÉ VISUELLE : qualité publicitaire professionnelle, éclairage maîtrisé, couleurs harmonieuses, composition haut de gamme, profondeur visuelle, niveau de détail élevé, esthétique premium. Aucun rendu amateur.
-${params.contentType === 'video' ? `
+${params.contentType === 'image' || params.contentType === 'carousel' ? `
+━━━━━━━━━━━━━━━━━━
+🎨 UX/UI DESIGN PREMIUM (IMAGES & CARROUSELS — OBLIGATOIRE)
+━━━━━━━━━━━━━━━━━━
+Premium advertising layout, award-winning creative agency design, editorial typography, luxury commercial poster, perfect text rendering, mobile-first visual hierarchy, Behance & Awwwards quality.
+
+Typography premium parfaitement lisible, texte naturel et humanisé, hiérarchie visuelle forte, titres impactants, CTA clair, mise en page éditoriale moderne, composition équilibrée, espaces de respiration, contrastes optimisés, éléments graphiques élégants et minimalistes, rendu publicitaire haut de gamme, esthétique grande marque internationale.
+
+Ne jamais inventer d'informations non fournies (prix, téléphone, email, adresse, réseaux sociaux, statistiques, avis, promotions ou certifications). Aucun texte déformé, aucun faux contenu, aucun watermark, aucun rendu IA visible, lisibilité mobile parfaite, design premium orienté conversion.
+` : ''}${params.contentType === 'video' ? `
 ━━━━━━━━━━━━━━━━━━
 BLOC CINÉMATOGRAPHIQUE (TOUTES VIDÉOS)
 ━━━━━━━━━━━━━━━━━━
 Produire une vidéo publicitaire premium digne des plus grandes agences créatives internationales. Mouvements de caméra fluides, cadrages professionnels, éclairages cinématographiques, profondeur de champ maîtrisée, transitions naturelles, étalonnage couleur haut de gamme, rythme dynamique, storytelling visuel puissant, qualité publicitaire de niveau international. Chaque scène renforce émotion, crédibilité et désir. Optimisation verticale réseaux sociaux, qualité cinéma, rendu ultra réaliste, esthétique publicitaire premium.
 ` : ''}${useCaseDirectiveBlock}${toneCoherenceBlock}`;
+
 
   const masterImagePrompt = `🖼️ PROMPT MAÎTRE — IMAGE PUBLICITAIRE VIRALE PREMIUM
 
