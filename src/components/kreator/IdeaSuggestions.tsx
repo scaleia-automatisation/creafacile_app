@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Loader2, PenLine, CheckCircle2, FileText } from 'lucide-react';
+import { Sparkles, Loader2, PenLine, CheckCircle2, FileText, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
 
@@ -116,10 +116,15 @@ const IdeaSuggestions = () => {
     }, 100);
   };
 
-  const handleSelectIdea = (idea: ContentIdea) => {
+  const handleChooseIdea = (idea: ContentIdea) => {
     const text = `${idea.hook} — ${idea.concept}`.slice(0, 500);
     setInputText(text);
     setIdeaChosen(text);
+    toast.success('Idée choisie. Personnalisation disponible…');
+    setTimeout(() => {
+      const target = document.getElementById('generation-step-block');
+      target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 200);
   };
 
   return (
@@ -170,20 +175,11 @@ const IdeaSuggestions = () => {
             return (
             <div
               key={idea.id ?? idx}
-              onClick={() => handleSelectIdea(idea)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleSelectIdea(idea);
-                }
-              }}
-              className={`relative cursor-pointer flex flex-col items-center text-center gap-3 p-4 rounded-card border-2 transition-all ${
+              className={`relative flex flex-col items-center text-center gap-3 p-4 rounded-card border-2 transition-all ${
                 isSelected
                   ? 'border-primary bg-card ring-2 ring-primary/40'
                   : dimmed
-                  ? 'border-foreground/10 bg-card opacity-50 grayscale hover:opacity-100 hover:grayscale-0 hover:border-primary/40'
+                  ? 'border-foreground/10 bg-card opacity-60 hover:opacity-100 hover:border-primary/40'
                   : 'border-foreground/10 bg-card hover:border-primary/40'
               }`}
             >
@@ -228,12 +224,12 @@ const IdeaSuggestions = () => {
                   size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleUseIdea(idea);
+                    handleChooseIdea(idea);
                   }}
                   className="gap-1.5 gradient-bg border-0 text-primary-foreground hover:opacity-90 text-xs font-bold"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Générer le contenu
+                  <Check className="w-3.5 h-3.5" />
+                  {isSelected ? 'Idée choisie' : 'Je choisis cette idée'}
                 </Button>
               </div>
             </div>
