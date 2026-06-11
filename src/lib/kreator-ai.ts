@@ -1948,10 +1948,14 @@ ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
   for (let i = 0; i < count; i++) {
     let t = (slides[i] || '').toString().trim();
     t = t.replace(/^["«»"'`]+|["«»"'`]+$/g, '').trim().replace(/\s+/g, ' ');
-    // Pas de troncature par nombre de mots : on conserve la phrase complète
-    // telle que le modèle l'a produite. On retire uniquement une ponctuation
-    // finale lourde si présente (le rendu visuel n'en a pas besoin).
+    // Retire la ponctuation finale lourde (le rendu visuel n'en a pas besoin).
     t = t.replace(/[;:]+$/g, '').trim();
+    // Cap dur à 15 mots maximum par slide (la borne basse de 5 mots reste
+    // à la charge du modèle via le system prompt).
+    const words = t.split(/\s+/).filter(Boolean);
+    if (words.length > 15) {
+      t = words.slice(0, 15).join(' ').replace(/[.,;:!?]+$/g, '').trim();
+    }
     out.push(t);
   }
   return out;
