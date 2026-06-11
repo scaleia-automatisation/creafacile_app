@@ -13,7 +13,7 @@ import ManualIdeaPanel from '@/components/kreator/ManualIdeaPanel';
 import PromptEditorBlock from '@/components/kreator/PromptEditorBlock';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Coins, LayoutDashboard, LogOut, Sun, Moon, RotateCcw, Sparkles, FileText } from 'lucide-react';
+import { Coins, LayoutDashboard, LogOut, Sun, Moon, RotateCcw, Sparkles, FileText, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { useKreatorStore } from '@/store/useKreatorStore';
@@ -169,6 +169,17 @@ const PreGenerationActions = () => {
         <FileText className="w-4 h-4" />
         {isPromptVisible ? 'Cacher le prompt' : 'Voir le prompt'}
       </Button>
+      {isPromptVisible && (
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => window.dispatchEvent(new CustomEvent('kreator:generate-prompt'))}
+          className="flex-1 gap-2 font-bold py-5 rounded-btn"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Mettre à jour le prompt
+        </Button>
+      )}
       <Button
         type="button"
         onClick={handleGenerate}
