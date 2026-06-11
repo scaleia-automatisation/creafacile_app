@@ -170,15 +170,26 @@ const PreGenerationActions = () => {
         {isPromptVisible ? 'Cacher le prompt' : 'Voir le prompt'}
       </Button>
       {isPromptVisible && (
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => window.dispatchEvent(new CustomEvent('kreator:generate-prompt'))}
-          className="flex-1 gap-2 font-bold py-5 rounded-btn"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Mettre à jour le prompt
-        </Button>
+        <>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => window.dispatchEvent(new CustomEvent('kreator:generate-prompt'))}
+            className="flex-1 gap-2 font-bold py-5 rounded-btn"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Mettre à jour le prompt
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => window.dispatchEvent(new CustomEvent('kreator:generate-prompt'))}
+            className="flex-1 gap-2 font-bold py-5 rounded-btn"
+          >
+            <Wand2 className="w-4 h-4" />
+            Générer une autre prompt
+          </Button>
+        </>
       )}
       <Button
         type="button"
