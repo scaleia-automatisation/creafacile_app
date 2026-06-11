@@ -131,6 +131,56 @@ const Index = () => {
   );
 };
 
+const PreGenerationActions = () => {
+  const {
+    type, prompt_fr, setPromptFr,
+    idea_chosen, manual_idea_mode, manual_idea_text, status,
+  } = useKreatorStore();
+
+  const hasIdea = manual_idea_mode ? !!manual_idea_text.trim() : !!idea_chosen.trim();
+  if (!hasIdea || status === 'generating') return null;
+
+  const isPromptVisible = !!prompt_fr?.trim();
+  const buttonLabel = type === 'image' ? 'Générer le contenu' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
+
+  const handleTogglePrompt = () => {
+    if (isPromptVisible) {
+      setPromptFr('');
+    } else {
+      window.dispatchEvent(new CustomEvent('kreator:generate-prompt'));
+    }
+  };
+
+  const handleGenerate = () => {
+    const hasPrompt = !!useKreatorStore.getState().prompt_fr?.trim();
+    window.dispatchEvent(new CustomEvent('kreator:generate', {
+      detail: { forcePromptRegen: !hasPrompt },
+    }));
+  };
+
+  return (
+    <div className="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-3 py-2">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleTogglePrompt}
+        className="flex-1 gap-2 font-bold py-5 rounded-btn"
+      >
+        <FileText className="w-4 h-4" />
+        {isPromptVisible ? 'Cacher le prompt' : 'Voir le prompt'}
+      </Button>
+      <Button
+        type="button"
+        onClick={handleGenerate}
+        className="flex-1 gap-2 gradient-bg border-0 text-primary-foreground hover:opacity-90 font-bold py-5 rounded-btn"
+      >
+        <Sparkles className="w-4 h-4" />
+        {buttonLabel}
+      </Button>
+    </div>
+  );
+};
+
 const CustomizationGate = () => {
   const idea_chosen = useKreatorStore((s) => s.idea_chosen);
   const manual_idea_mode = useKreatorStore((s) => s.manual_idea_mode);
