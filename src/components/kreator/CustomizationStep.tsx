@@ -374,9 +374,17 @@ const CustomizationStep = () => {
     const signature = [
       type,
       objective,
+      offer_type,
+      product_service,
+      product_description,
+      marketing_angle,
+      use_case,
+      options.ton,
+      slides_count,
       target_persona,
       company_activity,
       company_sector,
+      idea_chosen,
       manual_idea_mode ? `m:${manual_idea_text}` : '',
     ].join('|');
     const prev = prevUpstreamRef.current;
@@ -401,7 +409,7 @@ const CustomizationStep = () => {
       handleGenerateVoiceOver();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, objective, target_persona, company_activity, company_sector, manual_idea_text, manual_idea_mode]);
+  }, [type, objective, offer_type, product_service, product_description, marketing_angle, use_case, options.ton, slides_count, target_persona, company_activity, company_sector, idea_chosen, manual_idea_text, manual_idea_mode]);
 
   const isVisible = user_mode === 'expert' || showAdvanced;
 
