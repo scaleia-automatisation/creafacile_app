@@ -13,7 +13,7 @@ import ManualIdeaPanel from '@/components/kreator/ManualIdeaPanel';
 import PromptEditorBlock from '@/components/kreator/PromptEditorBlock';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Coins, LayoutDashboard, LogOut, Sun, Moon, RotateCcw, Sparkles, FileText, RefreshCw } from 'lucide-react';
+import { Coins, LayoutDashboard, LogOut, Sun, Moon, RotateCcw, Sparkles, FileText, RefreshCw, Wand2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { useKreatorStore } from '@/store/useKreatorStore';
