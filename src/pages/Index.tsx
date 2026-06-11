@@ -13,9 +13,11 @@ import ManualIdeaPanel from '@/components/kreator/ManualIdeaPanel';
 import PromptEditorBlock from '@/components/kreator/PromptEditorBlock';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Coins, LayoutDashboard, LogOut, Sun, Moon } from 'lucide-react';
+import { Coins, LayoutDashboard, LogOut, Sun, Moon, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
+import { useKreatorStore } from '@/store/useKreatorStore';
+import { toast } from 'sonner';
 
 const Index = () => {
   const { user, profile, signOut } = useAuth();
@@ -121,7 +123,31 @@ const Index = () => {
           <p className="text-center text-xs text-muted-foreground">© 2026 Créafacile — Génération de contenu marketing par IA</p>
         </div>
       </footer>
+
+      {/* Bouton Repartir de zéro */}
+      <ResetButton />
     </div>
+  );
+};
+
+const ResetButton = () => {
+  const resetProject = useKreatorStore((state) => state.resetProject);
+
+  const handleReset = () => {
+    if (window.confirm('Êtes-vous sûr de vouloir tout réinitialiser ?')) {
+      resetProject();
+      toast.success('Tous les champs ont été réinitialisés');
+    }
+  };
+
+  return (
+    <Button
+      onClick={handleReset}
+      className="fixed bottom-6 right-6 z-50 gap-2 gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn py-3 px-5 font-bold shadow-lg"
+    >
+      <RotateCcw className="w-4 h-4" />
+      Repartir de zéro
+    </Button>
   );
 };
 
