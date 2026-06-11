@@ -393,7 +393,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
     try {
       // 1) Génération silencieuse du prompt si pas déjà présent OU si on force la régénération
       // (régénération = on reprend en compte tous les nouveaux inputs : modèle, format, type, etc.)
-      let activePrompt = prompt_fr;
+      let activePrompt = useKreatorStore.getState().prompt_fr || '';
       if (opts?.forcePromptRegen || !activePrompt || activePrompt.trim().length === 0) {
         const promptResult = await raceAbort(generatePrompt(buildPromptParams()));
         activePrompt = promptResult.prompt_fr || '';
