@@ -1015,6 +1015,17 @@ RÈGLE ABSOLUE — RÉALISME 100% NATUREL
 ━━━━━━━━━━━━━━━━━━
 Rendu indiscernable d'une vraie production humaine. Anatomie parfaite (5 doigts, yeux et dents naturels, peau réelle). Préhension d'objets réaliste. Cohérence spatiale et logique du regard (écrans face caméra orientés vers la personne). Aucun artefact IA : pas de plastique, pas de uncanny valley, pas de doigts fusionnés, pas de texte illisible ou inventé, pas de logo déformé, pas de cadre/bordure/contour autour du logo, pas de fond rectangulaire derrière le produit (produit détouré intégré nativement dans le décor réel). Logo et texte overlay JAMAIS superposés (marge > 10%).
 
+━━━━━━━━━━━━━━━━━━
+RÈGLE ABSOLUE — CONCEPT & COMPOSITION 100% RÉALISTES ET LOGIQUES
+━━━━━━━━━━━━━━━━━━
+TOUS les blocs "🎨 CONCEPT CRÉATIF" et "🖼️ COMPOSITION VISUELLE" générés DOIVENT être :
+- 100% RÉALISTES : scènes plausibles dans le monde réel, situations crédibles, lieux existants, objets et accessoires cohérents avec l'usage réel du produit/service.
+- 100% LOGIQUES : aucune incohérence physique, spatiale, temporelle, contextuelle ou narrative. Chaque élément a une raison d'être. Les proportions, échelles, perspectives, ombres, reflets, gravité, interactions humain/objet sont parfaitement justes.
+- ZÉRO STYLE IA : interdiction absolue d'univers fantastiques, surréalistes, oniriques, "trop parfaits", flottants, abstraits, métaphoriques irréels, brillances exagérées, particules magiques, hologrammes gratuits, effets "rendu 3D IA", visages génériques uniformes.
+- ZÉRO INCOHÉRENCE avec le contenu généré (texte overlay, caption, script, idée, offre, produit) : ce qui est montré DOIT correspondre EXACTEMENT à ce qui est dit/écrit. Si le texte parle d'un café, l'image montre un vrai café réaliste, pas une métaphore.
+- Mise en scène = situation de vie réelle ou shooting publicitaire réaliste type grande agence (Apple, Nike, McDonald's, L'Oréal). Personnes naturelles, expressions authentiques, environnements réels, lumière crédible.
+Toute idée non réaliste, non logique, ou "IA-esque" DOIT être remplacée par une alternative photoréaliste, ancrée dans le réel, cohérente avec les inputs.
+
 ${masterPrompt}
 
 ${premiumDirectionBlock}
