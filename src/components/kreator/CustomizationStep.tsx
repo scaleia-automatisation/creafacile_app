@@ -739,51 +739,6 @@ const CustomizationStep = () => {
                                 </div>
                               </>
                             )}
-                            <div>
-                              <label className="text-xs text-muted-foreground mb-1 block">Position du texte 2</label>
-                              <Select
-                                value={options.text_position_2}
-                                onValueChange={(v) =>
-                                  setOptions({ text_position_2: v as typeof options.text_position_2 })
-                                }
-                              >
-                                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="bg-card border-foreground/10">
-                                  {TEXT_POSITIONS.map((p) => (
-                                    <SelectItem key={p.value} value={p.value} className="text-foreground focus:bg-secondary/20">
-                                      {p.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div>
-                              <label className="text-xs text-muted-foreground mb-1 block">Police du texte 2</label>
-                              <Select
-                                value={options.text_font_2}
-                                onValueChange={(v) => setOptions({ text_font_2: v })}
-                              >
-                                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="bg-card border-foreground/10 max-h-[280px]">
-                                  <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">Classiques</div>
-                                  {CLASSIC_FONTS.map((f) => (
-                                    <SelectItem key={f} value={f} className="text-foreground focus:bg-secondary/20" style={{ fontFamily: f }}>
-                                      {f}
-                                    </SelectItem>
-                                  ))}
-                                  <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">Design</div>
-                                  {DESIGN_FONTS.map((f) => (
-                                    <SelectItem key={f} value={f} className="text-foreground focus:bg-secondary/20" style={{ fontFamily: f }}>
-                                      {f}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
                             <div className="space-y-2">
                               <label className="text-xs text-muted-foreground block">Couleur du texte</label>
                               <div className="grid grid-cols-8 gap-2">
