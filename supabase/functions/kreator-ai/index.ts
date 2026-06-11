@@ -1416,7 +1416,7 @@ serve(async (req) => {
       return jsonError(400, "Missing messages");
     }
 
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    const OPENAI_API_KEY = (Deno.env.get("OPENAI_API_KEY") || "").trim();
     if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
 
     const selectedModel = model || "gpt-4o";
@@ -1465,7 +1465,10 @@ serve(async (req) => {
     if (!response.ok) {
       const text = await response.text();
       console.error("OpenAI error:", response.status, text);
-      return jsonError(response.status === 429 ? 429 : 500, response.status === 429 ? "Limite de requêtes OpenAI atteinte." : "Erreur du service OpenAI");
+      if (response.status === 429) return jsonError(429, "Limite de requêtes OpenAI atteinte.");
+      if (response.status === 431) return jsonError(500, "Requête OpenAI trop volumineuse (header). Réessayez sans images de référence ou avec un prompt plus court.");
+      if (response.status >= 500) return jsonFallback("Le service OpenAI est temporairement indisponible. Réessayez dans un instant.", { provider_status: response.status });
+      return jsonError(response.status, `Erreur OpenAI (${response.status}): ${text.slice(0, 200)}`);
     }
 
     const data = await response.json();
