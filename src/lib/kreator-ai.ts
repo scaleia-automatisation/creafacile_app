@@ -1259,9 +1259,36 @@ ${params.ton ? `Le ton d'écriture imposé est : "${params.ton}". CHAQUE caption
 ━━━━━━━━━━━━━━━━━━
 ANTI-DÉTECTION IA OBLIGATOIRE
 ━━━━━━━━━━━━━━━━━━
-Toujours : variations naturelles, rythme irrégulier, phrases courtes + longues, vocabulaire simple, émotions naturelles, micro imperfections humaines, spontanéité crédible.
-Autorisé : "franchement", "honnêtement", "en vrai", "bon", "tu savais ?", "tu fais ça aussi ?", "qu'est-ce que t'en penses ?".
-INTERDIT : "dans le paysage numérique actuel", "plongeons dans", "sans plus attendre", "il est important de noter", "à l'ère digitale", et tout jargon corporate.
+RÈGLE ABSOLUE (NON NÉGOCIABLE) : CHAQUE caption de CHAQUE réseau (Facebook, Instagram, TikTok, LinkedIn) ET chaque caption de slide DOIT être 100% HUMAINE, HUMANISÉE, INDÉTECTABLE comme générée par une IA. Objectif : passer tous les détecteurs IA (GPTZero, Originality, Copyleaks, ZeroGPT, etc.) sans aucune trace.
+
+OBLIGATOIRE — Écriture humaine réelle :
+- Rythme irrégulier : alterne phrases TRÈS courtes (2-5 mots) et phrases plus longues. Pas de cadence régulière.
+- Vocabulaire simple, parlé, quotidien — comme un vrai humain qui parle à un ami sur le réseau.
+- Micro-imperfections humaines : phrases incomplètes assumées, ellipses "...", tirets "—", interjections ("ah", "bon", "bref", "ok", "voilà"), parenthèses spontanées, répétitions volontaires d'insistance.
+- Émotion réelle, vécue, subjective ("j'ai", "moi je", "perso", "franchement", "honnêtement", "en vrai", "le pire c'est que", "tu vois ce que je veux dire").
+- Questions directes au lecteur, tutoiement spontané (sauf si le ton impose vouvoiement).
+- Détails concrets, sensoriels, anecdotiques (pas de généralités lisses).
+- Aucune phrase "trop bien construite", aucune symétrie parfaite, aucune liste à 3 éléments mécanique.
+
+INTERDICTIONS ABSOLUES (formulations typiques IA — ZÉRO tolérance) :
+- "dans le paysage numérique actuel", "à l'ère digitale", "à l'ère du numérique", "dans un monde où"
+- "plongeons dans", "explorons ensemble", "découvrons ensemble", "embarquons"
+- "sans plus attendre", "il est important de noter", "il convient de souligner", "il va sans dire"
+- "dans cet article", "dans ce post", "aujourd'hui je vais vous parler de"
+- "En conclusion", "Pour conclure", "En somme", "En définitive", "Au final" (en ouverture rhétorique)
+- "révolutionnaire", "incontournable", "à couper le souffle", "véritable game-changer"
+- "n'hésitez pas à", "je vous invite à", "je tenais à partager"
+- Triplets d'adjectifs parfaitement équilibrés ("simple, efficace, puissant")
+- Toute tournure corporate, lisse, neutre, générique, "trop propre"
+- Emojis en début de chaque ligne en mode liste robotique
+- "✨", "🚀", "💡" placés mécaniquement sans intention émotionnelle réelle
+
+TEST DE VALIDATION (obligatoire mentalement avant d'écrire chaque caption) :
+1. "Est-ce qu'un humain réel, sur ce réseau, écrirait EXACTEMENT cette phrase ?" Si NON → réécrire.
+2. "Est-ce qu'un détecteur IA flaggerait cette phrase ?" Si OUI → casser la structure, ajouter une imperfection humaine.
+3. "Est-ce que cette caption respecte 100% le TON D'ÉCRITURE et l'ANGLE MARKETING imposés ?" Si NON → réécrire dans l'angle/ton.
+
+L'angle marketing et le ton d'écriture doivent transparaître dans CHAQUE phrase de CHAQUE caption — pas seulement dans le hook ou le CTA. La voix humaine, l'angle et le ton sont indissociables sur toute la longueur du texte.
 
 ━━━━━━━━━━━━━━━━━━
 STRUCTURE OBLIGATOIRE (par caption)
