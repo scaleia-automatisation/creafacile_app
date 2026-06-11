@@ -1521,6 +1521,8 @@ export async function generateImage(
       size: format,
       dalle_size: dalleSize,
       quality: 'hd',
+      input_image_url: inputImageUrl || '',
+      logo_url: logoUrl || '',
     },
   });
 
