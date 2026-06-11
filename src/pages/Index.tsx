@@ -134,14 +134,14 @@ const Index = () => {
 const PreGenerationActions = () => {
   const {
     type, prompt_fr, setPromptFr,
-    idea_chosen, manual_idea_mode, manual_idea_text, status,
+    idea_chosen, manual_idea_mode, manual_idea_text, status, result_url,
   } = useKreatorStore();
 
   const hasIdea = manual_idea_mode ? !!manual_idea_text.trim() : !!idea_chosen.trim();
   if (!hasIdea || status === 'generating') return null;
 
   const isPromptVisible = !!prompt_fr?.trim();
-  const buttonLabel = 'Générer le contenu';
+  const buttonLabel = result_url ? 'Régénérer le contenu' : 'Générer le contenu';
 
   const handleTogglePrompt = () => {
     if (isPromptVisible) {

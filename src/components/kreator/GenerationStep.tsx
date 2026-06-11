@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock, Eye, EyeOff } from 'lucide-react';
 import StepContainer from './StepContainer';
-import { generateImage, generateVideo, generateCaption, generatePrompt, verifyGeneratedImage, type PlatformCaptions } from '@/lib/kreator-ai';
+import { generateImage, generateVideo, generateCaption, generatePrompt, type PlatformCaptions } from '@/lib/kreator-ai';
 import type { Json } from '@/integrations/supabase/types';
 import { getVideoDurationSec, supportsVoiceOver, supportsNativeVoiceOver } from '@/lib/voice-over';
 import { supabase } from '@/integrations/supabase/client';
@@ -185,7 +185,7 @@ const GenerationStep = () => {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const buttonLabel = 'Générer le contenu';
+  const buttonLabel = result_url ? 'Régénérer le contenu' : 'Générer le contenu';
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
 
   const currentCaption = captions ? captions[selectedPlatform] : null;
@@ -567,55 +567,12 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       if (progressInterval) clearInterval(progressInterval);
       setProgress(100);
 
-      // === AUTO-VÉRIFICATION VISUELLE (image uniquement, une seule régénération max) ===
-      let finalContentUrl = !isVideo && options.logo_enabled && options.logo_url
+      // Composition logo (image/carousel uniquement). Auto-vérification visuelle désactivée.
+      const finalContentUrl = !isVideo && options.logo_enabled && options.logo_url
         ? await raceAbort(composeImageWithExactLogo(contentUrl, options.logo_url, options.logo_position, format))
         : contentUrl;
       checkAbort();
-      let finalActivePrompt = activePrompt;
-      if (!isVideo && finalContentUrl && !abortController.signal.aborted) {
-        try {
-          const verdict = await raceAbort(verifyGeneratedImage({
-            imageUrl: finalContentUrl,
-            promptFr: activePrompt,
-            format,
-            hasText: !!options.show_text,
-            textContent: options.text_content,
-            textPosition: options.text_position,
-            hasLogo: !!options.logo_enabled,
-            logoPosition: options.logo_position,
-          }));
-          checkAbort();
-          if (!verdict.ok && verdict.improved_prompt_fr && !abortController.signal.aborted) {
-            console.warn('[verify] image non conforme, régénération:', verdict.issues);
-            toast.message('Optimisation visuelle automatique en cours…', {
-              description: verdict.issues.slice(0, 2).join(' • '),
-            });
-            const improved = verdict.improved_prompt_fr;
-            setPromptFr(improved);
-            const improvedGenerationPrompt = withExactVideoDurationInstruction(withLogoOverlayInstruction(withSelectedFormatInstruction(improved)));
-            const retryUrl = await generateImage(
-              improvedGenerationPrompt,
-              ai_model,
-              format,
-              input_photos?.[0]?.url,
-              abortController.signal,
-              '',
-            );
-            checkAbort();
-            if (retryUrl) {
-              finalContentUrl = options.logo_enabled && options.logo_url
-                ? await raceAbort(composeImageWithExactLogo(retryUrl, options.logo_url, options.logo_position, format))
-                : retryUrl;
-              finalActivePrompt = improved;
-            }
-          }
-        } catch (e) {
-          if (e instanceof DOMException && e.name === 'AbortError') throw e;
-          console.warn('[verify] échec auto-vérification (non bloquant):', e);
-        }
-      }
-      checkAbort();
+      const finalActivePrompt = activePrompt;
 
       const { data: deducted } = await raceAbort(Promise.resolve(supabase.rpc('deduct_credits', {
         p_user_id: user.id,
@@ -1003,7 +960,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
                 className="border-foreground/10 text-foreground hover:border-secondary text-xs px-2"
                 onClick={handleRegenerate}
               >
-                <RefreshCw className="w-3.5 h-3.5 mr-1" /> Régénérer
+                <RefreshCw className="w-3.5 h-3.5 mr-1" /> Régénérer le contenu
               </Button>
             </div>
 
