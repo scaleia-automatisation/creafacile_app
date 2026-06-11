@@ -642,15 +642,17 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       const force = detail.forcePromptRegen !== false;
       handleGenerateRef.current({ forcePromptRegen: force });
     };
-    const onGeneratePromptOnly = async () => {
+    const onGeneratePromptOnly = async (e: Event) => {
       try {
+        const detail = (e as CustomEvent).detail || {};
+        const variant = !!detail.variant;
         setPromptFr('');
         const target = document.getElementById('generation-step-block');
         target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        const res = await generatePrompt(buildPromptParamsRef.current());
+        const res = await generatePrompt({ ...buildPromptParamsRef.current(), variant });
         const p = res?.prompt_fr || '';
         setPromptFr(p);
-        if (p) toast.success('Prompt généré — modifiable ci-dessous');
+        if (p) toast.success(variant ? 'Nouvelle variante de prompt générée' : 'Prompt généré — modifiable ci-dessous');
       } catch (err) {
         console.error(err);
         toast.error('Erreur lors de la génération du prompt');
