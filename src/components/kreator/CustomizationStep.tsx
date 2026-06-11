@@ -148,6 +148,10 @@ const CustomizationStep = () => {
   const [logoColors, setLogoColors] = useState<string[]>([]);
   const lastIdeaForSlidesRef = useRef<string>('');
   const prevIdeaRef = useRef<string>(idea_chosen || '');
+  // Signature des inputs amont (type, objectif, persona, activité/secteur,
+  // idée choisie ou idée manuelle). Sert à régénérer automatiquement les
+  // champs déjà actifs de la personnalisation quand ces inputs changent.
+  const prevUpstreamRef = useRef<string>('');
 
   // Extract dominant colors from the logo whenever it changes; only used when
   // the colour palette is enabled and a logo is uploaded.
@@ -361,6 +365,43 @@ const CustomizationStep = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idea_chosen]);
+
+  // Régénération auto des champs DÉJÀ remplis de la personnalisation lorsque
+  // l'utilisateur modifie en amont : type de contenu, objectif, persona /
+  // activité / secteur, ou l'idée manuelle. Ne déclenche rien si rien n'est
+  // encore généré côté personnalisation.
+  useEffect(() => {
+    const signature = [
+      type,
+      objective,
+      target_persona,
+      company_activity,
+      company_sector,
+      manual_idea_mode ? `m:${manual_idea_text}` : '',
+    ].join('|');
+    const prev = prevUpstreamRef.current;
+    if (!prev) {
+      // Premier passage : on enregistre sans régénérer.
+      prevUpstreamRef.current = signature;
+      return;
+    }
+    if (signature === prev) return;
+    prevUpstreamRef.current = signature;
+    if (!canGenerateText) return;
+    if (!effectiveIdea) return;
+    if (isCarousel) {
+      const hadSlides = (options.slide_texts || []).some((t) => !!t?.trim());
+      if (hadSlides && !slidesGenerating) handleGenerateSlideTexts();
+    } else if (options.show_text) {
+      if (options.text_content?.trim() && !text1Generating) handleGenerateText(1);
+      if (options.text_2_enabled && options.text_content_2?.trim() && !text2Generating) handleGenerateText(2);
+    }
+    // Voix off : régénère si déjà présente et supportée par le modèle.
+    if (isVideo && voModelSupports && voice_over_text?.trim() && !voGenerating) {
+      handleGenerateVoiceOver();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type, objective, target_persona, company_activity, company_sector, manual_idea_text, manual_idea_mode]);
 
   const isVisible = user_mode === 'expert' || showAdvanced;
 

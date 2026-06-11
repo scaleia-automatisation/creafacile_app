@@ -124,7 +124,18 @@ const IdeaSuggestions = () => {
     setManualIdeaMode(false);
     setInputText(text);
     setIdeaChosen(text);
-    toast.success('Idée choisie. Personnalisation disponible…');
+    // N'affiche le toast que si le bloc personnalisation n'est pas déjà
+    // renseigné : si l'utilisateur a déjà saisi/généré des textes ou une
+    // voix off, la régénération auto suffit, pas besoin d'alerte.
+    const s = useKreatorStore.getState();
+    const customizationFilled =
+      !!s.options.text_content?.trim() ||
+      !!s.options.text_content_2?.trim() ||
+      (s.options.slide_texts || []).some((t) => !!t?.trim()) ||
+      !!s.voice_over_text?.trim();
+    if (!customizationFilled) {
+      toast.success('Idée choisie. Personnalisation disponible…');
+    }
     setTimeout(() => {
       const target = document.getElementById('generation-step-block');
       target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
