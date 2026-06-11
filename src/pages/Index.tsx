@@ -141,7 +141,7 @@ const PreGenerationActions = () => {
   if (!hasIdea || status === 'generating') return null;
 
   const isPromptVisible = !!prompt_fr?.trim();
-  const buttonLabel = type === 'image' ? 'Générer le contenu' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
+  const buttonLabel = 'Générer le contenu';
 
   const handleTogglePrompt = () => {
     if (isPromptVisible) {
