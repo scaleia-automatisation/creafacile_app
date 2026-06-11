@@ -664,6 +664,68 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
     };
   }, [setGeneratedCaptions, setGeneratedCarouselSlides, setResultUrl]);
 
+  // Auto-MAJ du prompt : dès qu'une info ayant servi à générer le prompt
+  // est modifiée, on régénère silencieusement le prompt en arrière-plan
+  // (uniquement si un prompt existe déjà et qu'aucune génération n'est en cours).
+  const autoPromptTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoPromptRunningRef = useRef(false);
+  const lastInputsKeyRef = useRef<string>('');
+  useEffect(() => {
+    const pickInputsKey = () => {
+      const s = useKreatorStore.getState();
+      return JSON.stringify({
+        type: s.type, format: s.format, ai_model: s.ai_model,
+        objective: s.objective, render_style: s.render_style, video_render_style: s.video_render_style,
+        company_activity: s.company_activity, company_sector: s.company_sector,
+        product_service: s.product_service, product_description: s.product_description,
+        market: s.market, offer_type: s.offer_type, target_persona: s.target_persona,
+        marketing_angle: s.marketing_angle, offer_nature: s.offer_nature,
+        visual_style_brief: s.visual_style_brief, use_case: s.use_case,
+        input_text: s.input_text, idea_chosen: s.idea_chosen,
+        manual_idea_mode: s.manual_idea_mode, manual_idea_text: s.manual_idea_text,
+        input_image_description: s.input_image_description,
+        input_photos: (s.input_photos || []).map(p => p?.url || ''),
+        simple_images: (s.simple_images || []).map(p => p?.url || ''),
+        starting_choice: s.starting_choice,
+        slides_count: s.slides_count,
+        voice_over_enabled: s.voice_over_enabled, voice_over_text: s.voice_over_text,
+        voice_over_language: s.voice_over_language,
+        model_settings: s.model_settings,
+        options: s.options,
+      });
+    };
+    lastInputsKeyRef.current = pickInputsKey();
+    const unsub = useKreatorStore.subscribe((state) => {
+      const key = pickInputsKey();
+      if (key === lastInputsKeyRef.current) return;
+      lastInputsKeyRef.current = key;
+      if (!state.prompt_fr?.trim()) return;
+      if (state.status === 'generating') return;
+      if (autoPromptRunningRef.current) return;
+      if (autoPromptTimerRef.current) clearTimeout(autoPromptTimerRef.current);
+      autoPromptTimerRef.current = setTimeout(async () => {
+        try {
+          autoPromptRunningRef.current = true;
+          const res = await generatePrompt(buildPromptParamsRef.current());
+          const p = res?.prompt_fr || '';
+          if (p) {
+            // Mettre à jour la clé pour ne pas re-déclencher sur ce setPromptFr
+            useKreatorStore.getState().setPromptFr(p);
+            lastInputsKeyRef.current = pickInputsKey();
+          }
+        } catch (e) {
+          console.warn('[auto-prompt] regen failed', e);
+        } finally {
+          autoPromptRunningRef.current = false;
+        }
+      }, 800);
+    });
+    return () => {
+      unsub();
+      if (autoPromptTimerRef.current) clearTimeout(autoPromptTimerRef.current);
+    };
+  }, []);
+
   const handleCopyCaption = () => {
     if (!currentCaption) return;
     const text = `${currentCaption.hook}\n${currentCaption.description}\n${currentCaption.cta}\n\n${currentCaption.hashtags}`;
