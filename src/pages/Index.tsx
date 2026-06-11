@@ -183,7 +183,7 @@ const PreGenerationActions = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => window.dispatchEvent(new CustomEvent('kreator:generate-prompt'))}
+            onClick={() => window.dispatchEvent(new CustomEvent('kreator:generate-prompt', { detail: { variant: true } }))}
             className="flex-1 gap-2 font-bold py-5 rounded-btn"
           >
             <Wand2 className="w-4 h-4" />
