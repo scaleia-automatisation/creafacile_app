@@ -135,6 +135,49 @@ serve(async (req) => {
 
       const selectedAspect = normalizeAspectRatio(size);
       const gatewaySize = gatewaySizeFromAspect(selectedAspect);
+      const hasRefImg = !!input_image_url;
+      const hasLogo = !!logo_url;
+
+      // When a reference product image is provided, GPT Image (OpenAI) cannot
+      // accept it via /v1/images/generations. Route through Gemini image
+      // (gemini-3-pro-image-preview) which faithfully reproduces the product.
+      if (hasRefImg || hasLogo) {
+        const logoOrderLabel = hasLogo ? (hasRefImg ? "second" : "first") : "";
+        const productInstr = hasRefImg
+          ? `\n\nABSOLUTE PRIORITY: The ${hasLogo ? "first" : "first"} reference image attached is the user's REAL product/service. You MUST reproduce this EXACT product with perfect fidelity in the generated visual — same shape, same colors, same packaging, same labels, same proportions, same materials, same details. Do NOT invent a different product, do NOT restyle it, do NOT change its branding. The generated image must be visually IDENTICAL to the reference product, only the scene/context/lighting around it changes.`
+          : "";
+        const logoInstr = hasLogo
+          ? `\n\nIMPORTANT: The ${logoOrderLabel} reference image is the user's brand logo. Integrate this EXACT logo (pixel-identical) into the generated image — do NOT redraw or substitute it. Keep its transparent background, do not crop or rotate it, place it discreetly without covering the main subject.`
+          : "";
+        const enhancedPrompt = `Generate an image STRICTLY in aspect ratio ${selectedAspect} (${aspectLabel(selectedAspect)}), output canvas ${gatewaySize}. ${prompt || ""}${productInstr}${logoInstr}`;
+
+        const userParts: any[] = [{ type: "text", text: enhancedPrompt }];
+        if (hasRefImg) userParts.push({ type: "image_url", image_url: { url: input_image_url } });
+        if (hasLogo) userParts.push({ type: "image_url", image_url: { url: logo_url } });
+
+        const refRes = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "google/gemini-3-pro-image-preview",
+            messages: [{ role: "user", content: userParts }],
+            modalities: ["image", "text"],
+            stream: false,
+          }),
+        });
+        if (!refRes.ok) {
+          const errText = await refRes.text();
+          console.error("GPT-image-2 ref→Gemini error:", refRes.status, errText);
+          if (refRes.status === 429) return jsonError(429, "Limite de requêtes atteinte.");
+          if (refRes.status === 402) return jsonError(402, "Crédits IA épuisés.");
+          return jsonError(500, "Erreur lors de la génération d'image avec référence");
+        }
+        const refData = await refRes.json();
+        const refItem = refData?.data?.[0];
+        const refUrl = refItem?.b64_json ? `data:image/png;base64,${refItem.b64_json}` : refItem?.url || null;
+        if (!refUrl) return jsonError(500, "Pas d'image générée");
+        return jsonResp({ image_url: refUrl });
+      }
 
       const callGptImage = () => fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
         method: "POST",
@@ -1326,9 +1369,12 @@ serve(async (req) => {
       const logoInstruction = logo_url
         ? `\n\nIMPORTANT: The ${hasInput ? "second" : "first"} reference image is the user's brand logo. You MUST integrate this EXACT logo into the generated image — do NOT invent, redraw, restyle or substitute any other logo. Reproduce it identically (same shapes, colors, typography, proportions), keep its transparent background, do not crop or rotate it, and place it discreetly without covering the main subject.`
         : "";
+      const productInstruction = hasInput
+        ? `\n\nABSOLUTE PRIORITY: The first reference image attached is the user's REAL product/service. You MUST reproduce this EXACT product with perfect fidelity in the generated visual — same shape, same colors, same packaging, same labels, same proportions, same materials, same details. Do NOT invent a different product, do NOT restyle it, do NOT change its branding. The generated image must be visually IDENTICAL to the reference product, only the scene, lighting, context and composition around it change.`
+        : "";
       const aspectRatioParam = size === "9:16" || size === "16:9" || size === "1:1" || size === "3:4" || size === "4:3" ? size : "1:1";
       const framingInstruction = ` IMPORTANT: strictly respect the ${aspectRatioParam} aspect ratio coming from the user's "format" field. Frame the scene so that ALL essential elements (the plate/dish, product, subject, logo, text) are FULLY VISIBLE within the frame — never crop, cut off, or hide any essential element. Leave safe margins around the subject. Compose the shot specifically for a ${aspectLabel} canvas.`;
-      const enhancedPrompt = `Generate an image with aspect ratio ${aspectRatioParam} (${aspectLabel}).${framingInstruction} ${prompt || ""}${logoInstruction}`;
+      const enhancedPrompt = `Generate an image with aspect ratio ${aspectRatioParam} (${aspectLabel}).${framingInstruction} ${prompt || ""}${productInstruction}${logoInstruction}`;
 
       let orRes: Response;
       try {
