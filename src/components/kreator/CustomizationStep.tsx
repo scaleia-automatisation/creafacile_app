@@ -394,20 +394,25 @@ const CustomizationStep = () => {
       return;
     }
     if (signature === prev) return;
-    prevUpstreamRef.current = signature;
-    if (!canGenerateText) return;
-    if (!effectiveIdea) return;
-    if (isCarousel) {
-      const hadSlides = (options.slide_texts || []).some((t) => !!t?.trim());
-      if (hadSlides && !slidesGenerating) handleGenerateSlideTexts();
-    } else if (options.show_text) {
-      if (options.text_content?.trim() && !text1Generating) handleGenerateText(1);
-      if (options.text_2_enabled && options.text_content_2?.trim() && !text2Generating) handleGenerateText(2);
-    }
-    // Voix off : régénère si déjà présente et supportée par le modèle.
-    if (isVideo && voModelSupports && voice_over_text?.trim() && !voGenerating) {
-      handleGenerateVoiceOver();
-    }
+    // Debounce pour éviter une régénération à chaque frappe (notamment dans
+    // le champ « Votre idée »). On attend que l'utilisateur arrête de taper.
+    const timer = setTimeout(() => {
+      prevUpstreamRef.current = signature;
+      if (!canGenerateText) return;
+      if (!effectiveIdea) return;
+      if (isCarousel) {
+        const hadSlides = (options.slide_texts || []).some((t) => !!t?.trim());
+        if (hadSlides && !slidesGenerating) handleGenerateSlideTexts();
+      } else if (options.show_text) {
+        if (options.text_content?.trim() && !text1Generating) handleGenerateText(1);
+        if (options.text_2_enabled && options.text_content_2?.trim() && !text2Generating) handleGenerateText(2);
+      }
+      // Voix off : régénère si déjà présente et supportée par le modèle.
+      if (isVideo && voModelSupports && voice_over_text?.trim() && !voGenerating) {
+        handleGenerateVoiceOver();
+      }
+    }, 700);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, objective, offer_type, product_service, product_description, marketing_angle, use_case, options.ton, slides_count, target_persona, company_activity, company_sector, idea_chosen, manual_idea_text, manual_idea_mode]);
 
