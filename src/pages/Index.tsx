@@ -108,6 +108,7 @@ const Index = () => {
           <PromptEditorBlock />
           <CustomizationGate />
           <StartingPointBlock />
+          <PreGenerationActions />
           <GenerationStep />
         </div>
       </main>
