@@ -402,6 +402,7 @@ const ProductOfferStep = () => {
           />
         </div>
 
+        {!(isProduct && product_image_url?.trim()) && (
         <div className="md:col-span-2">
           <label className="text-sm font-medium text-muted-foreground mb-2 block">
             {descriptionLabel}
@@ -443,6 +444,7 @@ const ProductOfferStep = () => {
               : ' — générée automatiquement à partir du nom du service'}
           </p>
         </div>
+        )}
 
         <div className="md:col-span-2">
           <ActivitySectorFields />

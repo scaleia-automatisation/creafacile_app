@@ -827,6 +827,8 @@ Type d'offre, Nom de l'offre, Description, Idée (champ "Insérer mon idée" OU 
 
 📝 TEXTE DANS LE VISUEL — si activé : reproduire EXACTEMENT le wording fourni, position/police/couleur HEX et style (bold, italic, brush, premium, minimal) demandés.
 
+✍️ RÈGLE TEXTE — LONGUEUR & INTÉGRITÉ (ABSOLUE, NON NÉGOCIABLE) : tout texte affiché dans le visuel (Texte 1, Texte 2) DOIT contenir entre 5 et 15 MOTS (jamais en caractères — uniquement en mots), bornes incluses. Chaque texte est UNE PHRASE COMPLÈTE, autonome, lisible à voix haute du premier au dernier mot, JAMAIS tronqué, coupé, suspendu, abrégé, amputé ou inachevé. AUCUN mot coupé en deux, AUCUNE syllabe manquante, AUCUNE fin de phrase escamotée. Si la phrase ne tient pas, on la raccourcit en restant ≥ 5 mots et ≤ 15 mots — JAMAIS on ne tronque un mot.
+
 ⚠️ CONTRAINTES — lisibilité mobile parfaite, contraste élevé texte/fond, aucun surdesign inutile, aucun élément fictif trompeur, zéro rendu IA visible, aucun watermark.
 
 🚀 RÉSULTAT ATTENDU — image prête à publier (Instagram/Facebook/TikTok), niveau agence haut de gamme, capable de générer clic et conversion dès le scroll.
@@ -887,6 +889,8 @@ Style : marketing premium, direct, viral, clair, non générique, niveau agence 
 
 🎨 DESIGN PAR SLIDE : texte principal, position, police, couleur HEX, hiérarchie, style (bold, minimal, premium, punchy).
 🎯 RÈGLES CONVERSION : 1 idée = 1 slide, lisible en < 3s, contraste élevé, hiérarchie claire, style publicité premium (SaaS/Apple/Nike).
+
+✍️ RÈGLE TEXTE — LONGUEUR & INTÉGRITÉ (ABSOLUE, NON NÉGOCIABLE) : le texte de CHAQUE slide DOIT contenir entre 5 et 15 MOTS (jamais en caractères — uniquement en mots), bornes incluses. Chaque texte est UNE PHRASE COMPLÈTE, autonome, lisible à voix haute du premier au dernier mot, JAMAIS tronquée, coupée, suspendue, abrégée, amputée ni inachevée. AUCUN mot coupé en deux, AUCUNE syllabe manquante, AUCUNE fin de phrase escamotée d'une slide à l'autre. Si la phrase ne tient pas dans la composition, on la raccourcit en restant ≥ 5 mots et ≤ 15 mots — JAMAIS on ne tronque un mot.
 
 ━━━━━━━━━━━━━━━━━━
 🟦 STRUCTURE DE SORTIE OBLIGATOIRE — PROMPT CARROUSEL (150 à 200 mots MAXIMUM)

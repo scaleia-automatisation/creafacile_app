@@ -227,23 +227,6 @@ const IdeaSuggestions = () => {
                 <Button
                   type="button"
                   size="sm"
-                  variant="outline"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (prompt_fr?.trim()) {
-                      setPromptFr('');
-                    } else {
-                      handleGenerateIdeaPrompt(idea);
-                    }
-                  }}
-                  className="gap-1.5 text-xs font-bold"
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  {prompt_fr?.trim() ? 'Cacher le prompt' : 'Voir le prompt'}
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleChooseIdea(idea);
