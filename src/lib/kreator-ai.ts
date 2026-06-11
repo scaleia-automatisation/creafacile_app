@@ -1926,7 +1926,7 @@ ${params.activity ? `Activité principale: ${params.activity}` : ''}
 ${params.sector ? `Secteur: ${params.sector}` : ''}
 ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
 
-Écris les ${count} textes à afficher dans chaque slide — chacun étant UNE PHRASE COMPLÈTE, concise, autonome, jamais tronquée, le strict nécessaire, 100% cohérents entre eux et optimisés pour la conversion.`;
+  Écris les ${count} textes à afficher dans chaque slide — chacun étant UNE PHRASE COMPLÈTE de 5 à 15 mots, autonome, jamais tronquée, en SUITE LOGIQUE cohérente d'une slide à l'autre (mini-script découpé), 100% alignés sur l'objectif, l'angle marketing, le nom, la description et le type d'offre ci-dessus, et optimisés pour la conversion.`;
 
   const data = await callKreatorAI({
     action: 'generate_slide_texts',
