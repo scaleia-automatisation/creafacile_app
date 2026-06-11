@@ -10,7 +10,7 @@ const IdeaSuggestions = () => {
     type, slides_count, objective, offer_type, product_service, product_description, product_image_url, use_case, marketing_angle, offer_nature,
     company_activity, company_sector, target_persona, market, options,
     setInputText, setIdeaChosen, idea_chosen,
-    setManualIdeaMode,
+    setManualIdeaMode, setManualIdeaText, manual_idea_mode,
   } = useKreatorStore();
 
   const [loading, setLoading] = useState(false);
@@ -108,6 +108,8 @@ const IdeaSuggestions = () => {
 
   const handleGenerateIdeaPrompt = (idea: ContentIdea) => {
     const text = `${idea.hook} — ${idea.concept}`.slice(0, 500);
+    setManualIdeaText('');
+    setManualIdeaMode(false);
     setInputText(text);
     setIdeaChosen(text);
     toast.info('Génération du prompt en cours…');
@@ -118,6 +120,8 @@ const IdeaSuggestions = () => {
 
   const handleChooseIdea = (idea: ContentIdea) => {
     const text = `${idea.hook} — ${idea.concept}`.slice(0, 500);
+    setManualIdeaText('');
+    setManualIdeaMode(false);
     setInputText(text);
     setIdeaChosen(text);
     toast.success('Idée choisie. Personnalisation disponible…');
@@ -139,6 +143,8 @@ const IdeaSuggestions = () => {
           type="button"
           onClick={() => {
             setManualIdeaMode(false);
+            setManualIdeaText('');
+            setIdeaChosen('');
             handleGenerate();
           }}
           disabled={loading || !canGenerate}
@@ -154,6 +160,7 @@ const IdeaSuggestions = () => {
             setManualIdeaMode(true);
             setMode('none');
             setIdeas([]);
+            setIdeaChosen('');
           }}
           disabled={!canGenerate}
           className="flex-1 py-6 text-base md:text-lg font-extrabold rounded-btn border-2 flex items-center justify-center gap-2"
@@ -163,7 +170,7 @@ const IdeaSuggestions = () => {
         </Button>
       </div>
 
-      {mode === 'generated' && ideas.length > 0 && (
+      {mode === 'generated' && ideas.length > 0 && !manual_idea_mode && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full mt-2">
           {ideas.map((idea, idx) => {
             const ideaText = `${idea.hook} — ${idea.concept}`.slice(0, 500);

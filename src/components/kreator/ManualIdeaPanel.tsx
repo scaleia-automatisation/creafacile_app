@@ -135,7 +135,10 @@ ${manual_idea_text}`;
       <label className="text-sm font-bold text-foreground">Votre idée</label>
       <textarea
         value={manual_idea_text}
-        onChange={(e) => setManualIdeaText(e.target.value)}
+        onChange={(e) => {
+          setManualIdeaText(e.target.value);
+          setIdeaChosen('');
+        }}
         rows={5}
         placeholder="Décrivez votre idée de contenu…"
         className="w-full text-sm text-foreground bg-background border border-foreground/10 focus:border-primary/50 focus:outline-none rounded-md p-3 resize-y"
