@@ -1093,31 +1093,19 @@ ${params.showText
     ? `Textes des slides du carrousel (À REPRODUIRE EXACTEMENT MOT POUR MOT — UN texte PAR slide, dans l'ordre, AUCUNE modification ni ajout) :
 ${(params.slideTexts.slice(0, Math.max(1, Math.min(4, params.slidesCount || params.slideTexts.length))))
   .map((t, i) => `Slide ${i + 1}: "${(t || '').trim()}"`).join('\n')}
-Position du texte (IDENTIQUE sur TOUTES les slides): ${
-        params.textPosition === 'top-center' ? 'centré en haut'
-      : params.textPosition === 'middle-center' ? 'centré au centre'
-      : 'centré en bas'
-    }.
-Police d'écriture (IDENTIQUE sur TOUTES les slides): "${params.textFont || 'Montserrat'}".
+Position du texte (IDENTIQUE sur TOUTES les slides) : à DÉCIDER de manière AUTONOME par le modèle, en parfaite cohérence avec la composition, le sujet et la hiérarchie visuelle de chaque slide — placement digne d'une grande agence créative premium (Behance / Awwwards), zones de respiration optimales, jamais sur un élément clé du visuel.
+Police d'écriture (IDENTIQUE sur TOUTES les slides) : à CHOISIR de manière AUTONOME par le modèle parmi des typographies premium éditoriales (sans-serif géométriques ou serif modernes haut de gamme selon le secteur), 100% cohérente avec le ton de marque, l'univers du produit/service et le rendu publicitaire grande marque visé. Kerning et leading impeccables, lisibilité mobile parfaite.
 ${params.textColor ? `🎨 Couleur du texte (IDENTIQUE sur TOUTES les slides — OBLIGATOIRE) : ${params.textColor} (code hexadécimal exact). Tous les textes affichés DOIVENT être rendus EXACTEMENT dans cette couleur, sans variation entre slides. Ajouter uniquement un léger contour/ombre subtil pour la lisibilité si nécessaire, sans altérer la teinte.` : ''}
 ⚡ HARMONIE PARFAITE OBLIGATOIRE entre TOUTES les slides du carrousel : même typographie, même taille relative, même position, même hiérarchie visuelle, même palette, même traitement (ombre/contour si nécessaire), même rythme et même style éditorial — comme un seul système de design cohérent du début à la fin. Lisibilité maximale sur mobile, contraste fort, intégration native dans la composition (pas un simple sticker collé). Rendu digne d'un grand directeur artistique, optimisé pour la conversion. La slide 1 doit porter le hook le plus puissant ; les slides suivantes développent et culminent sur un call-to-action implicite ou explicite. Ne JAMAIS modifier le wording fourni.`
     : `Texte overlay (À REPRODUIRE EXACTEMENT, MOT POUR MOT, AUCUNE MODIFICATION NI AJOUT): "${params.textContent}"
-Position du texte: ${
-        params.textPosition === 'top-center' ? 'centré en haut'
-      : params.textPosition === 'middle-center' ? 'centré au centre'
-      : 'centré en bas'
-    } — respecter STRICTEMENT cette position et ce nombre de lignes.
-Police d'écriture: "${params.textFont || 'Montserrat'}" — utiliser cette typographie (ou la plus proche visuellement disponible), bien lisible, kerning soigné.
+Position du texte : à DÉCIDER de manière AUTONOME par le modèle, en parfaite cohérence avec la composition, le sujet et la hiérarchie visuelle — placement digne d'une grande agence créative premium (Behance / Awwwards), respect des zones de respiration et de la règle des tiers, jamais sur un élément clé du visuel.
+Police d'écriture : à CHOISIR de manière AUTONOME par le modèle parmi des typographies premium éditoriales 100% cohérentes avec le ton de marque, le secteur et l'univers du produit/service. Kerning et leading impeccables, rendu publicitaire grande marque, lisibilité mobile parfaite.
 ${params.textColor ? `🎨 Couleur du texte (OBLIGATOIRE — PRIORITÉ ABSOLUE) : ${params.textColor} (code hexadécimal exact). Le texte affiché DOIT être rendu EXACTEMENT dans cette couleur, sans dérive, sans variation de teinte, sans dégradé, sans effet de couleur additionnel. Ajouter UNIQUEMENT un léger contour ou une ombre portée subtile si nécessaire pour garantir la lisibilité sur le fond, sans altérer la couleur du texte.` : ''}
 ${(params.contentType === 'video' || params.contentType === 'image') && params.text2Enabled && params.textContent2
   ? `\n--- TEXTE À L'ÉCRAN N°2 — À REPRODUIRE EXACTEMENT MOT POUR MOT : "${params.textContent2}"
 ⚡ CONTINUITÉ NARRATIVE OBLIGATOIRE : ce Texte 2 est la SUITE COHÉRENTE et NATURELLE du Texte 1 ("${params.textContent}"). Les deux forment UN MÊME message en deux temps (hook → chute / call-to-action), sans répétition. ${params.contentType === 'image' ? `Les deux textes sont visibles SIMULTANÉMENT dans l'image, hiérarchisés visuellement (Texte 1 = accroche principale, Texte 2 = punchline / CTA secondaire). Chacun fait entre 3 et 15 mots MAXIMUM — JAMAIS plus.` : ''}
-Position du texte 2: ${
-        params.textPosition2 === 'top-center' ? 'centré en haut'
-      : params.textPosition2 === 'middle-center' ? 'centré au centre'
-      : 'centré en bas'
-    } — respecter STRICTEMENT cette position.
-Police d'écriture 2: "${params.textFont2 || 'Montserrat'}".
+Position du texte 2 : à DÉCIDER de manière AUTONOME par le modèle, en parfaite cohérence avec la position du Texte 1 et la composition globale — hiérarchie visuelle claire, équilibre éditorial premium, aucun chevauchement.
+Police d'écriture 2 : à CHOISIR de manière AUTONOME par le modèle, en pair harmonieux avec la typographie du Texte 1 (même famille ou pair éditorial premium reconnu), cohérent avec la marque et le rendu publicitaire haut de gamme.
 ${params.textColor2 ? `🎨 Couleur du texte 2 (OBLIGATOIRE) : ${params.textColor2} (code hexadécimal exact) — appliquer EXACTEMENT cette couleur, sans dérive ni variation. Léger contour/ombre subtil autorisé uniquement pour la lisibilité.` : ''}
 ${params.contentType === 'video' ? `Timing à l'écran : Texte 1 apparaît à ${params.textStart1 ?? 0}s pendant ${params.textDuration1 ?? 3}s, puis Texte 2 apparaît à ${params.textStart2 ?? 0}s pendant ${params.textDuration2 ?? 3}s.` : ''}
 ⚡ HARMONIE OBLIGATOIRE entre Texte 1 et Texte 2 : cohérence typographique parfaite (même famille ou pair harmonieux), hiérarchie visuelle claire (poids/taille), palette cohérente, espacements équilibrés, rythme de lecture professionnel. Rendu digne d'un grand directeur artistique — composition équilibrée, lisibilité maximale, aucun chevauchement. Convertir avec impact, sans surcharge.`
