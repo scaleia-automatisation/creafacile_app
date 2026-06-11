@@ -104,10 +104,10 @@ const Index = () => {
             <StartingChoiceButtons />
           </StepContainer>
           <IdeaSuggestions />
-          <PromptEditorBlock />
-          <CustomizationStep />
-          <StartingPointBlock />
           <ManualIdeaPanel />
+          <PromptEditorBlock />
+          <CustomizationGate />
+          <StartingPointBlock />
           <GenerationStep />
         </div>
       </main>
@@ -128,6 +128,17 @@ const Index = () => {
       <ResetButton />
     </div>
   );
+};
+
+const CustomizationGate = () => {
+  const idea_chosen = useKreatorStore((s) => s.idea_chosen);
+  const manual_idea_mode = useKreatorStore((s) => s.manual_idea_mode);
+  const manual_idea_text = useKreatorStore((s) => s.manual_idea_text);
+  const shouldShow = manual_idea_mode
+    ? !!manual_idea_text.trim()
+    : !!idea_chosen.trim();
+  if (!shouldShow) return null;
+  return <CustomizationStep />;
 };
 
 const ResetButton = () => {
