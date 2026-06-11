@@ -9,7 +9,7 @@ const IdeaSuggestions = () => {
   const {
     type, slides_count, objective, offer_type, product_service, product_description, product_image_url, use_case, marketing_angle, offer_nature,
     company_activity, company_sector, target_persona, market, options,
-    setInputText, setIdeaChosen, idea_chosen,
+    setInputText, setIdeaChosen, idea_chosen, prompt_fr, setPromptFr,
     setManualIdeaMode, setManualIdeaText, manual_idea_mode,
   } = useKreatorStore();
 
@@ -230,12 +230,16 @@ const IdeaSuggestions = () => {
                   variant="outline"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleGenerateIdeaPrompt(idea);
+                    if (prompt_fr?.trim()) {
+                      setPromptFr('');
+                    } else {
+                      handleGenerateIdeaPrompt(idea);
+                    }
                   }}
                   className="gap-1.5 text-xs font-bold"
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  Voir le prompt
+                  {prompt_fr?.trim() ? 'Cacher le prompt' : 'Voir le prompt'}
                 </Button>
                 <Button
                   type="button"

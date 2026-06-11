@@ -11,6 +11,7 @@ const ManualIdeaPanel = () => {
     company_activity, company_sector, target_persona, market, options,
     setInputText, setIdeaChosen, setUseCase,
     manual_idea_mode, manual_idea_text, setManualIdeaText,
+    prompt_fr, setPromptFr,
   } = useKreatorStore();
 
   const [improving, setImproving] = useState(false);
@@ -157,12 +158,18 @@ ${manual_idea_text}`;
         <Button
           type="button"
           variant="outline"
-          onClick={handleGenerateManualPrompt}
+          onClick={() => {
+            if (prompt_fr?.trim()) {
+              setPromptFr('');
+            } else {
+              handleGenerateManualPrompt();
+            }
+          }}
           disabled={!manual_idea_text.trim()}
           className="flex-1 gap-2 font-bold"
         >
           <FileText className="w-4 h-4" />
-          Voir le prompt
+          {prompt_fr?.trim() ? 'Cacher le prompt' : 'Voir le prompt'}
         </Button>
         <Button
           type="button"

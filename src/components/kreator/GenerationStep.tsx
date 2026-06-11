@@ -995,7 +995,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
                 onClick={() => setShowPrompt(s => !s)}
               >
                 {showPrompt ? <EyeOff className="w-3.5 h-3.5 mr-1" /> : <Eye className="w-3.5 h-3.5 mr-1" />}
-                {showPrompt ? 'Masquer prompt' : 'Voir le prompt'}
+                {showPrompt ? 'Cacher le prompt' : 'Voir le prompt'}
               </Button>
               <Button
                 variant="outline"
