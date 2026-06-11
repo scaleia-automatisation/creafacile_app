@@ -661,6 +661,7 @@ export async function generatePrompt(params: {
   voiceOverText?: string;
   videoDurationSec?: number;
   voiceOverLanguage?: string;
+  variant?: boolean;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
 
@@ -1148,9 +1149,12 @@ Si un texte overlay exact a été fourni par l'utilisateur, le reproduire MOT PO
 
 Génère un prompt unifié, cohérent et fidèle à l'offre. Sobriété et précision priment sur la décoration.`;
 
+  const variantInstruction = params.variant
+    ? `\n\n=== VARIANTE CRÉATIVE EXIGÉE ===\nGénère une NOUVELLE VARIANTE du prompt en respectant STRICTEMENT les mêmes inputs (offre, idée, objectif, ton, format, style visuel, palette, texte overlay, logo, modèle IA, etc.) mais en changeant explicitement et significativement :\n- le CONCEPT CRÉATIF (angle narratif, métaphore visuelle, mise en scène),\n- la COMPOSITION VISUELLE (cadrage, perspective, placement du sujet et du produit, hiérarchie),\n- le STYLE VISUEL (ambiance lumineuse, palette d'éclairage, traitement, texture, rendu),\nafin de proposer une direction artistique CLAIREMENT DIFFÉRENTE de la précédente, tout en restant 100% fidèle aux inputs. Ne répète pas la même idée visuelle. Sois audacieux, original, et conserve une qualité agence premium. Seed aléatoire: ${Math.random().toString(36).slice(2, 10)}.`
+    : '';
   const data = await callKreatorAI({
     action: 'generate_prompt',
-    messages: [{ role: 'user', content: userPrompt }],
+    messages: [{ role: 'user', content: userPrompt + variantInstruction }],
     system_prompt: systemPrompt,
   });
 
