@@ -11,6 +11,7 @@ const ManualIdeaPanel = () => {
     company_activity, company_sector, target_persona, market, options,
     setInputText, setIdeaChosen, setUseCase,
     manual_idea_mode, manual_idea_text, setManualIdeaText,
+    prompt_fr, setPromptFr,
   } = useKreatorStore();
 
   const [improving, setImproving] = useState(false);
