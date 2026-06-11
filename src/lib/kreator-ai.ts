@@ -1894,9 +1894,10 @@ RÈGLES ABSOLUES :
 - Langue : français.
 - Chaque texte = UNE SEULE PHRASE COMPLÈTE, autonome, qui se suffit à elle-même. JAMAIS de phrase tronquée, coupée, incomplète, suspendue ou amputée. La phrase doit pouvoir être lue à voix haute sans qu'il manque un mot.
 - Phrase la PLUS CONCISE possible : le strict nécessaire, AUCUN mot superflu, aucun pavé de texte, aucune surcharge. Texte AÉRÉ digne d'une grande agence de communication et design produit/service.
-- Aucune limite stricte de mots imposée — mais reste systématiquement court, percutant, lisible d'un coup d'œil sur mobile. Pas de phrase à rallonge.
+- LONGUEUR IMPOSÉE : chaque texte fait ENTRE 5 ET 15 MOTS (bornes incluses). N'utilise PLUS de 15 mots, et JAMAIS moins de 5 mots. Si l'idée est riche, monte jusqu'à 15 mots ; si elle est simple, reste autour de 5-8 mots. Toujours percutant, lisible d'un coup d'œil sur mobile.
 - Un seul texte par slide (pas de retour à la ligne, pas de point-virgule pour relier deux idées).
-- HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé.
+- HARMONIE / COHÉRENCE NARRATIVE PARFAITE entre les ${count} slides : même ton, même registre, même rythme, même style éditorial — comme s'il s'agissait d'un seul mini-script découpé. SUITE LOGIQUE OBLIGATOIRE entre les textes : chaque slide enchaîne naturellement sur la précédente et prépare la suivante (cause → conséquence, problème → solution, étape → étape, promesse → preuve → action). Lus à la suite, les ${count} textes doivent former une mini-histoire fluide, sans rupture ni redite.
+- ALIGNEMENT CONTEXTE 100% OBLIGATOIRE : chaque texte DOIT s'appuyer fidèlement sur l'OBJECTIF du contenu, l'ANGLE MARKETING, le NOM de l'offre, sa DESCRIPTION, son TYPE D'OFFRE, le PERSONA, l'activité et le secteur fournis dans le contexte. Aucun texte ne doit inventer une fonctionnalité, un bénéfice ou un positionnement hors de ces inputs.
 - Progression narrative orientée conversion :
   • Slide 1 = HOOK 0-2s ultra puissant (scroll-stop, curiosité/émotion/promesse).
   • Slides intermédiaires = développement, preuve, bénéfice ou tension.
@@ -1925,7 +1926,7 @@ ${params.activity ? `Activité principale: ${params.activity}` : ''}
 ${params.sector ? `Secteur: ${params.sector}` : ''}
 ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
 
-Écris les ${count} textes à afficher dans chaque slide — chacun étant UNE PHRASE COMPLÈTE, concise, autonome, jamais tronquée, le strict nécessaire, 100% cohérents entre eux et optimisés pour la conversion.`;
+  Écris les ${count} textes à afficher dans chaque slide — chacun étant UNE PHRASE COMPLÈTE de 5 à 15 mots, autonome, jamais tronquée, en SUITE LOGIQUE cohérente d'une slide à l'autre (mini-script découpé), 100% alignés sur l'objectif, l'angle marketing, le nom, la description et le type d'offre ci-dessus, et optimisés pour la conversion.`;
 
   const data = await callKreatorAI({
     action: 'generate_slide_texts',
@@ -1947,10 +1948,14 @@ ${params.persona ? `Client cible / persona: ${params.persona}` : ''}
   for (let i = 0; i < count; i++) {
     let t = (slides[i] || '').toString().trim();
     t = t.replace(/^["«»"'`]+|["«»"'`]+$/g, '').trim().replace(/\s+/g, ' ');
-    // Pas de troncature par nombre de mots : on conserve la phrase complète
-    // telle que le modèle l'a produite. On retire uniquement une ponctuation
-    // finale lourde si présente (le rendu visuel n'en a pas besoin).
+    // Retire la ponctuation finale lourde (le rendu visuel n'en a pas besoin).
     t = t.replace(/[;:]+$/g, '').trim();
+    // Cap dur à 15 mots maximum par slide (la borne basse de 5 mots reste
+    // à la charge du modèle via le system prompt).
+    const words = t.split(/\s+/).filter(Boolean);
+    if (words.length > 15) {
+      t = words.slice(0, 15).join(' ').replace(/[.,;:!?]+$/g, '').trim();
+    }
     out.push(t);
   }
   return out;
