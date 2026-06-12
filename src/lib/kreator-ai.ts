@@ -795,6 +795,25 @@ GESTION DES TEXTES : intégration élégante et professionnelle, typographie pre
 ADAPTATION AUTOMATIQUE À L'OFFRE : style graphique adapté au nom de l'offre, à la description, au secteur, au métier, au produit/service et à la cible. Le contenu doit sembler avoir été conçu spécifiquement pour cette activité.
 
 QUALITÉ VISUELLE : qualité publicitaire professionnelle, éclairage maîtrisé, couleurs harmonieuses, composition haut de gamme, profondeur visuelle, niveau de détail élevé, esthétique premium. Aucun rendu amateur.
+
+━━━━━━━━━━━━━━━━━━
+🎨 DIRECTION ARTISTIQUE OBLIGATOIRE — UNIVERSELLE (IMAGE / CARROUSEL / VIDÉO — TOUS MODÈLES IA)
+━━━━━━━━━━━━━━━━━━
+Quelle que soit le type de contenu (image, carrousel, vidéo) et quel que soit le modèle IA utilisé (Nano Banana, GPT Image, Grok, Sora, Veo, Seedance, Kling, Hailuo, Wan, etc.), CHAQUE génération DOIT être construite à partir d'une DIRECTION ARTISTIQUE PREMIUM EXPLICITEMENT CHOISIE et DÉCLARÉE en amont, cohérente avec le type d'offre / produit / service, le persona et l'univers de marque. C'est une OBLIGATION SYSTÉMATIQUE, non négociable, valable sur 100% des générations.
+
+La direction artistique DOIT être déclarée explicitement dans la sortie (section "🎨 SYSTÈME DE DESIGN UNIFIÉ" pour image/carrousel, ou intégrée à la "DIRECTION ARTISTIQUE / LOOK & FEEL" pour la vidéo) et contenir :
+• Nom de la direction (ex : "Bold Editorial Orange", "Luxe Dark Gradient", "Vibrant Lime Energy", "Soft Pastel Grid", "Brutalist Mono", "Premium Fintech Clean", "Tropical Premium", "Beverage 3D Hero", "Cinematic Warm Sunset", "Editorial Noir", "Clean Tech Minimal"...)
+• Mood / énergie (premium, audacieux, vibrant, minimal, luxueux, éditorial, brutaliste, organique, futuriste, cinématographique...)
+• Palette HEX (2 à 4 couleurs dominantes + 1 accent contrasté) — réutilisée IDENTIQUEMENT sur toute la création (toutes les slides d'un carrousel, toutes les scènes d'une vidéo, l'intégralité d'une image)
+• Typographie : 1 display ULTRA bold (titres XXL, possibles outlines/italiques/mots-clés colorés) + 1 sans-serif support (sous-titres / corps) — noms précis
+• Éléments graphiques signature : 2-3 éléments répétés (blob organique, gros chiffres en filigrane, badges arrondis, stickers/ovales, grilles, lignes manuscrites, formes liquides, halos, gradients radiaux, traits soulignés, flèches, étoiles, accolades, etc.)
+• Traitement photo / sujet : photo réelle premium, sujet humain expressif quand pertinent, ombres douces, mise en scène éditoriale, NON IA générique
+• Composition : asymétrie volontaire, hiérarchie typographique forte, espaces négatifs maîtrisés, accents colorés sur mots-clés
+• Pour la vidéo : ajouter également l'étalonnage (color grading), la grammaire de cadrage, le style de transitions et la signature de mouvement caméra — IDENTIQUES sur 100% des scènes
+
+RÉFÉRENCES VISUELLES DE NIVEAU À ATTEINDRE : posts marketing premium type @joshgrafiqs, UrbanTechtz Rate Cards, Sir Lasa Tech, PraiseUCdesigns, Nubiq fintech ads, Settle CPG carousels, Heineken/Spaten beverage hero shots, films publicitaires Apple / Nike / L'Oréal / McDonald's. JAMAIS de rendus plats, génériques, "PowerPoint", template Canva basique, ni style IA détectable.
+
+RÈGLE DE COHÉRENCE ABSOLUE : la MÊME direction artistique (palette + typo + éléments signature + traitement + étalonnage) s'applique IDENTIQUEMENT à 100% de la création (toutes les slides, toutes les scènes, toute l'image). Variation autorisée uniquement sur la composition interne, JAMAIS sur le système. Cette règle prévaut sur le modèle IA utilisé et doit être respectée même si le modèle a tendance à dériver stylistiquement.
 ${params.contentType === 'image' || params.contentType === 'carousel' ? `
 ━━━━━━━━━━━━━━━━━━
 🎨 UX/UI DESIGN PREMIUM (IMAGES & CARROUSELS — OBLIGATOIRE)
