@@ -456,7 +456,7 @@ Ne pas inclure le texte des autres slides.
 - Même palette, même ambiance, même style graphique, même traitement photo, même éclairage, même grain.
 Cette slide doit être visuellement interchangeable avec les autres du carrousel à l'exception du contenu textuel "${slideText}".`;
             const [url, caps] = await Promise.all([
-              generateImage(perSlidePrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, '', true),
+              generateImage(perSlidePrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
               generateCaption({
                 ...baseCaptionParams,
                 idea: slideText || idea_chosen || input_text,
