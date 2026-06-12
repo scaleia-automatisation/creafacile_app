@@ -1219,6 +1219,7 @@ export async function generateCaption(params: {
   slideTexts?: string[];
   ideaHook?: string;
   useCase?: string;
+  regenerateVariant?: boolean;
 }): Promise<PlatformCaptions> {
   const isVideo = params.contentType === 'video';
   const isCarousel = params.contentType === 'carousel';
