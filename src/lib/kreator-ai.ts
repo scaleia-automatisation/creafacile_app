@@ -1444,15 +1444,15 @@ Génère maintenant les captions Facebook, Instagram, TikTok et LinkedIn${isCaro
   if (!content) throw new Error('No response from AI');
 
   try {
-    const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
-    const parsed = JSON.parse(cleaned);
+    const parsed = extractJsonObject(content);
     if (params.ideaHook) {
       for (const p of ['facebook', 'instagram', 'tiktok', 'linkedin'] as const) {
         if (parsed?.[p]) parsed[p].hook = params.ideaHook;
       }
     }
     return parsed;
-  } catch {
+  } catch (e) {
+    console.error('generateCaption JSON parse failed. Raw content:', String(content).slice(0, 800));
     throw new Error('Failed to parse AI response');
   }
 }
