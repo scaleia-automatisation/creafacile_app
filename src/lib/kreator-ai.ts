@@ -1457,6 +1457,31 @@ Génère maintenant les captions Facebook, Instagram, TikTok et LinkedIn${isCaro
   }
 }
 
+function extractJsonObject(raw: string): any {
+  let s = String(raw || '')
+    .replace(/```json\s*/gi, '')
+    .replace(/```/g, '')
+    .trim();
+  // direct parse
+  try { return JSON.parse(s); } catch {}
+  // grab the largest {...} block
+  const start = s.indexOf('{');
+  const end = s.lastIndexOf('}');
+  if (start !== -1 && end !== -1 && end > start) {
+    let candidate = s.substring(start, end + 1);
+    try { return JSON.parse(candidate); } catch {}
+    // repair common issues: trailing commas, control chars, smart quotes
+    candidate = candidate
+      .replace(/[\u0000-\u001F\u007F]/g, ' ')
+      .replace(/,\s*}/g, '}')
+      .replace(/,\s*]/g, ']')
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"');
+    return JSON.parse(candidate);
+  }
+  throw new Error('No JSON object found in AI response');
+}
+
 export async function generateImage(
   promptEn: string,
   aiModel: AIModel = 'nano-banana-2',
