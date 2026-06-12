@@ -713,7 +713,13 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       const key = pickInputsKey();
       if (key === lastInputsKeyRef.current) return;
       lastInputsKeyRef.current = key;
-      if (!state.prompt_fr?.trim()) return;
+      // On déclenche l'auto-MAJ du prompt dans ces cas :
+      // - un prompt existe déjà (après une 1ère génération / édition)
+      // - une idée a été choisie parmi les 3 suggestions
+      // - une idée a été insérée dans le champ "Votre idée"
+      const hasManualIdea = !!state.manual_idea_mode && !!state.manual_idea_text?.trim();
+      const hasTrigger = !!state.prompt_fr?.trim() || !!state.idea_chosen?.trim() || hasManualIdea;
+      if (!hasTrigger) return;
       if (state.status === 'generating') return;
       if (autoPromptRunningRef.current) return;
       if (autoPromptTimerRef.current) clearTimeout(autoPromptTimerRef.current);
