@@ -311,6 +311,8 @@ interface KreatorState {
   setCreditsUsed: (c: number) => void;
 
   resetProject: () => void;
+
+  type_snapshots: Partial<Record<ContentType, Record<string, unknown>>>;
 }
 
 // Champs propres à un type de contenu (image / carousel / vidéo).
