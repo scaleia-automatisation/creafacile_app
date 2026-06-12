@@ -864,6 +864,9 @@ Le champ prompt_fr DOIT contenir, exactement dans cet ordre, séparés par des s
 🎯 OBJECTIF
 [Objectif marketing : conversion, notoriété, promo, clic…]
 
+🎨 SYSTÈME DE DESIGN UNIFIÉ (OBLIGATOIRE)
+[Déclarer EXPLICITEMENT : Nom de la direction artistique choisie • Mood • Palette HEX (2-4 couleurs + accent) • Typographie display + support (noms précis) • 2-3 éléments graphiques signature • Traitement photo/sujet • Style de composition. Niveau agence premium internationale, appliqué à 100% de l'image.]
+
 🎨 CONCEPT CRÉATIF
 [Direction artistique globale : univers, ambiance, style]
 
