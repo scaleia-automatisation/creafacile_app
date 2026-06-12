@@ -1464,7 +1464,43 @@ export async function generateImage(
   inputImageUrl?: string,
   abortSignal?: AbortSignal,
   logoUrl?: string,
+  preferKie?: boolean,
 ) {
+  // === FORCE kie.ai (utilisé notamment pour la génération de carrousel
+  // sur nano-banana-2 / nano-banana-pro afin d'éviter l'épuisement des
+  // crédits Lovable AI Gateway / OpenRouter) ===
+  if (preferKie && ['nano-banana-2', 'nano-banana-pro'].includes(aiModel)) {
+    if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+    const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
+      body: {
+        action: 'kie_start_image',
+        prompt: promptEn,
+        ai_model: aiModel,
+        size: format,
+        input_image_url: inputImageUrl || '',
+        logo_url: logoUrl || '',
+      },
+    });
+    if (startError) throw startError;
+    if (startData?.error) throw new Error(startData.error);
+    if (startData?.done && startData?.image_url) return startData.image_url;
+    const taskId = startData?.task_id;
+    if (!taskId) throw new Error('No task_id returned from kie.ai');
+    const maxAttempts = 60;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      await new Promise((r) => setTimeout(r, 4000));
+      if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+      const { data: pollData, error: pollError } = await supabase.functions.invoke('kreator-ai', {
+        body: { action: 'kie_poll_image', task_id: taskId },
+      });
+      if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+      if (pollError) { console.warn('kie.ai poll error', pollError); continue; }
+      if (pollData?.error) throw new Error(pollData.error);
+      if (pollData?.done && pollData?.image_url) return pollData.image_url;
+    }
+    throw new Error('La génération image kie.ai a pris trop de temps. Réessayez.');
+  }
+
   // === OpenRouter models (Nano Banana, GPT Image 5, Grok) ===
   // NOTE: Imagen 4 variants are NOT on OpenRouter — they route through kie.ai below.
   const openRouterModels: AIModel[] = [
