@@ -1069,6 +1069,17 @@ TOUS les blocs "🎨 CONCEPT CRÉATIF" et "🖼️ COMPOSITION VISUELLE" génér
 - Mise en scène = situation de vie réelle ou shooting publicitaire réaliste type grande agence (Apple, Nike, McDonald's, L'Oréal). Personnes naturelles, expressions authentiques, environnements réels, lumière crédible.
 Toute idée non réaliste, non logique, ou "IA-esque" DOIT être remplacée par une alternative photoréaliste, ancrée dans le réel, cohérente avec les inputs.
 
+━━━━━━━━━━━━━━━━━━
+RÈGLE ABSOLUE — DIFFÉRENCIATION VISUELLE EN CAS DE COMPARAISON / AVANT-APRÈS / VERSUS
+━━━━━━━━━━━━━━━━━━
+Dès qu'un angle marketing, un cas d'utilisation, une idée ou une scène implique une COMPARAISON, un AVANT/APRÈS, un VS / VERSUS, une opposition "solution actuelle vs notre solution", "concurrent vs nous", "ancienne méthode vs nouvelle méthode", ou tout face-à-face entre deux options :
+- Le PRODUIT / SERVICE DE L'UTILISATEUR (référence exacte : ${params.productService || "[Nom de l'offre]"}) DOIT être représenté visuellement de manière STRICTEMENT DISTINCTE de l'autre produit/service/option auquel il est comparé. Aucune ressemblance de forme, de packaging, de couleur dominante, de matière, de typographie, de logo, de mise en scène, de cadrage ou de style entre les deux.
+- L'autre produit/service comparé DOIT être clairement DIFFÉRENT : silhouette différente, packaging différent, palette différente, traitement visuel différent (par ex. désaturé, terne, daté, générique, "old-school", flou de fond plus neutre), pour qu'aucune confusion ne soit possible entre les deux côtés.
+- Le côté "produit utilisateur" doit toujours apparaître valorisé (lumière premium, mise en avant, netteté, couleurs vives de sa propre direction artistique), tandis que l'alternative comparée reste neutre/discrète/moins attractive — sans jamais copier le design du produit utilisateur.
+- Interdiction absolue de dupliquer, cloner, mirroir ou décliner le produit de l'utilisateur pour représenter le "concurrent" / "avant" / "ancienne version". Il doit s'agir d'un objet ou d'une scène visuellement et conceptuellement distincte.
+- Ne JAMAIS nommer, afficher ou imiter une marque concurrente réelle, ni reproduire son logo, son packaging, sa typographie ou sa charte. L'alternative comparée reste générique et anonyme.
+- Cette règle s'applique à 100% des supports (image, carrousel, vidéo) et à 100% des modèles IA, sur chaque slide et chaque scène où la comparaison apparaît.
+
 ${masterPrompt}
 
 ${premiumDirectionBlock}
