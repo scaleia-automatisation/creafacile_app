@@ -238,14 +238,22 @@ const GenerationStep = () => {
     return synthesis;
   };
 
-  const buildPromptParams = () => ({
+  const buildPromptParams = () => {
+    const s = useKreatorStore.getState();
+    const manualIdea = s.manual_idea_mode && s.manual_idea_text?.trim() ? s.manual_idea_text.trim() : '';
+    // Quand l'utilisateur a inséré une idée dans "Votre idée", on oriente
+    // systématiquement le prompt vers cette idée (en priorité sur les autres
+    // sources d'idée), pour rester aligné avec l'idée + personnalisations.
+    const effectiveIdeaChosen = manualIdea || idea_chosen;
+    const effectiveInputText = manualIdea || input_text;
+    return ({
     contentType: type,
     format,
     objective,
     ton: options.ton,
     visualStyle: visual_style_brief || options.visual_style,
-    inputText: input_text,
-    ideaChosen: idea_chosen,
+    inputText: effectiveInputText,
+    ideaChosen: effectiveIdeaChosen,
     companyActivity: company_activity,
     companySector: company_sector,
     productService: product_service,
@@ -317,6 +325,7 @@ const GenerationStep = () => {
         : undefined,
     videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
   });
+  };
 
   const withSelectedFormatInstruction = (prompt: string) => `${prompt.trim()}
 
@@ -704,7 +713,13 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       const key = pickInputsKey();
       if (key === lastInputsKeyRef.current) return;
       lastInputsKeyRef.current = key;
-      if (!state.prompt_fr?.trim()) return;
+      // On déclenche l'auto-MAJ du prompt dans ces cas :
+      // - un prompt existe déjà (après une 1ère génération / édition)
+      // - une idée a été choisie parmi les 3 suggestions
+      // - une idée a été insérée dans le champ "Votre idée"
+      const hasManualIdea = !!state.manual_idea_mode && !!state.manual_idea_text?.trim();
+      const hasTrigger = !!state.prompt_fr?.trim() || !!state.idea_chosen?.trim() || hasManualIdea;
+      if (!hasTrigger) return;
       if (state.status === 'generating') return;
       if (autoPromptRunningRef.current) return;
       if (autoPromptTimerRef.current) clearTimeout(autoPromptTimerRef.current);
