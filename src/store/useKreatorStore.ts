@@ -313,6 +313,25 @@ interface KreatorState {
   resetProject: () => void;
 }
 
+// Champs propres à un type de contenu (image / carousel / vidéo).
+// Lorsque l'utilisateur change de type, on sauvegarde ces champs sous le
+// type courant, puis on restaure le snapshot du nouveau type (ou on
+// repart de l'état initial pour ce type). Les autres champs (offre,
+// activité, secteur, persona, etc.) restent partagés entre tous les types.
+const PER_TYPE_FIELDS = [
+  'ai_model', 'model_settings', 'format', 'slides_count',
+  'render_style', 'video_render_style', 'video_resolution',
+  'sora_character_total_duration', 'sora_character_scenes',
+  'starting_choice', 'simple_images',
+  'input_photos', 'input_image_url', 'input_image_description',
+  'input_text', 'idea_chosen', 'manual_idea_mode', 'manual_idea_text',
+  'options',
+  'prompt_fr', 'prompt_en', 'prompt_en_final',
+  'status', 'result_url', 'result_urls',
+  'generated_captions', 'generated_carousel_slides', 'credits_used',
+  'voice_over_enabled', 'voice_over_text', 'voice_over_language',
+] as const;
+
 const initialState = {
   user_mode: 'beginner' as UserMode,
   type: 'image' as ContentType,
@@ -389,13 +408,30 @@ const initialState = {
   credits_used: 0,
 };
 
+const pickPerType = (state: Record<string, unknown>) => {
+  const out: Record<string, unknown> = {};
+  for (const k of PER_TYPE_FIELDS) out[k] = state[k as string];
+  return out;
+};
+
+const initialPerType = pickPerType(initialState as unknown as Record<string, unknown>);
+
+type TypeSnapshots = Partial<Record<ContentType, Record<string, unknown>>>;
+
 export const useKreatorStore = create<KreatorState>()(persist((set) => ({
   ...initialState,
+  type_snapshots: {} as TypeSnapshots,
   setUserMode: (mode) => set({ user_mode: mode }),
-  setType: (type) => {
-    const format = type === 'video' ? '9:16' as Format : '9:16' as Format;
-    set({ type, ai_model: '' as AIModel, model_settings: {}, format });
-  },
+  setType: (type) => set((state) => {
+    const current = state as unknown as Record<string, unknown>;
+    if (current.type === type) return {} as Partial<KreatorState>;
+    const snapshots: TypeSnapshots = { ...(state as unknown as { type_snapshots: TypeSnapshots }).type_snapshots };
+    // Sauvegarde l'état per-type du type courant
+    snapshots[current.type as ContentType] = pickPerType(current);
+    // Charge le snapshot du nouveau type ou repart à l'initial pour ce type
+    const restored = snapshots[type] ?? { ...initialPerType };
+    return { ...(restored as Partial<KreatorState>), type, type_snapshots: snapshots } as Partial<KreatorState>;
+  }),
   setSlidesCount: (count) => set({ slides_count: count }),
   setAiModel: (model) => set({ ai_model: model, model_settings: {} }),
   setModelSetting: (key, value) =>
@@ -449,7 +485,7 @@ export const useKreatorStore = create<KreatorState>()(persist((set) => ({
   setGeneratedCaptions: (captions) => set({ generated_captions: captions }),
   setGeneratedCarouselSlides: (slides) => set({ generated_carousel_slides: slides }),
   setCreditsUsed: (c) => set({ credits_used: c }),
-  resetProject: () => set({ ...initialState }),
+  resetProject: () => set({ ...initialState, type_snapshots: {} as TypeSnapshots }),
 }), {
   name: 'kreator-current-workflow',
   storage: createJSONStorage(() => localStorage),
