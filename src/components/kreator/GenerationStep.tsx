@@ -172,6 +172,7 @@ const GenerationStep = () => {
   const [carouselSlides, setCarouselSlides] = useState<Array<{ url: string; captions: PlatformCaptions }> | null>(generated_carousel_slides);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('instagram');
   const [captionEditing, setCaptionEditing] = useState(false);
+  const [regeneratingCaption, setRegeneratingCaption] = useState(false);
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
   const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [showPublishedPopup, setShowPublishedPopup] = useState(false);
@@ -735,6 +736,108 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
     toast.success('Caption copié !');
   };
 
+  const handleRegenerateCaption = async () => {
+    if (!captions) return;
+    setRegeneratingCaption(true);
+    try {
+      const newCaptions = await generateCaption({
+        objective: (marketing_angle || objective) + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
+        idea: idea_chosen || input_text,
+        ideaHook: (idea_chosen || '').split(' — ')[0].trim(),
+        useCase: use_case,
+        contentType: type,
+        sector: company_sector,
+        activity: company_activity,
+        aiModel: ai_model,
+        format,
+        slidesCount: slides_count,
+        offerType: offer_type,
+        offerName: product_service,
+        offerDescription: product_description,
+        persona: target_persona,
+        market,
+        marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
+        ton: options.ton,
+        visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
+        freeDescription: input_text,
+        promptValide: prompt_en || prompt_fr || '',
+        advancedSettings: [
+          options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
+          options.logo_enabled ? `logo: ${options.logo_position}${type === 'video' ? ` (apparition ${options.logo_appearance})` : ''}` : '',
+          options.show_text ? `texte overlay: position ${options.text_position}, police ${options.text_font}` : '',
+        ].filter(Boolean).join(' | '),
+        productAnalysis: input_image_description,
+        text1: options.show_text ? options.text_content : '',
+        text2: options.text_2_enabled ? options.text_content_2 : '',
+        slideTexts: options.slide_texts,
+        regenerateVariant: true,
+      });
+      setCaptions(newCaptions);
+      setGeneratedCaptions(newCaptions);
+      toast.success('Caption régénérée avec succès !');
+    } catch {
+      toast.error('Erreur lors de la régénération de la caption');
+    } finally {
+      setRegeneratingCaption(false);
+    }
+  };
+
+  const handleRegenerateSlideCaption = async (slideIndex: number, slideText: string) => {
+    if (!carouselSlides) return;
+    setRegeneratingCaption(true);
+    try {
+      const baseCaptionParams = {
+        objective: (marketing_angle || objective) + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
+        contentType: 'image' as const,
+        sector: company_sector,
+        activity: company_activity,
+        aiModel: ai_model,
+        format,
+        slidesCount: 1,
+        offerType: offer_type,
+        offerName: product_service,
+        offerDescription: product_description,
+        persona: target_persona,
+        market,
+        marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
+        ton: options.ton,
+        visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
+        freeDescription: input_text,
+        promptValide: prompt_en || prompt_fr || '',
+        ideaHook: (idea_chosen || '').split(' — ')[0].trim(),
+        useCase: use_case,
+        advancedSettings: [
+          options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
+          options.logo_enabled ? `logo: ${options.logo_position}` : '',
+          options.show_text ? `texte overlay slides` : '',
+        ].filter(Boolean).join(' | '),
+        productAnalysis: input_image_description,
+      };
+      const newCaptions = await generateCaption({
+        ...baseCaptionParams,
+        idea: slideText || idea_chosen || input_text,
+        text1: slideText,
+        slideTexts: [slideText],
+        regenerateVariant: true,
+      });
+      const next = carouselSlides.map((s, i) => {
+        if (i !== slideIndex) return s;
+        return { ...s, captions: newCaptions };
+      });
+      setCarouselSlides(next);
+      setGeneratedCarouselSlides(next);
+      if (slideIndex === 0) {
+        setCaptions(newCaptions);
+        setGeneratedCaptions(newCaptions);
+      }
+      toast.success(`Caption slide ${slideIndex + 1} régénérée !`);
+    } catch {
+      toast.error('Erreur lors de la régénération');
+    } finally {
+      setRegeneratingCaption(false);
+    }
+  };
+
   const handleDownload = () => {
     if (!result_url) return;
     const ext = type === 'video' ? 'mp4' : 'png';
@@ -1144,18 +1247,30 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
                             rows={1}
                           />
                         </div>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-muted-foreground hover:text-foreground"
-                          onClick={() => {
-                            const text = `${cap.hook}\n${cap.description}\n${cap.cta}\n\n${cap.hashtags}`;
-                            navigator.clipboard.writeText(text);
-                            toast.success(`Caption slide ${idx + 1} copié !`);
-                          }}
-                        >
-                          <Copy className="w-3.5 h-3.5 mr-1" /> Copier
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-muted-foreground hover:text-foreground"
+                            onClick={() => {
+                              const text = `${cap.hook}\n${cap.description}\n${cap.cta}\n\n${cap.hashtags}`;
+                              navigator.clipboard.writeText(text);
+                              toast.success(`Caption slide ${idx + 1} copié !`);
+                            }}
+                          >
+                            <Copy className="w-3.5 h-3.5 mr-1" /> Copier
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-muted-foreground hover:text-foreground"
+                            onClick={() => handleRegenerateSlideCaption(idx, options.slide_texts?.[idx] || '')}
+                            disabled={regeneratingCaption}
+                          >
+                            {regeneratingCaption ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5 mr-1" />}
+                            Régénérer la caption
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   );
@@ -1182,6 +1297,16 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground h-8 px-2" onClick={handleCopyCaption}>
                     <Copy className="w-3.5 h-3.5 mr-1" /> Copier
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground h-8 px-2"
+                    onClick={handleRegenerateCaption}
+                    disabled={regeneratingCaption}
+                  >
+                    {regeneratingCaption ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5 mr-1" />}
+                    Régénérer la caption
                   </Button>
                   {captionEditing ? (
                     <Button variant="ghost" size="sm" className="text-primary hover:text-primary h-8 px-2" onClick={() => setCaptionEditing(false)}>

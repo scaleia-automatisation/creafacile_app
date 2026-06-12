@@ -1219,6 +1219,7 @@ export async function generateCaption(params: {
   slideTexts?: string[];
   ideaHook?: string;
   useCase?: string;
+  regenerateVariant?: boolean;
 }): Promise<PlatformCaptions> {
   const isVideo = params.contentType === 'video';
   const isCarousel = params.contentType === 'carousel';
@@ -1240,6 +1241,11 @@ Chaque caption doit :
 - être naturelle, émotionnelle, fluide, crédible,
 - cohérente avec le visuel généré, le ton, le style visuel, le secteur, le persona, l'objectif marketing, le marché ciblé et les textes présents dans le visuel,
 - augmenter engagement, commentaires, sauvegardes, partages, watch time, clics, conversion.
+
+${params.regenerateVariant ? `━━━━━━━━━━━━━━━━━━
+RÉGÉNÉRATION / VARIANTE ALTERNATIVE OBLIGATOIRE
+━━━━━━━━━━━━━━━━━━
+Cette demande est une RÉGÉNÉRATION. Tu DOIS produire des captions COMPLÈTEMENT DIFFÉRENTES de la version précédente : nouveaux hooks, nouvelles descriptions, nouveaux CTAs, nouveaux hashtags. Change l'angle narratif, le ton émotionnel, le style de formulation. MAIS conserve STRICTEMENT : le ton d'écriture imposé, l'objectif marketing, l'angle marketing, la cohérence avec le prompt du visuel, le style humanisé 100% naturel non-détectable IA, et la structure obligatoire (hook, description, CTA, hashtags).` : ''}
 
 ━━━━━━━━━━━━━━━━━━
 ACCESSIBILITÉ & CLARTÉ — RÈGLE ABSOLUE (NON NÉGOCIABLE)
