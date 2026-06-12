@@ -1229,10 +1229,14 @@ serve(async (req) => {
       if (input_image_url) refImages.push(input_image_url);
       if (logo_url) refImages.push(logo_url);
       if (refImages.length > 0) {
-        input.image_url = refImages[0];
-        input.image = refImages[0];
-        // Google nano-banana / imagen / gpt-image-2 expect `image_input` (array)
-        input.image_input = refImages;
+        // kie.ai nano-banana-2 / nano-banana-pro expect `image_urls` (array of public URLs)
+        if (kieModel === "nano-banana-2" || kieModel === "nano-banana-pro") {
+          input.image_urls = refImages;
+        } else {
+          input.image_url = refImages[0];
+          input.image = refImages[0];
+          input.image_input = refImages;
+        }
       } else if (needsImage) {
         return jsonError(400, `Le modèle ${ai_model} nécessite une image de référence en entrée.`);
       }
