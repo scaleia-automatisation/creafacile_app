@@ -854,9 +854,12 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
   };
 
   const handleRegenerate = () => {
-    // Reprendre TOUS les nouveaux inputs (modèle IA, format, type de contenu, réglages, etc.)
-    // en forçant la régénération du prompt depuis les valeurs courantes du store.
-    handleGenerate({ forcePromptRegen: true });
+    // Si l'utilisateur a généré (ou édité) un prompt visible, on respecte ce
+    // prompt — notamment lorsqu'il a cliqué « Générer une variante du prompt »
+    // pour obtenir une nouvelle direction avant de régénérer. Sinon on
+    // régénère le prompt depuis les valeurs courantes du store.
+    const hasPrompt = !!useKreatorStore.getState().prompt_fr?.trim();
+    handleGenerate({ forcePromptRegen: !hasPrompt });
   };
 
   const handleShare = (platform: string) => {
@@ -1150,11 +1153,19 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
                     )}px`,
                   }}
                 />
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-wrap gap-2 mt-2 items-center">
                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => { navigator.clipboard.writeText(prompt_fr); toast.success('Prompt copié'); }}>
                     <Copy className="w-3 h-3 mr-1" /> Copier
                   </Button>
-                  <p className="text-xs text-muted-foreground self-center">Les modifications seront utilisées lors du prochain « Régénérer ».</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-foreground/10 text-foreground hover:border-secondary"
+                    onClick={() => window.dispatchEvent(new CustomEvent('kreator:generate-prompt', { detail: { variant: true } }))}
+                  >
+                    <RefreshCw className="w-3 h-3 mr-1" /> Générer une variante du prompt
+                  </Button>
+                  <p className="text-xs text-muted-foreground self-center">La variante (ou vos modifications) sera utilisée lors du prochain « Régénérer le contenu ».</p>
                 </div>
               </div>
             )}
