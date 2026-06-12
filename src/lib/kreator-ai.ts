@@ -995,6 +995,9 @@ Le champ prompt_fr DOIT contenir, dans cet ordre, séparés par des sauts de lig
 🧾 TITRE
 Vidéo publicitaire ${params.productService || '[Nom de l\'offre]'} — ${videoDuration}s (${videoSceneCount} scènes)
 
+🎨 DIRECTION ARTISTIQUE / LOOK & FEEL (OBLIGATOIRE — IDENTIQUE SUR 100% DES SCÈNES)
+[Déclarer EXPLICITEMENT : Nom de la direction artistique choisie • Mood / énergie • Palette HEX (2-4 couleurs + accent) • Typographie display + support (noms précis) pour textes à l'écran • 2-3 éléments graphiques signature répétés • Traitement photo/sujet • Étalonnage couleur (color grading) • Grammaire de cadrage et signature de mouvement caméra • Style de transitions. Niveau agence publicitaire premium internationale, appliqué IDENTIQUEMENT à toutes les scènes.]
+
 🎯 ANGLE MARKETING & ÉMOTION
 [Angle retenu + émotion principale recherchée]
 
