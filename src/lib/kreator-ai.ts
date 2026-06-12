@@ -874,6 +874,24 @@ Le champ prompt_fr DOIT contenir, exactement dans cet ordre, séparés par des s
 Génère un carrousel publicitaire ultra performant, conçu pour maximiser engagement, clics et conversion, adapté à Facebook, Instagram, TikTok et LinkedIn.
 Style : marketing premium, direct, viral, clair, non générique, niveau agence internationale.
 
+━━━━━━━━━━━━━━━━━━
+🎨 DIRECTION ARTISTIQUE OBLIGATOIRE (SYSTÉMATIQUE — TOUS CARROUSELS)
+━━━━━━━━━━━━━━━━━━
+AVANT de rédiger le carrousel, CHOISIR EXPLICITEMENT et DÉCLARER UNE direction artistique premium cohérente avec le type d'offre / produit / service, le persona et l'univers de marque. Le carrousel ENTIER doit être construit à partir de cette direction (palette, typo, formes, textures, mise en scène, traitement photo) — design system UNIFIÉ sur 100% des slides.
+
+La direction artistique DOIT contenir, déclarée explicitement dans la sortie :
+• Nom de la direction (ex: "Bold Editorial Orange", "Luxe Dark Gradient", "Vibrant Lime Energy", "Soft Pastel Grid", "Brutalist Mono", "Premium Fintech Clean", "Tropical Premium", "Beverage 3D Hero")
+• Mood / énergie (premium, audacieux, vibrant, minimal, luxueux, éditorial, brutaliste, organique, futuriste…)
+• Palette HEX (2 à 4 couleurs dominantes + 1 accent contrasté) — réutilisée IDENTIQUEMENT sur toutes les slides
+• Typographie : 1 display ULTRA bold (titres XXL, possibles outlines, italiques, mots-clés colorés) + 1 sans-serif support (sous-titres / corps)
+• Éléments graphiques signature : blob organique, gros chiffres en filigrane, badges arrondis, stickers/ovales, grilles, lignes manuscrites, formes liquides, halos, gradients radiaux, traits soulignés, flèches, étoiles, accolades, etc. (CHOISIR 2-3 éléments répétés)
+• Traitement photo / sujet : photo réelle détourée premium, sujet humain expressif quand pertinent, ombres douces, mise en scène éditoriale, NON IA générique
+• Composition : asymétrie volontaire, hiérarchie typographique forte (titre énorme + sous-titre court + texte court), espaces négatifs maîtrisés, accents colorés sur mots-clés
+
+RÉFÉRENCES VISUELLES DE NIVEAU À ATTEINDRE (qualité agence top-tier) : posts marketing premium type @joshgrafiqs, UrbanTechtz Rate Cards, Sir Lasa Tech, PraiseUCdesigns, Nubiq fintech ads, Settle CPG carousels, Heineken/Spaten beverage hero shots. JAMAIS de slides plates, génériques, "PowerPoint", template Canva basique, ni style IA détectable.
+
+RÈGLE DE COHÉRENCE ABSOLUE : la MÊME direction artistique (palette + typo + éléments signature + traitement) s'applique IDENTIQUEMENT à TOUTES les slides — aucune slide ne dévie. Variation autorisée uniquement sur la composition interne (position du sujet, accents), JAMAIS sur le système.
+
 📥 INPUTS À UTILISER — Nombre de slides : ${params.slidesCount || 4}. Type d'offre, Nom de l'offre, Description, Idée (champ "Insérer mon idée" OU idée validée cliquée), Objectif du contenu, Ton d'écriture (déduit si absent), Angle marketing (déduit si absent), Activité/métier, Secteur, Marché/localisation, Persona, Image de référence + description, Textes des slides (si activés, un par slide), Position/police/couleur HEX, Palette (prioritaire si fournie).
 
 🧠 LOGIQUE OBLIGATOIRE — choisir automatiquement les meilleurs angles selon l'objectif, adapter le message au persona et niveau de conscience client, transformer l'idée en storytelling ou persuasion directe, prioriser clarté + impact + conversion, 1 slide = 1 message unique puissant, aucune surcharge, style humain non IA.
@@ -905,7 +923,7 @@ Le champ prompt_fr DOIT contenir, dans cet ordre, séparés par des sauts de lig
 [Objectif marketing visé]
 
 🎨 SYSTÈME DE DESIGN UNIFIÉ
-[Palette HEX 2-4 couleurs, typographie display + support, éléments graphiques signature, traitement photo — IDENTIQUES sur toutes les slides]
+[OBLIGATOIRE — déclarer : Nom de la direction artistique choisie • Mood • Palette HEX (2-4 couleurs + accent) • Typographie display + support (noms précis) • 2-3 éléments graphiques signature répétés • Traitement photo/sujet • Style de composition. Le tout IDENTIQUE sur 100% des slides, niveau agence premium internationale.]
 
 Puis pour CHAQUE slide (de 1 à ${params.slidesCount || 4}) reproduire EXACTEMENT ce gabarit :
 
