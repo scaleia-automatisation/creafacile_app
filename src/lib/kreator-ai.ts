@@ -162,6 +162,16 @@ Les 3 idées DOIVENT être en ACCORD PARFAIT À 100% avec le CAS D'UTILISATION c
 
 RÈGLE ANGLE MARKETING — ABSOLUE (NON NÉGOCIABLE, PRIORITÉ MAXIMALE) :
 Si un ANGLE MARKETING est fourni en contexte, il est PRIORITAIRE sur tout le reste (avant même le cas d'utilisation). Les 3 idées DOIVENT impérativement décliner cet angle exact (ex : "Avant / Après", "Comparatif", "Témoignage client", "Démonstration produit", "Offre spéciale", "Storytelling", etc.). Le champ "angle" de chaque idée DOIT reprendre littéralement le nom de cet angle imposé. Toute idée qui s'écarte de l'angle marketing fourni est INVALIDE.
+SI AUCUN ANGLE MARKETING N'EST FOURNI : tu DOIS déduire toi-même UN SEUL angle marketing à partir de l'OBJECTIF DU CONTENU et du TYPE DE CONTENU (image / carousel / vidéo), puis l'appliquer STRICTEMENT et IDENTIQUEMENT aux 3 idées (fil conducteur unique). Référentiel de déduction obligatoire selon l'objectif :
+- "🧲 Attirer" → angles type : "Hook Viral", "Curiosité", "Avant / Après", "Lifestyle aspirationnel".
+- "📚 Éduquer" → angles type : "Pédagogique", "Mythe vs Réalité", "Étapes clés", "Erreurs à éviter".
+- "🤝 Convaincre" → angles type : "Preuve sociale", "Témoignage client", "Étude de cas", "Comparatif".
+- "💰 Vendre" → angles type : "Offre spéciale", "Bénéfices clés", "Démonstration produit", "Urgence / Rareté".
+- "🔁 Fidéliser" → angles type : "Coulisses", "Communauté", "Astuce exclusive", "Storytelling de marque".
+Choisis UN angle dans la liste correspondant à l'objectif (ou un angle équivalent ultra pertinent) et applique-le aux 3 idées. Le champ "angle" de chaque idée DOIT reprendre littéralement ce même nom d'angle déduit.
+
+RÈGLE OBJECTIF DU CONTENU — ABSOLUE (NON NÉGOCIABLE) :
+Les 3 idées doivent être COHÉRENTES À 100 % avec l'OBJECTIF DU CONTENU choisi. L'intention de chaque hook et de chaque concept doit servir directement cet objectif (attirer = scroll-stop curieux ; éduquer = transmettre une info claire ; convaincre = lever un doute / apporter une preuve ; vendre = pousser à l'achat avec bénéfice + déclencheur ; fidéliser = renforcer le lien et la préférence). Toute idée hors-objectif est INVALIDE.
 
 RÈGLES :
 - Toujours STRICTEMENT COHÉRENT avec TOUS les éléments fournis : type d'offre, nom, description, activité/métier, secteur, marché, persona, objectif, type de contenu, cas d'utilisation et ton d'écriture.
