@@ -1044,8 +1044,12 @@ Puis pour CHAQUE scène (de 1 à ${videoSceneCount}) reproduire EXACTEMENT ce ga
 🎧 Audio :
  🎼 Musique : [style + ambiance + évolution]
  🔊 SFX : [bruitages précis synchronisés]
-📝 Texte écran : [wording exact si fourni, sinon court et impactant, sinon "aucun"]
-🎨 Design texte : [position, police, couleur HEX, style]
+📝 Texte écran : ${params.showText
+  ? `[wording EXACT fourni par l'utilisateur — reproduire mot pour mot. Si un seul texte fourni, ne l'afficher QUE sur la/les scène(s) cohérente(s) avec le timing renseigné ou déduit. Si aucun texte ne s'affiche sur cette scène, écrire "aucun".]`
+  : `"aucun" (l'utilisateur n'a PAS activé le texte à l'écran — INTERDICTION ABSOLUE d'ajouter le moindre texte overlay, sous-titre, accroche ou CTA visuel sur cette scène)`}
+🎨 Design texte : ${params.showText
+  ? `[position, police, couleur HEX — utiliser les valeurs utilisateur si fournies, sinon DÉDUIRE INTELLIGEMMENT à partir de l'idée, de la palette/branding et du ton ; timing & durée d'apparition idem]`
+  : `aucun (pas de texte donc pas de design texte)`}
 
 🎥 Scène finale (DOIT impérativement contenir)
 🎧 Audio :
