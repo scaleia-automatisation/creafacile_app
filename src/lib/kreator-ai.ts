@@ -2041,9 +2041,9 @@ export async function generateVideo(
       ? (modelSettings?.seedance2_reference_image_urls || []).filter(Boolean)
       : [];
     const effectivePrompt = seedanceRefs.length > 0
-      ? `${promptEn.trim()}
+      ? `CONTRAINTE PRODUIT SEEDANCE — PRIORITÉ ABSOLUE : les images de référence jointes contiennent le vrai produit utilisateur. La vidéo doit montrer CE PRODUIT EXACT, pas une version inventée : même packaging, même forme, mêmes couleurs, même étiquette, mêmes proportions, mêmes détails visibles. Utiliser la première image de référence comme source d'identité produit principale dans chaque plan où le produit apparaît. Interdit de changer la marque, le contenant, le logo, l'étiquette, la couleur ou de remplacer le produit par un produit générique.
 
-CONTRAINTE PRODUIT SEEDANCE — PRIORITÉ ABSOLUE : les images de référence jointes contiennent le vrai produit utilisateur. La vidéo doit montrer CE PRODUIT EXACT, pas une version inventée : même packaging, même forme, mêmes couleurs, même étiquette, mêmes proportions, mêmes détails visibles. Utiliser la première image de référence comme source d'identité produit principale dans chaque plan où le produit apparaît. Interdit de changer la marque, le contenant, le logo, l'étiquette, la couleur ou de remplacer le produit par un produit générique.`
+${promptEn.trim()}`
       : promptEn;
     let taskId = opts?.resumeTaskId;
     if (!taskId) {
