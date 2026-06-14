@@ -1597,18 +1597,31 @@ serve(async (req) => {
 
     let response: Response;
     try {
-      response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: selectedModel,
-          messages: builtMessages,
-          max_tokens: 2000,
-        }),
-      }, 110_000);
+      // Retry with exponential backoff on 429 (rate limit) — up to 3 attempts
+      let attempt = 0;
+      const maxAttempts = 3;
+      while (true) {
+        response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: selectedModel,
+            messages: builtMessages,
+            max_tokens: 2000,
+          }),
+        }, 110_000);
+        if (response.status !== 429 || attempt >= maxAttempts - 1) break;
+        const retryAfterHeader = response.headers.get("retry-after");
+        const retryAfterMs = retryAfterHeader ? Math.min(15000, Number(retryAfterHeader) * 1000) : 0;
+        const backoffMs = retryAfterMs || Math.min(8000, 1500 * Math.pow(2, attempt));
+        console.warn(`OpenAI 429 — retry ${attempt + 1}/${maxAttempts - 1} in ${backoffMs}ms`);
+        try { await response.body?.cancel(); } catch { /* noop */ }
+        await new Promise((r) => setTimeout(r, backoffMs));
+        attempt++;
+      }
     } catch (err) {
       if ((err as any)?.name === "AbortError") {
         return jsonError(504, "Le service OpenAI a mis trop de temps à répondre. Réessayez.");
