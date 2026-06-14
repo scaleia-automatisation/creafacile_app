@@ -12,6 +12,7 @@ import StepContainer from './StepContainer';
 import { generateImage, generateVideo, generateCaption, generatePrompt, type PlatformCaptions } from '@/lib/kreator-ai';
 import type { Json } from '@/integrations/supabase/types';
 import { getVideoDurationSec, supportsVoiceOver, supportsNativeVoiceOver } from '@/lib/voice-over';
+import { savePendingVideo, getPendingVideo, clearPendingVideo } from '@/lib/pending-video';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -526,6 +527,37 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         return;
       }
 
+      const captionArgs = {
+        objective: (marketing_angle || objective) + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
+        idea: idea_chosen || input_text,
+        ideaHook: (idea_chosen || '').split(' — ')[0].trim(),
+        useCase: use_case,
+        contentType: type,
+        sector: company_sector,
+        activity: company_activity,
+        aiModel: ai_model,
+        format,
+        slidesCount: slides_count,
+        offerType: offer_type,
+        offerName: product_service,
+        offerDescription: product_description,
+        persona: target_persona,
+        market,
+        marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
+        ton: options.ton,
+        visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
+        freeDescription: input_text,
+        promptValide: generationPrompt,
+        advancedSettings: [
+          options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
+          options.logo_enabled ? `logo: ${options.logo_position}${type === 'video' ? ` (apparition ${options.logo_appearance})` : ''}` : '',
+          options.show_text ? `texte overlay: position ${options.text_position}, police ${options.text_font}` : '',
+        ].filter(Boolean).join(' | '),
+        productAnalysis: input_image_description,
+        text1: options.show_text ? options.text_content : '',
+        text2: options.text_2_enabled ? options.text_content_2 : '',
+        slideTexts: options.slide_texts,
+      };
       const [contentUrl, captionResult] = await raceAbort(Promise.all([
         isVideo
           ? generateVideo(
@@ -539,39 +571,31 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
               voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
                 ? { text: voice_over_text.trim(), language: voice_over_language || 'Français' }
                 : undefined,
+              {
+                onTaskStart: (taskId) => {
+                  try {
+                    savePendingVideo({
+                      taskId,
+                      aiModel: ai_model,
+                      format,
+                      modelSettings: model_settings,
+                      soraCharacterScenes: sora_character_scenes || [],
+                      voiceOver:
+                        voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
+                          ? { text: voice_over_text.trim(), language: voice_over_language || 'Français' }
+                          : undefined,
+                      prompt: generationPrompt,
+                      captionParams: captionArgs,
+                      type,
+                      creditsNeeded,
+                      startedAt: Date.now(),
+                    });
+                  } catch { /* noop */ }
+                },
+              },
             )
           : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
-        generateCaption({
-          objective: (marketing_angle || objective) + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
-          idea: idea_chosen || input_text,
-          ideaHook: (idea_chosen || '').split(' — ')[0].trim(),
-          useCase: use_case,
-          contentType: type,
-          sector: company_sector,
-          activity: company_activity,
-          aiModel: ai_model,
-          format,
-          slidesCount: slides_count,
-          offerType: offer_type,
-          offerName: product_service,
-          offerDescription: product_description,
-          persona: target_persona,
-          market,
-          marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
-          ton: options.ton,
-          visualStyle: visual_style_brief || options.visual_style || render_style || video_render_style,
-          freeDescription: input_text,
-          promptValide: generationPrompt,
-          advancedSettings: [
-            options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
-            options.logo_enabled ? `logo: ${options.logo_position}${type === 'video' ? ` (apparition ${options.logo_appearance})` : ''}` : '',
-            options.show_text ? `texte overlay: position ${options.text_position}, police ${options.text_font}` : '',
-          ].filter(Boolean).join(' | '),
-          productAnalysis: input_image_description,
-          text1: options.show_text ? options.text_content : '',
-          text2: options.text_2_enabled ? options.text_content_2 : '',
-          slideTexts: options.slide_texts,
-        }),
+        generateCaption(captionArgs),
       ]));
       checkAbort();
 
@@ -637,6 +661,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       setGenerating(false);
       abortControllerRef.current = null;
       if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null; }
+      clearPendingVideo();
     }
   };
 
@@ -644,6 +669,86 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
   handleGenerateRef.current = handleGenerate;
   const buildPromptParamsRef = useRef(buildPromptParams);
   buildPromptParamsRef.current = buildPromptParams;
+
+  // Resume an in-flight video task that was started before the page reload/blank.
+  const resumedVideoRef = useRef(false);
+  useEffect(() => {
+    if (resumedVideoRef.current || !user) return;
+    const pending = getPendingVideo();
+    if (!pending) return;
+    // Auto-expire stale tasks after 30 minutes.
+    if (Date.now() - pending.startedAt > 30 * 60 * 1000) { clearPendingVideo(); return; }
+    resumedVideoRef.current = true;
+
+    const resume = async () => {
+      setGenerating(true);
+      setStatus('generating');
+      setProgress(20);
+      setElapsedSeconds(0);
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+      elapsedRef.current = setInterval(() => setElapsedSeconds(s => s + 1), 1000);
+      toast.info('Reprise de la génération vidéo en cours…');
+      try {
+        const videoUrl = await generateVideo(
+          pending.prompt,
+          pending.aiModel as never,
+          pending.format,
+          (pct) => setProgress(pct),
+          abortController.signal,
+          pending.modelSettings as never,
+          (pending.soraCharacterScenes || []) as { duration: number }[],
+          pending.voiceOver,
+          { resumeTaskId: pending.taskId },
+        );
+        const captionResult = await generateCaption(pending.captionParams as never);
+        setProgress(100);
+        const { data: deducted, error: deductErr } = await supabase.rpc('deduct_credits', {
+          p_user_id: user.id,
+          p_amount: pending.creditsNeeded,
+          p_action: `generate_${pending.type}`,
+        });
+        if (!deducted) {
+          toast.error(deductErr ? `Erreur crédits: ${deductErr.message}` : 'Crédits insuffisants');
+          setStatus('idle');
+          return;
+        }
+        await supabase.from('generations').insert([{
+          user_id: user.id,
+          type: pending.type,
+          ai_model: pending.aiModel,
+          format: pending.format,
+          prompt_en_final: pending.prompt,
+          prompt_fr_final: pending.prompt,
+          result_url: videoUrl,
+          credits_used: pending.creditsNeeded,
+          status: 'done',
+          captions: (captionResult ?? null) as unknown as Json,
+        }]);
+        setResultUrl(videoUrl);
+        setCreditsUsed(pending.creditsNeeded);
+        setCaptions(captionResult);
+        setGeneratedCaptions(captionResult);
+        setStatus('done');
+        await refreshProfile();
+        toast.success('Génération vidéo terminée');
+      } catch (err) {
+        console.error('[resume video]', err);
+        if (!(err instanceof DOMException && err.name === 'AbortError')) {
+          toast.error(err instanceof Error && err.message ? err.message : 'Reprise vidéo échouée');
+        }
+        setStatus('idle');
+      } finally {
+        clearPendingVideo();
+        setGenerating(false);
+        abortControllerRef.current = null;
+        if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null; }
+      }
+    };
+    resume();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
   useEffect(() => {
     const onTrigger = (e: Event) => {
       // Par défaut on régénère le prompt maître pour reprendre tous les
