@@ -581,6 +581,7 @@ serve(async (req) => {
       // (Veo 3 / 3.1 et Grok Imagine sont gérés plus bas dans des branches dédiées.)
       const OPENROUTER_VIDEO_MODELS = new Set<string>([
         "kling-3.0",
+        "kwaivgi/kling-video-o1",
         "bytedance/seedance-2",
         "bytedance/seedance-2-fast",
         "minimax/hailuo-2.3",
@@ -599,13 +600,31 @@ serve(async (req) => {
         if (typeof orBody.prompt === "string" && orBody.prompt.length > 3900) orBody.prompt = orBody.prompt.slice(0, 3900);
 
         if (ai_model === "kling-3.0") {
-          // Kling 3.0 : pro (qualité) ou standard. start_image_url / end_image_url pour ancrer.
+          // Kling 3.0 : pro (qualité) ou standard. T2V (texte) ou I2V (image vers vidéo).
           const mode = (ms.kling30_mode || "pro").toString().toLowerCase();
-          orModel = mode === "standard" ? "kwaivgi/kling-v3.0-std" : "kwaivgi/kling-v3.0-pro";
-          if (ms.kling30_start_image_url) orBody.image_url = ms.kling30_start_image_url;
-          if (ms.kling30_end_image_url) orBody.last_frame_image_url = ms.kling30_end_image_url;
-          orBody.aspect_ratio = aspectFromFormat;
+          orModel = mode === "std" || mode === "standard" ? "kwaivgi/kling-v3.0-std" : "kwaivgi/kling-v3.0-pro";
+          const k30Sub = (ms.kling30_sub_model || "t2v").toString();
+          if (k30Sub === "i2v") {
+            if (!ms.kling30_start_image_url) return jsonError(400, "Kling 3.0 I2V requiert une image de départ.");
+            orBody.image_url = ms.kling30_start_image_url;
+            if (ms.kling30_end_image_url) orBody.last_frame_image_url = ms.kling30_end_image_url;
+          } else {
+            orBody.aspect_ratio = ms.kling30_aspect || aspectFromFormat;
+          }
+          if (typeof ms.kling30_audio_enabled === "boolean") orBody.audio = !!ms.kling30_audio_enabled;
           if (ms.kling30_duration) orBody.duration = Number(ms.kling30_duration);
+          orBody.resolution = "720p";
+        } else if (ai_model === "kwaivgi/kling-video-o1") {
+          // Kling Video O1 : T2V ou I2V via OpenRouter.
+          orModel = "kwaivgi/kling-video-o1";
+          const o1Sub = (ms.klingo1_sub_model || "t2v").toString();
+          if (o1Sub === "i2v") {
+            if (!ms.klingo1_image_url) return jsonError(400, "Kling Video O1 I2V requiert une image source.");
+            orBody.image_url = ms.klingo1_image_url;
+          } else {
+            orBody.aspect_ratio = ms.klingo1_aspect || aspectFromFormat;
+          }
+          if (ms.klingo1_duration) orBody.duration = Number(ms.klingo1_duration);
           orBody.resolution = "720p";
         } else if (ai_model === "bytedance/seedance-2" || ai_model === "bytedance/seedance-2-fast") {
           const sub = ms.seedance2_sub_model || (ai_model === "bytedance/seedance-2-fast" ? "seedance-2-fast" : "seedance-2");
