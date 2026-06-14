@@ -645,7 +645,6 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       setGenerating(false);
       abortControllerRef.current = null;
       if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null; }
-      clearPendingVideo();
     }
   };
 
