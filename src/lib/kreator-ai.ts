@@ -173,6 +173,19 @@ Choisis UN angle dans la liste correspondant à l'objectif (ou un angle équival
 RÈGLE OBJECTIF DU CONTENU — ABSOLUE (NON NÉGOCIABLE) :
 Les 3 idées doivent être COHÉRENTES À 100 % avec l'OBJECTIF DU CONTENU choisi. L'intention de chaque hook et de chaque concept doit servir directement cet objectif (attirer = scroll-stop curieux ; éduquer = transmettre une info claire ; convaincre = lever un doute / apporter une preuve ; vendre = pousser à l'achat avec bénéfice + déclencheur ; fidéliser = renforcer le lien et la préférence). Toute idée hors-objectif est INVALIDE.
 
+RÈGLE SYNTHÈSE CONTEXTE — ABSOLUE (NON NÉGOCIABLE, PRIORITÉ MAXIMALE) :
+Chacune des 3 idées DOIT être la SYNTHÈSE FIDÈLE de TOUS les champs renseignés en contexte, sans en oublier un seul. Elle doit obligatoirement :
+1) parler explicitement et nommément du produit/service tel qu'il est nommé (champ "Nom de l'offre") et fidèle à sa description (champ "Description") — jamais d'un produit générique ;
+2) être pensée pour le TYPE DE CONTENU exact (image / carousel / vidéo) ;
+3) suivre À LA LETTRE l'ANGLE MARKETING fourni (ou déduit) comme format narratif imposé ;
+4) servir directement l'OBJECTIF DU CONTENU ;
+5) viser explicitement la cible définie dans "Client cible / Persona" ;
+6) être écrite intégralement dans le TON D'ÉCRITURE imposé (vocabulaire, niveau de langue, rythme, énergie) ;
+7) être plausible et crédible pour quelqu'un qui exerce l'ACTIVITÉ / MÉTIER dans le SECTEUR indiqué (point de vue émetteur = "je suis / je fais [activité] dans [secteur]").
+EXEMPLE de raisonnement attendu (à appliquer systématiquement, jamais à recopier littéralement) :
+Si offre = produit, nom = "bissap juice", description = "jus de bissap sain et naturel", activité = X, secteur = Y, persona = Z, objectif = "🧲 Attirer", ton = "direct / cash", type = "image", angle = "Avant / Après" → les 3 idées doivent être 3 visuels FIXES "Avant / Après mon bissap juice", qui parlent du bissap juice (jus de bissap sain et naturel), s'adressent à Z, sont formulées en ton direct / cash, et ont pour but d'attirer Z en arrêtant le scroll. AUCUNE idée ne peut être hors-produit, hors-angle, hors-objectif, hors-persona, hors-ton ou hors-format.
+Toute idée qui ne synthétise pas TOUS ces champs simultanément est INVALIDE et doit être réécrite.
+
 RÈGLES :
 - Toujours STRICTEMENT COHÉRENT avec TOUS les éléments fournis : type d'offre, nom, description, activité/métier, secteur, marché, persona, objectif, type de contenu, cas d'utilisation et ton d'écriture.
 - Respecter scrupuleusement le cas d'utilisation choisi (ex : Avant/Après, UGC, Témoignage, Démonstration, Comparatif, FAQ, etc.) — c'est le format narratif obligatoire de chaque idée.
