@@ -186,6 +186,10 @@ const GenerationStep = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Signature (modèle + réglages) utilisée lors de la dernière génération réussie.
+  // Sert à détecter un changement de modèle IA après coup pour forcer une
+  // régénération du prompt (et donc relancer la génération avec les nouveaux inputs).
+  const lastGenSignatureRef = useRef<string>('');
 
   const buttonLabel = result_url ? 'Régénérer le contenu' : 'Générer le contenu';
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
@@ -196,6 +200,11 @@ const GenerationStep = () => {
     if (status !== 'done') return;
     if (generated_captions) setCaptions(generated_captions);
     if (generated_carousel_slides) setCarouselSlides(generated_carousel_slides);
+    if (!lastGenSignatureRef.current) {
+      lastGenSignatureRef.current = JSON.stringify({
+        ai_model, model_settings: model_settings || {}, format, type,
+      });
+    }
   }, [status, generated_captions, generated_carousel_slides]);
 
   // Validation des champs requis (identique à PromptStep)
@@ -519,6 +528,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         setCaptions(slideResults[0].captions);
         setGeneratedCaptions(slideResults[0].captions);
         setStatus('done');
+        lastGenSignatureRef.current = buildGenSignature();
         await refreshProfile();
         return;
       }
@@ -639,6 +649,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       setGeneratedCaptions(captionResult);
       setGeneratedCarouselSlides(null);
       setStatus('done');
+      lastGenSignatureRef.current = buildGenSignature();
       await refreshProfile();
     } catch (err: unknown) {
       if (progressInterval) clearInterval(progressInterval);
@@ -743,6 +754,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         setCaptions(captionResult);
         setGeneratedCaptions(captionResult);
         setStatus('done');
+        lastGenSignatureRef.current = buildGenSignature();
         await refreshProfile();
         toast.success('Génération vidéo terminée');
       } catch (err) {
@@ -986,13 +998,26 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
     setShowSavedPopup(true);
   };
 
+  const buildGenSignature = () => {
+    const s = useKreatorStore.getState();
+    return JSON.stringify({
+      ai_model: s.ai_model,
+      model_settings: s.model_settings || {},
+      format: s.format,
+      type: s.type,
+    });
+  };
+
   const handleRegenerate = () => {
+    // Si le modèle d'IA (ou ses réglages, le format, le type) a changé depuis
+    // la dernière génération, on régénère obligatoirement le prompt afin que
+    // la nouvelle génération reflète bien les nouveaux inputs.
+    const currentSig = buildGenSignature();
+    const modelChanged = lastGenSignatureRef.current !== '' && lastGenSignatureRef.current !== currentSig;
     // Si l'utilisateur a généré (ou édité) un prompt visible, on respecte ce
-    // prompt — notamment lorsqu'il a cliqué « Générer une variante du prompt »
-    // pour obtenir une nouvelle direction avant de régénérer. Sinon on
-    // régénère le prompt depuis les valeurs courantes du store.
+    // prompt — sauf changement de modèle/réglages détecté ci-dessus.
     const hasPrompt = !!useKreatorStore.getState().prompt_fr?.trim();
-    handleGenerate({ forcePromptRegen: !hasPrompt });
+    handleGenerate({ forcePromptRegen: modelChanged || !hasPrompt });
   };
 
   const handleShare = (platform: string) => {
