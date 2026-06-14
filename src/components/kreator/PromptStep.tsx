@@ -147,12 +147,14 @@ const PromptStep = () => {
         textPosition: options.text_position,
         textFont: options.text_font,
         textColor: options.text_color,
+        voiceOverEnabled:
+          type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model),
         voiceOverText:
           type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
             ? voice_over_text.trim()
             : undefined,
         voiceOverLanguage:
-          type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
+          type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model)
             ? (voice_over_language || 'Français')
             : undefined,
         videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
@@ -198,6 +200,11 @@ const PromptStep = () => {
     options.text_content || '',
     options.text_content_2 || '',
     (options.slide_texts || []).join('§'),
+    options.show_text ? '1' : '0',
+    options.text_2_enabled ? '1' : '0',
+    voice_over_enabled ? '1' : '0',
+    voice_over_text || '',
+    voice_over_language || '',
   ].join('|');
   const prevTextSigRef = useRef<string | null>(null);
   useEffect(() => {

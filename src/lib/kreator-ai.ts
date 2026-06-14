@@ -682,6 +682,7 @@ export async function generatePrompt(params: {
   textDuration2?: number;
   textStart1?: number;
   textStart2?: number;
+  voiceOverEnabled?: boolean;
   voiceOverText?: string;
   videoDurationSec?: number;
   voiceOverLanguage?: string;
@@ -754,7 +755,8 @@ export async function generatePrompt(params: {
     videoDuration <= 8 ? 18 :
     videoDuration <= 10 ? 25 :
     35;
-  const hasVoiceOver = !!params.voiceOverText;
+  const hasVoiceOver = !!(params.voiceOverEnabled ?? !!params.voiceOverText);
+  const hasVoiceOverText = !!(params.voiceOverText && params.voiceOverText.trim());
   const voLang = (params.voiceOverLanguage || 'Français').toUpperCase();
 
   // Video-specific directives — nouveau prompt maître (script publicitaire premium)
@@ -1006,11 +1008,15 @@ Génère un script vidéo publicitaire ou marketing naturel, 100% réaliste, pre
 🎼 Musique de fond (BGM) — style adapté à l'émotion (premium / corporate / tropical / urbain / émotionnel / luxe / dynamique), évolution avec build-up et drop/accent final sur CTA, volume discret sous voix off, dominant sans voix off.
 🔊 Bruitages (SFX) — ambiance (nature, ville, studio, luxe), SFX produits (versement, ouverture, condensation, glace, clic CTA), transitions (whoosh, cinematic hit, soft fade), accents émotionnels (sparkle, rise, impact, breath). Chaque bruitage : cohérent avec l'image, discret mais impactant, synchronisé avec les actions à l'écran.
 
-🧩 OVERLAY TEXTE ÉCRAN — si activé : pour chaque texte renseigné, indiquer contenu, moment d'apparition, durée, position, police, couleur. Sinon déduction intelligente.
+🧩 OVERLAY TEXTE ÉCRAN — RÈGLE STRICTE :
+• Si l'utilisateur N'A PAS activé "Texte à l'écran" dans la personnalisation → AUCUN texte overlay dans AUCUNE scène. Indiquer EXPLICITEMENT "Texte écran : aucun" pour CHAQUE scène. INTERDICTION ABSOLUE d'inventer, d'ajouter ou de suggérer le moindre texte, sous-titre, accroche ou CTA visuel à l'écran.
+• Si activé : reproduire EXACTEMENT le wording fourni. Si la couleur, le moment d'apparition (timing) ou la durée d'affichage ne sont PAS renseignés par l'utilisateur, les DÉDUIRE INTELLIGEMMENT à partir de l'idée choisie, du ton, de l'angle marketing et du rythme narratif de la vidéo (couleur cohérente avec la palette/branding, timing aligné sur les beats clés de la scène, durée suffisante pour une lecture confortable mobile). Pour le second texte (si activé) appliquer la même règle de déduction intelligente.
 
 🎙️ VOIX OFF
 ${hasVoiceOver
-  ? `Voix off ACTIVÉE. UNE SEULE phrase continue, texte EXACT mot pour mot : "${params.voiceOverText}".
+  ? `Voix off ACTIVÉE. ${hasVoiceOverText
+    ? `UNE SEULE phrase continue, texte EXACT mot pour mot : "${params.voiceOverText}".`
+    : `Texte de voix off NON fourni par l'utilisateur → DÉDUIRE INTELLIGEMMENT une SEULE phrase continue, naturelle, native ${voLang}, parfaitement cohérente avec l'idée choisie, le nom de l'offre, sa description, le ton, l'angle marketing, l'objectif et le persona. La phrase doit sonner 100% humaine, conversationnelle et orientée conversion (hook → bénéfice → CTA implicite).`}
 🌐 LANGUE DE LA VOIX OFF — OBLIGATOIRE : la voix off DOIT être prononcée EXCLUSIVEMENT EN ${voLang} (langue déclarée du texte de la voix off). Le moteur audio/TTS du modèle vidéo (Veo, Sora, Kling, Hailuo, Seedance, Grok, Wan, etc.) DOIT détecter et utiliser la langue ${voLang} et UNIQUEMENT cette langue, avec un accent natif ${voLang}, une prononciation native, une intonation et un phrasé authentiquement ${voLang}. INTERDIT : prononcer le texte avec un accent étranger, traduire dans une autre langue, mélanger plusieurs langues, prononcer à l'anglaise des mots ${voLang}, ou utiliser une voix dans une langue différente de celle dans laquelle le texte est écrit. La langue parlée = la langue d'écriture du texte. Indiquer EXPLICITEMENT dans le script : "Voice-over language: ${voLang} (native speaker, native accent, no translation)".
 🗣️ VOIX 100% HUMAINE NATURELLE — OBLIGATION ABSOLUE : voix d'un acteur/locuteur humain réel, chaleureuse, expressive, vivante, avec respirations naturelles, micro-variations de rythme et d'intonation, émotion sincère, articulation claire mais non mécanique. INTERDIT FORMELLEMENT : voix robotique, voix monotone, voix TTS bas de gamme, voix synthétique perceptible, accent IA, débit mécanique uniforme, prononciation artificielle. Niveau : voix off professionnelle de publicité premium (acteur voix-off natif ${voLang}). Forcer le modèle via le prompt à utiliser une voix humaine premium native ${voLang} (mention explicite "natural human voice, native ${voLang} speaker, premium voice-over actor, warm, expressive, non-robotic, no AI artifacts").
 Maximum ${voiceOverMaxWords} mots. Mots faciles à prononcer (courts, courants, sans sigles, sans anglicismes complexes, sans chiffres en chiffres). Style naturel, fluide, premium, conversationnel. TIMING STRICT : démarre à t = 1.0s exactement (premier mot à ≥ 1s, aucun mot avant 1s). Se termine à t ≤ ${Math.max(1, videoDuration - 1)}s (1s avant la fin). Aucun mot dans la première seconde ni dans la dernière seconde de la vidéo. Débit ajusté pour tenir EXACTEMENT dans cette fenêtre de ${Math.max(1, videoDuration - 2)}s.`
@@ -1038,8 +1044,12 @@ Puis pour CHAQUE scène (de 1 à ${videoSceneCount}) reproduire EXACTEMENT ce ga
 🎧 Audio :
  🎼 Musique : [style + ambiance + évolution]
  🔊 SFX : [bruitages précis synchronisés]
-📝 Texte écran : [wording exact si fourni, sinon court et impactant, sinon "aucun"]
-🎨 Design texte : [position, police, couleur HEX, style]
+📝 Texte écran : ${params.showText
+  ? `[wording EXACT fourni par l'utilisateur — reproduire mot pour mot. Si un seul texte fourni, ne l'afficher QUE sur la/les scène(s) cohérente(s) avec le timing renseigné ou déduit. Si aucun texte ne s'affiche sur cette scène, écrire "aucun".]`
+  : `"aucun" (l'utilisateur n'a PAS activé le texte à l'écran — INTERDICTION ABSOLUE d'ajouter le moindre texte overlay, sous-titre, accroche ou CTA visuel sur cette scène)`}
+🎨 Design texte : ${params.showText
+  ? `[position, police, couleur HEX — utiliser les valeurs utilisateur si fournies, sinon DÉDUIRE INTELLIGEMMENT à partir de l'idée, de la palette/branding et du ton ; timing & durée d'apparition idem]`
+  : `aucun (pas de texte donc pas de design texte)`}
 
 🎥 Scène finale (DOIT impérativement contenir)
 🎧 Audio :
@@ -1047,7 +1057,7 @@ Puis pour CHAQUE scène (de 1 à ${videoSceneCount}) reproduire EXACTEMENT ce ga
  🔊 SFX : impact final / transition CTA / accent sonore premium
 
 ${hasVoiceOver ? `🎙️ Voix off (unique)
-"${params.voiceOverText}"
+${hasVoiceOverText ? `"${params.voiceOverText}"` : `[Phrase déduite intelligemment — UNE SEULE phrase native ${voLang}, cohérente avec l'idée, l'offre, le ton, l'angle et l'objectif]`}
 🌐 Langue parlée : ${voLang} UNIQUEMENT — locuteur natif ${voLang}, accent natif ${voLang}, prononciation native, aucune traduction, aucun mélange de langues. La langue dite = la langue dans laquelle le texte ci-dessus est écrit.
 🗣️ Voix : 100% humaine naturelle, chaleureuse, expressive, non robotique, qualité voix-off publicitaire premium (acteur voix-off natif ${voLang}). Interdit : voix synthétique, monotone, mécanique ou avec accent IA.
 (une seule phrase continue, ≤ ${voiceOverMaxWords} mots, démarre à t = 1s, se termine à t ≤ ${Math.max(1, videoDuration - 1)}s — donc 1s de silence au début ET 1s de silence à la fin)` : ''}
