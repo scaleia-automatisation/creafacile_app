@@ -638,6 +638,7 @@ serve(async (req) => {
           if (inputReferences.length > 0) orBody.input_references = inputReferences;
           if (refImgs.length > 0) {
             orBody.prompt = `ABSOLUTE PRODUCT REFERENCE LOCK: the attached image reference(s) define the exact real product identity. The generated video MUST show the same product, same packaging, same label, same colors, same shape, same proportions and visible details. Do not invent, redesign, rebrand, recolor, relabel, simplify or substitute the product. First image reference is the primary product identity source.\n\n${orBody.prompt}`;
+            if (typeof orBody.prompt === "string" && orBody.prompt.length > 3900) orBody.prompt = orBody.prompt.slice(0, 3900);
           }
           if (typeof ms.seedance2_generate_audio === "boolean") orBody.generate_audio = !!ms.seedance2_generate_audio;
           orBody.aspect_ratio = ms.seedance2_aspect || aspectFromFormat;
