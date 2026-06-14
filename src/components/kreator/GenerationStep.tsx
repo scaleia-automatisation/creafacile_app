@@ -200,6 +200,11 @@ const GenerationStep = () => {
     if (status !== 'done') return;
     if (generated_captions) setCaptions(generated_captions);
     if (generated_carousel_slides) setCarouselSlides(generated_carousel_slides);
+    if (!lastGenSignatureRef.current) {
+      lastGenSignatureRef.current = JSON.stringify({
+        ai_model, model_settings: model_settings || {}, format, type,
+      });
+    }
   }, [status, generated_captions, generated_carousel_slides]);
 
   // Validation des champs requis (identique à PromptStep)
