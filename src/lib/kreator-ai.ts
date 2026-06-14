@@ -97,7 +97,12 @@ Génère 3 idées virales, persuasives, impactantes et engageantes qui suscitent
   });
 
   const content = data?.choices?.[0]?.message?.content;
-  if (!content) throw new Error('No response from AI');
+  if (!content) {
+    if (data?.fallback || data?.rate_limited) {
+      throw new Error(data?.error || "Le service IA est saturé. Merci de réessayer dans quelques instants.");
+    }
+    throw new Error('No response from AI');
+  }
 
   try {
     const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
@@ -1297,21 +1302,26 @@ Génère un prompt unifié, cohérent et fidèle à l'offre. Sobriété et préc
     const parsed = JSON.parse(cleaned);
     if (parsed && typeof parsed.prompt_fr === 'string') {
       parsed.prompt_fr = formatPromptWithLineBreaks(parsed.prompt_fr);
-      // 🔍 AUTO-CONTRÔLE DE COHÉRENCE — passe de vérification logique avant génération finale
-      try {
-        const checked = await runCoherenceCheck({
-          promptFr: parsed.prompt_fr,
-          contentType: params.contentType,
-          ideaChosen: params.ideaChosen || params.inputText || '',
-          productService: params.productService || '',
-          productDescription: params.productDescription || '',
-          format: params.format,
-        });
-        if (checked && typeof checked === 'string' && checked.trim().length > 50) {
-          parsed.prompt_fr = formatPromptWithLineBreaks(checked);
+      // 🔍 AUTO-CONTRÔLE DE COHÉRENCE — désactivé par défaut pour éviter de doubler les
+      // appels OpenAI et déclencher des 429. Les règles "LOGIQUE & PHYSIQUE" sont déjà
+      // appliquées par le master prompt côté serveur. On peut le réactiver via le flag :
+      // localStorage.setItem('kreator:coherenceCheck', '1')
+      if (typeof window !== 'undefined' && window.localStorage?.getItem('kreator:coherenceCheck') === '1') {
+        try {
+          const checked = await runCoherenceCheck({
+            promptFr: parsed.prompt_fr,
+            contentType: params.contentType,
+            ideaChosen: params.ideaChosen || params.inputText || '',
+            productService: params.productService || '',
+            productDescription: params.productDescription || '',
+            format: params.format,
+          });
+          if (checked && typeof checked === 'string' && checked.trim().length > 50) {
+            parsed.prompt_fr = formatPromptWithLineBreaks(checked);
+          }
+        } catch (e) {
+          console.warn('[coherence-check] skipped:', e);
         }
-      } catch (e) {
-        console.warn('[coherence-check] skipped:', e);
       }
     }
     return parsed;
