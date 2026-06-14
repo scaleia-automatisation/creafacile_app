@@ -9,6 +9,7 @@ import { generatePrompt } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getVideoDurationSec, supportsVoiceOver } from '@/lib/voice-over';
+import { extractDominantColors, describeColorsForPrompt } from '@/lib/extract-colors';
 
 const PromptStep = () => {
   const { user } = useAuth();
@@ -87,6 +88,19 @@ const PromptStep = () => {
 
     setIsGenerating(true);
     try {
+      // Détecte les couleurs exactes du produit (code hex) à partir de la
+      // photo de référence pour les injecter dans le prompt — reproduction
+      // 100% fidèle des couleurs de marque.
+      let productColorsHex: string[] = [];
+      let productColorsDescription = '';
+      if (isProduct && product_image_url?.trim()) {
+        try {
+          productColorsHex = await extractDominantColors(product_image_url, 5);
+          productColorsDescription = describeColorsForPrompt(productColorsHex);
+        } catch {
+          productColorsHex = [];
+        }
+      }
       const result = await generatePrompt({
         contentType: type,
         format,
@@ -142,6 +156,8 @@ const PromptStep = () => {
             ? (voice_over_language || 'Français')
             : undefined,
         videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
+        productColorsHex,
+        productColorsDescription,
       });
 
       setPromptFr(result.prompt_fr || '');

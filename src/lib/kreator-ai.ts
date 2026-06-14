@@ -686,6 +686,8 @@ export async function generatePrompt(params: {
   videoDurationSec?: number;
   voiceOverLanguage?: string;
   variant?: boolean;
+  productColorsHex?: string[];
+  productColorsDescription?: string;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
 
@@ -1231,6 +1233,19 @@ UTILISATION STRATÉGIQUE DE LA PALETTE (RÈGLE INTELLIGENTE) :
 • Analyser automatiquement la psychologie des couleurs de la palette fournie.
 • Utiliser les couleurs dominantes pour renforcer l'objectif marketing recherché : attirer l'attention, inspirer confiance, transmettre de l'énergie, créer du désir, renforcer le caractère premium, favoriser la mémorisation.
 • La palette ne doit pas seulement être appliquée visuellement — elle doit aussi soutenir l'émotion et le message du contenu.` : 'Palette automatique'}
+
+${params.productColorsHex && params.productColorsHex.length > 0 ? `🎯 COULEURS EXACTES DU PRODUIT DÉTECTÉES (PRIORITÉ MAXIMALE — REPRODUCTION 100% FIDÈLE, NON NÉGOCIABLE) :
+Les codes hexadécimaux suivants ont été extraits automatiquement de la photo de référence du produit fournie par l'utilisateur. Ils correspondent aux couleurs RÉELLES du produit (packaging, étiquette, matière, finition, identité visuelle de marque) :
+${params.productColorsDescription || params.productColorsHex.join(', ')}
+Liste brute des codes hex (à reproduire à l'identique, sans dérive de teinte) : ${params.productColorsHex.join(' | ')}
+
+RÈGLES STRICTES :
+• Reproduire EXACTEMENT ces couleurs sur le produit lui-même (packaging, étiquette, capsule, bouchon, texte imprimé, logo de marque, matière, surface, finition) — code hex AU PIXEL PRÈS, aucune approximation, aucun virage colorimétrique, aucune resaturation, aucun changement de teinte/luminosité/saturation.
+• INTERDICTION ABSOLUE de remplacer une couleur du produit par une couleur voisine ou plus « esthétique ». La fidélité chromatique au produit RÉEL prime sur toute considération artistique, palette automatique, ambiance lumineuse ou direction visuelle.
+• L'éclairage de scène et l'ambiance colorée du décor doivent être conçus pour PRÉSERVER ces couleurs exactes (lumière neutre 5500K si nécessaire, balance des blancs juste, pas de teinte parasite sur le produit).
+• Mentionner explicitement les codes hexadécimaux dans le prompt final, au niveau de la description du produit, afin que le modèle générateur respecte ces valeurs au rendu.
+• Cette règle PRIME sur la palette de couleurs active, sur le style visuel et sur tout autre réglage couleur. Le client doit reconnaître son produit à 100% — couleurs identiques à la photo de référence.
+` : ''}
 
 ⚠️ RAPPEL FINAL — Les RÉGLAGES AVANCÉS ci-dessus (palette, ton, style visuel, texte overlay, logo, position, police, couleur${params.contentType === 'video' ? `, durée vidéo EXACTE ${videoDuration}s et timecodes des plans` : ''}) renseignés par l'utilisateur sont STRICTEMENT PRIORITAIRES sur toute autre source (analyse d'images, suggestions automatiques). Appliquer EXACTEMENT comme demandé.
 
