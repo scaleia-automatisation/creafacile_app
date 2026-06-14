@@ -18,6 +18,8 @@ const IdeaSuggestions = () => {
   const [mode, setMode] = useState<'none' | 'generated'>('none');
   const lastTypeRef = useRef<string>(type);
   const lastSlidesRef = useRef<number>(slides_count);
+  const lastAngleRef = useRef<string>(marketing_angle);
+  const lastObjectiveRef = useRef<string>(objective);
 
   const missing: string[] = [];
   if (!offer_type?.trim()) missing.push("type d'offre");
@@ -53,6 +55,8 @@ const IdeaSuggestions = () => {
       setMode('generated');
       lastTypeRef.current = type;
       lastSlidesRef.current = slides_count;
+      lastAngleRef.current = marketing_angle;
+      lastObjectiveRef.current = objective;
     } catch (e) {
       console.error(e);
       toast.error('Erreur lors de la génération des idées');
@@ -83,6 +87,26 @@ const IdeaSuggestions = () => {
     handleGenerate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slides_count]);
+
+  // Régénère automatiquement les 3 idées si l'angle marketing change après
+  // une première génération.
+  useEffect(() => {
+    if (mode !== 'generated') return;
+    if (lastAngleRef.current === marketing_angle) return;
+    if (!canGenerate || loading) return;
+    handleGenerate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marketing_angle]);
+
+  // Régénère automatiquement les 3 idées si l'objectif change après une
+  // première génération.
+  useEffect(() => {
+    if (mode !== 'generated') return;
+    if (lastObjectiveRef.current === objective) return;
+    if (!canGenerate || loading) return;
+    handleGenerate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [objective]);
 
   const updateIdea = (idx: number, field: 'hook' | 'concept', value: string) => {
     setIdeas((prev) => prev.map((it, i) => (i === idx ? { ...it, [field]: value } : it)));
