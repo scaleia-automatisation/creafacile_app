@@ -15,11 +15,10 @@ const videoModels: { value: AIModel; label: string }[] = [
   { value: 'kling-3.0', label: 'Kling 3.0' },
   { value: 'bytedance/seedance-2', label: 'Seedance 2.0' },
   { value: 'veo-3.1', label: 'Veo 3.1' },
+  { value: 'veo-3', label: 'Veo 3' },
   { value: 'minimax/hailuo-2.3', label: 'Hailuo 2.3' },
   { value: 'sora-2', label: 'Sora 2' },
-  { value: 'sora-2-pro-t2v', label: 'Sora 2 Pro — Text to Video' },
-  { value: 'sora-2-pro-i2v', label: 'Sora 2 Pro — Image to Video' },
-  { value: 'sora-2-pro-character', label: 'Sora 2 Pro — avec Personnage' },
+  { value: 'sora-2-pro' as AIModel, label: 'Sora 2 Pro' },
   { value: 'grok-imagine-1.5-preview', label: 'Grok Imagine Video 1.5 Preview' },
 ];
 
@@ -45,6 +44,23 @@ const ContentTypeStep = () => {
 
   const models = type === 'video' ? videoModels : imageModels;
   const isGptImage = ai_model === 'gpt-5.4-image-2';
+
+  // Sora 2 Pro: 1 entrée dans le select, 3 variantes via sous-onglet
+  const isSoraPro = typeof ai_model === 'string' && ai_model.startsWith('sora-2-pro-');
+  const displayedModel: string | undefined = isSoraPro ? 'sora-2-pro' : (ai_model || undefined);
+  const soraProVariants: { value: AIModel; label: string }[] = [
+    { value: 'sora-2-pro-t2v', label: 'Texte vers vidéo' },
+    { value: 'sora-2-pro-i2v', label: 'Image vers vidéo' },
+    { value: 'sora-2-pro-character', label: 'Avec personnage' },
+  ];
+  const handleModelChange = (v: string) => {
+    if (v === 'sora-2-pro') {
+      // Choix par défaut quand on sélectionne « Sora 2 Pro »
+      setAiModel('sora-2-pro-t2v' as AIModel);
+    } else {
+      setAiModel(v as AIModel);
+    }
+  };
 
   useEffect(() => {
     if (type === 'carousel' && ai_model === 'nano-banana-2') {
@@ -104,7 +120,7 @@ const ContentTypeStep = () => {
       {/* AI Model */}
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">Modèle IA</label>
-        <Select value={ai_model || undefined} onValueChange={(v) => setAiModel(v as AIModel)}>
+        <Select value={displayedModel} onValueChange={handleModelChange}>
           <SelectTrigger className="bg-card border-foreground/10 text-foreground">
             <SelectValue placeholder="Choisissez votre modèle d'IA" />
           </SelectTrigger>
@@ -117,6 +133,28 @@ const ContentTypeStep = () => {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Sora 2 Pro — choix de la variante */}
+      {type === 'video' && isSoraPro && (
+        <div className="mb-6">
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de génération</label>
+          <div className="grid grid-cols-3 gap-2">
+            {soraProVariants.map((v) => (
+              <button
+                key={v.value}
+                onClick={() => setAiModel(v.value)}
+                className={`px-3 py-2 rounded-btn font-medium text-sm transition-all ${
+                  ai_model === v.value
+                    ? 'gradient-bg text-primary-foreground'
+                    : 'bg-card border border-foreground/10 text-muted-foreground hover:border-secondary'
+                }`}
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Réglages spécifiques au modèle vidéo (Sora 2 / Veo) */}
       {type === 'video' && ai_model && (
