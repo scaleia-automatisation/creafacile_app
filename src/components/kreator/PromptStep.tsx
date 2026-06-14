@@ -124,8 +124,6 @@ const PromptStep = () => {
         text2Enabled: options.text_2_enabled,
         textContent2: options.text_content_2,
         textPosition2: options.text_position_2,
-        textFont2: options.text_font_2,
-        textColor2: options.text_color_2,
         textDuration1: options.text_duration_1,
         textDuration2: options.text_duration_2,
         textStart1: options.text_start_1,
@@ -145,8 +143,6 @@ const PromptStep = () => {
         logoPosition: options.logo_position,
         logoAppearance: options.logo_appearance,
         textPosition: options.text_position,
-        textFont: options.text_font,
-        textColor: options.text_color,
         voiceOverEnabled:
           type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model),
         voiceOverText:
