@@ -865,7 +865,7 @@ Génère une image publicitaire ultra réaliste, premium, digne d'une grande age
 Style : publicité grand compte (food, SaaS ou service), esthétique moderne, propre, stratégique, aucun rendu IA visible.
 
 📥 INPUTS À UTILISER (si renseignés, sinon déduire intelligemment, jamais inventer hors brief)
-Type d'offre, Nom de l'offre, Description, Idée (champ "Insérer mon idée" OU idée validée cliquée par l'utilisateur), Objectif du contenu, Ton d'écriture, Angle marketing, Nature de l'offre, Activité/métier, Secteur, Marché/localisation, Persona, Image de référence + description, Textes activés (texte 1, position, police, couleur HEX, idem texte 2 si activé), Palette de couleurs (prioritaire si fournie).
+Type d'offre, Nom de l'offre, Description, Idée (champ "Insérer mon idée" OU idée validée cliquée par l'utilisateur), Objectif du contenu, Ton d'écriture, Angle marketing, Nature de l'offre, Activité/métier, Secteur, Marché/localisation, Persona, Image de référence + description, Textes activés (texte 1, position ; idem texte 2 si activé — police et couleur TOUJOURS déduites intelligemment), Palette de couleurs (prioritaire si fournie).
 
 🎯 OBJECTIF CRÉATIF — viral, scroll-stop, orienté conversion, lisible mobile, cohérent persona/offre, zéro surcharge, zéro éléments fictifs trompeurs (pas de faux numéros, fausses adresses, faux comptes).
 
@@ -873,7 +873,7 @@ Type d'offre, Nom de l'offre, Description, Idée (champ "Insérer mon idée" OU 
 
 🧩 COMPOSITION — sujet principal ultra mis en avant, arrière-plan maîtrisé légèrement flou si pertinent, éléments graphiques dynamiques mais minimalistes, hiérarchie stricte : Hook visuel → Offre/valeur → Détail secondaire → CTA.
 
-📝 TEXTE DANS LE VISUEL — si activé : reproduire EXACTEMENT le wording fourni, position/police/couleur HEX et style (bold, italic, brush, premium, minimal) demandés.
+📝 TEXTE DANS LE VISUEL — si activé : reproduire EXACTEMENT le wording fourni à la position demandée. La POLICE et la COULEUR du texte ne sont JAMAIS choisies par l'utilisateur : elles DOIVENT être déduites par l'IA pour produire un design typographique moderne, stylé, puissant, ultra accrocheur, niveau UI/agence premium, parfaitement cohérent avec le produit/service, la palette/branding et la direction artistique choisie (contraste élevé, lisibilité mobile, hiérarchie forte, traitement éditorial — bold, italic, brush, premium ou minimal selon ce qui sert le mieux le message et l'univers).
 
 ✍️ RÈGLE TEXTE — LONGUEUR & INTÉGRITÉ (ABSOLUE, NON NÉGOCIABLE) : tout texte affiché dans le visuel (Texte 1, Texte 2) DOIT contenir entre 5 et 15 MOTS (jamais en caractères — uniquement en mots), bornes incluses. Chaque texte est UNE PHRASE COMPLÈTE, autonome, lisible à voix haute du premier au dernier mot, JAMAIS tronqué, coupé, suspendu, abrégé, amputé ou inachevé. AUCUN mot coupé en deux, AUCUNE syllabe manquante, AUCUNE fin de phrase escamotée. Si la phrase ne tient pas, on la raccourcit en restant ≥ 5 mots et ≤ 15 mots — JAMAIS on ne tronque un mot.
 
@@ -908,7 +908,7 @@ Le champ prompt_fr DOIT contenir, exactement dans cet ordre, séparés par des s
 [Texte principal affiché dans le visuel]
 
 📝 TEXTES À L'ÉCRAN (OVERLAY)
-[Pour chaque texte : contenu exact, position, police, couleur HEX, style]
+[Pour chaque texte : contenu EXACT, position. Police et couleur DÉDUITES par l'IA — design typo moderne, stylé, puissant, cohérent avec la direction artistique, la palette/branding et le produit. Indiquer le nom de la police choisie, la couleur HEX retenue et le style (bold / italic / brush / premium / minimal).]
 
 🎨 PALETTE / BRANDING
 [Couleurs principales utilisées + cohérence visuelle]
@@ -942,7 +942,7 @@ RÉFÉRENCES VISUELLES DE NIVEAU À ATTEINDRE (qualité agence top-tier) : posts
 
 RÈGLE DE COHÉRENCE ABSOLUE : la MÊME direction artistique (palette + typo + éléments signature + traitement) s'applique IDENTIQUEMENT à TOUTES les slides — aucune slide ne dévie. Variation autorisée uniquement sur la composition interne (position du sujet, accents), JAMAIS sur le système.
 
-📥 INPUTS À UTILISER — Nombre de slides : ${params.slidesCount || 4}. Type d'offre, Nom de l'offre, Description, Idée (champ "Insérer mon idée" OU idée validée cliquée), Objectif du contenu, Ton d'écriture (déduit si absent), Angle marketing (déduit si absent), Activité/métier, Secteur, Marché/localisation, Persona, Image de référence + description, Textes des slides (si activés, un par slide), Position/police/couleur HEX, Palette (prioritaire si fournie).
+📥 INPUTS À UTILISER — Nombre de slides : ${params.slidesCount || 4}. Type d'offre, Nom de l'offre, Description, Idée (champ "Insérer mon idée" OU idée validée cliquée), Objectif du contenu, Ton d'écriture (déduit si absent), Angle marketing (déduit si absent), Activité/métier, Secteur, Marché/localisation, Persona, Image de référence + description, Textes des slides (si activés, un par slide) + position. Police et couleur des textes TOUJOURS déduites intelligemment par l'IA (design moderne, stylé, cohérent avec la direction artistique et la palette/branding). Palette (prioritaire si fournie).
 
 🧠 LOGIQUE OBLIGATOIRE — choisir automatiquement les meilleurs angles selon l'objectif, adapter le message au persona et niveau de conscience client, transformer l'idée en storytelling ou persuasion directe, prioriser clarté + impact + conversion, 1 slide = 1 message unique puissant, aucune surcharge, style humain non IA.
 
@@ -956,7 +956,7 @@ RÈGLE DE COHÉRENCE ABSOLUE : la MÊME direction artistique (palette + typo + �
 🟦 SLIDE 3 — SOLUTION / MÉCANISME : solution, méthode, système, valeur concrète.
 🟦 SLIDE 4 (optionnel) — PREUVE + CTA : résultat, bénéfice, avant/après, autorité, CTA clair ("DM INFO", "Clique ici", "Réserve maintenant").
 
-🎨 DESIGN PAR SLIDE : texte principal, position, police, couleur HEX, hiérarchie, style (bold, minimal, premium, punchy).
+🎨 DESIGN PAR SLIDE : texte principal, position, hiérarchie + DESIGN TYPO DÉDUIT PAR L'IA (police, couleur HEX, style — bold, minimal, premium, punchy) — moderne, stylé, puissant, ultra accrocheur, parfaitement cohérent avec la direction artistique, la palette/branding et le produit/service.
 🎯 RÈGLES CONVERSION : 1 idée = 1 slide, lisible en < 3s, contraste élevé, hiérarchie claire, style publicité premium (SaaS/Apple/Nike).
 
 ✍️ RÈGLE TEXTE — LONGUEUR & INTÉGRITÉ (ABSOLUE, NON NÉGOCIABLE) : le texte de CHAQUE slide DOIT contenir entre 5 et 15 MOTS (jamais en caractères — uniquement en mots), bornes incluses. Chaque texte est UNE PHRASE COMPLÈTE, autonome, lisible à voix haute du premier au dernier mot, JAMAIS tronquée, coupée, suspendue, abrégée, amputée ni inachevée. AUCUN mot coupé en deux, AUCUNE syllabe manquante, AUCUNE fin de phrase escamotée d'une slide à l'autre. Si la phrase ne tient pas dans la composition, on la raccourcit en restant ≥ 5 mots et ≤ 15 mots — JAMAIS on ne tronque un mot.
@@ -982,9 +982,9 @@ Message clé : [phrase courte, 1 idée unique]
 Composition visuelle : [sujet, mise en scène, hiérarchie]
 Texte affiché : [wording EXACT, ou reproduire mot pour mot si fourni]
 Position du texte : [top-center / middle-center / bottom-center]
-Police : [nom de la police]
-Couleur : [HEX]
-Style : [bold / minimal / premium / punchy]
+Police : [nom de la police — DÉDUITE par l'IA, moderne, stylée, cohérente avec la direction artistique et l'univers de marque]
+Couleur : [HEX — DÉDUITE par l'IA depuis la palette/branding, contraste élevé, lisibilité mobile parfaite]
+Style : [bold / minimal / premium / punchy — choisi pour maximiser impact et cohérence visuelle]
 
 🎯 CTA FINAL
 [Appel à l'action clair, court, orienté conversion]
@@ -1048,7 +1048,7 @@ Puis pour CHAQUE scène (de 1 à ${videoSceneCount}) reproduire EXACTEMENT ce ga
   ? `[wording EXACT fourni par l'utilisateur — reproduire mot pour mot. Si un seul texte fourni, ne l'afficher QUE sur la/les scène(s) cohérente(s) avec le timing renseigné ou déduit. Si aucun texte ne s'affiche sur cette scène, écrire "aucun".]`
   : `"aucun" (l'utilisateur n'a PAS activé le texte à l'écran — INTERDICTION ABSOLUE d'ajouter le moindre texte overlay, sous-titre, accroche ou CTA visuel sur cette scène)`}
 🎨 Design texte : ${params.showText
-  ? `[position, police, couleur HEX — utiliser les valeurs utilisateur si fournies, sinon DÉDUIRE INTELLIGEMMENT à partir de l'idée, de la palette/branding et du ton ; timing & durée d'apparition idem]`
+  ? `[position selon le réglage utilisateur si fourni. POLICE et COULEUR HEX TOUJOURS DÉDUITES par l'IA (jamais choisies par l'utilisateur) — design typographique moderne, stylé, puissant, ultra accrocheur, niveau UI/agence premium, parfaitement cohérent avec l'idée choisie, la direction artistique, la palette/branding du produit et le ton. Contraste élevé, lisibilité mobile parfaite, hiérarchie forte. Timing & durée d'apparition : valeurs utilisateur si fournies, sinon déduites intelligemment selon le rythme narratif.]`
   : `aucun (pas de texte donc pas de design texte)`}
 
 🎥 Scène finale (DOIT impérativement contenir)
@@ -1085,7 +1085,7 @@ Utiliser les informations utilisateur dans cet ordre : 1) Réglages avancés act
 ━━━━━━━━━━━━━━━━━━
 RÈGLE ABSOLUE — RÉGLAGES AVANCÉS PRIORITAIRES
 ━━━━━━━━━━━━━━━━━━
-Tous les réglages avancés activés (palette, ton, style visuel, type de rendu, textes overlay + position/police/couleur HEX, second texte, durées/timings, logo + position/timing, voix off + texte exact + langue, paramètres modèle, format/aspect ratio, durée vidéo, nombre de slides) DOIVENT être appliqués FIDÈLEMENT et VISIBLEMENT, sans exception, sur tous les supports. En cas de conflit avec l'analyse d'image ou la palette automatique, les réglages avancés GAGNENT TOUJOURS. Si un réglage n'est pas activé : ne PAS l'inventer.
+Tous les réglages avancés activés (palette, ton, style visuel, type de rendu, textes overlay + position, second texte, durées/timings, logo + position/timing, voix off + texte exact + langue, paramètres modèle, format/aspect ratio, durée vidéo, nombre de slides) DOIVENT être appliqués FIDÈLEMENT et VISIBLEMENT, sans exception, sur tous les supports. POLICE et COULEUR des textes à l'écran ne sont JAMAIS fournies par l'utilisateur : elles sont TOUJOURS déduites par l'IA pour un design typographique moderne, stylé, puissant, cohérent avec le produit, la direction artistique et la palette/branding. En cas de conflit avec l'analyse d'image ou la palette automatique, les réglages avancés GAGNENT TOUJOURS. Si un réglage n'est pas activé : ne PAS l'inventer.
 
 ━━━━━━━━━━━━━━━━━━
 RÈGLE ABSOLUE — FORMAT / RATIO
