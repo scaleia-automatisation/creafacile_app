@@ -858,6 +858,7 @@ serve(async (req) => {
         }
 
         // ---------- GROK IMAGINE VIDEO (via OpenRouter) ----------
+        case "grok-imagine":
         case "grok-imagine-t2v":
         case "grok-imagine-i2v":
         case "grok-imagine-1.5-preview": {
@@ -873,11 +874,17 @@ serve(async (req) => {
           let primaryImage: string | undefined;
           let referenceImages: string[] = [];
 
-          if (ai_model === "grok-imagine-t2v") {
+          const grokSubMode = ai_model === "grok-imagine-t2v"
+            ? "t2v"
+            : ai_model === "grok-imagine-i2v"
+              ? "i2v"
+              : (ms.grok_sub_mode === "i2v" ? "i2v" : "t2v");
+
+          if (ai_model !== "grok-imagine-1.5-preview" && grokSubMode === "t2v") {
             grokAspect = ms.grok_aspect || aspectFromFormat;
             grokResolution = ms.grok_resolution || "720p";
             grokDuration = ms.grok_duration;
-          } else if (ai_model === "grok-imagine-i2v") {
+          } else if (ai_model !== "grok-imagine-1.5-preview" && grokSubMode === "i2v") {
             const refs = Array.isArray(ms.grok_image_urls) ? ms.grok_image_urls.filter(Boolean) : [];
             if (refs.length === 0) return jsonError(400, "Grok Imagine I2V requiert au moins une image.");
             if (refs.length === 1) primaryImage = refs[0];

@@ -10,6 +10,8 @@ export type AIModel =
   | 'sora-2' | 'sora-2-t2v' | 'sora-2-i2v' | 'sora-2-pro-i2v' | 'sora-2-pro-t2v' | 'sora-2-pro-character'
   // legacy/alt
   | 'veo-3' | 'veo-3.1'
+  | 'grok-imagine'
+  // legacy ids kept for backward compat with stored generations
   | 'grok-imagine-i2v' | 'grok-imagine-t2v'
   | 'grok-imagine-1.5-preview'
   | 'bytedance/seedance-1.5-pro' | 'bytedance/seedance-2'
@@ -38,6 +40,7 @@ export type VeoDuration = 4 | 6 | 8;
 export type GrokAspect = '2:3' | '3:2' | '1:1' | '16:9' | '9:16';
 export type GrokMode = 'amusant' | 'normale' | 'epice';
 export type GrokResolution = '480p' | '720p';
+export type GrokSubMode = 't2v' | 'i2v';
 
 // Grok Imagine Video 1.5 Preview
 export type Grok15Aspect = '1:1' | '16:9' | '9:16';
@@ -98,6 +101,7 @@ export interface ModelSettings {
   grok_duration?: number; // 6..30
   grok_resolution?: GrokResolution;
   grok_image_urls?: string[]; // i2v max 7
+  grok_sub_mode?: GrokSubMode;
   // Grok Imagine Video 1.5 Preview
   grok15_image_url?: string;
   grok15_aspect?: Grok15Aspect;

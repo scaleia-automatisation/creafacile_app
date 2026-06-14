@@ -6,7 +6,7 @@ import FileDropUpload from './FileDropUpload';
 import MultiFileUpload from './MultiFileUpload';
 import { Textarea } from '@/components/ui/textarea';
 import { Section, Field, PillGroup, AspectCards, SubModelTabs, IMAGE_HINT } from './model-settings/shared';
-import { GrokT2V, GrokI2V, GrokImagine15Preview } from './model-settings/GrokSettings';
+import { GrokImagine, GrokImagine15Preview } from './model-settings/GrokSettings';
 import { Seedance15Pro, Seedance2 } from './model-settings/SeedanceSettings';
 import { Kling21, Kling25, Kling26, Kling30 } from './model-settings/KlingSettings';
 import { KlingO1, Hailuo23, Wan27 } from './model-settings/OpenRouterSettings';
@@ -273,8 +273,7 @@ const ModelSettings = () => {
   if (m === 'sora-2-pro-t2v') return <SoraT2V pro />;
   if (m === 'sora-2-pro-i2v') return <SoraI2V pro />;
   if (m === 'veo-3' || m === 'veo-3.1') return <VeoSettings />;
-  if (m === 'grok-imagine-t2v') return <GrokT2V />;
-  if (m === 'grok-imagine-i2v') return <GrokI2V />;
+  if (m === 'grok-imagine' || m === 'grok-imagine-t2v' || m === 'grok-imagine-i2v') return <GrokImagine />;
   if (m === 'grok-imagine-1.5-preview') return <GrokImagine15Preview />;
   if (m === 'bytedance/seedance-1.5-pro') return <Seedance15Pro />;
   if (m === 'bytedance/seedance-2') return <Seedance2 />;

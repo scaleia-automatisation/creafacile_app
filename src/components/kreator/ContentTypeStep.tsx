@@ -21,8 +21,7 @@ const videoModels: { value: AIModel; label: string }[] = [
   { value: 'alibaba/wan-2.7', label: 'Wan 2.7' },
   { value: 'sora-2', label: 'Sora 2' },
   { value: 'sora-2-pro' as AIModel, label: 'Sora 2 Pro' },
-  { value: 'grok-imagine-t2v', label: 'Grok Imagine — Texte vers vidéo' },
-  { value: 'grok-imagine-i2v', label: 'Grok Imagine — Image vers vidéo' },
+  { value: 'grok-imagine', label: 'Grok Imagine' },
   { value: 'grok-imagine-1.5-preview', label: 'Grok Imagine Video 1.5 Preview' },
 ];
 
