@@ -528,6 +528,8 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       }
 
       const [contentUrl, captionResult] = await raceAbort(Promise.all([
+        // Build caption args once so we can reuse them on resume of a video task.
+        // (Defined below via IIFE-style const before the array is materialized.)
         isVideo
           ? generateVideo(
               generationPrompt,
