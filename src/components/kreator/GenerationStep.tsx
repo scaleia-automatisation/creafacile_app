@@ -576,28 +576,6 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
               voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
                 ? { text: voice_over_text.trim(), language: voice_over_language || 'Français' }
                 : undefined,
-              {
-                onTaskStart: (taskId) => {
-                  try {
-                    savePendingVideo({
-                      taskId,
-                      aiModel: ai_model,
-                      format,
-                      modelSettings: model_settings,
-                      soraCharacterScenes: sora_character_scenes || [],
-                      voiceOver:
-                        voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
-                          ? { text: voice_over_text.trim(), language: voice_over_language || 'Français' }
-                          : undefined,
-                      prompt: generationPrompt,
-                      captionParams: captionArgs,
-                      type,
-                      creditsNeeded,
-                      startedAt: Date.now(),
-                    });
-                  } catch { /* noop */ }
-                },
-              },
             )
           : generateImage(generationPrompt, ai_model, format, input_photos?.[0]?.url, abortController.signal, ''),
         generateCaption(captionArgs),
