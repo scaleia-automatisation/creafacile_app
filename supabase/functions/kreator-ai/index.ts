@@ -1597,9 +1597,9 @@ serve(async (req) => {
 
     let response: Response;
     try {
-      // Retry with exponential backoff on 429 (rate limit) — up to 3 attempts
+      // Retry with exponential backoff on 429 (rate limit) — up to 5 attempts
       let attempt = 0;
-      const maxAttempts = 3;
+      const maxAttempts = 5;
       while (true) {
         response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
           method: "POST",
@@ -1615,8 +1615,8 @@ serve(async (req) => {
         }, 110_000);
         if (response.status !== 429 || attempt >= maxAttempts - 1) break;
         const retryAfterHeader = response.headers.get("retry-after");
-        const retryAfterMs = retryAfterHeader ? Math.min(15000, Number(retryAfterHeader) * 1000) : 0;
-        const backoffMs = retryAfterMs || Math.min(8000, 1500 * Math.pow(2, attempt));
+        const retryAfterMs = retryAfterHeader ? Math.min(20000, Number(retryAfterHeader) * 1000) : 0;
+        const backoffMs = retryAfterMs || Math.min(15000, 2000 * Math.pow(2, attempt));
         console.warn(`OpenAI 429 — retry ${attempt + 1}/${maxAttempts - 1} in ${backoffMs}ms`);
         try { await response.body?.cancel(); } catch { /* noop */ }
         await new Promise((r) => setTimeout(r, backoffMs));
@@ -1632,7 +1632,7 @@ serve(async (req) => {
     if (!response.ok) {
       const text = await response.text();
       console.error("OpenAI error:", response.status, text);
-      if (response.status === 429) return jsonError(429, "Limite de requêtes OpenAI atteinte.");
+      if (response.status === 429) return jsonFallback("Limite de requêtes OpenAI atteinte. Réessayez dans quelques instants.", { provider_status: 429, provider: "openai", rate_limited: true });
       if (response.status === 431) return jsonError(500, "Requête OpenAI trop volumineuse (header). Réessayez sans images de référence ou avec un prompt plus court.");
       if (response.status >= 500) return jsonFallback("Le service OpenAI est temporairement indisponible. Réessayez dans un instant.", { provider_status: response.status });
       return jsonError(response.status, `Erreur OpenAI (${response.status}): ${text.slice(0, 200)}`);
