@@ -17,6 +17,7 @@ const videoModels: { value: AIModel; label: string }[] = [
   { value: 'veo-3.1', label: 'Veo 3.1' },
   { value: 'veo-3', label: 'Veo 3' },
   { value: 'minimax/hailuo-2.3', label: 'Hailuo 2.3' },
+  { value: 'alibaba/wan-2.7', label: 'Wan 2.7' },
   { value: 'sora-2', label: 'Sora 2' },
   { value: 'sora-2-pro' as AIModel, label: 'Sora 2 Pro' },
   { value: 'grok-imagine-t2v', label: 'Grok Imagine — Texte vers vidéo' },
