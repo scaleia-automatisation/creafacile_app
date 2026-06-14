@@ -467,6 +467,7 @@ serve(async (req) => {
     if (action === "kie_start_video") {
       // ---- OpenAI Sora routing: T2V / I2V (Standard + Pro). "Character" reste sur kie.ai. ----
       const OPENAI_SORA_MODELS: Record<string, "sora-2" | "sora-2-pro"> = {
+        "sora-2": "sora-2",
         "sora-2-t2v": "sora-2",
         "sora-2-i2v": "sora-2",
         "sora-2-pro-t2v": "sora-2-pro",
