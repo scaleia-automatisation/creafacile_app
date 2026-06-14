@@ -12,17 +12,14 @@ const imageModels: { value: AIModel; label: string }[] = [
 ];
 
 const videoModels: { value: AIModel; label: string }[] = [
-  { value: 'veo-3.1', label: 'Veo 3.1' },
   { value: 'kling-3.0', label: 'Kling 3.0' },
   { value: 'bytedance/seedance-2', label: 'Seedance 2.0' },
+  { value: 'veo-3.1', label: 'Veo 3.1' },
+  { value: 'minimax/hailuo-2.3', label: 'Hailuo 2.3' },
+  { value: 'sora-2', label: 'Sora 2' },
   { value: 'sora-2-pro-t2v', label: 'Sora 2 Pro — Text to Video' },
   { value: 'sora-2-pro-i2v', label: 'Sora 2 Pro — Image to Video' },
   { value: 'sora-2-pro-character', label: 'Sora 2 Pro — avec Personnage' },
-  { value: 'kwaivgi/kling-video-o1', label: 'Kling Video O1' },
-  { value: 'veo-3', label: 'Veo 3' },
-  { value: 'kling-2.6', label: 'Kling 2.6' },
-  { value: 'minimax/hailuo-2.3', label: 'Hailuo 2.3' },
-  { value: 'alibaba/wan-2.7', label: 'Wan 2.7' },
   { value: 'grok-imagine-1.5-preview', label: 'Grok Imagine Video 1.5 Preview' },
 ];
 
