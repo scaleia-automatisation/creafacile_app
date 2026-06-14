@@ -50,16 +50,29 @@ const ContentTypeStep = () => {
 
   // Sora 2 Pro: 1 entrée dans le select, 3 variantes via sous-onglet
   const isSoraPro = typeof ai_model === 'string' && ai_model.startsWith('sora-2-pro-');
-  const displayedModel: string | undefined = isSoraPro ? 'sora-2-pro' : (ai_model || undefined);
+  // Sora 2 (standard) : 1 entrée dans le select, 2 variantes via sous-onglet (t2v / i2v).
+  const isSora2Std = typeof ai_model === 'string' && (ai_model === 'sora-2' || ai_model === 'sora-2-t2v' || ai_model === 'sora-2-i2v');
+  const displayedModel: string | undefined = isSoraPro
+    ? 'sora-2-pro'
+    : isSora2Std
+    ? 'sora-2'
+    : (ai_model || undefined);
   const soraProVariants: { value: AIModel; label: string }[] = [
     { value: 'sora-2-pro-t2v', label: 'Texte vers vidéo' },
     { value: 'sora-2-pro-i2v', label: 'Image vers vidéo' },
     { value: 'sora-2-pro-character', label: 'Avec personnage' },
   ];
+  const sora2Variants: { value: AIModel; label: string }[] = [
+    { value: 'sora-2-t2v', label: 'Texte vers vidéo' },
+    { value: 'sora-2-i2v', label: 'Image vers vidéo' },
+  ];
   const handleModelChange = (v: string) => {
     if (v === 'sora-2-pro') {
       // Choix par défaut quand on sélectionne « Sora 2 Pro »
       setAiModel('sora-2-pro-t2v' as AIModel);
+    } else if (v === 'sora-2') {
+      // Choix par défaut quand on sélectionne « Sora 2 »
+      setAiModel('sora-2-t2v' as AIModel);
     } else {
       setAiModel(v as AIModel);
     }
@@ -143,6 +156,28 @@ const ContentTypeStep = () => {
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de génération</label>
           <div className="grid grid-cols-3 gap-2">
             {soraProVariants.map((v) => (
+              <button
+                key={v.value}
+                onClick={() => setAiModel(v.value)}
+                className={`px-3 py-2 rounded-btn font-medium text-sm transition-all ${
+                  ai_model === v.value
+                    ? 'gradient-bg text-primary-foreground'
+                    : 'bg-card border border-foreground/10 text-muted-foreground hover:border-secondary'
+                }`}
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Sora 2 (standard) — choix de la variante */}
+      {type === 'video' && isSora2Std && (
+        <div className="mb-6">
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de génération</label>
+          <div className="grid grid-cols-2 gap-2">
+            {sora2Variants.map((v) => (
               <button
                 key={v.value}
                 onClick={() => setAiModel(v.value)}
