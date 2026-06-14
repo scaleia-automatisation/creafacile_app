@@ -2,6 +2,7 @@ import type { AIModel, ModelSettings } from '@/store/useKreatorStore';
 
 // Modèles vidéo qui gèrent NATIVEMENT l'audio/voix off via le prompt
 export const NATIVE_VOICE_OVER_MODELS: AIModel[] = [
+  'sora-2',
   'sora-2-t2v',
   'sora-2-i2v',
   'sora-2-pro-t2v',
