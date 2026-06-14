@@ -1335,7 +1335,7 @@ async function runCoherenceCheck(input: {
   productDescription?: string;
   format?: string;
 }): Promise<string | null> {
-  const systemPrompt = `Tu es un DIRECTEUR DE PRODUCTION sénior spécialisé en relecture de scripts publicitaires (image, carrousel, vidéo). Ton rôle est de RELIRE un prompt de génération de contenu et de CORRIGER toutes les incohérences logiques, physiques ou narratives AVANT qu'il ne soit envoyé au modèle générateur.
+  const systemPrompt = `Tu es un DIRECTEUR DE PRODUCTION sénior spécialisé en relecture de scripts publicitaires (image, carrousel, vidéo). Ton rôle est de RELIRE un prompt de génération de contenu, DÉTECTER toute incohérence logique/physique/narrative, et si nécessaire RÉGÉNÉRER une VARIANTE STRICTEMENT COHÉRENTE du prompt à partir des MÊMES INPUTS (idée, produit, format, type), avant qu'il ne soit envoyé au modèle générateur.
 
 CHECKLIST DE CONTRÔLE OBLIGATOIRE (à appliquer scène par scène, plan par plan) :
 1) COHÉRENCE PHYSIQUE / OBJETS :
@@ -1355,10 +1355,16 @@ CHECKLIST DE CONTRÔLE OBLIGATOIRE (à appliquer scène par scène, plan par pla
    - Durée totale, nombre de scènes et timecodes cohérents entre eux (somme des plans = durée totale).
    - Voix off (si présente) : durée parlée compatible avec la durée vidéo, pas de débit impossible.
 
-RÈGLES DE SORTIE :
-- Si AUCUNE incohérence n'est trouvée, retourner le prompt ORIGINAL strictement à l'identique (mot pour mot).
-- Si des incohérences sont trouvées, retourner UNIQUEMENT le prompt CORRIGÉ en FRANÇAIS, en conservant la même structure (sections, sauts de ligne, ordre), le même niveau de détail et le même style. Ajouter UNIQUEMENT les précisions nécessaires pour rendre le script 100% logique et exploitable (ex : "ouvrir le bouchon de la bouteille" avant de verser).
-- NE JAMAIS ajouter de commentaire, d'introduction, de conclusion, de balise markdown ou de bloc \`\`\`. Sortie = texte brut du prompt corrigé uniquement.`;
+RÈGLES DE SORTIE (JSON STRICT UNIQUEMENT) :
+Retourner EXCLUSIVEMENT un objet JSON valide, sans markdown, sans commentaire, sans \`\`\` :
+{
+  "ok": boolean,             // true si AUCUNE incohérence détectée
+  "issues": string[],        // liste courte des incohérences détectées (vide si ok)
+  "prompt_fr": string        // prompt FINAL en français, prêt à générer
+}
+- Si ok=true : "prompt_fr" = le prompt ORIGINAL strictement à l'identique.
+- Si ok=false : "prompt_fr" = une VARIANTE COMPLÈTEMENT RÉGÉNÉRÉE du prompt, strictement cohérente avec les MÊMES INPUTS (idée choisie, produit/service, type de contenu, format/ratio, durée, textes à l'écran, voix off). Conserver la MÊME structure (sections, sauts de ligne, ordre), le MÊME niveau de détail, le MÊME style et la MÊME langue (français). Corriger TOUTES les incohérences listées dans "issues" : actions impossibles, états d'objets discontinus, timecodes/durées qui ne tombent pas juste, textes < 2s, etc. Le résultat doit être 100% logique, filmable et exploitable.
+- NE JAMAIS changer l'intention marketing, le produit, l'idée, le format/ratio, ni la durée totale demandée.`;
 
   const userPrompt = `TYPE DE CONTENU : ${input.contentType}${input.format ? ` (format ${input.format})` : ''}
 IDÉE CHOISIE : ${input.ideaChosen || '(non précisée)'}
@@ -1378,7 +1384,20 @@ Applique la checklist de contrôle. Retourne le prompt FINAL (corrigé si néces
     });
     const content = data?.choices?.[0]?.message?.content;
     if (!content || typeof content !== 'string') return null;
-    return content.replace(/^```[a-z]*\n?|\n?```$/g, '').trim();
+    const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
+    try {
+      const parsed = JSON.parse(cleaned);
+      if (parsed && typeof parsed.prompt_fr === 'string') {
+        if (parsed.ok === false && Array.isArray(parsed.issues) && parsed.issues.length > 0) {
+          console.info('[coherence-check] incohérences détectées → variante régénérée:', parsed.issues);
+        }
+        return parsed.prompt_fr;
+      }
+    } catch {
+      // Fallback : ancien format texte brut
+      return cleaned;
+    }
+    return null;
   } catch (e) {
     console.warn('[runCoherenceCheck] failed:', e);
     return null;
