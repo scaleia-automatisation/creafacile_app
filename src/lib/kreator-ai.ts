@@ -755,7 +755,8 @@ export async function generatePrompt(params: {
     videoDuration <= 8 ? 18 :
     videoDuration <= 10 ? 25 :
     35;
-  const hasVoiceOver = !!params.voiceOverText;
+  const hasVoiceOver = !!(params.voiceOverEnabled ?? !!params.voiceOverText);
+  const hasVoiceOverText = !!(params.voiceOverText && params.voiceOverText.trim());
   const voLang = (params.voiceOverLanguage || 'Français').toUpperCase();
 
   // Video-specific directives — nouveau prompt maître (script publicitaire premium)
