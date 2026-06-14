@@ -13,6 +13,7 @@ const imageModels: { value: AIModel; label: string }[] = [
 
 const videoModels: { value: AIModel; label: string }[] = [
   { value: 'kling-3.0', label: 'Kling 3.0' },
+  { value: 'kwaivgi/kling-video-o1', label: 'Kling Video O1' },
   { value: 'bytedance/seedance-2', label: 'Seedance 2.0' },
   { value: 'veo-3.1', label: 'Veo 3.1' },
   { value: 'veo-3', label: 'Veo 3' },

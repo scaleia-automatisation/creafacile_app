@@ -1,4 +1,4 @@
-import { useKreatorStore, type Kling21SubModel, type Kling25SubModel, type Kling26SubModel, type Kling30Mode, type KlingAspect, type KlingDuration } from '@/store/useKreatorStore';
+import { useKreatorStore, type Kling21SubModel, type Kling25SubModel, type Kling26SubModel, type Kling30Mode, type Kling30SubMode, type Kling30Aspect, type KlingAspect, type KlingDuration } from '@/store/useKreatorStore';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
@@ -159,24 +159,46 @@ export const Kling26 = () => {
 export const Kling30 = () => {
   const { model_settings, setModelSetting } = useKreatorStore();
   const dur = model_settings.kling30_duration ?? 5;
+  const sub: Kling30SubMode = model_settings.kling30_sub_model || 't2v';
   return (
     <Section>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FileDropUpload
-          label="Cadre de départ (optionnel)"
-          hint={IMAGE_HINT}
-          value={model_settings.kling30_start_image_url}
-          onChange={(url) => setModelSetting('kling30_start_image_url', url || undefined)}
-          kind="image"
+      <Field label="Type de génération" required>
+        <SubModelTabs<Kling30SubMode>
+          options={[
+            { value: 't2v', label: 'Texte vers vidéo' },
+            { value: 'i2v', label: 'Image vers vidéo' },
+          ]}
+          value={sub}
+          onChange={(v) => setModelSetting('kling30_sub_model', v)}
         />
-        <FileDropUpload
-          label="Cadre d'extrémité (optionnel)"
-          hint={IMAGE_HINT}
-          value={model_settings.kling30_end_image_url}
-          onChange={(url) => setModelSetting('kling30_end_image_url', url || undefined)}
-          kind="image"
-        />
-      </div>
+      </Field>
+      {sub === 'i2v' && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FileDropUpload
+            label="Cadre de départ"
+            hint={IMAGE_HINT}
+            value={model_settings.kling30_start_image_url}
+            onChange={(url) => setModelSetting('kling30_start_image_url', url || undefined)}
+            kind="image"
+          />
+          <FileDropUpload
+            label="Cadre d'extrémité (optionnel)"
+            hint={IMAGE_HINT}
+            value={model_settings.kling30_end_image_url}
+            onChange={(url) => setModelSetting('kling30_end_image_url', url || undefined)}
+            kind="image"
+          />
+        </div>
+      )}
+      {sub === 't2v' && (
+        <Field label="Format" hint="Format de la vidéo générée">
+          <AspectCards<Kling30Aspect>
+            options={['16:9', '9:16', '1:1']}
+            value={model_settings.kling30_aspect}
+            onChange={(v) => setModelSetting('kling30_aspect', v)}
+          />
+        </Field>
+      )}
       <div className="flex items-center justify-between">
         <Label htmlFor="k30-audio" className="text-sm text-foreground">Son actif</Label>
         <Switch
