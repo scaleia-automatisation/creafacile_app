@@ -97,7 +97,12 @@ Génère 3 idées virales, persuasives, impactantes et engageantes qui suscitent
   });
 
   const content = data?.choices?.[0]?.message?.content;
-  if (!content) throw new Error('No response from AI');
+  if (!content) {
+    if (data?.fallback || data?.rate_limited) {
+      throw new Error(data?.error || "Le service IA est saturé. Merci de réessayer dans quelques instants.");
+    }
+    throw new Error('No response from AI');
+  }
 
   try {
     const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
