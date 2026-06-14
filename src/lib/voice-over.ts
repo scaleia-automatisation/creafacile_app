@@ -21,6 +21,7 @@ export const MUX_VOICE_OVER_MODELS: AIModel[] = [
   'kling-2.1',
   'kling-2.5',
   'bytedance/seedance-1.5-pro',
+  'grok-imagine',
   'grok-imagine-t2v',
   'grok-imagine-i2v',
   'grok-imagine-1.5-preview',
