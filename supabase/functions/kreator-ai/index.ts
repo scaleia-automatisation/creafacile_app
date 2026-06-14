@@ -613,7 +613,11 @@ serve(async (req) => {
           if (ms.seedance2_first_frame_url) orBody.image_url = ms.seedance2_first_frame_url;
           if (ms.seedance2_last_frame_url) orBody.last_frame_image_url = ms.seedance2_last_frame_url;
           const refImgs = Array.isArray(ms.seedance2_reference_image_urls) ? ms.seedance2_reference_image_urls.filter(Boolean) : [];
-          if (refImgs.length > 0) orBody.reference_image_urls = refImgs.slice(0, 4);
+          if (refImgs.length > 0) orBody.reference_image_urls = refImgs.slice(0, 9);
+          const refVids = Array.isArray(ms.seedance2_reference_video_urls) ? ms.seedance2_reference_video_urls.filter(Boolean) : [];
+          if (refVids.length > 0) orBody.reference_video_urls = refVids.slice(0, 3);
+          if (ms.seedance2_reference_audio_url) orBody.reference_audio_url = ms.seedance2_reference_audio_url;
+          if (typeof ms.seedance2_generate_audio === "boolean") orBody.generate_audio = !!ms.seedance2_generate_audio;
           orBody.aspect_ratio = ms.seedance2_aspect || aspectFromFormat;
           orBody.resolution = ms.seedance2_resolution || "1080p";
           if (ms.seedance2_duration) orBody.duration = Number(ms.seedance2_duration);
