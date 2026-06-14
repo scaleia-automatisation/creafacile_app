@@ -523,6 +523,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         setCaptions(slideResults[0].captions);
         setGeneratedCaptions(slideResults[0].captions);
         setStatus('done');
+        lastGenSignatureRef.current = buildGenSignature();
         await refreshProfile();
         return;
       }
@@ -643,6 +644,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
       setGeneratedCaptions(captionResult);
       setGeneratedCarouselSlides(null);
       setStatus('done');
+      lastGenSignatureRef.current = buildGenSignature();
       await refreshProfile();
     } catch (err: unknown) {
       if (progressInterval) clearInterval(progressInterval);
@@ -747,6 +749,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         setCaptions(captionResult);
         setGeneratedCaptions(captionResult);
         setStatus('done');
+        lastGenSignatureRef.current = buildGenSignature();
         await refreshProfile();
         toast.success('Génération vidéo terminée');
       } catch (err) {
