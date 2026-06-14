@@ -610,13 +610,36 @@ serve(async (req) => {
         } else if (ai_model === "bytedance/seedance-2" || ai_model === "bytedance/seedance-2-fast") {
           const sub = ms.seedance2_sub_model || (ai_model === "bytedance/seedance-2-fast" ? "seedance-2-fast" : "seedance-2");
           orModel = sub === "seedance-2-fast" ? "bytedance/seedance-2.0-fast" : "bytedance/seedance-2.0";
-          if (ms.seedance2_first_frame_url) orBody.image_url = ms.seedance2_first_frame_url;
-          if (ms.seedance2_last_frame_url) orBody.last_frame_image_url = ms.seedance2_last_frame_url;
+          const frameImages: any[] = [];
+          if (ms.seedance2_first_frame_url) {
+            frameImages.push({
+              type: "image_url",
+              image_url: { url: ms.seedance2_first_frame_url },
+              frame_type: "first_frame",
+            });
+          }
+          if (ms.seedance2_last_frame_url) {
+            frameImages.push({
+              type: "image_url",
+              image_url: { url: ms.seedance2_last_frame_url },
+              frame_type: "last_frame",
+            });
+          }
+          if (frameImages.length > 0) orBody.frame_images = frameImages;
           const refImgs = Array.isArray(ms.seedance2_reference_image_urls) ? ms.seedance2_reference_image_urls.filter(Boolean) : [];
-          if (refImgs.length > 0) orBody.reference_image_urls = refImgs.slice(0, 9);
           const refVids = Array.isArray(ms.seedance2_reference_video_urls) ? ms.seedance2_reference_video_urls.filter(Boolean) : [];
-          if (refVids.length > 0) orBody.reference_video_urls = refVids.slice(0, 3);
-          if (ms.seedance2_reference_audio_url) orBody.reference_audio_url = ms.seedance2_reference_audio_url;
+          const inputReferences: any[] = [
+            ...refImgs.slice(0, 9).map((url: string) => ({ type: "image_url", image_url: { url } })),
+            ...refVids.slice(0, 3).map((url: string) => ({ type: "video_url", video_url: { url } })),
+          ];
+          if (ms.seedance2_reference_audio_url) {
+            inputReferences.push({ type: "audio_url", audio_url: { url: ms.seedance2_reference_audio_url } });
+          }
+          if (inputReferences.length > 0) orBody.input_references = inputReferences;
+          if (refImgs.length > 0) {
+            orBody.prompt = `ABSOLUTE PRODUCT REFERENCE LOCK: the attached image reference(s) define the exact real product identity. The generated video MUST show the same product, same packaging, same label, same colors, same shape, same proportions and visible details. Do not invent, redesign, rebrand, recolor, relabel, simplify or substitute the product. First image reference is the primary product identity source.\n\n${orBody.prompt}`;
+            if (typeof orBody.prompt === "string" && orBody.prompt.length > 3900) orBody.prompt = orBody.prompt.slice(0, 3900);
+          }
           if (typeof ms.seedance2_generate_audio === "boolean") orBody.generate_audio = !!ms.seedance2_generate_audio;
           orBody.aspect_ratio = ms.seedance2_aspect || aspectFromFormat;
           orBody.resolution = ms.seedance2_resolution || "1080p";
