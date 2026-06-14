@@ -547,7 +547,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         advancedSettings: [
           options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
           options.logo_enabled ? `logo: ${options.logo_position}${type === 'video' ? ` (apparition ${options.logo_appearance})` : ''}` : '',
-          options.show_text ? `texte overlay: position ${options.text_position}, police ${options.text_font}` : '',
+          options.show_text ? `texte overlay: position ${options.text_position} (police options.show_text ? `texte overlay: position ${options.text_position}, police ${options.text_font}` : '' couleur déduites par l'IA)` : '',
         ].filter(Boolean).join(' | '),
         productAnalysis: input_image_description,
         text1: options.show_text ? options.text_content : '',
@@ -882,7 +882,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         advancedSettings: [
           options.palette_enabled ? `palette: ${options.palette_hex.join(', ')}` : '',
           options.logo_enabled ? `logo: ${options.logo_position}${type === 'video' ? ` (apparition ${options.logo_appearance})` : ''}` : '',
-          options.show_text ? `texte overlay: position ${options.text_position}, police ${options.text_font}` : '',
+          options.show_text ? `texte overlay: position ${options.text_position} (police options.show_text ? `texte overlay: position ${options.text_position}, police ${options.text_font}` : '' couleur déduites par l'IA)` : '',
         ].filter(Boolean).join(' | '),
         productAnalysis: input_image_description,
         text1: options.show_text ? options.text_content : '',
