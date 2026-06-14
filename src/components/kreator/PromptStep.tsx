@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,6 +23,7 @@ const PromptStep = () => {
     objective, product_image_url,
     simple_images, starting_choice,
     user_mode, voice_over_language,
+    manual_idea_text,
   } = useKreatorStore();
 
   const getImageSynthesis = () => {
@@ -172,6 +173,32 @@ const PromptStep = () => {
   };
 
   const hasPrompt = prompt_fr.length > 0;
+
+  // Auto-régénération du prompt lorsque l'utilisateur modifie le « texte à
+  // l'écran », « texte dans le visuel » ou les « textes des slides », SI une
+  // idée a déjà été choisie (parmi les 3 idées générées) ou que le champ
+  // « Votre idée » est déjà renseigné, ET qu'un prompt a déjà été généré.
+  const textSignature = [
+    options.text_content || '',
+    options.text_content_2 || '',
+    (options.slide_texts || []).join('§'),
+  ].join('|');
+  const prevTextSigRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (prevTextSigRef.current === null) {
+      prevTextSigRef.current = textSignature;
+      return;
+    }
+    if (prevTextSigRef.current === textSignature) return;
+    const ideaReady = !!idea_chosen?.trim() || !!manual_idea_text?.trim();
+    if (!hasPrompt || !ideaReady || isGenerating || hasMissing) return;
+    const timer = setTimeout(() => {
+      prevTextSigRef.current = textSignature;
+      handleGenerate();
+    }, 800);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [textSignature]);
 
   return (
     <>
