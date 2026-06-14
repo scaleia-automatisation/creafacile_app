@@ -1050,7 +1050,7 @@ Puis pour CHAQUE scène (de 1 à ${videoSceneCount}) reproduire EXACTEMENT ce ga
   ? `[wording EXACT fourni par l'utilisateur — reproduire mot pour mot. Si un seul texte fourni, ne l'afficher QUE sur la/les scène(s) cohérente(s) avec le timing renseigné ou déduit. Si aucun texte ne s'affiche sur cette scène, écrire "aucun".]`
   : `"aucun" (l'utilisateur n'a PAS activé le texte à l'écran — INTERDICTION ABSOLUE d'ajouter le moindre texte overlay, sous-titre, accroche ou CTA visuel sur cette scène)`}
 🎨 Design texte : ${params.showText
-  ? `[position selon le réglage utilisateur si fourni. POLICE et COULEUR HEX TOUJOURS DÉDUITES par l'IA (jamais choisies par l'utilisateur) — design typographique moderne, stylé, puissant, ultra accrocheur, niveau UI/agence premium, parfaitement cohérent avec l'idée choisie, la direction artistique, la palette/branding du produit et le ton. CONTRASTE OBLIGATOIRE FORT entre la couleur du texte et la zone d'arrière-plan exacte sous le texte (ratio WCAG ≥ 4.5:1, viser 7:1) — INTERDIT de choisir une couleur identique ou proche du fond (même famille / même luminosité) qui empêcherait la lecture. Si fond clair → texte sombre ; si fond sombre → texte clair ; si fond complexe/texturé → ajouter ombre portée ou voile subtil sous le texte pour garantir une lisibilité instantanée. Lisibilité mobile parfaite, hiérarchie forte. Timing & durée d'apparition : valeurs utilisateur si fournies (minimum 3s), sinon déduites intelligemment selon le rythme narratif avec un MINIMUM ABSOLU DE 3s par texte (jamais d'affichage flash inférieur à 3s).]`
+  ? `[position selon le réglage utilisateur si fourni. POLICE et COULEUR HEX TOUJOURS DÉDUITES par l'IA (jamais choisies par l'utilisateur) — design typographique moderne, stylé, puissant, ultra accrocheur, niveau UI/agence premium, parfaitement cohérent avec l'idée choisie, la direction artistique, la palette/branding du produit et le ton. CONTRASTE OBLIGATOIRE FORT entre la couleur du texte et la zone d'arrière-plan exacte sous le texte (ratio WCAG ≥ 4.5:1, viser 7:1) — INTERDIT de choisir une couleur identique ou proche du fond (même famille / même luminosité) qui empêcherait la lecture. Si fond clair → texte sombre ; si fond sombre → texte clair ; si fond complexe/texturé → ajouter ombre portée ou voile subtil sous le texte pour garantir une lisibilité instantanée. Lisibilité mobile parfaite, hiérarchie forte. Timing & durée d'apparition : valeurs utilisateur si fournies (minimum 2s), sinon déduites intelligemment selon le rythme narratif avec un MINIMUM ABSOLU DE 2s par texte (jamais d'affichage flash inférieur à 2s).]`
   : `aucun (pas de texte donc pas de design texte)`}
 
 🎥 Scène finale (DOIT impérativement contenir)
@@ -1216,8 +1216,8 @@ Police d'écriture : à CHOISIR de manière AUTONOME par le modèle parmi des ty
 ${params.textColor ? `🎨 Couleur du texte (OBLIGATOIRE — PRIORITÉ ABSOLUE) : ${params.textColor} (code hexadécimal exact). Le texte affiché DOIT être rendu EXACTEMENT dans cette couleur, sans dérive, sans variation de teinte, sans dégradé, sans effet de couleur additionnel. Ajouter UNIQUEMENT un léger contour ou une ombre portée subtile si nécessaire pour garantir la lisibilité sur le fond, sans altérer la couleur du texte.` : ''}
 ${params.contentType === 'video' ? `⏱️ Timing à l'écran — TEXTE 1 (OBLIGATOIRE — DOIT figurer EXPLICITEMENT dans la/les scène(s) correspondante(s) du storyboard) :
 • Moment d'apparition : ${typeof params.textStart1 === 'number' ? `${params.textStart1}s (timing EXACT fourni par l'utilisateur — à respecter strictement)` : `À DÉDUIRE INTELLIGEMMENT par le modèle en fonction de l'idée, du rythme narratif, du hook et de la durée totale de ${videoDuration}s (typiquement entre 0s et ${Math.max(1, Math.floor(videoDuration / 3))}s pour un hook d'accroche). Annoncer le timing déduit explicitement dans le storyboard.`}
-• Durée d'affichage : ${typeof params.textDuration1 === 'number' ? `${Math.max(3, params.textDuration1)}s (durée fournie par l'utilisateur — JAMAIS inférieure à 3s pour garantir la lecture confortable)` : `À DÉDUIRE INTELLIGEMMENT par le modèle en fonction du nombre de mots et du rythme de lecture confortable (≈ 0,35s/mot), avec un MINIMUM ABSOLU de 3s (NON NÉGOCIABLE — jamais d'affichage flash inférieur à 3s) et un maximum de ${Math.max(3, videoDuration - 1)}s. Annoncer la durée déduite explicitement dans le storyboard.`}
-• Le texte doit rester parfaitement lisible pendant TOUTE sa durée d'affichage (≥ 3s OBLIGATOIRE, jamais d'apparition flash), sans chevauchement avec d'autres overlays.` : ''}
+• Durée d'affichage : ${typeof params.textDuration1 === 'number' ? `${Math.max(2, params.textDuration1)}s (durée fournie par l'utilisateur — JAMAIS inférieure à 2s pour garantir la lecture confortable)` : `À DÉDUIRE INTELLIGEMMENT par le modèle en fonction du nombre de mots et du rythme de lecture confortable (≈ 0,35s/mot), avec un MINIMUM ABSOLU de 2s (NON NÉGOCIABLE — jamais d'affichage flash inférieur à 2s) et un maximum de ${Math.max(2, videoDuration - 1)}s. Annoncer la durée déduite explicitement dans le storyboard.`}
+• Le texte doit rester parfaitement lisible pendant TOUTE sa durée d'affichage (≥ 2s OBLIGATOIRE, jamais d'apparition flash), sans chevauchement avec d'autres overlays.` : ''}
 ${(params.contentType === 'video' || params.contentType === 'image') && params.text2Enabled && params.textContent2
   ? `\n--- TEXTE À L'ÉCRAN N°2 — À REPRODUIRE EXACTEMENT MOT POUR MOT : "${params.textContent2}"
 ⚡ CONTINUITÉ NARRATIVE OBLIGATOIRE : ce Texte 2 est la SUITE COHÉRENTE et NATURELLE du Texte 1 ("${params.textContent}"). Les deux forment UN MÊME message en deux temps (hook → chute / call-to-action), sans répétition. ${params.contentType === 'image' ? `Les deux textes sont visibles SIMULTANÉMENT dans l'image, hiérarchisés visuellement (Texte 1 = accroche principale, Texte 2 = punchline / CTA secondaire). Chacun fait entre 3 et 15 mots MAXIMUM — JAMAIS plus.` : ''}
@@ -1226,8 +1226,8 @@ Police d'écriture 2 : à CHOISIR de manière AUTONOME par le modèle, en pair h
 ${params.textColor2 ? `🎨 Couleur du texte 2 (OBLIGATOIRE) : ${params.textColor2} (code hexadécimal exact) — appliquer EXACTEMENT cette couleur, sans dérive ni variation. Léger contour/ombre subtil autorisé uniquement pour la lisibilité.` : ''}
 ${params.contentType === 'video' ? `⏱️ Timing à l'écran — TEXTE 2 (OBLIGATOIRE — DOIT figurer EXPLICITEMENT dans la/les scène(s) correspondante(s) du storyboard) :
 • Moment d'apparition : ${typeof params.textStart2 === 'number' ? `${params.textStart2}s (timing EXACT fourni par l'utilisateur — à respecter strictement)` : `À DÉDUIRE INTELLIGEMMENT après le Texte 1, en cohérence avec la dramaturgie (typiquement seconde moitié de la vidéo, ou juste après la fin du Texte 1, jamais avant). Annoncer le timing déduit explicitement dans le storyboard.`}
-• Durée d'affichage : ${typeof params.textDuration2 === 'number' ? `${Math.max(3, params.textDuration2)}s (durée fournie par l'utilisateur — JAMAIS inférieure à 3s pour garantir la lecture confortable)` : `À DÉDUIRE INTELLIGEMMENT en fonction du nombre de mots (≈ 0,35s/mot) et du rôle CTA / punchline finale, avec un MINIMUM ABSOLU de 3s (NON NÉGOCIABLE — jamais d'affichage flash inférieur à 3s). Annoncer la durée déduite explicitement dans le storyboard.`}
-• AUCUN chevauchement avec le Texte 1 : le Texte 2 commence APRÈS la disparition complète du Texte 1, ou occupe une zone visuelle clairement distincte. Durée minimale d'affichage ≥ 3s OBLIGATOIRE.` : ''}
+• Durée d'affichage : ${typeof params.textDuration2 === 'number' ? `${Math.max(2, params.textDuration2)}s (durée fournie par l'utilisateur — JAMAIS inférieure à 2s pour garantir la lecture confortable)` : `À DÉDUIRE INTELLIGEMMENT en fonction du nombre de mots (≈ 0,35s/mot) et du rôle CTA / punchline finale, avec un MINIMUM ABSOLU de 2s (NON NÉGOCIABLE — jamais d'affichage flash inférieur à 2s). Annoncer la durée déduite explicitement dans le storyboard.`}
+• AUCUN chevauchement avec le Texte 1 : le Texte 2 commence APRÈS la disparition complète du Texte 1, ou occupe une zone visuelle clairement distincte. Durée minimale d'affichage ≥ 2s OBLIGATOIRE.` : ''}
 ⚡ HARMONIE OBLIGATOIRE entre Texte 1 et Texte 2 : cohérence typographique parfaite (même famille ou pair harmonieux), hiérarchie visuelle claire (poids/taille), palette cohérente, espacements équilibrés, rythme de lecture professionnel. Rendu digne d'un grand directeur artistique — composition équilibrée, lisibilité maximale, aucun chevauchement. Convertir avec impact, sans surcharge.`
   : ''}`)
   : 'Pas de texte overlay — NE PAS générer de texte, pancarte, étiquette, logo ou enseigne dans l\'image'}
@@ -1275,6 +1275,9 @@ Tout texte visible dans le visuel généré (overlay, titre, sous-titre, textes 
 3) Le TON D'ÉCRITURE${params.ton ? ` ("${params.ton}")` : ''} — vocabulaire, registre, niveau de langue, énergie et rythme du texte affiché DOIVENT respecter EXACTEMENT ce ton, sans exception.
 Si un texte overlay exact a été fourni par l'utilisateur, le reproduire MOT POUR MOT sans modification. Sinon, tout texte généré (titre, accroche, mention visible) doit dériver STRICTEMENT de l'idée/angle, servir l'objectif et adopter le ton — jamais générique, jamais hors-sujet, jamais contradictoire.
 
+🧠 COHÉRENCE LOGIQUE & PHYSIQUE DU SCRIPT (RÈGLE ABSOLUE — NON NÉGOCIABLE) :
+Chaque action, plan, scène ou slide doit être PHYSIQUEMENT et NARRATIVEMENT possible. Aucune incohérence tolérée. Exemples interdits : verser le contenu d'une bouteille sans avoir d'abord ouvert/retiré le bouchon ; utiliser un produit hors de la boîte sans l'avoir ouverte ; allumer un appareil débranché ; manipuler un objet jamais montré ; téléporter un personnage entre deux plans sans transition. RÈGLES À APPLIQUER : (1) tout objet manipulé doit avoir été préalablement montré ET préparé dans un plan visible (ex : ouvrir le bouchon AVANT de verser, ouvrir la boîte AVANT d'en sortir le produit) ; (2) les états successifs d'un objet ou d'un personnage doivent être continus (ouvert/fermé, plein/vide, allumé/éteint) ; (3) chaque scène doit s'enchaîner par une relation cause→effet plausible ; (4) la somme des durées des plans doit égaler la durée totale annoncée ; (5) le débit voix off doit être réaliste pour la durée du plan. Le script final doit être 100% EXPLOITABLE par le modèle générateur sans produire d'absurdité visuelle.
+
 Génère un prompt unifié, cohérent et fidèle à l'offre. Sobriété et précision priment sur la décoration.`;
 
   const variantInstruction = params.variant
@@ -1294,10 +1297,91 @@ Génère un prompt unifié, cohérent et fidèle à l'offre. Sobriété et préc
     const parsed = JSON.parse(cleaned);
     if (parsed && typeof parsed.prompt_fr === 'string') {
       parsed.prompt_fr = formatPromptWithLineBreaks(parsed.prompt_fr);
+      // 🔍 AUTO-CONTRÔLE DE COHÉRENCE — passe de vérification logique avant génération finale
+      try {
+        const checked = await runCoherenceCheck({
+          promptFr: parsed.prompt_fr,
+          contentType: params.contentType,
+          ideaChosen: params.ideaChosen || params.inputText || '',
+          productService: params.productService || '',
+          productDescription: params.productDescription || '',
+          format: params.format,
+        });
+        if (checked && typeof checked === 'string' && checked.trim().length > 50) {
+          parsed.prompt_fr = formatPromptWithLineBreaks(checked);
+        }
+      } catch (e) {
+        console.warn('[coherence-check] skipped:', e);
+      }
     }
     return parsed;
   } catch {
     throw new Error('Failed to parse AI response');
+  }
+}
+
+/**
+ * Auto-contrôle de cohérence : relit le prompt généré, détecte les incohérences
+ * logiques/physiques (ex: verser le contenu d'une bouteille fermée, manipuler un
+ * objet qui n'est pas montré, durée d'apparition d'un texte < 2s, etc.) et
+ * retourne une version corrigée. Si aucune correction n'est nécessaire, retourne
+ * le prompt original tel quel.
+ */
+async function runCoherenceCheck(input: {
+  promptFr: string;
+  contentType: string;
+  ideaChosen?: string;
+  productService?: string;
+  productDescription?: string;
+  format?: string;
+}): Promise<string | null> {
+  const systemPrompt = `Tu es un DIRECTEUR DE PRODUCTION sénior spécialisé en relecture de scripts publicitaires (image, carrousel, vidéo). Ton rôle est de RELIRE un prompt de génération de contenu et de CORRIGER toutes les incohérences logiques, physiques ou narratives AVANT qu'il ne soit envoyé au modèle générateur.
+
+CHECKLIST DE CONTRÔLE OBLIGATOIRE (à appliquer scène par scène, plan par plan) :
+1) COHÉRENCE PHYSIQUE / OBJETS :
+   - Un objet ne peut être manipulé que s'il a été préalablement montré et préparé (ex : on ne peut PAS verser le contenu d'une bouteille dont le bouchon est encore fermé ; il faut d'abord l'ouvrir explicitement dans une action visible).
+   - Un produit ne peut apparaître que si sa présence dans la scène est plausible et préparée.
+   - Les états successifs d'un objet doivent être continus (ouvert/fermé, plein/vide, allumé/éteint, propre/sale) — pas de saut illogique.
+2) COHÉRENCE NARRATIVE :
+   - Chaque scène / slide doit s'enchaîner logiquement avec la précédente (cause → effet).
+   - Pas de personnage qui apparaît ou disparaît sans transition.
+   - Pas d'action impossible ou contradictoire avec le sujet/produit.
+3) COHÉRENCE TEXTES À L'ÉCRAN (si présents) :
+   - Chaque texte affiché DOIT rester visible MINIMUM 2 SECONDES (jamais d'apparition flash < 2s). Si une durée < 2s est mentionnée, la corriger à 2s minimum.
+   - Pas de chevauchement entre Texte 1 et Texte 2.
+   - Le contenu textuel doit être cohérent avec l'idée et l'objectif.
+4) COHÉRENCE TECHNIQUE :
+   - Format / ratio respecté de bout en bout.
+   - Durée totale, nombre de scènes et timecodes cohérents entre eux (somme des plans = durée totale).
+   - Voix off (si présente) : durée parlée compatible avec la durée vidéo, pas de débit impossible.
+
+RÈGLES DE SORTIE :
+- Si AUCUNE incohérence n'est trouvée, retourner le prompt ORIGINAL strictement à l'identique (mot pour mot).
+- Si des incohérences sont trouvées, retourner UNIQUEMENT le prompt CORRIGÉ en FRANÇAIS, en conservant la même structure (sections, sauts de ligne, ordre), le même niveau de détail et le même style. Ajouter UNIQUEMENT les précisions nécessaires pour rendre le script 100% logique et exploitable (ex : "ouvrir le bouchon de la bouteille" avant de verser).
+- NE JAMAIS ajouter de commentaire, d'introduction, de conclusion, de balise markdown ou de bloc \`\`\`. Sortie = texte brut du prompt corrigé uniquement.`;
+
+  const userPrompt = `TYPE DE CONTENU : ${input.contentType}${input.format ? ` (format ${input.format})` : ''}
+IDÉE CHOISIE : ${input.ideaChosen || '(non précisée)'}
+PRODUIT / SERVICE : ${input.productService || '(non précisé)'}${input.productDescription ? `\nDESCRIPTION : ${input.productDescription}` : ''}
+
+=== PROMPT À RELIRE ET CORRIGER ===
+${input.promptFr}
+=== FIN DU PROMPT ===
+
+Applique la checklist de contrôle. Retourne le prompt FINAL (corrigé si nécessaire, sinon identique), prêt à être envoyé au modèle générateur.`;
+
+  try {
+    const data = await callKreatorAI({
+      action: 'generate_prompt',
+      messages: [{ role: 'user', content: userPrompt }],
+      system_prompt: systemPrompt,
+    });
+    const content = data?.choices?.[0]?.message?.content;
+    if (!content || typeof content !== 'string') return null;
+    return content.replace(/^```[a-z]*\n?|\n?```$/g, '').trim();
+  } catch (e) {
+    console.warn('[runCoherenceCheck] failed:', e);
+    return null;
   }
 }
 
