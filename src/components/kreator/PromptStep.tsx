@@ -147,12 +147,14 @@ const PromptStep = () => {
         textPosition: options.text_position,
         textFont: options.text_font,
         textColor: options.text_color,
+        voiceOverEnabled:
+          type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model),
         voiceOverText:
           type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
             ? voice_over_text.trim()
             : undefined,
         voiceOverLanguage:
-          type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
+          type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model)
             ? (voice_over_language || 'Français')
             : undefined,
         videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
