@@ -1008,7 +1008,9 @@ Génère un script vidéo publicitaire ou marketing naturel, 100% réaliste, pre
 🎼 Musique de fond (BGM) — style adapté à l'émotion (premium / corporate / tropical / urbain / émotionnel / luxe / dynamique), évolution avec build-up et drop/accent final sur CTA, volume discret sous voix off, dominant sans voix off.
 🔊 Bruitages (SFX) — ambiance (nature, ville, studio, luxe), SFX produits (versement, ouverture, condensation, glace, clic CTA), transitions (whoosh, cinematic hit, soft fade), accents émotionnels (sparkle, rise, impact, breath). Chaque bruitage : cohérent avec l'image, discret mais impactant, synchronisé avec les actions à l'écran.
 
-🧩 OVERLAY TEXTE ÉCRAN — si activé : pour chaque texte renseigné, indiquer contenu, moment d'apparition, durée, position, police, couleur. Sinon déduction intelligente.
+🧩 OVERLAY TEXTE ÉCRAN — RÈGLE STRICTE :
+• Si l'utilisateur N'A PAS activé "Texte à l'écran" dans la personnalisation → AUCUN texte overlay dans AUCUNE scène. Indiquer EXPLICITEMENT "Texte écran : aucun" pour CHAQUE scène. INTERDICTION ABSOLUE d'inventer, d'ajouter ou de suggérer le moindre texte, sous-titre, accroche ou CTA visuel à l'écran.
+• Si activé : reproduire EXACTEMENT le wording fourni. Si la couleur, le moment d'apparition (timing) ou la durée d'affichage ne sont PAS renseignés par l'utilisateur, les DÉDUIRE INTELLIGEMMENT à partir de l'idée choisie, du ton, de l'angle marketing et du rythme narratif de la vidéo (couleur cohérente avec la palette/branding, timing aligné sur les beats clés de la scène, durée suffisante pour une lecture confortable mobile). Pour le second texte (si activé) appliquer la même règle de déduction intelligente.
 
 🎙️ VOIX OFF
 ${hasVoiceOver
