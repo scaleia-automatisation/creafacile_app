@@ -200,6 +200,11 @@ const PromptStep = () => {
     options.text_content || '',
     options.text_content_2 || '',
     (options.slide_texts || []).join('§'),
+    options.show_text ? '1' : '0',
+    options.text_2_enabled ? '1' : '0',
+    voice_over_enabled ? '1' : '0',
+    voice_over_text || '',
+    voice_over_language || '',
   ].join('|');
   const prevTextSigRef = useRef<string | null>(null);
   useEffect(() => {
