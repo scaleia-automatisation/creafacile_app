@@ -316,11 +316,11 @@ const GenerationStep = () => {
     textFont: options.text_font,
     textColor: options.text_color,
     voiceOverText:
-      type === 'video' && voice_over_enabled && supportsNativeVoiceOver(ai_model) && voice_over_text.trim()
+      type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
         ? voice_over_text.trim()
         : undefined,
     voiceOverLanguage:
-      type === 'video' && voice_over_enabled && supportsNativeVoiceOver(ai_model) && voice_over_text.trim()
+      type === 'video' && voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
         ? (voice_over_language || 'Français')
         : undefined,
     videoDurationSec: type === 'video' ? getVideoDurationSec(ai_model, model_settings) : undefined,
