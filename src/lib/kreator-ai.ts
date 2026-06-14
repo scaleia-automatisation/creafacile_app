@@ -1833,7 +1833,8 @@ export async function generateVideo(
     'grok-imagine-i2v', 'grok-imagine-t2v',
     'grok-imagine-1.5-preview',
     'bytedance/seedance-1.5-pro', 'bytedance/seedance-2',
-    'sora-2-t2v', 'sora-2-i2v', 'sora-2-pro-t2v', 'sora-2-pro-i2v', 'sora-2-pro-character',
+    'sora-2', 'sora-2-t2v', 'sora-2-i2v', 'sora-2-pro-t2v', 'sora-2-pro-i2v', 'sora-2-pro-character',
+    'minimax/hailuo-2.3', 'alibaba/wan-2.7',
   ].includes(aiModel);
 
   // Helper local : applique le mux voix off post-génération si nécessaire.
