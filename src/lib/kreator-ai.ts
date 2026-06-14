@@ -1275,6 +1275,9 @@ Tout texte visible dans le visuel généré (overlay, titre, sous-titre, textes 
 3) Le TON D'ÉCRITURE${params.ton ? ` ("${params.ton}")` : ''} — vocabulaire, registre, niveau de langue, énergie et rythme du texte affiché DOIVENT respecter EXACTEMENT ce ton, sans exception.
 Si un texte overlay exact a été fourni par l'utilisateur, le reproduire MOT POUR MOT sans modification. Sinon, tout texte généré (titre, accroche, mention visible) doit dériver STRICTEMENT de l'idée/angle, servir l'objectif et adopter le ton — jamais générique, jamais hors-sujet, jamais contradictoire.
 
+🧠 COHÉRENCE LOGIQUE & PHYSIQUE DU SCRIPT (RÈGLE ABSOLUE — NON NÉGOCIABLE) :
+Chaque action, plan, scène ou slide doit être PHYSIQUEMENT et NARRATIVEMENT possible. Aucune incohérence tolérée. Exemples interdits : verser le contenu d'une bouteille sans avoir d'abord ouvert/retiré le bouchon ; utiliser un produit hors de la boîte sans l'avoir ouverte ; allumer un appareil débranché ; manipuler un objet jamais montré ; téléporter un personnage entre deux plans sans transition. RÈGLES À APPLIQUER : (1) tout objet manipulé doit avoir été préalablement montré ET préparé dans un plan visible (ex : ouvrir le bouchon AVANT de verser, ouvrir la boîte AVANT d'en sortir le produit) ; (2) les états successifs d'un objet ou d'un personnage doivent être continus (ouvert/fermé, plein/vide, allumé/éteint) ; (3) chaque scène doit s'enchaîner par une relation cause→effet plausible ; (4) la somme des durées des plans doit égaler la durée totale annoncée ; (5) le débit voix off doit être réaliste pour la durée du plan. Le script final doit être 100% EXPLOITABLE par le modèle générateur sans produire d'absurdité visuelle.
+
 Génère un prompt unifié, cohérent et fidèle à l'offre. Sobriété et précision priment sur la décoration.`;
 
   const variantInstruction = params.variant
