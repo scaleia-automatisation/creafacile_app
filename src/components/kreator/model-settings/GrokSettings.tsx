@@ -1,10 +1,10 @@
-import { useKreatorStore, type GrokAspect, type GrokMode, type GrokResolution, type Grok15Aspect, type Grok15Resolution } from '@/store/useKreatorStore';
+import { useKreatorStore, type GrokAspect, type GrokMode, type GrokResolution, type GrokSubMode, type Grok15Aspect, type Grok15Resolution } from '@/store/useKreatorStore';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import MultiFileUpload from '../MultiFileUpload';
 import FileDropUpload from '../FileDropUpload';
-import { Section, Field, PillGroup, AspectCards, IMAGE_HINT } from './shared';
+import { Section, Field, PillGroup, AspectCards, SubModelTabs, IMAGE_HINT } from './shared';
 
 const ASPECTS: GrokAspect[] = ['2:3', '3:2', '1:1', '16:9', '9:16'];
 const DURATIONS = Array.from({ length: 25 }, (_, i) => i + 6); // 6..30
@@ -49,22 +49,31 @@ const Common = () => {
   );
 };
 
-export const GrokT2V = () => (
-  <Section><Common /></Section>
-);
-
-export const GrokI2V = () => {
+export const GrokImagine = () => {
   const { model_settings, setModelSetting } = useKreatorStore();
+  const subMode: GrokSubMode = model_settings.grok_sub_mode ?? 't2v';
   return (
     <Section>
-      <MultiFileUpload
-        label="Images source"
-        hint={IMAGE_HINT + ' (max 7 images)'}
-        values={model_settings.grok_image_urls || []}
-        onChange={(urls) => setModelSetting('grok_image_urls', urls)}
-        max={7}
-        kind="image"
-      />
+      <Field label="Mode de génération">
+        <SubModelTabs<GrokSubMode>
+          options={[
+            { value: 't2v', label: 'Texte vers vidéo' },
+            { value: 'i2v', label: 'Image vers vidéo' },
+          ]}
+          value={subMode}
+          onChange={(v) => setModelSetting('grok_sub_mode', v)}
+        />
+      </Field>
+      {subMode === 'i2v' && (
+        <MultiFileUpload
+          label="Images source"
+          hint={IMAGE_HINT + ' (max 7 images)'}
+          values={model_settings.grok_image_urls || []}
+          onChange={(urls) => setModelSetting('grok_image_urls', urls)}
+          max={7}
+          kind="image"
+        />
+      )}
       <Common />
     </Section>
   );
