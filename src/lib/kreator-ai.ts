@@ -1858,7 +1858,8 @@ export async function generateVideo(
   abortSignal?: AbortSignal,
   modelSettings?: ModelSettings,
   soraCharacterScenes?: { duration: number }[],
-  voiceOver?: { text: string; language: string }
+  voiceOver?: { text: string; language: string },
+  opts?: { onTaskStart?: (taskId: string) => void; resumeTaskId?: string }
 ) {
   const isKieModel = [
     'veo-3', 'veo-3.1', 'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
@@ -1922,22 +1923,25 @@ export async function generateVideo(
 
   // === kie.ai models — start + polling ===
   if (isKieModel) {
-    const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
-      body: {
-        action: 'kie_start_video',
-        prompt: promptEn,
-        ai_model: aiModel,
-        size: format,
-        model_settings: modelSettings || {},
-        sora_character_scenes: soraCharacterScenes || [],
-      },
-    });
-    if (startError) throw startError;
-    if (startData?.error) throw new Error(startData.error);
-    if (startData?.done && startData?.video_url) return await maybeMux(startData.video_url);
-
-    const taskId = startData?.task_id;
-    if (!taskId) throw new Error('No task_id returned from kie.ai');
+    let taskId = opts?.resumeTaskId;
+    if (!taskId) {
+      const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
+        body: {
+          action: 'kie_start_video',
+          prompt: promptEn,
+          ai_model: aiModel,
+          size: format,
+          model_settings: modelSettings || {},
+          sora_character_scenes: soraCharacterScenes || [],
+        },
+      });
+      if (startError) throw startError;
+      if (startData?.error) throw new Error(startData.error);
+      if (startData?.done && startData?.video_url) return await maybeMux(startData.video_url);
+      taskId = startData?.task_id;
+      if (!taskId) throw new Error('No task_id returned from kie.ai');
+      try { opts?.onTaskStart?.(taskId); } catch { /* noop */ }
+    }
 
     const maxAttempts = 90;
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
