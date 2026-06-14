@@ -1294,10 +1294,91 @@ Génère un prompt unifié, cohérent et fidèle à l'offre. Sobriété et préc
     const parsed = JSON.parse(cleaned);
     if (parsed && typeof parsed.prompt_fr === 'string') {
       parsed.prompt_fr = formatPromptWithLineBreaks(parsed.prompt_fr);
+      // 🔍 AUTO-CONTRÔLE DE COHÉRENCE — passe de vérification logique avant génération finale
+      try {
+        const checked = await runCoherenceCheck({
+          promptFr: parsed.prompt_fr,
+          contentType: params.contentType,
+          ideaChosen: params.ideaChosen || params.inputText || '',
+          productService: params.productService || '',
+          productDescription: params.productDescription || '',
+          format: params.format,
+        });
+        if (checked && typeof checked === 'string' && checked.trim().length > 50) {
+          parsed.prompt_fr = formatPromptWithLineBreaks(checked);
+        }
+      } catch (e) {
+        console.warn('[coherence-check] skipped:', e);
+      }
     }
     return parsed;
   } catch {
     throw new Error('Failed to parse AI response');
+  }
+}
+
+/**
+ * Auto-contrôle de cohérence : relit le prompt généré, détecte les incohérences
+ * logiques/physiques (ex: verser le contenu d'une bouteille fermée, manipuler un
+ * objet qui n'est pas montré, durée d'apparition d'un texte < 2s, etc.) et
+ * retourne une version corrigée. Si aucune correction n'est nécessaire, retourne
+ * le prompt original tel quel.
+ */
+async function runCoherenceCheck(input: {
+  promptFr: string;
+  contentType: string;
+  ideaChosen?: string;
+  productService?: string;
+  productDescription?: string;
+  format?: string;
+}): Promise<string | null> {
+  const systemPrompt = `Tu es un DIRECTEUR DE PRODUCTION sénior spécialisé en relecture de scripts publicitaires (image, carrousel, vidéo). Ton rôle est de RELIRE un prompt de génération de contenu et de CORRIGER toutes les incohérences logiques, physiques ou narratives AVANT qu'il ne soit envoyé au modèle générateur.
+
+CHECKLIST DE CONTRÔLE OBLIGATOIRE (à appliquer scène par scène, plan par plan) :
+1) COHÉRENCE PHYSIQUE / OBJETS :
+   - Un objet ne peut être manipulé que s'il a été préalablement montré et préparé (ex : on ne peut PAS verser le contenu d'une bouteille dont le bouchon est encore fermé ; il faut d'abord l'ouvrir explicitement dans une action visible).
+   - Un produit ne peut apparaître que si sa présence dans la scène est plausible et préparée.
+   - Les états successifs d'un objet doivent être continus (ouvert/fermé, plein/vide, allumé/éteint, propre/sale) — pas de saut illogique.
+2) COHÉRENCE NARRATIVE :
+   - Chaque scène / slide doit s'enchaîner logiquement avec la précédente (cause → effet).
+   - Pas de personnage qui apparaît ou disparaît sans transition.
+   - Pas d'action impossible ou contradictoire avec le sujet/produit.
+3) COHÉRENCE TEXTES À L'ÉCRAN (si présents) :
+   - Chaque texte affiché DOIT rester visible MINIMUM 2 SECONDES (jamais d'apparition flash < 2s). Si une durée < 2s est mentionnée, la corriger à 2s minimum.
+   - Pas de chevauchement entre Texte 1 et Texte 2.
+   - Le contenu textuel doit être cohérent avec l'idée et l'objectif.
+4) COHÉRENCE TECHNIQUE :
+   - Format / ratio respecté de bout en bout.
+   - Durée totale, nombre de scènes et timecodes cohérents entre eux (somme des plans = durée totale).
+   - Voix off (si présente) : durée parlée compatible avec la durée vidéo, pas de débit impossible.
+
+RÈGLES DE SORTIE :
+- Si AUCUNE incohérence n'est trouvée, retourner le prompt ORIGINAL strictement à l'identique (mot pour mot).
+- Si des incohérences sont trouvées, retourner UNIQUEMENT le prompt CORRIGÉ en FRANÇAIS, en conservant la même structure (sections, sauts de ligne, ordre), le même niveau de détail et le même style. Ajouter UNIQUEMENT les précisions nécessaires pour rendre le script 100% logique et exploitable (ex : "ouvrir le bouchon de la bouteille" avant de verser).
+- NE JAMAIS ajouter de commentaire, d'introduction, de conclusion, de balise markdown ou de bloc \`\`\`. Sortie = texte brut du prompt corrigé uniquement.`;
+
+  const userPrompt = `TYPE DE CONTENU : ${input.contentType}${input.format ? ` (format ${input.format})` : ''}
+IDÉE CHOISIE : ${input.ideaChosen || '(non précisée)'}
+PRODUIT / SERVICE : ${input.productService || '(non précisé)'}${input.productDescription ? `\nDESCRIPTION : ${input.productDescription}` : ''}
+
+=== PROMPT À RELIRE ET CORRIGER ===
+${input.promptFr}
+=== FIN DU PROMPT ===
+
+Applique la checklist de contrôle. Retourne le prompt FINAL (corrigé si nécessaire, sinon identique), prêt à être envoyé au modèle générateur.`;
+
+  try {
+    const data = await callKreatorAI({
+      action: 'generate_prompt',
+      messages: [{ role: 'user', content: userPrompt }],
+      system_prompt: systemPrompt,
+    });
+    const content = data?.choices?.[0]?.message?.content;
+    if (!content || typeof content !== 'string') return null;
+    return content.replace(/^```[a-z]*\n?|\n?```$/g, '').trim();
+  } catch (e) {
+    console.warn('[runCoherenceCheck] failed:', e);
+    return null;
   }
 }
 
