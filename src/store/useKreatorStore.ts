@@ -7,7 +7,7 @@ export type Format = '9:16' | '16:9' | '1:1' | '3:4' | '4:3';
 export type AIModel =
   | 'nano-banana-2' | 'nano-banana-pro'
   | 'gpt-5.4-image-2' | 'grok-image'
-  | 'sora-2-t2v' | 'sora-2-i2v' | 'sora-2-pro-i2v' | 'sora-2-pro-t2v' | 'sora-2-pro-character'
+  | 'sora-2' | 'sora-2-t2v' | 'sora-2-i2v' | 'sora-2-pro-i2v' | 'sora-2-pro-t2v' | 'sora-2-pro-character'
   // legacy/alt
   | 'veo-3' | 'veo-3.1'
   | 'grok-imagine-i2v' | 'grok-imagine-t2v'
