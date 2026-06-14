@@ -12,7 +12,6 @@ import StepContainer from './StepContainer';
 import { generateImage, generateVideo, generateCaption, generatePrompt, type PlatformCaptions } from '@/lib/kreator-ai';
 import type { Json } from '@/integrations/supabase/types';
 import { getVideoDurationSec, supportsVoiceOver, supportsNativeVoiceOver } from '@/lib/voice-over';
-import { getVideoDurationSec, supportsVoiceOver, supportsNativeVoiceOver } from '@/lib/voice-over';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
