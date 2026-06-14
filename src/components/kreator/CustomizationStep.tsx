@@ -584,71 +584,7 @@ const CustomizationStep = () => {
                         </div>
                       </>
                     )}
-                    {/* Couleur du texte 1 */}
-                    <div className="space-y-2">
-                        <label className="text-xs text-muted-foreground block">Couleur du texte</label>
-                        <div className="grid grid-cols-8 gap-2">
-                          {TEXT_COLORS.map((c) => {
-                            const selected = options.text_color?.toUpperCase() === c.hex.toUpperCase();
-                            return (
-                              <button
-                                key={c.hex}
-                                type="button"
-                                title={`${c.name} ${c.hex}`}
-                                onClick={() => {
-                                  setOptions({ text_color: c.hex });
-                                  setHexInput(c.hex);
-                                }}
-                                className={`h-7 w-7 rounded-full border transition-all ${
-                                  selected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background border-foreground/40' : 'border-foreground/10 hover:scale-110'
-                                }`}
-                                style={{ backgroundColor: c.hex }}
-                                aria-label={c.name}
-                              />
-                            );
-                          })}
-                        </div>
-                        {logoColors.length > 0 && (
-                          <div className="space-y-1">
-                            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Couleurs du logo</div>
-                            <div className="grid grid-cols-8 gap-2">
-                              {logoColors.map((hex) => {
-                                const selected = options.text_color?.toUpperCase() === hex.toUpperCase();
-                                return (
-                                  <button
-                                    key={`logo-${hex}`}
-                                    type="button"
-                                    title={`Logo ${hex}`}
-                                    onClick={() => {
-                                      setOptions({ text_color: hex });
-                                      setHexInput(hex);
-                                    }}
-                                    className={`h-7 w-7 rounded-full border transition-all ${
-                                      selected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background border-foreground/40' : 'border-foreground/10 hover:scale-110'
-                                    }`}
-                                    style={{ backgroundColor: hex }}
-                                    aria-label={`Couleur logo ${hex}`}
-                                  />
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground">Code hex</span>
-                          <Input
-                            value={hexInput || options.text_color}
-                            onChange={(e) => handleHexChange(e.target.value)}
-                            placeholder="#FFFFFF"
-                            className="bg-card border-foreground/10 text-foreground text-xs h-8 w-28 font-mono uppercase"
-                            maxLength={7}
-                          />
-                          <div
-                            className="h-6 w-6 rounded-md border border-foreground/10"
-                            style={{ backgroundColor: options.text_color }}
-                          />
-                        </div>
-                    </div>
+                    {/* Couleur & police : déduites automatiquement, cohérentes avec l'identité visuelle */}
 
                     {/* Second on-screen text */}
                     {!isCarousel && <div className="pt-3 border-t border-foreground/10 space-y-3">
