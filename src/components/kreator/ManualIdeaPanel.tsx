@@ -9,6 +9,7 @@ const ManualIdeaPanel = () => {
   const {
     type, objective, offer_type, product_service, product_description,
     company_activity, company_sector, target_persona, market, options,
+    marketing_angle, offer_nature,
     setInputText, setIdeaChosen, setUseCase,
     manual_idea_mode, manual_idea_text, setManualIdeaText,
     prompt_fr, setPromptFr,
@@ -17,6 +18,8 @@ const ManualIdeaPanel = () => {
   const [improving, setImproving] = useState(false);
   const improvedOnceRef = useRef(false);
   const lastTypeRef = useRef<string>(type);
+  const lastAngleRef = useRef<string>(marketing_angle);
+  const lastObjectiveRef = useRef<string>(objective);
 
   const missing: string[] = [];
   if (!offer_type?.trim()) missing.push("type d'offre");
@@ -40,6 +43,7 @@ const ManualIdeaPanel = () => {
 RÈGLES:
 - Conserver l'intention et le sujet de l'idée originale, ne pas changer le fond.
 - Ajouter un hook 0-2s irrésistible (curiosité, émotion, controverse douce, transformation, preuve sociale, urgence).
+- Respecter À 100% l'ANGLE MARKETING fourni s'il est renseigné : l'angle est le fil conducteur OBLIGATOIRE de l'idée réécrite (message, accroche, promesse).
 - Rester en français, ton fidèle au ton demandé.
 - Réponds UNIQUEMENT avec un JSON valide sans markdown: {"idea":"hook + concept en 1-3 phrases max 500 caractères"}`;
       const user = `=== INPUTS ===
@@ -47,6 +51,7 @@ Type d'offre: ${offer_type}
 Nom: ${product_service}
 Description: ${product_description}
 Objectif du contenu: ${objective}
+Angle marketing: ${marketing_angle ? marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : '') : 'non précisé'}
 Ton d'écriture: ${options?.ton || 'non précisé'}
 Persona / client cible: ${target_persona || 'non précisé'}
 Type de contenu: ${type}
@@ -73,6 +78,8 @@ ${manual_idea_text}`;
       setManualIdeaText(improved);
       improvedOnceRef.current = true;
       lastTypeRef.current = type;
+      lastAngleRef.current = marketing_angle;
+      lastObjectiveRef.current = objective;
       toast.success('Idée améliorée');
     } catch (e) {
       console.error(e);
@@ -93,6 +100,27 @@ ${manual_idea_text}`;
     handleImproveIdea();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
+
+  // Si l'angle marketing change après une première amélioration,
+  // on re-améliore automatiquement l'idée pour qu'elle reste alignée.
+  useEffect(() => {
+    if (!manual_idea_mode) return;
+    if (!improvedOnceRef.current) return;
+    if (lastAngleRef.current === marketing_angle) return;
+    if (improving || !manual_idea_text.trim() || !canGenerate) return;
+    handleImproveIdea();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marketing_angle]);
+
+  // Idem si l'objectif change après une première amélioration.
+  useEffect(() => {
+    if (!manual_idea_mode) return;
+    if (!improvedOnceRef.current) return;
+    if (lastObjectiveRef.current === objective) return;
+    if (improving || !manual_idea_text.trim() || !canGenerate) return;
+    handleImproveIdea();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [objective]);
 
   if (!manual_idea_mode) return null;
 
