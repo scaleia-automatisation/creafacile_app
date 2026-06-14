@@ -55,6 +55,8 @@ export type Kling21SubModel = 'master-t2v' | 'image-to-video' | 'pro' | 'standar
 export type Kling25SubModel = 'turbo-t2v-pro' | 'turbo-i2v-pro';
 export type Kling26SubModel = 't2v' | 'i2v';
 export type Kling30Mode = 'std' | 'pro';
+export type Kling30SubMode = 't2v' | 'i2v';
+export type Kling30Aspect = '16:9' | '9:16' | '1:1';
 
 // Kling Video O1 (OpenRouter)
 export type KlingO1SubModel = 't2v' | 'i2v';
@@ -136,6 +138,8 @@ export interface ModelSettings {
   kling26_duration?: KlingDuration;
   kling26_aspect?: KlingAspect;
   // Kling 3.0
+  kling30_sub_model?: Kling30SubMode;
+  kling30_aspect?: Kling30Aspect;
   kling30_start_image_url?: string;
   kling30_end_image_url?: string;
   kling30_audio_enabled?: boolean;
