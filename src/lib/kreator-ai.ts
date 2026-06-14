@@ -1264,7 +1264,7 @@ RÈGLES STRICTES :
 • Cette règle PRIME sur la palette de couleurs active, sur le style visuel et sur tout autre réglage couleur. Le client doit reconnaître son produit à 100% — couleurs identiques à la photo de référence.
 ` : ''}
 
-⚠️ RAPPEL FINAL — Les RÉGLAGES AVANCÉS ci-dessus (palette, ton, style visuel, texte overlay, logo, position, police, couleur${params.contentType === 'video' ? `, durée vidéo EXACTE ${videoDuration}s et timecodes des plans` : ''}) renseignés par l'utilisateur sont STRICTEMENT PRIORITAIRES sur toute autre source (analyse d'images, suggestions automatiques). Appliquer EXACTEMENT comme demandé.
+⚠️ RAPPEL FINAL — Les RÉGLAGES AVANCÉS ci-dessus (palette, ton, style visuel, texte overlay, logo, position${params.contentType === 'video' ? `, durée vidéo EXACTE ${videoDuration}s et timecodes des plans` : ''}) renseignés par l'utilisateur sont STRICTEMENT PRIORITAIRES sur toute autre source (analyse d'images, suggestions automatiques). Appliquer EXACTEMENT comme demandé. La POLICE et la COULEUR des textes à l'écran ne sont JAMAIS choisies par l'utilisateur : elles DOIVENT être déduites par l'IA pour un design typographique moderne, stylé, puissant, ultra accrocheur, cohérent avec le produit, l'identité visuelle (palette/branding) et la direction artistique.
 
 ⚡ COHÉRENCE DU TEXTE AFFICHÉ DANS LE VISUEL (RÈGLE ABSOLUE — NON NÉGOCIABLE) :
 Tout texte visible dans le visuel généré (overlay, titre, sous-titre, textes de slides du carrousel, mentions, badges, accroches, punchlines, CTA) DOIT être 100% COHÉRENT avec, par ordre de priorité :
