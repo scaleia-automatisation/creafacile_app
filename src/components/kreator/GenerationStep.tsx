@@ -666,6 +666,23 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
   const buildPromptParamsRef = useRef(buildPromptParams);
   buildPromptParamsRef.current = buildPromptParams;
 
+  // Empêcher tout rechargement / fermeture / navigation pendant qu'une génération
+  // est en cours (l'utilisateur veut rester sur la même page jusqu'à 5 min, sans
+  // que la page se réactualise toute seule). Le navigateur affichera une alerte
+  // native si l'utilisateur tente de quitter / rafraîchir.
+  useEffect(() => {
+    if (!generating) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      // Le message custom est ignoré par les navigateurs modernes, mais
+      // returnValue active la confirmation native.
+      e.returnValue = 'Une génération est en cours. Si vous quittez maintenant, elle sera interrompue.';
+      return e.returnValue;
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [generating]);
+
   // Resume an in-flight video task that was started before the page reload/blank.
   const resumedVideoRef = useRef(false);
   useEffect(() => {
