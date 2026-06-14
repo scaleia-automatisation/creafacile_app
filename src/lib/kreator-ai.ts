@@ -2037,12 +2037,20 @@ export async function generateVideo(
 
   // === kie.ai models — start + polling ===
   if (isKieModel) {
+    const seedanceRefs = aiModel === 'bytedance/seedance-2'
+      ? (modelSettings?.seedance2_reference_image_urls || []).filter(Boolean)
+      : [];
+    const effectivePrompt = seedanceRefs.length > 0
+      ? `${promptEn.trim()}
+
+CONTRAINTE PRODUIT SEEDANCE — PRIORITÉ ABSOLUE : les images de référence jointes contiennent le vrai produit utilisateur. La vidéo doit montrer CE PRODUIT EXACT, pas une version inventée : même packaging, même forme, mêmes couleurs, même étiquette, mêmes proportions, mêmes détails visibles. Utiliser la première image de référence comme source d'identité produit principale dans chaque plan où le produit apparaît. Interdit de changer la marque, le contenant, le logo, l'étiquette, la couleur ou de remplacer le produit par un produit générique.`
+      : promptEn;
     let taskId = opts?.resumeTaskId;
     if (!taskId) {
       const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
         body: {
           action: 'kie_start_video',
-          prompt: promptEn,
+          prompt: effectivePrompt,
           ai_model: aiModel,
           size: format,
           model_settings: modelSettings || {},

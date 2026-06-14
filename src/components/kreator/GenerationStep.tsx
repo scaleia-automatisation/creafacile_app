@@ -159,7 +159,7 @@ const GenerationStep = () => {
     ai_model, format, setCreditsUsed, objective, marketing_angle, offer_nature, input_text, idea_chosen,
     company_sector, company_activity, input_photos, resetProject,
     model_settings, sora_character_scenes,
-    offer_type, product_service, product_description, target_persona, market, use_case,
+    offer_type, product_service, product_description, product_image_url, product_image_urls_extra, target_persona, market, use_case,
     options, slides_count, visual_style_brief, render_style, video_render_style,
     input_image_description, simple_images, starting_choice,
     voice_over_enabled, voice_over_text, voice_over_language, user_mode,
@@ -563,6 +563,19 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         text2: options.text_2_enabled ? options.text_content_2 : '',
         slideTexts: options.slide_texts,
       };
+      const effectiveModelSettings = (() => {
+        if (!isVideo || ai_model !== 'bytedance/seedance-2') return model_settings;
+        const productRefs = [product_image_url, ...(product_image_urls_extra || [])]
+          .map((url) => url?.trim())
+          .filter(Boolean) as string[];
+        if (productRefs.length === 0) return model_settings;
+        const existingRefs = Array.isArray(model_settings?.seedance2_reference_image_urls)
+          ? model_settings.seedance2_reference_image_urls.filter(Boolean)
+          : [];
+        const mergedRefs = Array.from(new Set([...productRefs, ...existingRefs])).slice(0, 9);
+        return { ...model_settings, seedance2_reference_image_urls: mergedRefs };
+      })();
+
       const [contentUrl, captionResult] = await raceAbort(Promise.all([
         isVideo
           ? generateVideo(
@@ -571,7 +584,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
               format,
               (pct) => setProgress(pct),
               abortController.signal,
-              model_settings,
+              effectiveModelSettings,
               sora_character_scenes,
               voice_over_enabled && supportsVoiceOver(ai_model) && voice_over_text.trim()
                 ? { text: voice_over_text.trim(), language: voice_over_language || 'Français' }
