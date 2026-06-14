@@ -1053,7 +1053,7 @@ Puis pour CHAQUE scène (de 1 à ${videoSceneCount}) reproduire EXACTEMENT ce ga
  🔊 SFX : impact final / transition CTA / accent sonore premium
 
 ${hasVoiceOver ? `🎙️ Voix off (unique)
-"${params.voiceOverText}"
+${hasVoiceOverText ? `"${params.voiceOverText}"` : `[Phrase déduite intelligemment — UNE SEULE phrase native ${voLang}, cohérente avec l'idée, l'offre, le ton, l'angle et l'objectif]`}
 🌐 Langue parlée : ${voLang} UNIQUEMENT — locuteur natif ${voLang}, accent natif ${voLang}, prononciation native, aucune traduction, aucun mélange de langues. La langue dite = la langue dans laquelle le texte ci-dessus est écrit.
 🗣️ Voix : 100% humaine naturelle, chaleureuse, expressive, non robotique, qualité voix-off publicitaire premium (acteur voix-off natif ${voLang}). Interdit : voix synthétique, monotone, mécanique ou avec accent IA.
 (une seule phrase continue, ≤ ${voiceOverMaxWords} mots, démarre à t = 1s, se termine à t ≤ ${Math.max(1, videoDuration - 1)}s — donc 1s de silence au début ET 1s de silence à la fin)` : ''}
