@@ -682,6 +682,7 @@ export async function generatePrompt(params: {
   textDuration2?: number;
   textStart1?: number;
   textStart2?: number;
+  voiceOverEnabled?: boolean;
   voiceOverText?: string;
   videoDurationSec?: number;
   voiceOverLanguage?: string;
