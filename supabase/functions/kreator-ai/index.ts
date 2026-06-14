@@ -467,6 +467,7 @@ serve(async (req) => {
     if (action === "kie_start_video") {
       // ---- OpenAI Sora routing: T2V / I2V (Standard + Pro). "Character" reste sur kie.ai. ----
       const OPENAI_SORA_MODELS: Record<string, "sora-2" | "sora-2-pro"> = {
+        "sora-2": "sora-2",
         "sora-2-t2v": "sora-2",
         "sora-2-i2v": "sora-2",
         "sora-2-pro-t2v": "sora-2-pro",
@@ -574,6 +575,109 @@ serve(async (req) => {
         if (!oaiId) return jsonError(500, "OpenAI Sora n'a pas retourné d'id");
         // Préfixe pour router le polling vers OpenAI
         return jsonResp({ task_id: `oai:${oaiId}`, done: false });
+      }
+
+      // ---- OpenRouter video routing: Kling 3.0, Seedance 2, Hailuo 2.3, Wan 2.7 ----
+      // (Veo 3 / 3.1 et Grok Imagine sont gérés plus bas dans des branches dédiées.)
+      const OPENROUTER_VIDEO_MODELS = new Set<string>([
+        "kling-3.0",
+        "bytedance/seedance-2",
+        "bytedance/seedance-2-fast",
+        "minimax/hailuo-2.3",
+        "alibaba/wan-2.7",
+      ]);
+      if (ai_model && OPENROUTER_VIDEO_MODELS.has(ai_model)) {
+        const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
+        if (!OPENROUTER_API_KEY) return jsonError(500, "OPENROUTER_API_KEY non configurée");
+
+        const ms = (model_settings || {}) as Record<string, any>;
+        const aspectFromFormat = size === "9:16" ? "9:16" : size === "1:1" ? "1:1" : "16:9";
+
+        let orModel = "";
+        const orBody: Record<string, any> = { prompt: typeof prompt === "string" ? prompt : "" };
+        // Safety: cap prompt length under most providers' 4096 chars.
+        if (typeof orBody.prompt === "string" && orBody.prompt.length > 3900) orBody.prompt = orBody.prompt.slice(0, 3900);
+
+        if (ai_model === "kling-3.0") {
+          // Kling 3.0 : pro (qualité) ou standard. start_image_url / end_image_url pour ancrer.
+          const mode = (ms.kling30_mode || "pro").toString().toLowerCase();
+          orModel = mode === "standard" ? "kwaivgi/kling-v3.0-std" : "kwaivgi/kling-v3.0-pro";
+          if (ms.kling30_start_image_url) orBody.image_url = ms.kling30_start_image_url;
+          if (ms.kling30_end_image_url) orBody.last_frame_image_url = ms.kling30_end_image_url;
+          orBody.aspect_ratio = aspectFromFormat;
+          if (ms.kling30_duration) orBody.duration = Number(ms.kling30_duration);
+          orBody.resolution = "720p";
+        } else if (ai_model === "bytedance/seedance-2" || ai_model === "bytedance/seedance-2-fast") {
+          const sub = ms.seedance2_sub_model || (ai_model === "bytedance/seedance-2-fast" ? "seedance-2-fast" : "seedance-2");
+          orModel = sub === "seedance-2-fast" ? "bytedance/seedance-2.0-fast" : "bytedance/seedance-2.0";
+          if (ms.seedance2_first_frame_url) orBody.image_url = ms.seedance2_first_frame_url;
+          if (ms.seedance2_last_frame_url) orBody.last_frame_image_url = ms.seedance2_last_frame_url;
+          const refImgs = Array.isArray(ms.seedance2_reference_image_urls) ? ms.seedance2_reference_image_urls.filter(Boolean) : [];
+          if (refImgs.length > 0) orBody.reference_image_urls = refImgs.slice(0, 4);
+          orBody.aspect_ratio = ms.seedance2_aspect || aspectFromFormat;
+          orBody.resolution = ms.seedance2_resolution || "1080p";
+          if (ms.seedance2_duration) orBody.duration = Number(ms.seedance2_duration);
+        } else if (ai_model === "minimax/hailuo-2.3") {
+          orModel = "minimax/hailuo-2.3";
+          const sub = (ms.hailuo_sub_model || "t2v").toString();
+          if (sub === "i2v") {
+            if (!ms.hailuo_image_url) return jsonError(400, "Hailuo 2.3 I2V requiert une image source.");
+            orBody.image_url = ms.hailuo_image_url;
+          }
+          // Hailuo 2.3 OpenRouter : 16:9 et 1080p uniquement.
+          orBody.aspect_ratio = "16:9";
+          orBody.resolution = "1080p";
+          orBody.duration = Number(ms.hailuo_duration) || 6;
+        } else if (ai_model === "alibaba/wan-2.7") {
+          orModel = "alibaba/wan-2.7";
+          const sub = (ms.wan_sub_mode || "t2v").toString();
+          if (sub === "i2v") {
+            if (!ms.wan_image_url) return jsonError(400, "Wan 2.7 I2V requiert une image source.");
+            orBody.image_url = ms.wan_image_url;
+          } else if (sub === "reference") {
+            const refs = Array.isArray(ms.wan_reference_image_urls) ? ms.wan_reference_image_urls.filter(Boolean) : [];
+            if (refs.length === 0) return jsonError(400, "Wan 2.7 Référence requiert au moins une image.");
+            orBody.reference_image_urls = refs.slice(0, 4);
+          }
+          orBody.aspect_ratio = ms.wan_aspect || aspectFromFormat;
+          orBody.resolution = ms.wan_resolution || "720p";
+          if (ms.wan_duration) orBody.duration = Number(ms.wan_duration);
+        }
+
+        orBody.model = orModel;
+        console.log(`[openrouter_video_start] ai_model=${ai_model} → ${orModel}`, JSON.stringify(orBody).substring(0, 500));
+
+        let orRes: Response;
+        try {
+          orRes = await fetchWithTimeout("https://openrouter.ai/api/v1/videos", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(orBody),
+          }, 60_000);
+        } catch (err) {
+          if ((err as any)?.name === "AbortError") {
+            return jsonFallback("Le fournisseur OpenRouter ne répond pas. Merci de réessayer ou de choisir un autre modèle.", { provider: "openrouter", timeout: true });
+          }
+          throw err;
+        }
+        const orText = await orRes.text();
+        if (!orRes.ok) {
+          console.error("OpenRouter video start error:", orRes.status, orText);
+          const fallbackable = orRes.status >= 500 || /unavailable|maintenance|temporarily|overloaded/i.test(orText);
+          if (fallbackable) {
+            return jsonFallback(`Le modèle vidéo (${ai_model}) est temporairement indisponible chez OpenRouter. Merci d'en choisir un autre.`, { provider_status: orRes.status, provider: "openrouter" });
+          }
+          return jsonError(orRes.status === 429 ? 429 : 400, `Erreur OpenRouter: ${orText.slice(0, 300)}`);
+        }
+        let orJson: any;
+        try { orJson = JSON.parse(orText); } catch { return jsonError(500, "Réponse OpenRouter invalide"); }
+        const pollingUrl = orJson?.polling_url;
+        if (!pollingUrl) return jsonError(500, "OpenRouter n'a pas retourné de polling_url");
+        const tid = `or:${btoa(pollingUrl)}`;
+        return jsonResp({ task_id: tid, done: false, provider_id: orJson?.id });
       }
 
       const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
