@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Copy, Loader2, AlertCircle } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { toast } from 'sonner';
-import { generatePrompt } from '@/lib/kreator-ai';
+import { generatePrompt, buildPersonaContext } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getVideoDurationSec, supportsVoiceOver } from '@/lib/voice-over';
@@ -16,7 +16,7 @@ const PromptStep = () => {
   const {
     prompt_fr, setPromptFr,
     type, format, company_activity, company_sector, product_service, market,
-    offer_type, target_persona, marketing_angle, offer_nature, visual_style_brief,
+    offer_type, target_persona, target_audience, marketing_angle, offer_nature, visual_style_brief,
     input_text, idea_chosen, input_image_description, input_photos,
     options, slides_count, status, setStatus, setResultUrl, ai_model,
     render_style, video_render_style,
@@ -115,7 +115,7 @@ const PromptStep = () => {
         productDescription: product_description,
         market,
         offerType: offer_type,
-        targetPersona: target_persona,
+        targetPersona: buildPersonaContext(target_audience, target_persona),
         marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
         showText: options.show_text,
         textContent: options.text_content,

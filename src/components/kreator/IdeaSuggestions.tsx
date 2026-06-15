@@ -3,12 +3,12 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2, PenLine, CheckCircle2, FileText, Check } from 'lucide-react';
 import { toast } from 'sonner';
-import { generateContentIdeas, type ContentIdea } from '@/lib/kreator-ai';
+import { generateContentIdeas, buildPersonaContext, type ContentIdea } from '@/lib/kreator-ai';
 
 const IdeaSuggestions = () => {
   const {
     type, slides_count, objective, offer_type, product_service, product_description, product_image_url, use_case, marketing_angle, offer_nature,
-    company_activity, company_sector, target_persona, market, options,
+    company_activity, company_sector, target_persona, target_audience, market, options,
     setInputText, setIdeaChosen, idea_chosen, prompt_fr, setPromptFr,
     setManualIdeaMode, setManualIdeaText, manual_idea_mode,
   } = useKreatorStore();
@@ -44,7 +44,7 @@ const IdeaSuggestions = () => {
         productDescription: product_description,
         activity: company_activity,
         sector: company_sector,
-        persona: target_persona,
+        persona: buildPersonaContext(target_audience, target_persona),
         market,
         useCase: use_case,
         tone: options?.ton,

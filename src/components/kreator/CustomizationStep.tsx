@@ -11,7 +11,7 @@ import { useStorageUpload } from '@/hooks/useStorageUpload';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { supportsVoiceOver, getVideoDurationSec } from '@/lib/voice-over';
-import { generateVoiceOver, generateOnScreenText, generateSlideTexts } from '@/lib/kreator-ai';
+import { generateVoiceOver, generateOnScreenText, generateSlideTexts, buildPersonaContext } from '@/lib/kreator-ai';
 
 const tons = [
   'Direct / Cash',
@@ -129,7 +129,7 @@ const CustomizationStep = () => {
     offer_type, product_service, product_description,
     marketing_angle, objective, visual_style_brief,
     idea_chosen, input_text, format,
-    company_activity, company_sector, target_persona,
+    company_activity, company_sector, target_persona, target_audience,
     render_style, video_render_style,
     slides_count, use_case,
     manual_idea_text, manual_idea_mode,
@@ -189,7 +189,7 @@ const CustomizationStep = () => {
         productDescription: product_description,
         objective,
         tone: options.ton,
-        persona: target_persona,
+        persona: buildPersonaContext(target_audience, target_persona),
         useCase: use_case,
         videoDurationSec,
         language: voice_over_language || 'Français',
@@ -253,7 +253,7 @@ const CustomizationStep = () => {
     tone: options.ton,
     activity: company_activity,
     sector: company_sector,
-    persona: target_persona,
+    persona: buildPersonaContext(target_audience, target_persona),
     variant,
     excludeText: variant === 2 ? options.text_content : undefined,
     maxWords: 10,
@@ -319,7 +319,7 @@ const CustomizationStep = () => {
         tone: options.ton,
         activity: company_activity,
         sector: company_sector,
-        persona: target_persona,
+        persona: buildPersonaContext(target_audience, target_persona),
       });
       const next = [...(options.slide_texts || ['', '', '', ''])];
       for (let i = 0; i < 4; i++) next[i] = (texts[i] || '');

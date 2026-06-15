@@ -3,12 +3,12 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2, Wand2, FileText } from 'lucide-react';
 import { toast } from 'sonner';
-import { callKreatorAI } from '@/lib/kreator-ai';
+import { callKreatorAI, buildPersonaContext } from '@/lib/kreator-ai';
 
 const ManualIdeaPanel = () => {
   const {
     type, objective, offer_type, product_service, product_description,
-    company_activity, company_sector, target_persona, market, options,
+    company_activity, company_sector, target_persona, target_audience, market, options,
     marketing_angle, offer_nature,
     setInputText, setIdeaChosen, setUseCase,
     manual_idea_mode, manual_idea_text, setManualIdeaText,
@@ -53,7 +53,7 @@ Description: ${product_description}
 Objectif du contenu: ${objective}
 Angle marketing: ${marketing_angle ? marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : '') : 'non précisé'}
 Ton d'écriture: ${options?.ton || 'non précisé'}
-Persona / client cible: ${target_persona || 'non précisé'}
+Persona / client cible: ${buildPersonaContext(target_audience, target_persona) || 'non précisé'}
 Type de contenu: ${type}
 ${company_activity ? `Activité: ${company_activity}` : ''}
 ${company_sector ? `Secteur: ${company_sector}` : ''}

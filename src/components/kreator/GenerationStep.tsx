@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock, Eye, EyeOff } from 'lucide-react';
 import StepContainer from './StepContainer';
-import { generateImage, generateVideo, generateCaption, generatePrompt, type PlatformCaptions } from '@/lib/kreator-ai';
+import { generateImage, generateVideo, generateCaption, generatePrompt, buildPersonaContext, type PlatformCaptions } from '@/lib/kreator-ai';
 import type { Json } from '@/integrations/supabase/types';
 import { getVideoDurationSec, supportsVoiceOver, supportsNativeVoiceOver } from '@/lib/voice-over';
 import { supabase } from '@/integrations/supabase/client';
@@ -159,7 +159,7 @@ const GenerationStep = () => {
     ai_model, format, setCreditsUsed, objective, marketing_angle, offer_nature, input_text, idea_chosen,
     company_sector, company_activity, input_photos, resetProject,
     model_settings, sora_character_scenes,
-    offer_type, product_service, product_description, product_image_url, product_image_urls_extra, target_persona, market, use_case,
+    offer_type, product_service, product_description, product_image_url, product_image_urls_extra, target_persona, target_audience, market, use_case,
     options, slides_count, visual_style_brief, render_style, video_render_style,
     input_image_description, simple_images, starting_choice,
     voice_over_enabled, voice_over_text, voice_over_language, user_mode,
@@ -269,7 +269,7 @@ const GenerationStep = () => {
     productDescription: product_description,
     market,
     offerType: offer_type,
-    targetPersona: target_persona,
+    targetPersona: buildPersonaContext(target_audience, target_persona),
     marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
     useCase: use_case,
     showText: options.show_text,
@@ -436,7 +436,7 @@ CONTRAINTE LOGO ABSOLUE — le modèle IA NE DOIT PAS dessiner, inventer, recré
           offerType: offer_type,
           offerName: product_service,
           offerDescription: product_description,
-          persona: target_persona,
+          persona: buildPersonaContext(target_audience, target_persona),
           market,
           marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
           ton: options.ton,
@@ -546,7 +546,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         offerType: offer_type,
         offerName: product_service,
         offerDescription: product_description,
-        persona: target_persona,
+        persona: buildPersonaContext(target_audience, target_persona),
         market,
         marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
         ton: options.ton,
@@ -811,7 +811,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         offerType: offer_type,
         offerName: product_service,
         offerDescription: product_description,
-        persona: target_persona,
+        persona: buildPersonaContext(target_audience, target_persona),
         market,
         marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
         ton: options.ton,
@@ -854,7 +854,7 @@ Cette slide doit être visuellement interchangeable avec les autres du carrousel
         offerType: offer_type,
         offerName: product_service,
         offerDescription: product_description,
-        persona: target_persona,
+        persona: buildPersonaContext(target_audience, target_persona),
         market,
         marketingAngle: marketing_angle + (offer_nature ? ` — Nature de l'offre : ${offer_nature}` : ''),
         ton: options.ton,
