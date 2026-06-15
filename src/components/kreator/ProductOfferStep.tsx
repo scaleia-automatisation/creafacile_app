@@ -460,10 +460,26 @@ const ProductOfferStep = () => {
 
         {user_mode === 'expert' && (
           <div className="md:col-span-2">
+            <div className="mb-4">
+              <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                <Users className="w-4 h-4 text-primary" />
+                Client cible (audience large)
+                {loadingPersonas && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />}
+              </label>
+              <Textarea
+                value={target_audience}
+                onChange={(e) => setTargetAudience(e.target.value)}
+                placeholder="Audience cible large et généraliste (déduite automatiquement à partir de l'offre)."
+                className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[60px] resize-none"
+              />
+              <p className="text-[11px] text-muted-foreground mt-1">
+                Audience large (groupe généraliste) — déduite automatiquement, modifiable. Les 3 personas ci-dessous sont des sous-cibles précises de cette audience.
+              </p>
+            </div>
             <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
               <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary" />
-                Client cible / Persona
+                Persona (sous-cible précise)
               </label>
               <Button
                 type="button"
