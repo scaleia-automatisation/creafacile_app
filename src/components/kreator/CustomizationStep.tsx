@@ -189,7 +189,7 @@ const CustomizationStep = () => {
         productDescription: product_description,
         objective,
         tone: options.ton,
-        persona: target_persona,
+        persona: buildPersonaContext(target_audience, target_persona),
         useCase: use_case,
         videoDurationSec,
         language: voice_over_language || 'Français',
@@ -253,7 +253,7 @@ const CustomizationStep = () => {
     tone: options.ton,
     activity: company_activity,
     sector: company_sector,
-    persona: target_persona,
+    persona: buildPersonaContext(target_audience, target_persona),
     variant,
     excludeText: variant === 2 ? options.text_content : undefined,
     maxWords: 10,
@@ -319,7 +319,7 @@ const CustomizationStep = () => {
         tone: options.ton,
         activity: company_activity,
         sector: company_sector,
-        persona: target_persona,
+        persona: buildPersonaContext(target_audience, target_persona),
       });
       const next = [...(options.slide_texts || ['', '', '', ''])];
       for (let i = 0; i < 4; i++) next[i] = (texts[i] || '');
