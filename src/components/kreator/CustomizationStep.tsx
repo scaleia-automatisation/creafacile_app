@@ -129,7 +129,7 @@ const CustomizationStep = () => {
     offer_type, product_service, product_description,
     marketing_angle, objective, visual_style_brief,
     idea_chosen, input_text, format,
-    company_activity, company_sector, target_persona,
+    company_activity, company_sector, target_persona, target_audience,
     render_style, video_render_style,
     slides_count, use_case,
     manual_idea_text, manual_idea_mode,
