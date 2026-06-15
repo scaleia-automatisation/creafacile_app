@@ -37,6 +37,7 @@ const ProductOfferStep = () => {
     product_description, setProductDescription,
     offer_type, setOfferType,
     target_persona, setTargetPersona,
+    target_audience, setTargetAudience,
     product_image_url, setProductImageUrl,
     product_image_urls_extra, setProductImageUrlsExtra,
     idea_chosen, setIdeaChosen,
