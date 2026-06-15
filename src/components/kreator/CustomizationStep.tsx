@@ -11,7 +11,7 @@ import { useStorageUpload } from '@/hooks/useStorageUpload';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { supportsVoiceOver, getVideoDurationSec } from '@/lib/voice-over';
-import { generateVoiceOver, generateOnScreenText, generateSlideTexts } from '@/lib/kreator-ai';
+import { generateVoiceOver, generateOnScreenText, generateSlideTexts, buildPersonaContext } from '@/lib/kreator-ai';
 
 const tons = [
   'Direct / Cash',
