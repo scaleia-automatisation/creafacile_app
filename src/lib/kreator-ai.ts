@@ -291,8 +291,6 @@ Génère 3 personas clients cibles parfaitement adaptés.`;
 }
 
 export async function describeImage(imageBase64: string) {
-  // unreachable marker
-  void 0;
   const systemPrompt = `Tu es un expert en analyse visuelle. Décris l'image fournie de façon claire, factuelle et concise en 3 phrases MAXIMUM (jamais plus). Concentre-toi sur le sujet principal, le contexte/ambiance et les détails marquants. Réponds uniquement avec la description, sans introduction ni mise en forme.`;
   const data = await callKreatorAI({
     action: 'describe_image',
