@@ -249,9 +249,11 @@ export async function generatePersonas(params: {
   const systemPrompt = `Tu es un expert en marketing et personas client. Génère exactement 3 profils de persona ULTRA pertinents pour le contexte fourni.
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown, exactement ce format :
-{"personas":[{"id":1,"profil":"Nom + âge + situation courte (ex: Marie, 34 ans, maman active)","contexte_rapide":"1 phrase sur son contexte de vie / pro","csp":"CSP+ / CSP / employé / étudiant / retraité / dirigeant…","probleme":"problème principal qu'il/elle rencontre","objectif":"objectif principal qu'il/elle cherche à atteindre"},{"id":2,...},{"id":3,...}],"best_id":1,"best_reason":"raison courte"}
+{"target_audience":"Audience cible LARGE et généraliste en 1 phrase (genre dominant, tranche d'âge globale, situation de vie générale, intérêt clé). Pas de prénom, pas de cas individuel — c'est le grand groupe à qui s'adresse l'offre.","personas":[{"id":1,"profil":"Nom + âge + situation courte (ex: Marie, 34 ans, maman active)","contexte_rapide":"1 phrase sur son contexte de vie / pro","csp":"CSP+ / CSP / employé / étudiant / retraité / dirigeant…","probleme":"problème principal qu'il/elle rencontre","objectif":"objectif principal qu'il/elle cherche à atteindre"},{"id":2,...},{"id":3,...}],"best_id":1,"best_reason":"raison courte"}
 
 Les 3 personas doivent être DIFFÉRENTS (âges, situations, motivations différentes) mais tous cohérents avec l'activité, le secteur et le type d'offre.
+
+Le champ "target_audience" est obligatoire : il décrit le CLIENT CIBLE LARGE (audience généraliste) à laquelle appartiennent les 3 personas. Les 3 personas DOIVENT être des sous-ensembles cohérents de cette audience cible.
 
 RÈGLE ABSOLUE DE COHÉRENCE D'AUDIENCE (priorité maximale) :
 - Analyse la description et le nom de l'offre pour détecter toute contrainte démographique implicite ou explicite : genre (femmes / hommes uniquement), tranche d'âge (enfants, ados, seniors), état (femmes enceintes, jeunes mamans, retraités, étudiants, sportifs, professionnels d'un métier précis…), etc.
