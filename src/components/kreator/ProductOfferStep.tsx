@@ -92,6 +92,7 @@ const ProductOfferStep = () => {
     setProductImageUrl('');
     setProductImageUrlsExtra([]);
     setTargetPersona('');
+    setTargetAudience('');
     setIdeaChosen('');
     setInputText('');
     setPersonas([]);
@@ -233,6 +234,9 @@ const ProductOfferStep = () => {
       });
       const list: Persona[] = result.personas || [];
       setPersonas(list);
+      if (typeof result.target_audience === 'string' && result.target_audience.trim()) {
+        setTargetAudience(result.target_audience.trim());
+      }
       const bestId = typeof result.best_id === 'number' ? result.best_id : list[0]?.id;
       const best = list.find((p) => p.id === bestId) || list[0];
       if (best) {
@@ -267,6 +271,9 @@ const ProductOfferStep = () => {
         const result = await generatePersonas({ activity, sector, offerType: offer, productService: product_service, productDescription: desc });
         const list: Persona[] = result.personas || [];
         setPersonas(list);
+        if (typeof result.target_audience === 'string' && result.target_audience.trim()) {
+          setTargetAudience(result.target_audience.trim());
+        }
         // Auto-sélection du meilleur persona (conversion / douleur / revenus)
         const bestId = typeof result.best_id === 'number' ? result.best_id : list[0]?.id;
         const best = list.find((p) => p.id === bestId) || list[0];
