@@ -290,6 +290,15 @@ Génère 3 personas clients cibles parfaitement adaptés.`;
   }
 }
 
+// Combine the broad target audience with the focused persona description
+// into a single context string passed downstream to all generation prompts.
+export function buildPersonaContext(audience?: string, persona?: string): string {
+  const a = (audience || '').trim();
+  const p = (persona || '').trim();
+  if (a && p) return `Audience cible (large) : ${a}\nPersona principal (ciblé) : ${p}`;
+  return a || p || '';
+}
+
 export async function describeImage(imageBase64: string) {
   const systemPrompt = `Tu es un expert en analyse visuelle. Décris l'image fournie de façon claire, factuelle et concise en 3 phrases MAXIMUM (jamais plus). Concentre-toi sur le sujet principal, le contexte/ambiance et les détails marquants. Réponds uniquement avec la description, sans introduction ni mise en forme.`;
   const data = await callKreatorAI({
