@@ -253,6 +253,8 @@ interface KreatorState {
   setOfferType: (val: string) => void;
   target_persona: string;
   setTargetPersona: (val: string) => void;
+  target_audience: string;
+  setTargetAudience: (val: string) => void;
   marketing_angle: string;
   setMarketingAngle: (val: string) => void;
   offer_nature: string;
